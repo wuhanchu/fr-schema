@@ -1,7 +1,7 @@
 import queryString from "query-string"
 
-import { config, request, user } from "../index"
-import { convertFromRemote, convertToRemote } from "../schemas"
+import { config, request, user } from "./index"
+import { convertFromRemote, convertToRemote } from "./schema"
 import actions from "./actions"
 
 export function createBasicApi(module, subModule) {

@@ -1,4 +1,4 @@
-import { user as userInfo } from "../index"
+import { user as userInfo } from "./index"
 
 const types = {
     finance: {

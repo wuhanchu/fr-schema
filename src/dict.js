@@ -1,4 +1,4 @@
-import { sysDict } from "../index"
+import { sysDict } from "./index"
 import { schemaFieldType } from "./schema";
 
 export default {

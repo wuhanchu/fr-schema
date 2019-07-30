@@ -1,5 +1,12 @@
-import schemas, { listToDict } from "./schemas"
-import services from "./services"
+import * as schema from "./schema"
+export { dict } from "./dict"
+export { actions } from "./actions"
+export { model } from "./model"
+export { momnet } from "./momnet"
+export { permission } from "./permission"
+export { service } from "./service"
+export { string } from "./string"
+
 
 export let request = null
 export let config = null
@@ -55,8 +62,7 @@ export const initGlobalDict = value => {
 export default {
     init: index,
     initUser,
-    services,
-    schemas,
     initSysDict,
-    initGlobalDict
+    initGlobalDict,
+    ...schema
 }
