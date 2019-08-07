@@ -4,72 +4,6 @@ import { config, request, user } from "./index"
 import { convertFromRemote, convertToRemote } from "./schema"
 import actions from "./actions"
 
-export function createBasicApi(module, subModule) {
-    return {
-        get: async (args = {}) => {
-            const response = await request({
-                method: "GET",
-                url: (
-                    "/" +
-                    config.apiVersion +
-                    module +
-                    (args.id ? "/" + args.id : "") +
-                    (subModule ? "/" + subModule + "/" : "") +
-                    "/?" +
-                    queryString.stringify({
-                        ...args,
-                        token: user && user.user && user.user.token
-                    })
-                ).replace("//", "/")
-            })
-
-            return response
-        },
-
-        put: args => {
-            return request({
-                method: "PUT",
-                url: (
-                    "/" +
-                    config.apiVersion +
-                    module +
-                    "/" +
-                    (args.id ? args.id : "") +
-                    (subModule ? "/" + subModule + "/" : "")
-                ).replace("//", "/"),
-                data: args
-            })
-        },
-
-        patch: args => {
-            return request({
-                method: "PATCH",
-                url: (
-                    "/" +
-                    config.apiVersion +
-                    module +
-                    "/" +
-                    (args.id ? args.id : "") +
-                    (subModule ? "/" + subModule + "/" : "")
-                ).replace("//", "/"),
-                data: args
-            })
-        },
-
-        post: args =>
-            request({
-                method: "POST",
-                url: (
-                    "/" +
-                    config.apiVersion +
-                    module +
-                    (subModule ? "/" + subModule + "/" : "")
-                ).replace("//", "/"),
-                data: args
-            })
-    }
-}
-
 /**
  *
  * @param module
@@ -79,42 +13,6 @@ export function createBasicApi(module, subModule) {
  */
 export function createApi(module, schema = {}, options = {}) {
     return {
-        getExtend: async (args = {}, inSchema = schema) => {
-            // convert moment
-            let params = {}
-            Object.keys(args).forEach(key => {
-                const item = args[key]
-                if (item === undefined) {
-                    return
-                }
-                params[key] = item && item.unix ? item.unix() : item
-            })
-
-            let { currentPage, pageSize, ...otherParams } = args
-
-            const response = await request({
-                method: "GET",
-                url:
-                    "/" +
-                    config.apiVersion +
-                    module +
-                    "?" +
-                    queryString.stringify({
-                        ...otherParams,
-                        page: currentPage || 1,
-                        limit: pageSize || 10
-                    })
-            })
-
-            let { total, records } = response || {}
-            records = records || response
-            return {
-                list: inSchema
-                    ? convertFromRemote(records || [], inSchema || schema)
-                    : records,
-                pagination: { current: currentPage, pageSize, total }
-            }
-        },
         get: async (args = {}, inSchema = schema) => {
             // convert moment
             let params = {}
@@ -127,7 +25,7 @@ export function createApi(module, schema = {}, options = {}) {
             })
 
             let { currentPage, pageSize, ...otherParams } = args
-
+            const limit = pageSize || 10
             const response = await request(
                 {
                     method: "GET",
@@ -135,12 +33,12 @@ export function createApi(module, schema = {}, options = {}) {
                         "/" +
                         config.apiVersion +
                         module +
-                        "/bulk?" +
+                        "?" +
                         queryString.stringify({
                             sort: "-id",
                             ...otherParams,
-                            page: currentPage || 1,
-                            limit: pageSize || 10
+                            offset: limit * ((currentPage || 1) - 1),
+                            limit
                         })
                     ).replace("//", "/")
                 },
@@ -151,11 +49,11 @@ export function createApi(module, schema = {}, options = {}) {
                 }
             )
 
-            const { total, records } = response || {}
+            const { total, list } = response.data || {}
             return {
                 list: inSchema
-                    ? convertFromRemote(records || [], inSchema || schema)
-                    : records,
+                    ? convertFromRemote(list || [], inSchema || schema)
+                    : list,
                 pagination: { current: currentPage, pageSize, total }
             }
         },
@@ -190,14 +88,17 @@ export function createApi(module, schema = {}, options = {}) {
         patch: (args, inSchema = schema) => {
             return request({
                 method: "PATCH",
-                url: ("/" + config.apiVersion + module).replace("//", "/"),
+                url: ("/" + config.apiVersion + module + "/" + args.id).replace(
+                    "//",
+                    "/"
+                ),
                 data: convertToRemote(args, inSchema || schema)
             })
         },
         put: (args, inSchema = schema) => {
             return request({
                 method: "PUT",
-                url: "/" + config.apiVersion + module,
+                url: "/" + config.apiVersion + module + "/" + args.id,
                 data: convertToRemote(args, inSchema || schema)
             })
         },
@@ -208,6 +109,17 @@ export function createApi(module, schema = {}, options = {}) {
                     "//",
                     "/"
                 )
+            }),
+        deleteMulti: args =>
+            request({
+                method: "DELETE",
+                url: (
+                    "/" +
+                    config.apiVersion +
+                    module +
+                    "?" +
+                    queryString.stringify(args)
+                ).replace("//", "/")
             })
     }
 }
