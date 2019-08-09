@@ -1,6 +1,6 @@
 export default {
     add: "add",
-    update: "update",
+    edit: "edit",
     show: "show",
     search: "search"
 }

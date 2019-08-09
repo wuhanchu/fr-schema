@@ -1,8 +1,10 @@
 import actions from "./actions"
 import moment from "moment"
-import { DATE_FORMAT, DATE_TIME_FORMAT, DTAE_TIME_FORMAT } from "./momnet"
+import { DATE_FORMAT, DATE_TIME_FORMAT, DTAE_TIME_FORMAT } from "./moment"
 import { addRemark, reverseDictValue } from "./dict"
 import validator from "async-validator"
+
+console.debug("actions", actions)
 
 /**
  * schema字段类型
@@ -170,7 +172,13 @@ function toRemote(item, schema, action = actions.edit) {
 
         switch (schema[key].type) {
             case "DatePicker":
-                result[key] = moment(item[key]).valueOf()
+                result[key] = moment(item[key])
+                if (schema[key].submitFormat) {
+                    result[key] = result[key].format(schema[key].submitFormat)
+                }else{
+                    result[key] = result[key].valueOf()                    
+                }
+
                 break
             default:
         }
@@ -180,13 +188,14 @@ function toRemote(item, schema, action = actions.edit) {
 }
 
 /**
- * 批量转换数据为远程数据
- * @param data
+ * 转换数据为远程数据
+ * @param data 可以是单个数据或者数组
  * @param schema
  * @param action
  * @returns {*}
  */
-export function convertToRemote(data, schema, action = actions.edit) {
+export const convertToRemote = (data, schema, action = actions.edit) => {
+    console.debug("actions.edit", actions.edit)
     let result = null
     if (data instanceof Array) {
         result = data.map(item => toRemote(item, schema, action))
@@ -280,14 +289,10 @@ export async function convertFormImport(data, schema) {
 
                 let errorStr = ""
                 errors.forEach(error => {
-                    errorStr += `字段[${schema[error.field].title}]错误[${
-                        error.message
-                    }];`
+                    errorStr += `字段[${schema[error.field].title}]错误[${error.message}];`
                 })
 
-                throwMessage = `数据资源编码[${
-                    result.sensorId
-                }]出现问题: ${errorStr}。`
+                throwMessage = `数据资源编码[${result.sensorId}]出现问题: ${errorStr}。`
             }
         })
 

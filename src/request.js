@@ -20,6 +20,10 @@ const codeMessage = {
     504: "网关超时。"
 }
 
+/**
+ * 检查返回数据是否是错误的
+ * @param {返回对象} response 
+ */
 const checkStatus = async response => {
     if (response.status >= 200 && response.status < 300) {
         return response
@@ -30,17 +34,10 @@ const checkStatus = async response => {
     try {
         const data = await response.json()
         errortext =
-            data.error_description || data.extMessage || data.errorMessage
+            data.message
     } catch (e) {
         return response
     }
-
-    // if (response.status !== 401) {
-    //   notification.error({
-    //     message: `请求错误 ${response.status}: ${response.url}`,
-    //     description: errortext,
-    //   });
-    // }
 
     const error = new Error(errortext)
     error.name = response.status

@@ -1,20 +1,19 @@
-import * as schema from './schema'
+import * as schema from "./schema"
 // export other modules
-import dict from './dict'
+import dict, * as dictUtils from "./dict"
 
-import * as model from './model'
-import * as momnet from './momnet'
-import permission from './permission'
-import * as service from './service'
-import * as string from './string'
-import defaultRequest from './request'
+import * as model from "./model"
+import * as moment from "./moment"
+import * as service from "./service"
+import * as string from "./string"
+import defaultRequest from "./request"
+import actions from "./actions"
 
 // 引入的数据
-let request = defaultRequest
-let config = null
-let user = null
-let sysDict = null
-let globalDict = null
+export let request = defaultRequest
+export let config = null
+export let sysDict = null
+export let globalDict = null
 
 /**
  * schema 初始化
@@ -23,20 +22,12 @@ let globalDict = null
  * @param {*} outComponentDict
  */
 const init = (outConfig, outRequest = null) => {
-    console.log('common init start')
-    request = outRequest
+    console.log("common init start")
+    config = outConfig
     if (outRequest) {
-        config = outConfig
+        request = outRequest
     }
-    console.log('common init end')
-}
-
-/**
- * 初始化用户
- * @param outUser
- */
-const initUser = outUser => {
-    user = outUser
+    console.log("common init end")
 }
 
 /**
@@ -46,15 +37,15 @@ const initUser = outUser => {
 const initSysDict = value => {
     sysDict = {}
     value &&
-    value.forEach(item => {
-        sysDict[item.type] ||
-        (sysDict[item.type] = listToDict(
-            value,
-            { type: item.type },
-            'value',
-            'label'
-        ))
-    })
+        value.forEach(item => {
+            sysDict[item.type] ||
+                (sysDict[item.type] = listToDict(
+                    value,
+                    { type: item.type },
+                    "value",
+                    "label"
+                ))
+        })
     return sysDict
 }
 
@@ -68,24 +59,22 @@ const initGlobalDict = value => {
 
 export default {
     init,
-    initUser,
     initSysDict,
     initGlobalDict,
     params: {
         request,
         config,
-        user,
         sysDict,
-        globalDict,
-        ComponentDict
+        globalDict
     },
     utils: {
-        dict,
-        model,
-        momnet,
-        permission,
-        string
+        moment,
+        string,
+        dict: dictUtils
     },
+    dict,
+    actions,
+    model,
     ...service,
     ...schema
 }

@@ -1,5 +1,6 @@
 import { sysDict } from "./index"
-import { schemaFieldType } from "./schema";
+import { schemaFieldType } from "./schema"
+import clone from "clone"
 
 export default {
     yesOrNo: {
@@ -42,7 +43,6 @@ export default {
         }
     }
 }
-
 
 /**
  * add remark to obj
@@ -93,6 +93,24 @@ export function convertDict(value, dict, split = true) {
     }
 
     return result
+}
+
+/**
+ * if shcmea have select type and have attribute (dictFunc)
+ * you need call this method to conver dict value  scope
+ * @param {*} inSchema current schema
+ * @param {*} dict global dict
+ */
+export function callSchemaDictFunc(inSchema, dict) {
+    let schema = clone(inSchema)
+
+    Object.values(schema).forEach(column => {
+        if (column && column.dictFunc) {
+            column.dict = column.dictFunc(dict)
+        }
+    })
+
+    return schema
 }
 
 /**
