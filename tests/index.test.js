@@ -1,4 +1,4 @@
-const schema = require('../src');
+const schema = require('../lib');
 
 test('test import', () => {
     console.log(schema)

@@ -1,6 +1,6 @@
 {
   "name": "fr-schema",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "前端的一个统一schema工具，设计schema来生成不同客户端以及不同框架的界面。",
   "main": "lib/index.js",
   "scripts": {
@@ -27,11 +27,11 @@
     "@babel/core": "^7.5.5",
     "@babel/polyfill": "^7.4.4",
     "@babel/preset-env": "^7.5.5",
-    "async-validator": "^2.0.0",
-    "jest": "^24.8.0",
-    "moment": "^2.24.0"
+    "jest": "^24.8.0"
   },
   "dependencies": {
-    "query-string": "^6.8.2"
+    "async-validator": "^2.0.0",
+    "query-string": "^6.8.2",
+    "moment": "^2.24.0"
   }
 }

@@ -1,34 +1,41 @@
-import * as schema from "./schema"
-export { dict } from "./dict"
-export { actions } from "./actions"
-export { model } from "./model"
-export { momnet } from "./momnet"
-export { permission } from "./permission"
-export { service } from "./service"
-export { string } from "./string"
+import * as schema from './schema'
+// export other modules
+import dict from './dict'
 
+import * as model from './model'
+import * as momnet from './momnet'
+import permission from './permission'
+import * as service from './service'
+import * as string from './string'
+import defaultRequest from './request'
 
-export let request = null
-export let config = null
-export let user = null
-export let sysDict = null
-export let globalDict = null
+// 引入的数据
+let request = defaultRequest
+let config = null
+let user = null
+let sysDict = null
+let globalDict = null
 
-export let ComponentDict = {}
-
-const index = (outRequest, outConfig, outComponentDict) => {
-    console.log("common init start")
+/**
+ * schema 初始化
+ * @param {s} outRequest
+ * @param {*} outConfig
+ * @param {*} outComponentDict
+ */
+const init = (outConfig, outRequest = null) => {
+    console.log('common init start')
     request = outRequest
-    config = outConfig
-    ComponentDict = outComponentDict
-    console.log("common init end")
+    if (outRequest) {
+        config = outConfig
+    }
+    console.log('common init end')
 }
 
 /**
  * 初始化用户
  * @param outUser
  */
-export const initUser = outUser => {
+const initUser = outUser => {
     user = outUser
 }
 
@@ -36,18 +43,18 @@ export const initUser = outUser => {
  * 初始化系统字典
  * @param value
  */
-export const initSysDict = value => {
+const initSysDict = value => {
     sysDict = {}
     value &&
-        value.forEach(item => {
-            sysDict[item.type] ||
-                (sysDict[item.type] = listToDict(
-                    value,
-                    { type: item.type },
-                    "value",
-                    "label"
-                ))
-        })
+    value.forEach(item => {
+        sysDict[item.type] ||
+        (sysDict[item.type] = listToDict(
+            value,
+            { type: item.type },
+            'value',
+            'label'
+        ))
+    })
     return sysDict
 }
 
@@ -55,14 +62,30 @@ export const initSysDict = value => {
  *  初始化全局字典
  * @param value
  */
-export const initGlobalDict = value => {
+const initGlobalDict = value => {
     globalDict = value
 }
 
 export default {
-    init: index,
+    init,
     initUser,
     initSysDict,
     initGlobalDict,
+    params: {
+        request,
+        config,
+        user,
+        sysDict,
+        globalDict,
+        ComponentDict
+    },
+    utils: {
+        dict,
+        model,
+        momnet,
+        permission,
+        string
+    },
+    ...service,
     ...schema
 }
