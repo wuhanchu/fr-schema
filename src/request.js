@@ -1,6 +1,7 @@
 import fetch from "dva/fetch"
 import { message, notification } from "antd"
 import hash from "hash.js"
+import oauth, { OAuthToken } from "./oauth"
 
 const codeMessage = {
     200: "服务器成功返回请求的数据。",
@@ -22,7 +23,7 @@ const codeMessage = {
 
 /**
  * 检查返回数据是否是错误的
- * @param {返回对象} response 
+ * @param {返回对象} response
  */
 const checkStatus = async response => {
     if (response.status >= 200 && response.status < 300) {
@@ -33,8 +34,7 @@ const checkStatus = async response => {
 
     try {
         const data = await response.json()
-        errortext =
-            data.message
+        errortext = data.message
     } catch (e) {
         return response
     }
@@ -74,11 +74,7 @@ const cachedSave = (response, hashcode) => {
  * @param  {object} [options] The options we want to pass to "fetch"
  * @return {object}           An object containing either "data" or "err"
  */
-export default function request(
-    obj,
-    options = {
-    }
-) {
+export default function request(obj, options = {}) {
     // adapt the other param
     let url = obj
     if (obj instanceof Object) {
@@ -143,7 +139,32 @@ export default function request(
         }
     }
 
-    return fetch(url, newOptions)
+    return new Promise((resolve, reject) => {
+        let token = localStorage.getItem("token")
+        if (!token) {
+            resolve(null)
+        }
+
+        token = JSON.parse(token)
+        if (token.expires > Date.now()) {
+            resolve(token)
+        } else {
+            return new OAuthToken(oauth(), token).refresh().then(token => {
+                token.data.expires = token.expires.getTime()
+                // 设置
+                localStorage.setItem("token", JSON.stringify(token.data))
+                resolve(token.data)
+            })
+        }
+    })
+        .then(token => {
+            if (token) {
+                newOptions.headers = newOptions.headers || {}
+                newOptions.headers.Authorization = `Bearer ${token.access_token}`
+            }
+
+            return fetch(url, newOptions)
+        })
         .then(checkStatus)
         .then(response => cachedSave(response, hashcode))
         .then(async response => {
@@ -167,6 +188,7 @@ export default function request(
             const status = e.name
             console.log("window.g_app._store", window.g_app._store)
             if (status === 401 && window.g_app._store) {
+                debugger
                 // @HACK
                 /* eslint-disable no-underscore-dangle */
                 if (!window.location.href.includes("login")) {

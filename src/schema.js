@@ -21,7 +21,9 @@ export const schemaFieldType = {
     Slider: "Slider",
     Table: "Table",
     Input: "Input",
-    InputNumber: "InputNumber"
+    InputNumber: "InputNumber",
+    Upload: "Upload",
+    Transfer:"Transfer"
 }
 
 /**
@@ -151,7 +153,7 @@ function formRemote(item, schema) {
  * @returns {*}
  */
 function toRemote(item, schema, action = actions.edit) {
-    if (!schema) {
+    if (!schema || item instanceof FormData) {
         return item
     }
 
@@ -175,8 +177,8 @@ function toRemote(item, schema, action = actions.edit) {
                 result[key] = moment(item[key])
                 if (schema[key].submitFormat) {
                     result[key] = result[key].format(schema[key].submitFormat)
-                }else{
-                    result[key] = result[key].valueOf()                    
+                } else {
+                    result[key] = result[key].valueOf()
                 }
 
                 break

@@ -8,12 +8,19 @@ import * as service from "./service"
 import * as string from "./string"
 import defaultRequest from "./request"
 import actions from "./actions"
-
+import oauth from "./oauth"
 // 引入的数据
 export let request = defaultRequest
 export let config = null
 export let sysDict = null
 export let globalDict = null
+
+/**
+ * get current config
+ */
+export const getConfig = () => {
+    return config
+}
 
 /**
  * schema 初始化
@@ -72,6 +79,7 @@ export default {
         string,
         dict: dictUtils
     },
+    oauth,
     dict,
     actions,
     model,

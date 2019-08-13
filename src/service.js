@@ -3,6 +3,7 @@ import queryString from "query-string"
 import { config, request, user } from "./index"
 import { convertFromRemote, convertToRemote } from "./schema"
 import actions from "./actions"
+import { object } from "prop-types"
 
 /**
  *
@@ -57,6 +58,29 @@ export function createApi(module, schema = {}, options = {}) {
                 pagination: { current: currentPage, pageSize, total }
             }
         },
+        getBasic: async (args = {}, inSchema = schema) => {
+            // convert moment
+            const response = await request(
+                {
+                    method: "GET",
+                    url: (
+                        "/" +
+                        config.apiVersion +
+                        module +
+                        (Object.keys(args).length > 0
+                            ? "?" + queryString.stringify(args)
+                            : "")
+                    ).replace("//", "/")
+                },
+                {
+                    // todo 需要删除缓存
+                    // expirys: 60,
+                    ...options
+                }
+            )
+
+            return response.data
+        },
         getDetail: async (args = {}, inSchema = schema) => {
             const { id } = args
             const response = await request(
@@ -88,27 +112,35 @@ export function createApi(module, schema = {}, options = {}) {
         patch: (args, inSchema = schema) => {
             return request({
                 method: "PATCH",
-                url: ("/" + config.apiVersion + module + "/" + args.id).replace(
-                    "//",
-                    "/"
-                ),
+                url: (
+                    "/" +
+                    config.apiVersion +
+                    module +
+                    (args.id ? "/" + args.id : "")
+                ).replace("//", "/"),
                 data: convertToRemote(args, inSchema || schema)
             })
         },
         put: (args, inSchema = schema) => {
             return request({
                 method: "PUT",
-                url: "/" + config.apiVersion + module + "/" + args.id,
+                url:
+                    "/" +
+                    config.apiVersion +
+                    module +
+                    (args.id ? "/" + args.id : ""),
                 data: convertToRemote(args, inSchema || schema)
             })
         },
         delete: args =>
             request({
                 method: "DELETE",
-                url: ("/" + config.apiVersion + module + "/" + args.id).replace(
-                    "//",
-                    "/"
-                )
+                url: (
+                    "/" +
+                    config.apiVersion +
+                    module +
+                    (args.id ? "/" + args.id : "")
+                ).replace("//", "/")
             }),
         deleteMulti: args =>
             request({
