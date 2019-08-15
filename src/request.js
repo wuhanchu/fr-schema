@@ -188,7 +188,6 @@ export default function request(obj, options = {}) {
             const status = e.name
             console.log("window.g_app._store", window.g_app._store)
             if (status === 401 && window.g_app._store) {
-                debugger
                 // @HACK
                 /* eslint-disable no-underscore-dangle */
                 if (!window.location.href.includes("login")) {

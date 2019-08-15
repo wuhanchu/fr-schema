@@ -1,4 +1,5 @@
 import * as schema from "./schema"
+
 // export other modules
 import dict, * as dictUtils from "./dict"
 
@@ -9,6 +10,7 @@ import * as string from "./string"
 import defaultRequest from "./request"
 import actions from "./actions"
 import oauth from "./oauth"
+
 // 引入的数据
 export let request = defaultRequest
 export let config = null
@@ -29,12 +31,10 @@ export const getConfig = () => {
  * @param {*} outComponentDict
  */
 const init = (outConfig, outRequest = null) => {
-    console.log("common init start")
     config = outConfig
     if (outRequest) {
         request = outRequest
     }
-    console.log("common init end")
 }
 
 /**
@@ -69,12 +69,12 @@ export default {
     initSysDict,
     initGlobalDict,
     params: {
-        request,
         config,
         sysDict,
         globalDict
     },
     utils: {
+        request,
         moment,
         string,
         dict: dictUtils

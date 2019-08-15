@@ -1,3 +1,19 @@
+import moment from "moment"
+
 export const DATE_FORMAT = "YYYY年MM月DD日"
 export const DATE_TIME_FORMAT = "YYYY年MM月DD日 HH:mm:ss"
 export const TME_FORMAT = "HH:mm:ss"
+
+/**
+ *毫秒转换成时间显示
+ * @param {*} inSeconds 秒数
+ */
+export function getTimeShow(inSeconds) {
+    const d = moment.duration(inSeconds, "milliseconds")
+    const hours = Math.floor(d.asHours())
+    const mins = Math.floor(d.asMinutes()) - hours * 60
+    const seconds = Math.floor(d.asSeconds()) - hours * 60 * 60 - mins * 60
+    return `${hours ? hours.toString().padStart(2, "0") : "00"}:${
+        mins ? mins.toString().padStart(2, "0") : "00"
+    }:${seconds.toString().padStart(2, "0")}`
+}
