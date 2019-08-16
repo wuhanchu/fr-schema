@@ -149,12 +149,19 @@ export default function request(obj, options = {}) {
         if (token.expires > Date.now()) {
             resolve(token)
         } else {
-            return new OAuthToken(oauth(), token).refresh().then(token => {
-                token.data.expires = token.expires.getTime()
-                // 设置
-                localStorage.setItem("token", JSON.stringify(token.data))
-                resolve(token.data)
-            })
+            return new OAuthToken(oauth(), token)
+                .refresh()
+                .then(token => {
+                    token.data.expires = token.expires.getTime()
+                    // 设置
+                    localStorage.setItem("token", JSON.stringify(token.data))
+                    resolve(token.data)
+                })
+                .catch(e => {
+                    window.g_app._store.dispatch({
+                        type: "login/logout"
+                    })
+                })
         }
     })
         .then(token => {
