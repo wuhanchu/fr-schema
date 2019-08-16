@@ -56,7 +56,7 @@ export function getInfoColumn(schema, infoAction = actions.add) {
             return
         }
 
-        if (infoAction === actions.update && schema[key].editHide) {
+        if (infoAction === actions.edit && schema[key].editHide) {
             return
         }
 
