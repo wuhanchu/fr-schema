@@ -79,7 +79,7 @@ export function createApi(module, schema = {}, options = {}) {
                 }
             )
 
-            return response.data
+            return response
         },
         getDetail: async (args = {}, inSchema = schema) => {
             const { id } = args

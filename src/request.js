@@ -2,6 +2,7 @@ import fetch from "dva/fetch"
 import { message, notification } from "antd"
 import hash from "hash.js"
 import oauth, { OAuthToken } from "./oauth"
+import clone from "clone"
 
 const codeMessage = {
     200: "服务器成功返回请求的数据。",
@@ -33,7 +34,8 @@ const checkStatus = async response => {
     let errortext = null
 
     try {
-        const data = await response.json()
+        const tempResposne = clone(response)
+        const data = await tempResposne.json()
         errortext = data.message
     } catch (e) {
         return response
@@ -65,6 +67,22 @@ const cachedSave = (response, hashcode) => {
             })
     }
     return response
+}
+
+/**
+ * create the fetch head
+ */
+export function getXhrOptions() {
+    let options = { headers: {} }
+    let token = localStorage.getItem("token")
+    if (token) {
+        token = JSON.parse(token)
+        options.headers = [
+            { key: "Authorization", value: `Bearer ${token.access_token}` }
+        ]
+    }
+
+    return options
 }
 
 /**
@@ -177,19 +195,30 @@ export default function request(obj, options = {}) {
         .then(async response => {
             // DELETE and 204 do not return data by default
             // using .json will report an error.
+
             if (newOptions.method === "DELETE" || response.status === 204) {
                 return response.text()
             }
 
-            const result = await response.json()
+            console.debug(response.headers.get("content-type"))
+            const type = response.headers.get("content-type")
 
-            if (result && result.errorMessage) {
-                const error = new Error(result.errorMessage)
-                error.name = response.status
-                error.response = response
-                throw error
+            //  文件
+            if (type.indexOf("wav") > -1) {
+                return response.blob()
+            } else if (type.indexOf("json") > -1) {
+                const result = await response.json()
+                if (result && result.errorMessage) {
+                    const error = new Error(result.errorMessage)
+                    error.name = response.status
+                    error.response = response
+                    throw error
+                }
+
+                return result
+            } else {
+                return response.text()
             }
-            return result
         })
         .catch(e => {
             const status = e.name

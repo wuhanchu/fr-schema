@@ -7,7 +7,7 @@ import * as model from "./model"
 import * as moment from "./moment"
 import * as service from "./service"
 import * as string from "./string"
-import defaultRequest from "./request"
+import defaultRequest, { getXhrOptions } from "./request"
 import actions from "./actions"
 import oauth from "./oauth"
 
@@ -74,6 +74,7 @@ export default {
         globalDict
     },
     utils: {
+        getXhrOptions,
         request,
         moment,
         string,
