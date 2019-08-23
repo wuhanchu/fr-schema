@@ -31,19 +31,18 @@ const checkStatus = async response => {
         return response
     }
 
-    let errortext = null
+    const error = new Error()
+    error.status = response.status
+    error.response = response
 
     try {
-        const tempResposne = clone(response)
-        const data = await tempResposne.json()
-        errortext = data.message
+        const tempResponse = clone(response)
+        const data = await tempResponse.json()
+        error.message = data.message
     } catch (e) {
-        return response
+        throw error
     }
 
-    const error = new Error(errortext)
-    error.name = response.status
-    error.response = response
     throw error
 }
 
@@ -200,7 +199,6 @@ export default function request(obj, options = {}) {
                 return response.text()
             }
 
-            console.debug(response.headers.get("content-type"))
             const type = response.headers.get("content-type")
 
             //  文件
@@ -214,15 +212,13 @@ export default function request(obj, options = {}) {
                     error.response = response
                     throw error
                 }
-
                 return result
             } else {
                 return response.text()
             }
         })
         .catch(e => {
-            const status = e.name
-            console.log("window.g_app._store", window.g_app._store)
+            const status = e.status
             if (status === 401 && window.g_app._store) {
                 // @HACK
                 /* eslint-disable no-underscore-dangle */
