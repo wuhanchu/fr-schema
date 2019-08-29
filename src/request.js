@@ -202,16 +202,22 @@ export default function request(obj, options = {}) {
             const type = response.headers.get("content-type")
 
             //  文件
-            if (type.indexOf("wav") > -1) {
+            if (type.indexOf("wav") > -1 || type.indexOf("zip") > -1) {
                 return response.blob()
             } else if (type.indexOf("json") > -1) {
+                console.debug("response", response)
+
                 const result = await response.json()
+                console.debug("result", result)
+
                 if (result && result.errorMessage) {
                     const error = new Error(result.errorMessage)
                     error.name = response.status
                     error.response = response
                     throw error
                 }
+                console.debug("return result", result)
+
                 return result
             } else {
                 return response.text()

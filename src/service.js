@@ -96,10 +96,11 @@ export function createApi(module, schema = {}, options = {}) {
                 }
             )
 
-            const { result, ...others } = response
+            console.debug("data", response)
+            const { data, ...others } = response
 
             return {
-                result: convertFromRemote(result, inSchema),
+                data: convertFromRemote(data, inSchema),
                 ...others
             }
         },
