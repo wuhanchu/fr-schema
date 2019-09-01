@@ -214,7 +214,6 @@ export default function request(obj, options = {}) {
                     throw error
                 }
 
-                debugger
                 if (result.code != "100") {
                     const error = new Error(result.msg)
                     error.name = response.status
