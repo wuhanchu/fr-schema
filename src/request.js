@@ -195,9 +195,9 @@ export default function request(obj, options = {}) {
             // DELETE and 204 do not return data by default
             // using .json will report an error.
 
-            if (newOptions.method === "DELETE" || response.status === 204) {
-                return response.text()
-            }
+            // if (newOptions.method === "DELETE" || response.status === 204) {
+            //     return response.text()
+            // }
 
             const type = response.headers.get("content-type")
 
@@ -205,10 +205,7 @@ export default function request(obj, options = {}) {
             if (type.indexOf("wav") > -1 || type.indexOf("zip") > -1) {
                 return response.blob()
             } else if (type.indexOf("json") > -1) {
-                console.debug("response", response)
-
                 const result = await response.json()
-                console.debug("result", result)
 
                 if (result && result.errorMessage) {
                     const error = new Error(result.errorMessage)
@@ -216,6 +213,15 @@ export default function request(obj, options = {}) {
                     error.response = response
                     throw error
                 }
+
+                debugger
+                if (result.code != "100") {
+                    const error = new Error(result.msg)
+                    error.name = response.status
+                    error.response = response
+                    throw error
+                }
+
                 console.debug("return result", result)
 
                 return result
