@@ -228,8 +228,9 @@ export default function request(obj, options = {}) {
 
                 return result
             } else {
-                let txt = response.text()
-                let temp = lodash.attempt(JSON.parse, str)
+                let txt = await response.text()
+                // let temp = JSON.parse(txt)
+                let temp = lodash.attempt(JSON.parse, txt)
                 if (lodash.isError(temp)) {
                     return txt
                 } else {
