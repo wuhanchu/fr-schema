@@ -3,6 +3,7 @@ import { message, notification } from "antd"
 import hash from "hash.js"
 import oauth, { OAuthToken } from "./oauth"
 import clone from "clone"
+import * as lodash from "lodash"
 
 const codeMessage = {
     200: "服务器成功返回请求的数据。",
@@ -82,6 +83,10 @@ export function getXhrOptions() {
     }
 
     return options
+}
+
+function isJSON(str) {
+    return !lodash.isError(lodash.attempt(JSON.parse, str))
 }
 
 /**
@@ -221,11 +226,15 @@ export default function request(obj, options = {}) {
                     throw error
                 }
 
-                console.debug("return result", result)
-
                 return result
             } else {
-                return response.text()
+                let txt = response.text()
+                let temp = lodash.attempt(JSON.parse, str)
+                if (lodash.isError(temp)) {
+                    return txt
+                } else {
+                    return temp
+                }
             }
         })
         .catch(e => {
