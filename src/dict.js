@@ -5,11 +5,11 @@ import clone from "clone"
 export default {
     yesOrNo: {
         yes: {
-            value: "1",
+            value: true,
             remark: "是"
         },
         no: {
-            value: "0",
+            value: false,
             remark: "否"
         }
     },
