@@ -35,12 +35,15 @@ const checkStatus = async response => {
     const error = new Error()
     error.status = response.status
     error.response = response
+    const tempResponse = clone(response)
 
     try {
-        const tempResponse = clone(response)
+
         const data = await tempResponse.json()
         error.message = data.message
     } catch (e) {
+        error.message = `请求[${response.url}],后台返回无法解析的错误！详情查看开发工具Network标签中的相关请求。`
+      
         throw error
     }
 
