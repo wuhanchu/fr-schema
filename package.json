@@ -1,5 +1,5 @@
 {
-  "name": "ant-design-pro_fr_schema",
+  "name": "antd_design_pro_starter",
   "version": "1.0.0",
   "private": true,
   "description": "An out-of-box UI solution for enterprise applications",
@@ -46,8 +46,7 @@
     "not ie <= 10"
   ],
   "dependencies": {
-    "@ant-design/pro-laye
-    out": "^4.5.16",
+    "@ant-design/pro-layout": "^4.5.16",
     "@antv/data-set": "^0.10.2",
     "antd": "^3.23.6",
     "bizcharts": "^3.5.3-beta.0",
