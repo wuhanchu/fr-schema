@@ -11,6 +11,7 @@ import { formatMessage } from "umi-plugin-react/locale"
 import SelectLang from "@/components/SelectLang"
 import logo from "../assets/logo.svg"
 import styles from "./UserLayout.less"
+import config from "@/config"
 
 const UserLayout = props => {
     const {
@@ -48,16 +49,16 @@ const UserLayout = props => {
                                     className={styles.logo}
                                     src={logo}
                                 />
-                                <span className={styles.title}>Ant Design</span>
+                                <span className={styles.title}>
+                                    {config.name}
+                                </span>
                             </Link>
                         </div>
-                        <div className={styles.desc}>
-                            Ant Design 是西湖区最具影响力的 Web 设计规范
-                        </div>
+                        <div className={styles.desc}>{config.desc}</div>
                     </div>
                     {children}
                 </div>
-                <DefaultFooter />
+                <DefaultFooter copyright={config.copyright} links={[]} />
             </div>
         </DocumentTitle>
     )

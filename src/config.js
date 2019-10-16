@@ -4,8 +4,13 @@ import "moment/locale/zh-cn"
 moment.locale("zh-cn")
 
 const config = {
+    // basic info
+    name: "antd_pro_design", // 基础信息
+    desc: "antd_pro_design 演示系统", // 基础信息
+    copyright: "wuhanchu", // 版本信息
+
     // api 前缀
-    apiVersion: "api/v1/",
+    apiVersion: "api/v1/"
     // DATE_FORMAT: "YYYY-MM-DD",
     // DATE_TIME_FORMAT: "YYYY-MM-DD HH:mm:ss",
 
@@ -19,9 +24,6 @@ const config = {
 
     // iconfont
     // iconfontUrl: "//at.alicdn.com/t/font_1368817_ytmlcctjr8d.js"
-
-    // compnay
-    copyright: "" // 版本信息
 }
 
 export default config
