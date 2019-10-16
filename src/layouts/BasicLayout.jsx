@@ -85,20 +85,12 @@ const BasicLayout = props => {
                 },
                 ...routers
             ]}
-            itemRender={(route, params, routes, paths) => {
-                const first = routes.indexOf(route) === 0
-                return first ? (
-                    <Link to={paths.join("/")}>{route.breadcrumbName}</Link>
-                ) : (
-                    <span>{route.breadcrumbName}</span>
-                )
-            }}
             footerRender={footerRender}
             menuDataRender={menuDataRender}
-            formatMessage={formatMessage}
             rightContentRender={rightProps => <RightContent {...rightProps} />}
             {...props}
             {...settings}
+            title={config.name}
         >
             {children}
         </ProLayout>
