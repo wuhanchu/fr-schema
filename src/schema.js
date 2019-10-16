@@ -23,7 +23,7 @@ export const schemaFieldType = {
     Input: "Input",
     InputNumber: "InputNumber",
     Upload: "Upload",
-    Transfer:"Transfer"
+    Transfer: "Transfer"
 }
 
 /**

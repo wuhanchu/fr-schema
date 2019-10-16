@@ -205,7 +205,6 @@ export function listToDict(
             remark: item[remarkKey],
             condition: tempCondition
         }
-
     })
     return result
 }

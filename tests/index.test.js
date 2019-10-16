@@ -1,5 +1,5 @@
-const schema = require('../lib');
+const schema = require("../lib")
 
-test('test import', () => {
+test("test import", () => {
     console.log(schema)
-});
+})
