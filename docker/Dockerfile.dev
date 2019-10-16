@@ -7,5 +7,6 @@ RUN npm install --silent --no-cache
 
 COPY ./ ./
 
+EXPOSE 8000
 
 CMD ["npm", "run", "start"]
