@@ -85,6 +85,15 @@ const BasicLayout = props => {
                 },
                 ...routers
             ]}
+            itemRender={(route, params, routes, paths) => {
+                const first = routes.indexOf(route) === 0
+                return first ? (
+                    <Link to={paths.join("/")}>{route.breadcrumbName}</Link>
+                ) : (
+                    <span>{route.breadcrumbName}</span>
+                )
+            }}
+            formatMessage={formatMessage}
             footerRender={footerRender}
             menuDataRender={menuDataRender}
             rightContentRender={rightProps => <RightContent {...rightProps} />}
