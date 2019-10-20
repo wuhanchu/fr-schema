@@ -1,8 +1,10 @@
+简体中文 | [English](./README.en.md)
+
 # antd_design_pro_starter
 
-This project is initialized with [Ant Design Pro Starter](https://github.com/wuhanchu/antd_design_pro_starter). Follow is the quick guide for how to use.
+这个项目主要是在[fr-schema](https://github.com/wuhanchu/fr-schema.git),[antd_design_pro](https://github.com/ant-design/ant-design-pro.git),[fr-schema-antd-utils](https://github.com/wuhanchu/fr-schema-antd-utils.git)的基础上，组建出一个快速的开发模版。
 
-## Environment Prepare
+## 安装环境
 
 Install `node_modules`:
 
@@ -13,40 +15,34 @@ npm install
 or
 
 ```bash
-yarn
+yarn installe
 ```
 
-## Provided Scripts
-
-Ant Design Pro provides some useful script to help you quick start and build with web project, code style check and test.
-
-Scripts provided in `package.json`. It's safe to modify or add additional script:
-
-### Start project
+### 运行
 
 ```bash
 npm start
 ```
 
-### Build project
+### 编译
 
 ```bash
 npm run build
 ```
 
-### Check code style
+### 检查代码规范
 
 ```bash
 npm run lint
 ```
 
-You can also use script to auto fix some lint error:
+你可以运行下面的代码来修改代码规范问题:
 
 ```bash
 npm run lint:fix
 ```
 
-### Test code
+### 运行段云测试
 
 ```bash
 npm test
@@ -54,4 +50,4 @@ npm test
 
 ## More
 
-You can view full document on our [official website](https://pro.ant.design). And welcome any feedback in our [github](https://github.com/ant-design/ant-design-pro).
+使用到的一些组件可以在[official website](https://pro.ant.design)中找到. 如果你不喜欢我开发的模版，你可以访问[github](https://github.com/ant-design/ant-design-pro)是一个很优秀的脚手架.
