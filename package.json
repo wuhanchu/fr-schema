@@ -24,7 +24,9 @@
         "test": "umi test",
         "test:all": "node ./tests/run-tests.js",
         "test:component": "umi test ./src/components",
-        "ui": "umi ui"
+        "ui": "umi ui",
+        "upload:dev": "npm run build && git add . && git commit -m 'upload:dev' && git pull && git push origin -u develop",
+        "upload:master": "npm run build && git add . && git commit -m 'upload:master' && git pull && git push origin -u master"
     },
     "husky": {
         "hooks": {
@@ -114,7 +116,7 @@
         "lint-staged": "^9.0.0",
         "mockjs": "^1.0.1-beta3",
         "node-fetch": "^2.6.0",
-        "prettier": "^1.17.1",
+        "prettier": "^1.18.2",
         "pro-download": "1.0.1",
         "slash2": "^2.0.0",
         "stylelint": "^10.1.0",

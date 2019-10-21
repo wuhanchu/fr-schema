@@ -39,10 +39,10 @@ npm run lint
 你可以运行下面的代码来修改代码规范问题:
 
 ```bash
-npm run lint:fix
+npm run prettier
 ```
 
-### 运行段云测试
+### 运行单元测试
 
 ```bash
 npm test

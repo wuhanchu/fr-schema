@@ -1,9 +1,9 @@
 ---
-name: '疑问或需要帮助 ❓'
+name: "疑问或需要帮助 ❓"
 about: 对 Ant Design Pro 使用的疑问或需要帮助
-title: '[问题]'
+title: "[问题]"
 labels: question
-assignees: ''
+assignees: ""
 ---
 
 **问题描述** [详细地描述问题，让大家都能理解]
