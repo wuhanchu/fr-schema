@@ -2,8 +2,7 @@ module.exports = {
     extends: ["prettier", "prettier/react"],
     parser: "babel-eslint",
     plugins: ["prettier"],
-    rules: {
-    },
+    rules: {},
     parserOptions: {
         ecmaVersion: 6,
         sourceType: "module",
@@ -11,7 +10,7 @@ module.exports = {
             jsx: true
         }
     },
-    
+
     env: {
         browser: true,
         node: true
