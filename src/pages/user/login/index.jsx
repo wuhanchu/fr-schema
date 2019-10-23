@@ -17,6 +17,7 @@ class Login extends Component {
         type: "account",
         autoLogin: true
     }
+
     changeAutoLogin = e => {
         this.setState({
             autoLogin: e.target.checked
