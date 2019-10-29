@@ -1,7 +1,7 @@
 import fetch from "dva/fetch"
-import { message, notification } from "antd"
+import {message, notification} from "antd"
 import hash from "hash.js"
-import oauth, { OAuthToken } from "./oauth"
+import oauth, {OAuthToken} from "./oauth"
 import clone from "clone"
 import * as lodash from "lodash"
 
@@ -75,12 +75,12 @@ const cachedSave = (response, hashcode) => {
  * create the fetch head
  */
 export function getXhrOptions() {
-    let options = { headers: {} }
+    let options = {headers: {}}
     let token = localStorage.getItem("token")
     if (token) {
         token = JSON.parse(token)
         options.headers = [
-            { key: "Authorization", value: `Bearer ${token.access_token}` }
+            {key: "Authorization", value: `Bearer ${token.access_token}`}
         ]
     }
 
@@ -167,6 +167,7 @@ export default function request(obj, options = {}) {
         let token = localStorage.getItem("token")
         if (!token) {
             resolve(null)
+            return
         }
 
         token = JSON.parse(token)
