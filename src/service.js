@@ -129,6 +129,10 @@ export function createApi(module, schema = {}, options = { form: false }) {
                 }
             )
 
+            if (!response) {
+                return
+            }
+
             const { total, list } = response.data || {}
             return {
                 list: inSchema

@@ -1,7 +1,7 @@
 import fetch from "dva/fetch"
-import {message, notification} from "antd"
+import { message, notification } from "antd"
 import hash from "hash.js"
-import oauth, {OAuthToken} from "./oauth"
+import oauth, { OAuthToken } from "./oauth"
 import clone from "clone"
 import * as lodash from "lodash"
 
@@ -75,12 +75,12 @@ const cachedSave = (response, hashcode) => {
  * create the fetch head
  */
 export function getXhrOptions() {
-    let options = {headers: {}}
+    let options = { headers: {} }
     let token = localStorage.getItem("token")
     if (token) {
         token = JSON.parse(token)
         options.headers = [
-            {key: "Authorization", value: `Bearer ${token.access_token}`}
+            { key: "Authorization", value: `Bearer ${token.access_token}` }
         ]
     }
 
@@ -222,7 +222,7 @@ export default function request(obj, options = {}) {
                     throw error
                 }
 
-                if (result.code != "100") {
+                if (!result.data && result.code != "100") {
                     const error = new Error(result.msg)
                     error.name = response.status
                     error.response = response
@@ -244,8 +244,6 @@ export default function request(obj, options = {}) {
         .catch(e => {
             const status = e.status
             if (status === 401 && window.g_app._store) {
-                // @HACK
-                /* eslint-disable no-underscore-dangle */
                 if (!window.location.href.includes("login")) {
                     window.g_app._store.dispatch({
                         type: "login/logout"
@@ -255,10 +253,10 @@ export default function request(obj, options = {}) {
                         message: "账户出错"
                     })
                 }
-                return
+            } else {
+                message.error(e.message)
             }
 
-            message.error(e.message)
             return new Promise((resolve, reject) => {
                 reject(e.message)
             })
