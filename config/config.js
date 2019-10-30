@@ -1,3 +1,4 @@
+import pageRoutes from "./router.config"
 import defaultSettings from "./defaultSettings" // https://umijs.org/config/
 
 import slash from "slash2"
@@ -70,6 +71,27 @@ if (isAntDesignProPreview) {
     ])
 }
 
+// 根据环境变量设置信息
+let extend = {}
+if (process.env.UMI_ENV == "flask") {
+    extend = {
+        base: "/static",
+        publicPath: "/static/",
+        runtimePublicPath: true
+    }
+}
+
+// 代理url
+let proxy_url = null
+let pathRewrite = null
+switch (process.env.UMI_ENV) {
+    case "local":
+        proxy_url = "http://127.0.0.1:5002"
+        break
+    default:
+        proxy_url = "http://dataknown.tpddns.cn:5002"
+}
+
 export default {
     plugins,
     block: {
@@ -82,54 +104,10 @@ export default {
         ie: 11
     },
     devtool: isAntDesignProPreview ? "source-map" : false,
-    // umi routes: https://umijs.org/zh/guide/router.html
-    routes: [
-        {
-            path: "/user",
-            component: "../layouts/UserLayout",
-            routes: [
-                {
-                    name: "login",
-                    path: "/user/login",
-                    component: "./user/login"
-                }
-            ]
-        },
-        {
-            path: "/",
-            component: "../layouts/SecurityLayout",
-            routes: [
-                {
-                    path: "/",
-                    component: "../layouts/BasicLayout",
-                    authority: ["admin", "user"],
-                    routes: [
-                        {
-                            path: "/",
-                            redirect: "/welcome"
-                        },
-                        {
-                            path: "/welcome",
-                            name: "welcome",
-                            icon: "smile",
-                            component: "./Welcome"
-                        },
-
-                        {
-                            component: "./404"
-                        }
-                    ]
-                },
-                {
-                    component: "./404"
-                }
-            ]
-        },
-        {
-            component: "./404"
-        }
-    ],
-    // Theme for antd: https://ant.design/docs/react/customize-theme-cn
+    // 路由配置
+    routes: pageRoutes,
+    // Theme for antd
+    // https://ant.design/docs/react/customize-theme-cn
     theme: {
         "primary-color": primaryColor
     },
@@ -173,13 +151,13 @@ export default {
     manifest: {
         basePath: "/"
     },
-    chainWebpack: webpackPlugin
+    chainWebpack: webpackPlugin,
+    ...extend
     /*
   proxy: {
     '/server/api/': {
-      target: 'https://preview.pro.ant.design/',
-      changeOrigin: true,
-      pathRewrite: { '^/server': '' },
+      target: 'proxy_url',
+      changeOrigin: true
     },
   },
   */
