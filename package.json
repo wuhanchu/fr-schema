@@ -6,6 +6,7 @@
     "scripts": {
         "analyze": "cross-env ANALYZE=1 umi build",
         "build": "umi build",
+	"build:flask": "cross-env UMI_ENV=flask umi build",
         "deploy": "cross-env ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION=site npm run site && npm run gh-pages",
         "fetch:blocks": "pro fetch-blocks",
         "format-imports": "cross-env import-sort --write '**/*.{js,jsx,ts,tsx}'",
@@ -20,6 +21,7 @@
         "lint:style": "stylelint --fix \"src/**/*.less\" --syntax less",
         "prettier": "prettier -c --write \"src/**/*\"",
         "start": "umi dev",
+    	"start:local": "cross-env UMI_ENV=local umi dev",
         "start:no-mock": "cross-env MOCK=none umi dev",
         "test": "umi test",
         "test:all": "node ./tests/run-tests.js",

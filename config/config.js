@@ -81,17 +81,6 @@ if (process.env.UMI_ENV == "flask") {
     }
 }
 
-// 代理url
-let proxy_url = null
-let pathRewrite = null
-switch (process.env.UMI_ENV) {
-    case "local":
-        proxy_url = "http://127.0.0.1:5002"
-        break
-    default:
-        proxy_url = "http://dataknown.tpddns.cn:5002"
-}
-
 export default {
     plugins,
     block: {
