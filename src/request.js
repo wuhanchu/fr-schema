@@ -248,14 +248,16 @@ export default function request(obj, options = {}) {
                     window.g_app._store.dispatch({
                         type: "login/logout"
                     })
-
-                    notification.error({
-                        message: "账户出错"
+                    return new Promise((resolve, reject) => {
+                        reject("账户出错")
                     })
                 }
-            } else {
-                message.error(e.message)
+                return new Promise((resolve, reject) => {
+                    reject()
+                })
             }
+
+            // throw e
 
             return new Promise((resolve, reject) => {
                 reject(e.message)
