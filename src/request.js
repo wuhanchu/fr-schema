@@ -12,7 +12,7 @@ const codeMessage = {
     204: "删除数据成功。",
     400: "发出的请求有错误，服务器没有进行新增或修改数据的操作。",
     401: "用户没有权限（令牌、用户名、密码错误）。",
-    403: "用户得到授权，但是访问是被禁止的。",
+    403: "用户得到授权，但是访问是被禁止的。请确认是否已经上传证书！",
     404: "发出的请求针对的是不存在的记录，服务器没有进行操作。",
     406: "请求的格式不可得。",
     410: "请求的资源被永久删除，且不会再得到的。",
@@ -35,16 +35,10 @@ const checkStatus = async response => {
     const error = new Error()
     error.status = response.status
     error.response = response
-    const tempResponse = clone(response)
 
-    try {
-        const data = await tempResponse.json()
-        error.message = data.message
-    } catch (e) {
-        error.message = `请求[${response.url}],后台返回无法解析的错误！详情查看开发工具Network标签中的相关请求。`
-
-        throw error
-    }
+    error.message =
+        codeMessage[response.status] ||
+        `请求[${response.url}],后台返回无法解析的错误！详情查看开发工具Network标签中的相关请求。`
 
     throw error
 }
@@ -97,6 +91,7 @@ function isJSON(str) {
  * @param  {string} url       The URL we want to request
  * @param  {object} [options] The options we want to pass to "fetch"
  *  skipConvert
+ *  skipOauth
  * @return {object}           An object containing either "data" or "err"
  */
 export default function request(obj, options = {}) {
@@ -174,7 +169,7 @@ export default function request(obj, options = {}) {
         token = JSON.parse(token)
         if (token.expires > Date.now()) {
             resolve(token)
-        } else {
+        } else if (!options.skipOauth) {
             return new OAuthToken(oauth(), token)
                 .refresh()
                 .then(token => {
@@ -188,6 +183,8 @@ export default function request(obj, options = {}) {
                         type: "login/logout"
                     })
                 })
+        } else {
+            resolve(null)
         }
     })
         .then(token => {
@@ -247,17 +244,18 @@ export default function request(obj, options = {}) {
         })
         .catch(e => {
             const status = e.status
-            if (status === 401 && window.g_app._store) {
+            if ((status === 401 || status === 403) && window.g_app._store) {
                 if (!window.location.href.includes("login")) {
                     window.g_app._store.dispatch({
                         type: "login/logout"
                     })
                     return new Promise((resolve, reject) => {
-                        reject("账户出错")
+                        reject(e.message || "账户出错")
                     })
                 }
+
                 return new Promise((resolve, reject) => {
-                    reject()
+                    reject(e.message)
                 })
             }
 

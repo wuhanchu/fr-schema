@@ -1,5 +1,5 @@
 import queryString from "query-string"
-
+import lodash from "lodash"
 import { config, request, user } from "./index"
 import { convertFromRemote, convertToRemote } from "./schema"
 import actions from "./actions"
@@ -8,20 +8,27 @@ import { object } from "prop-types"
 export function createBasicApi(module, subModule) {
     return {
         get: async (args = {}) => {
-            const response = await request({
-                method: "GET",
-                url: (
-                    "/" +
-                    config.apiVersion +
-                    module +
-                    (args.id ? "/" + args.id : "") +
-                    (subModule ? "/" + subModule + "/" : "") +
+            let url =
+                "/" +
+                config.apiVersion +
+                module +
+                (args.id ? "/" + args.id : "") +
+                (subModule ? "/" + subModule + "/" : "")
+
+            if (!lodash.isEmpty(args)) {
+                url +=
                     "/?" +
                     queryString.stringify({
                         ...args,
                         token: user && user.user && user.user.token
                     })
-                ).replace("//", "/")
+            }
+
+            url = url.replace("//", "/")
+
+            const response = await request({
+                method: "GET",
+                url
             })
 
             return response
@@ -77,6 +84,10 @@ export function createBasicApi(module, subModule) {
  * @returns {FormData}
  */
 export function objToFrom(data) {
+    if (data instanceof FormData) {
+        return data
+    }
+
     const formData = new FormData()
     Object.keys(data).forEach(key => {
         if (data[key] !== undefined) {
