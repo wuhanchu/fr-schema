@@ -11,6 +11,17 @@ export default [
         ]
     },
     {
+        path: "/exception",
+        routes: [
+            {
+                component: "403"
+            },
+            {
+                component: "404"
+            }
+        ]
+    },
+    {
         path: "/",
         component: "../layouts/SecurityLayout",
         routes: [
