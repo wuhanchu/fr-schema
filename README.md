@@ -48,6 +48,28 @@ npm run prettier
 npm test
 ```
 
+## 部署
+
+### 编译镜像
+
+```docker
+docker build  -t antd_design_pro_starter --file docker/Dockerfile.hub  .
+```
+
+### 运行容器
+
+```docker
+docker run --rm  -p 8000:80 --name antd_design_pro_starter -e SERVER_URL='http://192.168.1.150:5002' antd_design_pro_starter
+```
+
+-   端口 80: web 访问端口
+-   SERVER_URL: 后端服务地址
+
+### 导入导出镜像
+
+-   导出镜像：docker save -o ./antd_design_pro_starter.docker antd_design_pro_starter
+-   导入镜像：docker load ‒‒input antd_design_pro_starter.docker
+
 ## More
 
 使用到的一些组件可以在[official website](https://pro.ant.design)中找到. 如果你不喜欢我开发的模版，你可以访问[github](https://github.com/ant-design/ant-design-pro)是一个很优秀的脚手架.
