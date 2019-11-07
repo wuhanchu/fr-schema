@@ -1,7 +1,7 @@
 import fetch from "dva/fetch"
-import { message, notification } from "antd"
+import {message, notification} from "antd"
 import hash from "hash.js"
-import oauth, { OAuthToken } from "./oauth"
+import oauth, {OAuthToken} from "./oauth"
 import clone from "clone"
 import * as lodash from "lodash"
 
@@ -35,10 +35,17 @@ const checkStatus = async response => {
     const error = new Error()
     error.status = response.status
     error.response = response
+    const tempResponse = clone(response)
 
-    error.message =
-        codeMessage[response.status] ||
-        `请求[${response.url}],后台返回无法解析的错误！详情查看开发工具Network标签中的相关请求。`
+    try {
+        const data = await tempResponse.json()
+        error.message = data.msg
+    } catch (e) {
+        error.message =
+            codeMessage[response.status] ||
+            `请求[${response.url}],后台返回无法解析的错误！详情查看开发工具Network标签中的相关请求。`
+
+    }
 
     throw error
 }
@@ -69,12 +76,12 @@ const cachedSave = (response, hashcode) => {
  * create the fetch head
  */
 export function getXhrOptions() {
-    let options = { headers: {} }
+    let options = {headers: {}}
     let token = localStorage.getItem("token")
     if (token) {
         token = JSON.parse(token)
         options.headers = [
-            { key: "Authorization", value: `Bearer ${token.access_token}` }
+            {key: "Authorization", value: `Bearer ${token.access_token}`}
         ]
     }
 
