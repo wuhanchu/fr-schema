@@ -83,20 +83,20 @@ export function getInfoColumn(schema, infoAction = actions.add) {
 
 /**
  * convert the data from remote server
- * @param data
+ * @param inData
  * @param schema
  * @returns {*}
  */
-export function convertFromRemote(data, schema) {
+export function convertFromRemote(inData, schema) {
     let result = null
-    if (!data) {
-        return null
+    if (inData == null || schema == null) {
+        return inData
     }
 
-    if (data instanceof Array) {
-        result = data.map(item => formRemote(item, schema))
+    if (inData instanceof Array) {
+        result = inData.map(item => formRemote(item, schema))
     } else {
-        result = formRemote(data, schema)
+        result = formRemote(inData, schema)
     }
     return result
 }
