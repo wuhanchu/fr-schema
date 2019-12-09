@@ -1,9 +1,9 @@
 import queryString from "query-string"
-import lodash from "lodash"
 import {config, request, user} from "./index"
 import {convertFromRemote, convertToRemote} from "./schema"
 import actions from "./actions"
 import {object} from "prop-types"
+import * as lodash from "lodash"
 
 export function createBasicApi(module, subModule) {
     return {
@@ -12,7 +12,7 @@ export function createBasicApi(module, subModule) {
                 "/" +
                 config.apiVersion +
                 module +
-                (args.id ? "/" + args.id : "") +
+                (lodash.isNull(args.id) ? "/" + args.id : "") +
                 (subModule ? "/" + subModule + "/" : "")
 
             if (!lodash.isEmpty(args)) {
@@ -41,7 +41,7 @@ export function createBasicApi(module, subModule) {
                     config.apiVersion +
                     module +
                     "/" +
-                    (args.id ? args.id : "") +
+                    (lodash.isNull(args.id) ? args.id : "") +
                     (subModule ? "/" + subModule + "/" : "")
                 ).replace("//", "/"),
                 data: args
@@ -55,7 +55,7 @@ export function createBasicApi(module, subModule) {
                     config.apiVersion +
                     module +
                     "/" +
-                    (args.id ? args.id : "") +
+                    (lodash.isNull(args.id) ? args.id : "") +
                     (subModule ? "/" + subModule + "/" : "")
                 ).replace("//", "/"),
                 data: args
@@ -206,7 +206,7 @@ export function createApi(module, schema = {}, options = {form: false}) {
                     "/" +
                     config.apiVersion +
                     module +
-                    (args.id ? "/" + args.id : "")
+                    (lodash.isNull(args.id) ? "/" + args.id : "")
                 ).replace("//", "/"),
                 data: convertToRemote(args, inSchema || schema)
             })
@@ -218,7 +218,7 @@ export function createApi(module, schema = {}, options = {form: false}) {
                     "/" +
                     config.apiVersion +
                     module +
-                    (args.id ? "/" + args.id : ""),
+                    (lodash.isNull(args.id) ? "/" + args.id : ""),
                 data: convertToRemote(args, inSchema || schema)
             })
         },
@@ -229,7 +229,7 @@ export function createApi(module, schema = {}, options = {form: false}) {
                     "/" +
                     config.apiVersion +
                     module +
-                    (args.id ? "/" + args.id : "")
+                    (lodash.isNull(args.id) ? "/" + args.id : "")
                 ).replace("//", "/")
             }),
         deleteMulti: args =>
