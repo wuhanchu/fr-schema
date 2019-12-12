@@ -36,21 +36,28 @@ const footerRender = () => {
 }
 
 const BasicLayout = props => {
-    const { dispatch, children, settings } = props
+    const { dispatch, children, user, settings } = props
+
     /**
      * constructor
      */
 
     useEffect(() => {
         if (dispatch) {
-            dispatch({
-                type: "user/fetchCurrent"
-            })
-            dispatch({
-                type: "settings/getSetting"
-            })
+            if (user.init) {
+                dispatch({
+                    type: "global/queryDict"
+                })
+                dispatch({
+                    type: "settings/getSetting"
+                })
+            } else {
+                dispatch({
+                    type: "user/fetchCurrent"
+                })
+            }
         }
-    }, [])
+    }, [user.init])
     /**
      * init variables
      */
