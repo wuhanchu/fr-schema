@@ -4,7 +4,6 @@ import { DATE_FORMAT, DATE_TIME_FORMAT, DTAE_TIME_FORMAT } from "./moment"
 import { addRemark, reverseDictValue } from "./dict"
 import validator from "async-validator"
 
-console.debug("actions", actions)
 
 /**
  * schema字段类型
