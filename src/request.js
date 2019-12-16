@@ -259,14 +259,13 @@ export default function request(obj, options = {}) {
                     window.g_app._store.dispatch({
                         type: "login/logout"
                     })
-                    return new Promise((resolve, reject) => {
-                        reject(e.message || "账户出错")
-                    })
                 }
 
-                return new Promise((resolve, reject) => {
-                    reject(e)
-                })
+                if (window.location.pathname == "/" || window.location.pathname == "/user/login") {
+                    return new Promise((resolve, reject) => {
+                        resolve(null)
+                    })
+                }
             }
 
             // throw e
