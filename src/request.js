@@ -37,17 +37,17 @@ const checkStatus = async response => {
     const error = new Error()
     error.status = response.status
     error.response = response
-    const tempResponse = clone(response)
+    const text = await response.text()
 
     try {
-        const data = await tempResponse.json()
+        const data = JSON.parse(text)
         error.message = data.msg
-        error.detail = data.detail
+        error.detail = data.detail || data.traceback
     } catch (e) {
         error.message =
             codeMessage[response.status] ||
             `请求[${response.url}],后台返回无法解析的错误！详情查看开发工具Network标签中的相关请求。`
-        error.detail = response.text()
+        error.detail = text
     }
 
     throw error
@@ -233,7 +233,7 @@ export default function request(obj, options = {}) {
                     throw error
                 }
 
-                if (!result.data && result.code != "100") {
+                if (!result.data && result.code && result.code != "100") {
                     const error = new Error(result.msg)
                     error.name = response.status
                     error.response = response
