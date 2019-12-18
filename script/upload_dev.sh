@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 yarn install
 npm run build
 zip -r -9 dist.zip ./dist
