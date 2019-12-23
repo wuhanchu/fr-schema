@@ -261,9 +261,12 @@ export default function request(obj, options = {}) {
                     })
                 }
 
-                if (window.location.pathname == "/" || window.location.pathname == "/user/login") {
+                if (
+                    window.location.pathname == "/" ||
+                    window.location.pathname == "/user/login"
+                ) {
                     return new Promise((resolve, reject) => {
-                        resolve(null)
+                        resolve(e)
                     })
                 }
             }
