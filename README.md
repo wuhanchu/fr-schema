@@ -4,6 +4,34 @@
 
 这个项目主要是在[fr-schema](https://github.com/wuhanchu/fr-schema.git),[antd_design_pro](https://github.com/ant-design/ant-design-pro.git),[fr-schema-antd-utils](https://github.com/wuhanchu/fr-schema-antd-utils.git)的基础上，组建出一个快速的开发模版。
 
+## 目录结构
+
+    |-- config                                # umi 配置，包含路由，构建等配置
+    |-- mock                                  # 本地模拟数据
+    |-- public
+    |   |-- favicon.png                       # favicon
+    |-- src                                   #
+    |   |-- assets                            # 本地静态资源
+    |   |-- components                        # 业务通用组件
+    |   |-- layout                            # 通用布局
+    |   |-- models                            # 全局 dva model
+    |   |-- services                          # 后台接口服务
+    |   |-- pages                             # 业务页面入口和常用模板
+    |   |-- e2e                               # 集成测试用例
+    |   |-- global.less                       # 全局样式
+    |   |-- global.tsx                         # 全局 JS
+    |   |-- theme.js
+    |-- tests                                 # 测试工具
+    |-- .gitignore                            # git忽略文件
+    |-- .editorconfig                         # 编辑器代码风格配置
+    |-- .eslintignore                         # eslint忽略文件
+    |-- .eslintrc                             # eslint规则
+    |-- .prettierignore                       # 代码风格配置忽略文件
+    |-- .prettierrc                           # 代码风格配置文件
+    |-- .stylelintrc                          # 样式风格配置文件
+    |-- package.json
+    |-- README.md
+
 ## 安装环境
 
 Install `node_modules`:
