@@ -13,9 +13,8 @@ pipeline {
             sh 'yarn install'
             sh 'docker build . -f /docker/Dockerfile.hub -t z_antd_design_pro_strater' 
         }
-        
 
-        stage('Deploy') {
+        stage('Push') {
             when {
               expression {
                 currentBuild.result == null || currentBuild.result == 'SUCCESS' 
@@ -29,7 +28,6 @@ pipeline {
         stage('Deploy') {
             sh "docker rm z_antd_design_pro_strater_dev "
             sh "docker rm z_antd_design_pro_strater_dev "
-
         }
     }
 }

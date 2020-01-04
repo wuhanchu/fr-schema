@@ -22,7 +22,7 @@ const showError = error => {
                     <Panel
                         header={
                             <div>
-                                {error.message} <a>详情</a>
+                                {error.message} {error.detal && <a>详情</a>}
                             </div>
                         }
                         style={{
