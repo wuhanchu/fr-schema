@@ -51,6 +51,7 @@ schema 代表是一个数据对象的定义，一般来说会和数据库的设�
     -   Slider: "范围选择",
     -   Input: "普通输入框"
 -   required 是否必填
+-   sorter 可排序
 -   extra 字段说明
 -   submitFormat 提交格式（当字段是日期格式时可用）
 -   groupName 分组名称，如果字段太多，可进行分组，界面上会进行分区显示。
