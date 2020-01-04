@@ -1,27 +1,34 @@
 import queryString from "query-string"
-
-import { config, request, user } from "./index"
-import { convertFromRemote, convertToRemote } from "./schema"
+import {config, request, user} from "./index"
+import {convertFromRemote, convertToRemote} from "./schema"
 import actions from "./actions"
-import { object } from "prop-types"
+import {object} from "prop-types"
+import * as lodash from "lodash"
 
 export function createBasicApi(module, subModule) {
     return {
         get: async (args = {}) => {
-            const response = await request({
-                method: "GET",
-                url: (
-                    "/" +
-                    config.apiVersion +
-                    module +
-                    (args.id ? "/" + args.id : "") +
-                    (subModule ? "/" + subModule + "/" : "") +
+            let url =
+                "/" +
+                config.apiVersion +
+                module +
+                (!lodash.isNil(args.id) ? "/" + args.id : "") +
+                (subModule ? "/" + subModule + "/" : "")
+
+            if (!lodash.isEmpty(args)) {
+                url +=
                     "/?" +
                     queryString.stringify({
                         ...args,
                         token: user && user.user && user.user.token
                     })
-                ).replace("//", "/")
+            }
+
+            url = url.replace("//", "/")
+
+            const response = await request({
+                method: "GET",
+                url
             })
 
             return response
@@ -34,7 +41,7 @@ export function createBasicApi(module, subModule) {
                     config.apiVersion +
                     module +
                     "/" +
-                    (args.id ? args.id : "") +
+                    (!lodash.isNil(args.id) ? args.id : "") +
                     (subModule ? "/" + subModule + "/" : "")
                 ).replace("//", "/"),
                 data: args
@@ -48,7 +55,7 @@ export function createBasicApi(module, subModule) {
                     config.apiVersion +
                     module +
                     "/" +
-                    (args.id ? args.id : "") +
+                    (!lodash.isNil(args.id) ? args.id : "") +
                     (subModule ? "/" + subModule + "/" : "")
                 ).replace("//", "/"),
                 data: args
@@ -77,6 +84,10 @@ export function createBasicApi(module, subModule) {
  * @returns {FormData}
  */
 export function objToFrom(data) {
+    if (data instanceof FormData) {
+        return data
+    }
+
     const formData = new FormData()
     Object.keys(data).forEach(key => {
         if (data[key] !== undefined) {
@@ -93,7 +104,7 @@ export function objToFrom(data) {
  * @param options 选项 form 使用form来传输数据
  * @returns {{patch: (function(*=): *), post: (function(*=): *), get: (function(*=): {pagination: {current, total, pageSize}, list: *}), delete: (function(*): *), put: (function(*=): *)}}
  */
-export function createApi(module, schema = {}, options = { form: false }) {
+export function createApi(module, schema = {}, options = {form: false}) {
     return {
         get: async (args = {}, inSchema = schema) => {
             // convert moment
@@ -106,7 +117,7 @@ export function createApi(module, schema = {}, options = { form: false }) {
                 params[key] = item && item.unix ? item.unix() : item
             })
 
-            let { currentPage, pageSize, ...otherParams } = args
+            let {currentPage, pageSize, ...otherParams} = args
             const limit = pageSize || 10
             const response = await request(
                 {
@@ -129,12 +140,16 @@ export function createApi(module, schema = {}, options = { form: false }) {
                 }
             )
 
-            const { total, list } = response.data || {}
+            if (!response) {
+                return
+            }
+
+            const {total, list} = response.data || {}
             return {
                 list: inSchema
                     ? convertFromRemote(list || [], inSchema || schema)
                     : list,
-                pagination: { current: currentPage, pageSize, total }
+                pagination: {current: currentPage, pageSize, total}
             }
         },
         getBasic: async (args = {}, inSchema = schema) => {
@@ -161,7 +176,7 @@ export function createApi(module, schema = {}, options = { form: false }) {
             return response
         },
         getDetail: async (args = {}, inSchema = schema) => {
-            const { id } = args
+            const {id} = args
             const response = await request(
                 {
                     method: "GET",
@@ -175,10 +190,8 @@ export function createApi(module, schema = {}, options = { form: false }) {
                 }
             )
 
-            console.debug("data", response)
-            const { data, ...others } = response
-
-            return convertFromRemote(data, inSchema)
+            const result = convertFromRemote(response.data, inSchema)
+            return result
         },
         post: (args, inSchema = schema) =>
             request({
@@ -193,7 +206,7 @@ export function createApi(module, schema = {}, options = { form: false }) {
                     "/" +
                     config.apiVersion +
                     module +
-                    (args.id ? "/" + args.id : "")
+                    (!lodash.isNil(args.id) ? "/" + args.id : "")
                 ).replace("//", "/"),
                 data: convertToRemote(args, inSchema || schema)
             })
@@ -205,7 +218,7 @@ export function createApi(module, schema = {}, options = { form: false }) {
                     "/" +
                     config.apiVersion +
                     module +
-                    (args.id ? "/" + args.id : ""),
+                    (!lodash.isNil(args.id) ? "/" + args.id : ""),
                 data: convertToRemote(args, inSchema || schema)
             })
         },
@@ -216,7 +229,7 @@ export function createApi(module, schema = {}, options = { form: false }) {
                     "/" +
                     config.apiVersion +
                     module +
-                    (args.id ? "/" + args.id : "")
+                    (!lodash.isNil(args.id) ? "/" + args.id : "")
                 ).replace("//", "/")
             }),
         deleteMulti: args =>

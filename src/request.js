@@ -1,9 +1,11 @@
 import fetch from "dva/fetch"
-import {message, notification} from "antd"
+import { notification, Collapse } from "antd"
 import hash from "hash.js"
-import oauth, {OAuthToken} from "./oauth"
+import oauth, { OAuthToken } from "./oauth"
 import clone from "clone"
 import * as lodash from "lodash"
+
+const { Panel } = Collapse
 
 const codeMessage = {
     200: "服务器成功返回请求的数据。",
@@ -12,7 +14,7 @@ const codeMessage = {
     204: "删除数据成功。",
     400: "发出的请求有错误，服务器没有进行新增或修改数据的操作。",
     401: "用户没有权限（令牌、用户名、密码错误）。",
-    403: "用户得到授权，但是访问是被禁止的。",
+    403: "用户得到授权，但是访问是被禁止的。请确认是否已经上传证书！",
     404: "发出的请求针对的是不存在的记录，服务器没有进行操作。",
     406: "请求的格式不可得。",
     410: "请求的资源被永久删除，且不会再得到的。",
@@ -35,15 +37,17 @@ const checkStatus = async response => {
     const error = new Error()
     error.status = response.status
     error.response = response
-    const tempResponse = clone(response)
+    const text = await response.text()
 
     try {
-        const data = await tempResponse.json()
-        error.message = data.message
+        const data = JSON.parse(text)
+        error.message = data.msg
+        error.detail = data.detail || data.traceback
     } catch (e) {
-        error.message = `请求[${response.url}],后台返回无法解析的错误！详情查看开发工具Network标签中的相关请求。`
-
-        throw error
+        error.message =
+            codeMessage[response.status] ||
+            `请求[${response.url}],后台返回无法解析的错误！详情查看开发工具Network标签中的相关请求。`
+        error.detail = text
     }
 
     throw error
@@ -75,12 +79,12 @@ const cachedSave = (response, hashcode) => {
  * create the fetch head
  */
 export function getXhrOptions() {
-    let options = {headers: {}}
+    let options = { headers: {} }
     let token = localStorage.getItem("token")
     if (token) {
         token = JSON.parse(token)
         options.headers = [
-            {key: "Authorization", value: `Bearer ${token.access_token}`}
+            { key: "Authorization", value: `Bearer ${token.access_token}` }
         ]
     }
 
@@ -96,6 +100,8 @@ function isJSON(str) {
  *
  * @param  {string} url       The URL we want to request
  * @param  {object} [options] The options we want to pass to "fetch"
+ *  skipConvert
+ *  skipOauth
  * @return {object}           An object containing either "data" or "err"
  */
 export default function request(obj, options = {}) {
@@ -173,7 +179,7 @@ export default function request(obj, options = {}) {
         token = JSON.parse(token)
         if (token.expires > Date.now()) {
             resolve(token)
-        } else {
+        } else if (!options.skipOauth) {
             return new OAuthToken(oauth(), token)
                 .refresh()
                 .then(token => {
@@ -187,6 +193,8 @@ export default function request(obj, options = {}) {
                         type: "login/logout"
                     })
                 })
+        } else {
+            resolve(null)
         }
     })
         .then(token => {
@@ -206,6 +214,9 @@ export default function request(obj, options = {}) {
             // if (newOptions.method === "DELETE" || response.status === 204) {
             //     return response.text()
             // }
+            if (options.skipConvert) {
+                return response
+            }
 
             const type = response.headers.get("content-type")
 
@@ -222,7 +233,7 @@ export default function request(obj, options = {}) {
                     throw error
                 }
 
-                if (result.code != "100") {
+                if (!result.data && result.code && result.code != "100") {
                     const error = new Error(result.msg)
                     error.name = response.status
                     error.response = response
@@ -243,24 +254,27 @@ export default function request(obj, options = {}) {
         })
         .catch(e => {
             const status = e.status
-            if (status === 401 && window.g_app._store) {
-                // @HACK
-                /* eslint-disable no-underscore-dangle */
+            if ((status === 401 || status === 403) && window.g_app._store) {
                 if (!window.location.href.includes("login")) {
                     window.g_app._store.dispatch({
                         type: "login/logout"
                     })
+                }
 
-                    notification.error({
-                        message: "账户出错"
+                if (
+                    window.location.pathname == "/" ||
+                    window.location.pathname == "/user/login"
+                ) {
+                    return new Promise((resolve, reject) => {
+                        resolve(e)
                     })
                 }
-                return
             }
 
-            message.error(e.message)
+            // throw e
+
             return new Promise((resolve, reject) => {
-                reject(e.message)
+                reject(e)
             })
         })
 }

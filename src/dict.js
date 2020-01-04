@@ -84,7 +84,9 @@ export function addRemark(obj, model = {}) {
  */
 export function convertDict(value, dict, split = true) {
     let result = null
-    if (typeof value === "string" && value) {
+    if (value instanceof Array) {
+        result = value.map(value => getDictValue(value, dict))
+    } else if (typeof value === "string" && value) {
         const list = split ? value.split && value.split(",") : [value]
         result = list.map(value => getDictValue(value, dict))
         result = result.join()
