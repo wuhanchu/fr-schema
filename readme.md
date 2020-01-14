@@ -25,7 +25,6 @@ export default {
     -   resource: schema resource name，
     -   service: 配置在 modules 中的 service
     -   title: page title,
-    -   infoProps: infoForm props
     -   handleChangeCallback: data change call back
     -   queryArgs: fixed query args
     -   infoProps 会传给 InfoModal 的属性
