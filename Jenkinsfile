@@ -15,7 +15,7 @@ pipeline {
         }
 
         stage('Docker Build') {
-            sh 'docker build . -f /docker/Dockerfile.hub -t asus.uglyxu.cn:35744/z_antd_design_pro_strater:master' 
+            sh 'docker build . -f ./docker/Dockerfile.hub -t asus.uglyxu.cn:35744/z_antd_design_pro_strater:master' 
         }
 
         stage('Push') {
