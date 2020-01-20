@@ -26,7 +26,7 @@ pipeline {
             }
             steps {
                 sh 'docker push asus.uglyxu.cn:35744/z_antd_design_pro_strater:master'
-                sh 'docker rmi asus.uglyxu.cn:35744/z_antd_design_pro_strater:master
+                sh 'docker rmi asus.uglyxu.cn:35744/z_antd_design_pro_strater:master'
             }
         }
 
