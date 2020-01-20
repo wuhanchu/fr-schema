@@ -7,7 +7,7 @@ pipeline {
             agent {
                 docker {
                     image 'node:lts-alpine' 
-                    args '-v jenkins-data:/var/jenkins_home -v jenkins_yarn_cache:/Users/wuhanchu/Library/Caches/Yarn' 
+                    args '-v jenkins-data:/var/jenkins_home -v jenkins_yarn_cache:/usr/local/share/.cache/yarn' 
                 }
             }
             steps{
