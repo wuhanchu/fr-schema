@@ -1,6 +1,12 @@
 pipeline {
     agent any
     stages {
+         stage('git'){
+            steps{
+                sh 'git submodule init ; git submodule update'
+            }
+        }
+
         stage('Build') { 
             agent {
                 docker {
