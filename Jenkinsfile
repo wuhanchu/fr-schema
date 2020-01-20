@@ -29,7 +29,7 @@ pipeline {
               }
             }
             steps {
-                withDockerRegistry(registry: [uri: "server.aiknown.cn:31003", credentialsId: 'dataknown_harbor']) {
+                withDockerRegistry(registry: [url: "https://server.aiknown.cn:31003", credentialsId: 'dataknown_harbor']) {
                     sh 'docker push server.aiknown.cn:31003/library/z_antd_design_pro_strater:master'
                     sh 'docker rmi server.aiknown.cn:31003/library/z_antd_design_pro_strater:master'
                 }
