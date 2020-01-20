@@ -9,7 +9,7 @@ pipeline {
                 }
             }
             steps{
-                sh 'yarn install --registry=https://registry.npm.taobao.org'
+                sh 'npm install --registry=https://registry.npm.taobao.org'
                 sh 'npm run build'
             }
         }
