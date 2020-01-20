@@ -4,7 +4,7 @@ pipeline {
             agent {
                 docker {
                     image 'node:lts-alpine' 
-                    args '-p 3000:3000 -v $HOME/workspace:/var/jenkins_home/workspace -v ' 
+                    args '-v $HOME/workspace:/var/jenkins_home/workspace' 
                 }
             }
             steps{
