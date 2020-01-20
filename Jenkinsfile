@@ -38,7 +38,6 @@ pipeline {
 
         stage('Deploy') {
             steps{
-                
                 sshagent(credentials : ['centos']) {
                     sh "docker pull server.aiknown.cn:31003/library/z_antd_design_pro_strater:master"
                     sh "docker rm -f  z_antd_design_pro_strater_master"
