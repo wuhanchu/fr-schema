@@ -41,7 +41,7 @@ pipeline {
                 sshagent(credentials : ['centos']) {
                     sh "docker pull server.aiknown.cn:31003/library/z_antd_design_pro_strater:master"
                     sh "docker rm -f  z_antd_design_pro_strater_master"
-                    sh "docker run -p 8080:80 --name z_antd_design_pro_strater_master server.aiknown.cn:31003/libraryz_antd_design_pro_strater:master"
+                    sh "docker run --restart=always -d -p 8083:80 -e SERVER_URL='http://127.0.0.1:5000' --name z_antd_design_pro_strater_master server.aiknown.cn:31003/library/z_antd_design_pro_strater:master"
                 }
             }
         }
