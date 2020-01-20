@@ -1,11 +1,7 @@
 pipeline {
     agent any
     stages {
-         stage('git'){
-            steps{
-                sh 'git submodule init ; git submodule update'
-            }
-        }
+        
 
         stage('Build') { 
             agent {
@@ -22,7 +18,7 @@ pipeline {
 
         stage('Docker Build') {
             steps{
-                sh 'docker build . -f ./docker/Dockerfile.hub -t asus.uglyxu.cn:35744/z_antd_design_pro_strater:master' 
+                sh 'docker build . -f ./docker/Dockerfile.hub -t server.aiknown.cn:31003/z_antd_design_pro_strater:master' 
             }
         }
 
@@ -33,15 +29,17 @@ pipeline {
               }
             }
             steps {
-                sh 'docker push asus.uglyxu.cn:35744/z_antd_design_pro_strater:master'
-                sh 'docker rmi asus.uglyxu.cn:35744/z_antd_design_pro_strater:master'
+                sh 'docker push server.aiknown.cn:31003/z_antd_design_pro_strater:master'
+                sh 'docker rmi server.aiknown.cn:31003/z_antd_design_pro_strater:master'
             }
         }
 
         stage('Deploy') {
             steps{
-                sh "docker pull asus.uglyxu.cn:35744/z_antd_design_pro_strater:master"
-                sh "docker run asus.uglyxu.cn:35744/z_antd_design_pro_strater -p 8080:80 --name z_antd_design_pro_strater_master z_antd_design_pro_strater:master"
+                sshagent(credentials : ['centos']) {
+                    sh "docker pull server.aiknown.cn:31003/z_antd_design_pro_strater:master"
+                    sh "docker run server.aiknown.cn:31003/z_antd_design_pro_strater -p 8080:80 --name z_antd_design_pro_strater_master z_antd_design_pro_strater:master"
+                }
             }
         }
     }
