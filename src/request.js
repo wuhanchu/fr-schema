@@ -149,6 +149,8 @@ export default function request(obj, options = {}) {
             // newOptions.body is FormData
             newOptions.headers = {
                 Accept: "application/json",
+                "Cache-Control": "no-cache",
+                "Pragma": "no-cache",
                 ...newOptions.headers
             }
         }
