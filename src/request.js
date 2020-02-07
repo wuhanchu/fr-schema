@@ -122,8 +122,11 @@ export default function request(obj, options = {}) {
         .digest("hex")
 
     const defaultOptions = {
-        credentials: "include"
+        credentials: "include",
+        "Cache-Control": "no-cache",
+        "Pragma": "no-cache",
     }
+
     const newOptions = {
         ...defaultOptions,
         body: obj.data,
@@ -139,8 +142,6 @@ export default function request(obj, options = {}) {
         if (!(newOptions.body instanceof FormData)) {
             newOptions.headers = {
                 Accept: "application/json",
-                "Cache-Control": "no-cache",
-                "Pragma": "no-cache",
                 "Content-Type": "application/json; charset=utf-8",
                 ...newOptions.headers
             }
@@ -149,8 +150,6 @@ export default function request(obj, options = {}) {
             // newOptions.body is FormData
             newOptions.headers = {
                 Accept: "application/json",
-                "Cache-Control": "no-cache",
-                "Pragma": "no-cache",
                 ...newOptions.headers
             }
         }
