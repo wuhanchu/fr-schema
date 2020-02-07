@@ -196,7 +196,6 @@ function toRemote(item, schema, action = actions.edit) {
  * @returns {*}
  */
 export const convertToRemote = (data, schema, action = actions.edit) => {
-    console.debug("actions.edit", actions.edit)
     let result = null
     if (data instanceof Array) {
         result = data.map(item => toRemote(item, schema, action))
