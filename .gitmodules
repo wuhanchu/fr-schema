@@ -1,8 +1,8 @@
 [submodule "src/outter/fr-schema"]
 	path = src/outter/fr-schema
 	url = https://github.com/wuhanchu/fr-schema.git
-[submodule "src/outter/fr-schemna-antd-utils"]
-	path = src/outter/fr-schemna-antd-utils
+[submodule "src/outter/fr-schema-antd-utils"]
+	path = src/outter/fr-schema-antd-utils
 	url = https://github.com/wuhanchu/fr-schema-antd-utils.git
 [submodule "src/components/Extra"]
 	path = src/components/Extra
