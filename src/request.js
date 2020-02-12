@@ -123,8 +123,10 @@ export default function request(obj, options = {}) {
 
     const defaultOptions = {
         credentials: "include",
-        "Cache-Control": "no-cache",
-        "Pragma": "no-cache",
+        header: {
+            "Cache-Control": "no-cache",
+            Pragma: "no-cache"
+        }
     }
 
     const newOptions = {
@@ -224,6 +226,10 @@ export default function request(obj, options = {}) {
             const type = response.headers.get("content-type")
 
             //  文件
+            if (!type) {
+                return
+            }
+
             if (type.indexOf("wav") > -1 || type.indexOf("zip") > -1) {
                 return response.blob()
             } else if (type.indexOf("json") > -1) {
@@ -243,7 +249,18 @@ export default function request(obj, options = {}) {
                     throw error
                 }
 
-                return result
+                let total = response.headers.get("content-range")
+                if (total) {
+                    total = total.split("/")[1]
+                }
+
+                if (result instanceof Array) {
+                    return {
+                        data: { list: result, total: total && parseInt(total) }
+                    }
+                } else {
+                    return { data: result }
+                }
             } else {
                 let txt = await response.text()
                 // let temp = JSON.parse(txt)

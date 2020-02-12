@@ -1,8 +1,8 @@
 import queryString from "query-string"
-import {config, request, user} from "./index"
-import {convertFromRemote, convertToRemote} from "./schema"
+import { config, request, user } from "./index"
+import { convertFromRemote, convertToRemote } from "./schema"
 import actions from "./actions"
-import {object} from "prop-types"
+import { object } from "prop-types"
 import * as lodash from "lodash"
 
 export function createBasicApi(module, subModule) {
@@ -104,7 +104,7 @@ export function objToFrom(data) {
  * @param options 选项 form 使用form来传输数据
  * @returns {{patch: (function(*=): *), post: (function(*=): *), get: (function(*=): {pagination: {current, total, pageSize}, list: *}), delete: (function(*): *), put: (function(*=): *)}}
  */
-export function createApi(module, schema = {}, options = {form: false}) {
+export function createApi(module, schema = {}, options = { form: false }) {
     return {
         get: async (args = {}, inSchema = schema) => {
             // convert moment
@@ -117,7 +117,7 @@ export function createApi(module, schema = {}, options = {form: false}) {
                 params[key] = item && item.unix ? item.unix() : item
             })
 
-            let {currentPage, pageSize, ...otherParams} = args
+            let { currentPage, pageSize, ...otherParams } = args
             const limit = pageSize || 10
             const response = await request(
                 {
@@ -128,7 +128,7 @@ export function createApi(module, schema = {}, options = {form: false}) {
                         module +
                         "?" +
                         queryString.stringify({
-                            sort: "-id",
+                            order: "id",
                             ...otherParams,
                             offset: limit * ((currentPage || 1) - 1),
                             limit
@@ -136,6 +136,9 @@ export function createApi(module, schema = {}, options = {form: false}) {
                     ).replace("//", "/")
                 },
                 {
+                    headers: {
+                        Prefer: "count=exact"
+                    },
                     ...options
                 }
             )
@@ -144,12 +147,12 @@ export function createApi(module, schema = {}, options = {form: false}) {
                 return
             }
 
-            const {total, list} = response.data || {}
+            const { total, list } = response.data || {}
             return {
                 list: inSchema
                     ? convertFromRemote(list || [], inSchema || schema)
                     : list,
-                pagination: {current: currentPage, pageSize, total}
+                pagination: { current: currentPage, pageSize, total }
             }
         },
         getBasic: async (args = {}, inSchema = schema) => {
@@ -167,6 +170,7 @@ export function createApi(module, schema = {}, options = {form: false}) {
                     ).replace("//", "/")
                 },
                 {
+
                     // todo 需要删除缓存
                     // expirys: 60,
                     ...options
@@ -176,16 +180,19 @@ export function createApi(module, schema = {}, options = {form: false}) {
             return response
         },
         getDetail: async (args = {}, inSchema = schema) => {
-            const {id} = args
+            const { id } = args
             const response = await request(
                 {
                     method: "GET",
-                    url: ("/" + config.apiVersion + module + "/" + id).replace(
+                    url: ("/" + config.apiVersion + module + "?id=eq." + id).replace(
                         "//",
                         "/"
                     )
                 },
                 {
+                    headers: {
+                        Accept: "application/vnd.pgrst.object+json"
+                    },
                     ...options
                 }
             )
@@ -206,7 +213,7 @@ export function createApi(module, schema = {}, options = {form: false}) {
                     "/" +
                     config.apiVersion +
                     module +
-                    (!lodash.isNil(args.id) ? "/" + args.id : "")
+                    (!lodash.isNil(args.id) ? "?id=eq." + args.id : "")
                 ).replace("//", "/"),
                 data: convertToRemote(args, inSchema || schema)
             })
@@ -218,7 +225,7 @@ export function createApi(module, schema = {}, options = {form: false}) {
                     "/" +
                     config.apiVersion +
                     module +
-                    (!lodash.isNil(args.id) ? "/" + args.id : ""),
+                    (!lodash.isNil(args.id) ? "?id=eq." + args.id : ""),
                 data: convertToRemote(args, inSchema || schema)
             })
         },
@@ -229,7 +236,7 @@ export function createApi(module, schema = {}, options = {form: false}) {
                     "/" +
                     config.apiVersion +
                     module +
-                    (!lodash.isNil(args.id) ? "/" + args.id : "")
+                    (!lodash.isNil(args.id) ? "?id=eq." + args.id : "")
                 ).replace("//", "/")
             }),
         deleteMulti: args =>
