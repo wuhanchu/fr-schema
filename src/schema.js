@@ -1,9 +1,9 @@
 import actions from "./actions"
 import moment from "moment"
-import { DATE_FORMAT, DATE_TIME_FORMAT, DTAE_TIME_FORMAT } from "./moment"
-import { addRemark, reverseDictValue } from "./dict"
+import {DATE_FORMAT, DATE_TIME_FORMAT, DTAE_TIME_FORMAT} from "./moment"
+import {addRemark, reverseDictValue} from "./dict"
 import validator from "async-validator"
-
+import * as _ from "lodash"
 
 /**
  * schema字段类型
@@ -63,10 +63,10 @@ export function getInfoColumn(schema, infoAction = actions.add) {
             return
         }
 
-        !schema[key].infoHide && result.push({ dataIndex: key, ...schema[key] })
+        !schema[key].infoHide && result.push({dataIndex: key, ...schema[key]})
     })
 
-    result.sort(function(a, b) {
+    result.sort(function (a, b) {
         return (
             (a.orderIndex === undefined || a.orderIndex === null
                 ? 9999
@@ -107,11 +107,12 @@ export function convertFromRemote(inData, schema) {
  * @returns {{[p: string]: *}}
  */
 function formRemote(item, schema) {
-    let result = { ...item }
+    let result = {...item}
     Object.keys(schema).forEach(key => {
         if (!item[key] || !schema[key]) {
             return
         }
+
         switch (schema[key].type) {
             case schemaFieldType.DatePicker:
                 let value = item[key]
@@ -123,11 +124,13 @@ function formRemote(item, schema) {
                 if (reg.test(value)) {
                     value = parseInt(item[key])
                 }
+
                 result[key] =
                     typeof value === "number"
                         ? moment.unix(value)
                         : moment(value)
                 break
+
         }
 
         // 除数
@@ -156,7 +159,7 @@ function toRemote(item, schema, action = actions.edit) {
         return item
     }
 
-    let result = { ...item }
+    let result = {...item}
     Object.keys(schema).forEach(key => {
         if (
             action === actions.edit &&
@@ -225,13 +228,15 @@ export function getPrimaryKey(schema) {
  * 转换到excel文件中导入的数据
  * @param data
  * @param schema
+ * @param sliceNum Start with the sliceNum
+ * @param errorKey Error showing data key
  */
-export async function convertFormImport(data, schema) {
+export async function convertFormImport(data, schema, sliceNum = 1, errorKey = "id") {
     // 转换schema 根据 中文标题做key
     let convertMap = {}
     Object.keys(schema).forEach(dataIndex => {
         const fieldDefine = schema[dataIndex]
-        convertMap[fieldDefine.title] = { ...schema[dataIndex], dataIndex }
+        convertMap[fieldDefine.title] = {...schema[dataIndex], dataIndex}
     })
 
     // 添加 A,B,C，D... 等的匹配
@@ -242,9 +247,8 @@ export async function convertFormImport(data, schema) {
     // 生成validate descriptor
     let descriptor = {}
     Object.keys(schema).forEach(key => {
-        const { required, rules } = schema[key]
+        const {required, rules} = schema[key]
         descriptor[key] = {
-            type: "string",
             required,
             ...(rules || {})
         }
@@ -253,15 +257,19 @@ export async function convertFormImport(data, schema) {
     // 批量验证
     const dataResult = []
     let throwMessage = null
-    data.slice(1).some(async item => {
+    data.slice(sliceNum).some(async item => {
         let result = {}
 
+        // convert the data
+        let lastFiledDefine = null
         Object.keys(item).forEach(key => {
-            const filedDefine = convertMap[key]
+            let filedDefine = convertMap[key]
             if (!filedDefine) {
-                return
+                filedDefine = lastFiledDefine
             }
-            if (filedDefine.addHide) {
+
+
+            if (_.isNil(filedDefine) || filedDefine.addHide) {
                 return
             }
 
@@ -272,18 +280,28 @@ export async function convertFormImport(data, schema) {
             }
 
             // 获取值
+            lastFiledDefine = filedDefine
             let value = item[key]
             if (filedDefine.dict) {
                 value = reverseDictValue(value, filedDefine.dict)
             }
-            result[realKey] = value
+
+            if (_.isNil(result[realKey])) {
+                result[realKey] = value
+            } else if (result[realKey] instanceof Array) {
+                result[realKey].push(value)
+            } else {
+                result[realKey] = [result[realKey], value]
+            }
+
+            // The following data is assembled into the last key
+
         })
 
         //  校验
         await new validator(descriptor).validate(result, (errors, fields) => {
             if (errors) {
                 console.error("item", item)
-
                 console.error("errors", errors)
                 console.error("fields", fields)
 
@@ -292,7 +310,7 @@ export async function convertFormImport(data, schema) {
                     errorStr += `字段[${schema[error.field].title}]错误[${error.message}];`
                 })
 
-                throwMessage = `数据资源编码[${result.sensorId}]出现问题: ${errorStr}。`
+                throwMessage = `数据[${result[errorKey]}]出现问题: ${errorStr}。`
             }
         })
 
@@ -333,7 +351,7 @@ export function decorateItem(item, schema) {
         return item
     }
 
-    let result = { ...item }
+    let result = {...item}
     result = addRemark(result, schema)
 
     Object.keys(schema).forEach(key => {
@@ -355,6 +373,12 @@ export function decorateItem(item, schema) {
                         item[key] && item[key].format(DATE_FORMAT)
                 }
                 break
+            case schemaFieldType.Select:
+                if (item[key] instanceof Array) {
+                    result[key + "_remark"] = item[key].join("|")
+                }
+                break
+
             default:
                 if (schema[key].unit) {
                     result[key + "_remark"] =
