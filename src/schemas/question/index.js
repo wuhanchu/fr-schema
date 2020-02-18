@@ -42,6 +42,7 @@ const schema = {
 }
 
 const service = createApi("postgrest/question", schema)
+service.search = createApi("postgrest/rpc/question_search", schema).getBasic
 
 export default {
     schema,

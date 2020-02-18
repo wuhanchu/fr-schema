@@ -10,9 +10,11 @@ import * as _ from "lodash"
 class BaseList extends DataList {
     constructor(props) {
         super(props, {
+            operateWidth: 100,
             schema: schemas.question.schema,
             service: schemas.question.service,
             allowExport: true,
+            showSelect: true,
             allowImport: true,
             importTemplateUrl:
                 BASE_PATH + "import/掌数_知料_知识库信息导入.xlsx"
@@ -126,7 +128,7 @@ class BaseList extends DataList {
                 importTemplateUrl={this.meta.importTemplateUrl}
                 schema={this.schema}
                 errorKey={"question_standard"}
-                sliceNum={3}
+                sliceNum={4}
                 onCancel={() => this.setState({ visibleImport: false })}
                 onChange={data => this.setState({ importData: data })}
                 onOk={async () => {
@@ -140,7 +142,7 @@ class BaseList extends DataList {
 
                         return {
                             ...this.meta.addArgs,
-                            label: label.split("|"),
+                            label: label && label.split("|"),
                             question_extend: question_extend_data,
                             ...others
                         }
