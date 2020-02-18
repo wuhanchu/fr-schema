@@ -1,7 +1,7 @@
 import actions from "./actions"
 import moment from "moment"
-import {DATE_FORMAT, DATE_TIME_FORMAT, DTAE_TIME_FORMAT} from "./moment"
-import {addRemark, reverseDictValue} from "./dict"
+import { DATE_FORMAT, DATE_TIME_FORMAT, DTAE_TIME_FORMAT } from "./moment"
+import { addRemark, reverseDictValue } from "./dict"
 import validator from "async-validator"
 import * as _ from "lodash"
 
@@ -63,10 +63,10 @@ export function getInfoColumn(schema, infoAction = actions.add) {
             return
         }
 
-        !schema[key].infoHide && result.push({dataIndex: key, ...schema[key]})
+        !schema[key].infoHide && result.push({ dataIndex: key, ...schema[key] })
     })
 
-    result.sort(function (a, b) {
+    result.sort(function(a, b) {
         return (
             (a.orderIndex === undefined || a.orderIndex === null
                 ? 9999
@@ -107,7 +107,7 @@ export function convertFromRemote(inData, schema) {
  * @returns {{[p: string]: *}}
  */
 function formRemote(item, schema) {
-    let result = {...item}
+    let result = { ...item }
     Object.keys(schema).forEach(key => {
         if (!item[key] || !schema[key]) {
             return
@@ -130,7 +130,6 @@ function formRemote(item, schema) {
                         ? moment.unix(value)
                         : moment(value)
                 break
-
         }
 
         // 除数
@@ -159,7 +158,7 @@ function toRemote(item, schema, action = actions.edit) {
         return item
     }
 
-    let result = {...item}
+    let result = { ...item }
     Object.keys(schema).forEach(key => {
         if (
             action === actions.edit &&
@@ -231,12 +230,17 @@ export function getPrimaryKey(schema) {
  * @param sliceNum Start with the sliceNum
  * @param errorKey Error showing data key
  */
-export async function convertFormImport(data, schema, sliceNum = 1, errorKey = "id") {
+export async function convertFormImport(
+    data,
+    schema,
+    sliceNum = 1,
+    errorKey = "id"
+) {
     // 转换schema 根据 中文标题做key
     let convertMap = {}
     Object.keys(schema).forEach(dataIndex => {
         const fieldDefine = schema[dataIndex]
-        convertMap[fieldDefine.title] = {...schema[dataIndex], dataIndex}
+        convertMap[fieldDefine.title] = { ...schema[dataIndex], dataIndex }
     })
 
     // 添加 A,B,C，D... 等的匹配
@@ -247,7 +251,7 @@ export async function convertFormImport(data, schema, sliceNum = 1, errorKey = "
     // 生成validate descriptor
     let descriptor = {}
     Object.keys(schema).forEach(key => {
-        const {required, rules} = schema[key]
+        const { required, rules } = schema[key]
         descriptor[key] = {
             required,
             ...(rules || {})
@@ -255,72 +259,82 @@ export async function convertFormImport(data, schema, sliceNum = 1, errorKey = "
     })
 
     // 批量验证
-    const dataResult = []
+    let dataResult = []
     let throwMessage = null
-    data.slice(sliceNum).some(async item => {
-        let result = {}
+    const handlePromiseList = data.slice(sliceNum).map(item => {
+        return new Promise(async (resolve, reject) => {
+            let result = {}
 
-        // convert the data
-        let lastFiledDefine = null
-        Object.keys(item).forEach(key => {
-            let filedDefine = convertMap[key]
-            if (!filedDefine) {
-                filedDefine = lastFiledDefine
-            }
+            // convert the data
+            let lastFiledDefine = null
+            Object.keys(item).forEach(key => {
+                let filedDefine = convertMap[key]
+                if (!filedDefine) {
+                    filedDefine = lastFiledDefine
+                }
 
+                if (_.isNil(filedDefine) || filedDefine.addHide) {
+                    return
+                }
 
-            if (_.isNil(filedDefine) || filedDefine.addHide) {
-                return
-            }
+                // 获取key
+                const realKey = filedDefine.dataIndex
+                if (!realKey) {
+                    return
+                }
 
-            // 获取key
-            const realKey = filedDefine.dataIndex
-            if (!realKey) {
-                return
-            }
+                // 获取值
+                lastFiledDefine = filedDefine
+                let value = item[key]
+                if (filedDefine.dict) {
+                    value = reverseDictValue(value, filedDefine.dict)
+                }
 
-            // 获取值
-            lastFiledDefine = filedDefine
-            let value = item[key]
-            if (filedDefine.dict) {
-                value = reverseDictValue(value, filedDefine.dict)
-            }
+                if (_.isNil(result[realKey])) {
+                    result[realKey] = value
+                } else if (result[realKey] instanceof Array) {
+                    result[realKey].push(value)
+                } else {
+                    result[realKey] = [result[realKey], value]
+                }
 
-            if (_.isNil(result[realKey])) {
-                result[realKey] = value
-            } else if (result[realKey] instanceof Array) {
-                result[realKey].push(value)
-            } else {
-                result[realKey] = [result[realKey], value]
-            }
+                // The following data is assembled into the last key
+            })
 
-            // The following data is assembled into the last key
+            //  校验
+            await new validator(descriptor).validate(
+                result,
+                (errors, fields) => {
+                    if (errors) {
+                        console.error("item", item)
+                        console.error("errors", errors)
+                        console.error("fields", fields)
 
+                        let errorStr = ""
+                        errors.forEach(error => {
+                            errorStr += `字段[${
+                                schema[error.field].title
+                            }]错误[${error.message}];`
+                        })
+
+                        throwMessage = `数据[${result[errorKey]}]出现问题: ${errorStr}。`
+                        reject(throwMessage)
+                    }
+                }
+            )
+
+            const convertResult = toRemote(result, schema, actions.add)
+            resolve(convertResult)
         })
-
-        //  校验
-        await new validator(descriptor).validate(result, (errors, fields) => {
-            if (errors) {
-                console.error("item", item)
-                console.error("errors", errors)
-                console.error("fields", fields)
-
-                let errorStr = ""
-                errors.forEach(error => {
-                    errorStr += `字段[${schema[error.field].title}]错误[${error.message}];`
-                })
-
-                throwMessage = `数据[${result[errorKey]}]出现问题: ${errorStr}。`
-            }
-        })
-
-        dataResult.push(toRemote(result, schema, actions.add))
-        return throwMessage
     })
 
-    if (throwMessage) {
-        throw new Error(throwMessage)
-    }
+    await Promise.all(handlePromiseList)
+        .then(allResult => {
+            dataResult = allResult
+        })
+        .catch(function(r) {
+            throw new Error(throwMessage)
+        })
 
     return dataResult
 }
@@ -351,7 +365,7 @@ export function decorateItem(item, schema) {
         return item
     }
 
-    let result = {...item}
+    let result = { ...item }
     result = addRemark(result, schema)
 
     Object.keys(schema).forEach(key => {
