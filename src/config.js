@@ -5,8 +5,8 @@ moment.locale("zh-cn")
 
 const config = {
     // basic info
-    name: "antd_pro_design", // 基础信息
-    desc: "antd_pro_design 演示系统", // 基础信息
+    name: "掌数知料", // 基础信息
+    // desc: "antd_pro_design 演示系统", // 基础信息
     copyright: "wuhanchu", // 版本信息
 
     // api 前缀

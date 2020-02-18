@@ -36,12 +36,6 @@ export default [
                 icon: "project",
                 component: "./project/List"
             },
-            {
-                path: "/search",
-                name: "search",
-                icon: "search",
-                component: "./question/components/SearchPageModal"
-            },
 
             {
                 component: "./404"
