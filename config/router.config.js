@@ -23,29 +23,20 @@ export default [
     },
     {
         path: "/",
-        component: "../layouts/SecurityLayout",
+        component: "../layouts/BasicLayout",
+        authority: ["admin", "user"],
         routes: [
             {
                 path: "/",
-                component: "../layouts/BasicLayout",
-                authority: ["admin", "user"],
-                routes: [
-                    {
-                        path: "/",
-                        redirect: "/welcome"
-                    },
-                    {
-                        path: "/welcome",
-                        name: "welcome",
-                        icon: "smile",
-                        component: "./Welcome"
-                    },
-
-                    {
-                        component: "./404"
-                    }
-                ]
+                redirect: "/project"
             },
+            {
+                path: "/project",
+                name: "project",
+                icon: "project",
+                component: "./project/List"
+            },
+
             {
                 component: "./404"
             }

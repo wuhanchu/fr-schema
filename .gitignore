@@ -7,7 +7,7 @@
 _roadhog-api-doc
 
 # production
-# /dist
+/dist
 /.vscode
 
 # misc
@@ -38,3 +38,6 @@ screenshot
 .outter
 
 build
+dist/import/
+dist/umi.7470d4b8.js
+dist/umi.f6ac919f.css

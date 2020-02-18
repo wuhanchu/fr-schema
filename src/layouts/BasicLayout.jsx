@@ -45,16 +45,16 @@ const BasicLayout = props => {
     useEffect(() => {
         if (dispatch) {
             if (user.init) {
-                dispatch({
-                    type: "global/queryDict"
-                })
-                dispatch({
-                    type: "settings/getSetting"
-                })
+                // dispatch({
+                //     type: "global/queryDict"
+                // })
+                // dispatch({
+                //     type: "settings/getSetting"
+                // })
             } else {
-                dispatch({
-                    type: "user/fetchCurrent"
-                })
+                // dispatch({
+                //     type: "user/fetchCurrent"
+                // })
             }
         }
     }, [user.init])

@@ -10,7 +10,7 @@ const config = {
     copyright: "wuhanchu", // 版本信息
 
     // api 前缀
-    apiVersion: "api/v1/"
+    apiVersion: (BASE_PATH || "/") + "api/"
     // DATE_FORMAT: "YYYY-MM-DD",
     // DATE_TIME_FORMAT: "YYYY-MM-DD HH:mm:ss",
 

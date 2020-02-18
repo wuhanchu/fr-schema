@@ -1,12 +1,12 @@
 {
-    "name": "antd_design_pro_starter",
+    "name": "z_knwon_info_web",
     "version": "1.0.0",
     "private": true,
     "description": "An out-of-box UI solution for enterprise applications",
     "scripts": {
         "analyze": "cross-env ANALYZE=1 umi build",
         "build": "umi build",
-        "build:flask": "cross-env UMI_ENV=flask umi build",
+        "build:dataknown": "cross-env BASE_PATH=/dataknown/z_know_info/ umi build",
         "deploy": "cross-env ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION=site npm run site && npm run gh-pages",
         "fetch:blocks": "pro fetch-blocks",
         "format-imports": "cross-env import-sort --write '**/*.{js,jsx,ts,tsx}'",
@@ -37,11 +37,12 @@
     },
     "lint-staged": {
         "**/*.less": "stylelint --syntax less",
-        "**/*.{js,jsx,tsx,ts,md,json}": [
+        "**/*.{js,jsx,tsx,ts,less,md,json}": [
             "prettier --write",
             "git add"
         ],
-        "**/*.{js,jsx,tsx}": "npm run lint-staged:js"
+        "**/*.{js,jsx}": "npm run lint-staged:js",
+        "**/*.{js,ts,tsx}": "npm run lint-staged:js"
     },
     "browserslist": [
         "> 1%",
@@ -51,7 +52,7 @@
     "dependencies": {
         "@ant-design/pro-layout": "^4.5.16",
         "@antv/data-set": "^0.10.2",
-        "antd": "^3.23.6",
+        "antd": "3.25",
         "async-validator": "^2.0.0",
         "axios": "^0.19.0",
         "bizcharts": "^3.5.3-beta.0",

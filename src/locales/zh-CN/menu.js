@@ -7,5 +7,6 @@ export default {
     "menu.register.result": "注册结果",
     "menu.exception.403": "403",
     "menu.exception.404": "404",
-    "menu.exception.500": "500"
+    "menu.exception.500": "500",
+    "menu.project": "问题库"
 }

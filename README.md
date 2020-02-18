@@ -1,6 +1,6 @@
 简体中文 | [English](./README.en.md)
 
-# antd_design_pro_starter
+# z_know_info_web
 
 这个项目主要是在[fr-schema](https://github.com/wuhanchu/fr-schema.git),[antd_design_pro](https://github.com/ant-design/ant-design-pro.git),[fr-schema-antd-utils](https://github.com/wuhanchu/fr-schema-antd-utils.git)的基础上，组建出一个快速的开发模版。
 
@@ -55,7 +55,7 @@ npm start
 ### 编译
 
 ```bash
-npm run build
+npm run build:dataknown
 ```
 
 ### 检查代码规范
@@ -81,13 +81,13 @@ npm test
 ### 编译镜像
 
 ```docker
-docker build  -t antd_design_pro_starter --file docker/Dockerfile.hub  .
+docker build  -t z_know_info_web --file docker/Dockerfile.hub  .
 ```
 
 ### 运行容器
 
 ```docker
-docker run --rm  -p 8000:80 --name antd_design_pro_starter -e SERVER_URL='http://192.168.1.150:5002' antd_design_pro_starter
+docker run --rm  -p 8000:80 --name z_know_info_web -e SERVER_URL='http://192.168.1.150:5002' z_know_info_web
 ```
 
 -   端口 80: web 访问端口
@@ -95,8 +95,8 @@ docker run --rm  -p 8000:80 --name antd_design_pro_starter -e SERVER_URL='http:/
 
 ### 导入导出镜像
 
--   导出镜像：docker save -o ./antd_design_pro_starter.docker antd_design_pro_starter
--   导入镜像：docker load ‒‒input antd_design_pro_starter.docker
+-   导出镜像：docker save -o ./z_know_info_web.docker z_know_info_web
+-   导入镜像：docker load ‒‒input z_know_info_web.docker
 
 ## More
 

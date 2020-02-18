@@ -3,6 +3,7 @@ import defaultSettings from "./defaultSettings" // https://umijs.org/config/
 
 import slash from "slash2"
 import webpackPlugin from "./plugin.config"
+
 const { pwa, primaryColor } = defaultSettings // preview.pro.ant.design only do not use in your production ;
 // preview.pro.ant.design 专用环境变量，请不要在你的项目中使用它。
 
@@ -73,10 +74,15 @@ if (isAntDesignProPreview) {
 
 // 根据环境变量设置信息
 let extend = {}
-if (process.env.UMI_ENV == "flask") {
+let proxyTarget =
+    process.env.ProxyTarget ||
+    "http://asus.uglyxu.cn:40003/dataknown/z_know_info"
+let basePath = process.env.BASE_PATH
+
+if (basePath) {
     extend = {
-        base: "/static",
-        publicPath: "/static/",
+        base: basePath,
+        publicPath: basePath,
         runtimePublicPath: true
     }
 }
@@ -101,6 +107,7 @@ export default {
         "primary-color": primaryColor
     },
     define: {
+        BASE_PATH: basePath || "",
         ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION:
             ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION || "" // preview.pro.ant.design only do not use in your production ; preview.pro.ant.design 专用环境变量，请不要在你的项目中使用它。
     },
@@ -141,13 +148,12 @@ export default {
         basePath: "/"
     },
     chainWebpack: webpackPlugin,
-    ...extend
-    /*
-  proxy: {
-    '/server/api/': {
-      target: 'proxy_url',
-      changeOrigin: true
-    },
-  },
-  */
+    ...extend,
+
+    proxy: {
+        "/api": {
+            target: proxyTarget,
+            changeOrigin: true
+        }
+    }
 }
