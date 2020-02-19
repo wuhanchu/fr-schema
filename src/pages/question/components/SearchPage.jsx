@@ -57,20 +57,24 @@ function SearchPage(props) {
                                         title={
                                             <div
                                                 dangerouslySetInnerHTML={{
-                                                    __html: item.question_standard_mark.replace(
-                                                        /<b>/g,
-                                                        "<b style='color:red;'>"
-                                                    )
+                                                    __html: item.question_standard_mark
+                                                        .replace(
+                                                            /<b>/g,
+                                                            "<b style='color:red;'>"
+                                                        )
+                                                        .replace(/\n/g, "<br/>")
                                                 }}
                                             ></div>
                                         }
                                         description={
                                             <div
                                                 dangerouslySetInnerHTML={{
-                                                    __html: item.answer_mark.replace(
-                                                        /<b>/g,
-                                                        "<b style='color:red;'>"
-                                                    )
+                                                    __html: item.answer_mark
+                                                        .replace(
+                                                            /<b>/g,
+                                                            "<b style='color:red;'>"
+                                                        )
+                                                        .replace(/\n/g, "<br/>")
                                                 }}
                                             ></div>
                                         }
