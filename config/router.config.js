@@ -5,8 +5,12 @@ export default [
         routes: [
             {
                 name: "login",
+                path: "/user/login"
+            },
+            {
                 path: "/user/login",
-                component: "./user/login"
+                name: "login",
+                component: "./authority/user/Login"
             }
         ]
     },

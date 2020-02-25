@@ -17,7 +17,7 @@ const schema = {
     }
 }
 
-const service = createApi("postgrest/project", schema)
+const service = createApi("project", schema)
 
 export default {
     schema,

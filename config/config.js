@@ -74,9 +74,7 @@ if (isAntDesignProPreview) {
 
 // 根据环境变量设置信息
 let extend = {}
-let proxyTarget =
-    process.env.ProxyTarget ||
-    "http://asus.uglyxu.cn:40003/dataknown/z_know_info"
+let proxyTarget = process.env.ProxyTarget || "http://localhost:5000"
 let basePath = process.env.BASE_PATH
 
 if (basePath) {
@@ -152,8 +150,14 @@ export default {
 
     proxy: {
         "/api": {
-            target: proxyTarget,
-            changeOrigin: true
+            target: "http://localhost:5001",
+            changeOrigin: true,
+            pathRewrite: { "^/api": "" }
+        },
+        "/oauth": {
+            target: "http://localhost:5000",
+            changeOrigin: true,
+            pathRewrite: { "^/api": "" }
         }
     }
 }

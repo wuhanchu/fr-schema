@@ -7,3 +7,6 @@
 [submodule "src/outter/fr-schema-antd-utils"]
 	path = src/outter/fr-schema-antd-utils
 	url = https://github.com/wuhanchu/fr-schema-antd-utils.git
+[submodule "src/pages/authority"]
+	path = src/pages/authority
+	url = https://wuhanchu@github.com/wuhanchu/fr-schema-authority.git
