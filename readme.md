@@ -31,7 +31,7 @@ export default {
 
 ### 列表操作
 
--   handleModalVisible: 信息框显示
+-   handleVisibleModal: 信息框显示
 
 ## schema 的属性
 

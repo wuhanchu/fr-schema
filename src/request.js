@@ -41,7 +41,7 @@ const checkStatus = async response => {
 
     try {
         const data = JSON.parse(text)
-        error.message = data.msg
+        error.message = data.message
         error.detail = data.detail || data.traceback
     } catch (e) {
         error.message =
@@ -235,19 +235,6 @@ export default function request(obj, options = {}) {
             } else if (type.indexOf("json") > -1) {
                 const result = await response.json()
 
-                if (result && result.errorMessage) {
-                    const error = new Error(result.errorMessage)
-                    error.name = response.status
-                    error.response = response
-                    throw error
-                }
-
-                if (!result.data && result.code && result.code != "100") {
-                    const error = new Error(result.msg)
-                    error.name = response.status
-                    error.response = response
-                    throw error
-                }
 
                 let total = response.headers.get("content-range")
                 if (total) {
@@ -274,11 +261,12 @@ export default function request(obj, options = {}) {
         })
         .catch(e => {
             const status = e.status
-            if ((status === 401 || status === 403) && window.g_app._store) {
+            if (status === 401 && window.g_app._store) {
                 if (!window.location.href.includes("login")) {
                     window.g_app._store.dispatch({
                         type: "login/logout"
                     })
+                    throw e
                 }
 
                 if (
