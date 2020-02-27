@@ -1,5 +1,4 @@
-import { queryNotices } from "@/services/user"
-import frSchema from "@/outter/fr-schema/src/index"
+import frSchema from "@/outter/fr-schema/src"
 import config from "@/config"
 
 const GlobalModel = {

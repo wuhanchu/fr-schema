@@ -3,6 +3,9 @@ import { Card, Divider, Empty, Input, List, Spin } from "antd"
 import schemas from "@/schemas"
 import { contentHeight } from "@/styles/global"
 import * as _ from "lodash"
+import utils from "@/outter/fr-schema-antd-utils/src/utils"
+
+const { url } = utils
 
 function SearchPage(props) {
     const [state, setState] = useState({
@@ -11,7 +14,15 @@ function SearchPage(props) {
     })
 
     const { data, loading } = state
-    const height = contentHeight - 200
+
+    // 判断是否外嵌模式
+    let project_id = url.getUrlParams("project_id")
+    let height = contentHeight
+    if (props.record && props.record.id) {
+        project_id = props.record && props.record.id
+        height = contentHeight - 200
+    }
+
     return (
         <Fragment>
             <Input.Search
@@ -31,7 +42,7 @@ function SearchPage(props) {
 
                     const response = await schemas.question.service.search({
                         search: value.replace(/\s+/g, "|"),
-                        project_id: props.record.id
+                        project_id
                     })
                     setState({
                         data: response.data.list,

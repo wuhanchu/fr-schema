@@ -177,12 +177,12 @@
         </div>
     </body>
     <script>
-      if (!window.name) {
-          var str = Math.random()
-              .toString(36)
-              .substr(2) //?????
-          window.location.href += "?S=" + str //?????????
-          window.name = "isreload"
-      }
-  </script>
+        if (!window.name && window.location.href.index("?") < 0) {
+            var str = Math.random()
+                .toString(36)
+                .substr(2) //?????
+            window.location.href += "?S=" + str //?????????
+            window.name = "isreload"
+        }
+    </script>
 </html>

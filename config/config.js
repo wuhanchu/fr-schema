@@ -79,6 +79,7 @@ let basePath = process.env.BASE_PATH
 
 if (basePath) {
     extend = {
+        ...extennd,
         base: basePath,
         publicPath: basePath,
         runtimePublicPath: true
@@ -150,14 +151,14 @@ export default {
 
     proxy: {
         "/api": {
-            target: "http://localhost:5001",
+            target: process.env.SERVER_URL,
             changeOrigin: true,
             pathRewrite: { "^/api": "" }
         },
-        "/oauth": {
-            target: "http://localhost:5000",
+        "/api/flask_user_auth": {
+            target: process.env.AUTH_URL,
             changeOrigin: true,
-            pathRewrite: { "^/api": "" }
+            pathRewrite: { "^/api/flask_user_auth": "" }
         }
     }
 }

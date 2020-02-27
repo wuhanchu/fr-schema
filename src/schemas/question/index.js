@@ -41,7 +41,7 @@ const schema = {
     }
 }
 
-const service = createApi("question", schema)
+const service = createApi("question", schema, ".eq")
 service.search = createApi("rpc/question_search", schema).getBasic
 
 export default {

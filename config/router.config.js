@@ -4,13 +4,16 @@ export default [
         component: "../layouts/UserLayout",
         routes: [
             {
-                name: "login",
-                path: "/user/login"
+                path: "/user",
+                redirect: "/user/login"
             },
             {
                 path: "/user/login",
                 name: "login",
                 component: "./authority/user/Login"
+            },
+            {
+                component: "404"
             }
         ]
     },
@@ -25,10 +28,21 @@ export default [
             }
         ]
     },
+
+    {
+        path: "/outter",
+        component: "../layouts/BlankLayout",
+        routes: [
+            {
+                path: "/outter/question/search",
+                name: "search",
+                component: "./question/components/SearchPage"
+            }
+        ]
+    },
     {
         path: "/",
         component: "../layouts/BasicLayout",
-        authority: ["admin", "user"],
         routes: [
             {
                 path: "/",
@@ -39,6 +53,28 @@ export default [
                 name: "project",
                 icon: "project",
                 component: "./project/List"
+            },
+            {
+                name: "system",
+                path: "/system",
+                icon: "project",
+                routes: [
+                    {
+                        path: "/system/user",
+                        name: "user",
+                        component: "./authority/user/List"
+                    },
+                    {
+                        path: "/system/role",
+                        name: "role",
+                        component: "./authority/role/List"
+                    },
+                    {
+                        path: "/system/license",
+                        name: "license",
+                        component: "./authority/permission/License"
+                    }
+                ]
             },
 
             {
