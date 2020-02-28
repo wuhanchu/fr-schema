@@ -17,7 +17,7 @@ const schema = {
     }
 }
 
-const service = createApi("project", schema, ".eq")
+const service = createApi("project", schema, null, "eq.")
 
 export default {
     schema,
