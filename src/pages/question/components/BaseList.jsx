@@ -5,13 +5,14 @@ import ImportModal from "@/pages/question/components/ImportModal"
 import React from "react"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import * as _ from "lodash"
+import clone from "clone"
 
 @Form.create()
 class BaseList extends DataList {
     constructor(props) {
         super(props, {
             operateWidth: 100,
-            schema: schemas.question.schema,
+            schema: clone(schemas.question.schema),
             service: schemas.question.service,
             allowExport: true,
             showSelect: true,
@@ -126,7 +127,7 @@ class BaseList extends DataList {
         return (
             <ImportModal
                 importTemplateUrl={this.meta.importTemplateUrl}
-                schema={this.schema}
+                schema={schemas.question.schema}
                 errorKey={"question_standard"}
                 sliceNum={4}
                 onCancel={() => this.setState({ visibleImport: false })}
