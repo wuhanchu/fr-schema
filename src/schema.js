@@ -286,6 +286,8 @@ export async function convertFormImport(
                 // 获取值
                 lastFiledDefine = filedDefine
                 let value = item[key]
+
+               
                 if (filedDefine.dict) {
                     value = reverseDictValue(value, filedDefine.dict)
                 }
