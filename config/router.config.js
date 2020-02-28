@@ -42,43 +42,49 @@ export default [
     },
     {
         path: "/",
-        component: "../layouts/BasicLayout",
+        component: "../layouts/SecurityLayout",
         routes: [
             {
                 path: "/",
-                redirect: "/project"
-            },
-            {
-                path: "/project",
-                name: "project",
-                icon: "project",
-                component: "./project/List"
-            },
-            {
-                name: "system",
-                path: "/system",
-                icon: "project",
+                component: "../layouts/BasicLayout",
                 routes: [
                     {
-                        path: "/system/user",
-                        name: "user",
-                        component: "./authority/user/List"
+                        path: "/",
+                        redirect: "/project"
                     },
                     {
-                        path: "/system/role",
-                        name: "role",
-                        component: "./authority/role/List"
+                        path: "/project",
+                        name: "project",
+                        icon: "project",
+                        component: "./project/List"
                     },
                     {
-                        path: "/system/license",
-                        name: "license",
-                        component: "./authority/permission/License"
+                        name: "system",
+                        path: "/system",
+                        icon: "project",
+                        routes: [
+                            {
+                                path: "/system/user",
+                                name: "user",
+                                component: "./authority/user/List"
+                            },
+                            {
+                                path: "/system/role",
+                                name: "role",
+                                component: "./authority/role/List"
+                            },
+                            {
+                                path: "/system/license",
+                                name: "license",
+                                component: "./authority/permission/License"
+                            }
+                        ]
+                    },
+
+                    {
+                        component: "./404"
                     }
                 ]
-            },
-
-            {
-                component: "./404"
             }
         ]
     },

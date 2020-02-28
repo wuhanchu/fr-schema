@@ -75,11 +75,11 @@ if (isAntDesignProPreview) {
 // 根据环境变量设置信息
 let extend = {}
 let proxyTarget = process.env.ProxyTarget || "http://localhost:5000"
-let basePath = process.env.BASE_PATH
+let basePath = process.env.BASE_PATH || "/"
 
 if (basePath) {
     extend = {
-        ...extennd,
+        ...extend,
         base: basePath,
         publicPath: basePath,
         runtimePublicPath: true
