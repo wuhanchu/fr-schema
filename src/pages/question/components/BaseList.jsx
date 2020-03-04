@@ -1,7 +1,7 @@
 import { Form } from "antd"
 import schemas from "@/schemas"
 import DataList from "@/outter/fr-schema-antd-utils/src/components/Page/DataList"
-import ImportModal from "@/pages/question/components/ImportModal"
+import ImportModal from "@/outter/fr-schema-antd-utils/src/components/modal/ImportModal"
 import React from "react"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import * as _ from "lodash"

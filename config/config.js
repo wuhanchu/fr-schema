@@ -1,9 +1,8 @@
-import pageRoutes from "./router.config"
 import defaultSettings from "./defaultSettings" // https://umijs.org/config/
 
 import slash from "slash2"
 import webpackPlugin from "./plugin.config"
-
+import routes from "./router.config"
 const { pwa, primaryColor } = defaultSettings // preview.pro.ant.design only do not use in your production ;
 // preview.pro.ant.design 专用环境变量，请不要在你的项目中使用它。
 
@@ -74,7 +73,6 @@ if (isAntDesignProPreview) {
 
 // 根据环境变量设置信息
 let extend = {}
-let proxyTarget = process.env.ProxyTarget || "http://localhost:5000"
 let basePath = process.env.BASE_PATH || "/"
 
 if (basePath) {
@@ -89,8 +87,6 @@ if (basePath) {
 export default {
     plugins,
     block: {
-        // 国内用户可以使用码云
-        // defaultGitUrl: 'https://gitee.com/ant-design/pro-blocks',
         defaultGitUrl: "https://github.com/ant-design/pro-blocks"
     },
     hash: true,
@@ -98,15 +94,12 @@ export default {
         ie: 11
     },
     devtool: isAntDesignProPreview ? "source-map" : false,
-    // 路由配置
-    routes: pageRoutes,
-    // Theme for antd
-    // https://ant.design/docs/react/customize-theme-cn
+    routes,
     theme: {
         "primary-color": primaryColor
     },
     define: {
-        BASE_PATH: basePath || "",
+        BASE_PATH: basePath,
         ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION:
             ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION || "" // preview.pro.ant.design only do not use in your production ; preview.pro.ant.design 专用环境变量，请不要在你的项目中使用它。
     },
@@ -139,7 +132,6 @@ export default {
                     "-"
                 )
             }
-
             return localName
         }
     },
@@ -147,8 +139,6 @@ export default {
         basePath: "/"
     },
     chainWebpack: webpackPlugin,
-    ...extend,
-
     proxy: {
         "/api": {
             target: process.env.SERVER_URL,
@@ -160,5 +150,6 @@ export default {
             changeOrigin: true,
             pathRewrite: { "^/api/flask_user_auth": "" }
         }
-    }
+    },
+    ...extend
 }
