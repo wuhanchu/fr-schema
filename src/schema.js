@@ -287,7 +287,6 @@ export async function convertFormImport(
                 lastFiledDefine = filedDefine
                 let value = item[key]
 
-               
                 if (filedDefine.dict) {
                     value = reverseDictValue(value, filedDefine.dict)
                 }
@@ -314,9 +313,7 @@ export async function convertFormImport(
 
                         let errorStr = ""
                         errors.forEach(error => {
-                            errorStr += `字段[${
-                                schema[error.field].title
-                            }]错误[${error.message}];`
+                            errorStr += `字段[${schema[error.field].title}]错误[${error.message}];`
                         })
 
                         throwMessage = `数据[${result[errorKey]}]出现问题: ${errorStr}。`

@@ -50,7 +50,7 @@ schema 代表是一个数据对象的定义，一般来说会和数据库的设�
     -   Slider: "范围选择",
     -   Input: "普通输入框"
 -   required 是否必填
--   tip    字段说明 右方浮框
+-   tip 字段说明 右方浮框
 -   extra 字段说明 下方文字
 -   submitFormat 提交格式（当字段是日期格式时可用）
 -   groupName 分组名称，如果字段太多，可进行分组，界面上会进行分区显示。
@@ -68,6 +68,7 @@ schema 代表是一个数据对象的定义，一般来说会和数据库的设�
 -   decoratorProps form.getFieldDecorator 传入的参数数据（主要是校验规则等）
 -   render 列表的渲染方法（可选）
 -   renderInput(item, data, action): 输入框的渲染方法（可选）
+
     -   item： schema file 对象
     -   data：数据
     -   action: 当前操作 action

@@ -1,6 +1,7 @@
 import { sysDict } from "./index"
 import { schemaFieldType } from "./schema"
 import clone from "clone"
+import * as _ from "lodash"
 
 export default {
     yesOrNo: {
@@ -183,10 +184,11 @@ export function listToDict(
     showCondition
 ) {
     let result = {}
-    if (!list) {
+    if (_.isEmpty(list)) {
         console.warn("listToDict list not data")
         return result
     }
+
     list.forEach(item => {
         //check the dict Whether it matches
         if (condition) {

@@ -2,7 +2,6 @@ import queryString from "query-string"
 import { config, request, user } from "./index"
 import { convertFromRemote, convertToRemote } from "./schema"
 import actions from "./actions"
-import { object } from "prop-types"
 import * as lodash from "lodash"
 
 export function createBasicApi(module, subModule) {
@@ -12,8 +11,8 @@ export function createBasicApi(module, subModule) {
                 "/" +
                 config.apiVersion +
                 module +
-                (!lodash.isNil(args.id) ? "/" + args.id : "") +
-                (subModule ? "/" + subModule : "")
+                (!lodash.isNil(args.id)? "/" + args.id : "") +
+                (subModule? "/" + subModule : "")
 
             if (!lodash.isEmpty(args)) {
                 url +=
@@ -41,8 +40,8 @@ export function createBasicApi(module, subModule) {
                     config.apiVersion +
                     module +
                     "/" +
-                    (!lodash.isNil(args.id) ? args.id : "") +
-                    (subModule ? "/" + subModule : "")
+                    (!lodash.isNil(args.id)? args.id : "") +
+                    (subModule? "/" + subModule : "")
                 ).replace("//", "/"),
                 data: args
             })
@@ -55,8 +54,8 @@ export function createBasicApi(module, subModule) {
                     config.apiVersion +
                     module +
                     "/" +
-                    (!lodash.isNil(args.id) ? args.id : "") +
-                    (subModule ? "/" + subModule : "")
+                    (!lodash.isNil(args.id)? args.id : "") +
+                    (subModule? "/" + subModule : "")
                 ).replace("//", "/"),
                 data: args
             })
@@ -70,7 +69,7 @@ export function createBasicApi(module, subModule) {
                     "/" +
                     config.apiVersion +
                     module +
-                    (subModule ? "/" + subModule : "")
+                    (subModule? "/" + subModule : "")
                 ).replace("//", "/"),
                 data: formData
             })
@@ -98,6 +97,29 @@ export function objToFrom(data) {
 }
 
 /**
+ * add prefix to params fit postgresql
+ * @param {} params
+ * @param {*} prefix
+ */
+function addParamPrefix(params, prefix) {
+    const result = {}
+    if (!prefix) {
+        return params
+    }
+
+    Object.keys(params).forEach(key => {
+        result[key] =
+            key != "select" &&
+            params[key] &&
+            params[key].toString().indexOf(".") < 1
+                ? prefix + params[key]
+                : params[key]
+    })
+
+    return result
+}
+
+/**
  *
  * @param module
  * @param schema
@@ -122,6 +144,7 @@ export function createApi(
                 }
                 otherParams[key] = item
             })
+
             const limit = pageSize || 10
             const response = await request(
                 {
@@ -133,9 +156,9 @@ export function createApi(
                         "?" +
                         queryString.stringify({
                             order: "id",
-                            ...otherParams,
-                            offset: limit * ((currentPage || 1) - 1),
-                            limit
+                            offset: limit*((currentPage || 1) - 1),
+                            limit,
+                            ...addParamPrefix(otherParams, prefix)
                         })
                     ).replace("//", "/")
                 },
@@ -151,7 +174,7 @@ export function createApi(
                 return
             }
 
-            const { total, list } = response.data || {}
+            const { total, list } = response || {}
             return {
                 list: inSchema
                     ? convertFromRemote(list || [], inSchema || schema)
@@ -182,6 +205,12 @@ export function createApi(
         },
         getDetail: async (args = {}, inSchema = schema) => {
             const { id } = args
+            console.debug("getDetail config", config)
+            console.debug("getDetail module", module)
+            if (!id) {
+                return null
+            }
+
             const response = await request(
                 {
                     method: "GET",
@@ -202,7 +231,7 @@ export function createApi(
                 }
             )
 
-            const result = convertFromRemote(response.data, inSchema)
+            const result = convertFromRemote(response, inSchema)
             return result
         },
         post: (args, inSchema = schema) =>
@@ -211,20 +240,7 @@ export function createApi(
                 url: ("/" + config.apiVersion + module).replace("//", "/"),
                 data: convertToRemote(args, inSchema || schema, actions.add)
             }),
-        upInsert: (args, inSchema = schema) =>
-            request(
-                {
-                    method: "POST",
-                    url: ("/" + config.apiVersion + module).replace("//", "/"),
-                    data: convertToRemote(args, inSchema || schema, actions.add)
-                },
-                {
-                    headers: {
-                        Prefer: "resolution=merge-duplicates"
-                    },
-                    ...options
-                }
-            ),
+
         patch: (args, inSchema = schema) => {
             const { id, ...others } = args
             return request({
@@ -233,7 +249,7 @@ export function createApi(
                     "/" +
                     config.apiVersion +
                     module +
-                    (!lodash.isNil(id) ? "?id=" + prefix + id : "")
+                    (!lodash.isNil(id)? "?id=" + prefix + id : "")
                 ).replace("//", "/"),
                 data: convertToRemote(others, inSchema || schema)
             })
@@ -244,7 +260,7 @@ export function createApi(
                 "/" +
                 config.apiVersion +
                 module +
-                (!lodash.isNil(id) ? "?id=" + prefix + id : "")
+                (!lodash.isNil(id)? "?id=" + prefix + id : "")
             ).replace("//", "/")
             return request({
                 method: "PUT",
@@ -259,9 +275,24 @@ export function createApi(
                     "/" +
                     config.apiVersion +
                     module +
-                    (!lodash.isNil(args.id) ? "?id=" + prefix + args.id : "")
+                    (!lodash.isNil(args.id)? "?id=" + prefix + args.id : "")
                 ).replace("//", "/")
             }),
+
+        upInsert: (args, inSchema = schema) =>
+            request(
+                {
+                    method: "POST",
+                    url: ("/" + config.apiVersion + module).replace("//", "/"),
+                    data: convertToRemote(args, inSchema || schema, actions.add)
+                },
+                {
+                    headers: {
+                        Prefer: "resolution=merge-duplicates"
+                    },
+                    ...options
+                }
+            ),
         deleteMulti: args =>
             request({
                 method: "DELETE",
@@ -272,6 +303,6 @@ export function createApi(
                     "?" +
                     queryString.stringify(args)
                 ).replace("//", "/")
-            })
+            }),
     }
 }

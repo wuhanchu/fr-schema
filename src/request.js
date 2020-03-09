@@ -1,9 +1,8 @@
 import fetch from "dva/fetch"
-import { notification, Collapse } from "antd"
+import { Collapse } from "antd"
 import hash from "hash.js"
 import oauth, { OAuthToken } from "./oauth"
-import clone from "clone"
-import * as lodash from "lodash"
+import * as _ from "lodash"
 
 const { Panel } = Collapse
 
@@ -92,7 +91,7 @@ export function getXhrOptions() {
 }
 
 function isJSON(str) {
-    return !lodash.isError(lodash.attempt(JSON.parse, str))
+    return !_.isError(_.attempt(JSON.parse, str))
 }
 
 /**
@@ -235,24 +234,28 @@ export default function request(obj, options = {}) {
             } else if (type.indexOf("json") > -1) {
                 const result = await response.json()
 
+                if (Array.isArray(result)) {
+                    let total = null
 
-                let total = response.headers.get("content-range")
-                if (total) {
-                    total = total.split("/")[1]
-                }
-
-                if (result instanceof Array) {
-                    return {
-                        data: { list: result, total: total && parseInt(total) }
+                    let contentRange = response.headers.get("content-range")
+                    if (
+                        !_.isEmpty(contentRange) &&
+                        contentRange instanceof String
+                    ) {
+                        total = response.headers
+                            .get("content-range")
+                            .split("/")[1]
                     }
+
+                    return { list: result, total: total && parseInt(total) }
                 } else {
-                    return { data: result }
+                    return result
                 }
             } else {
                 let txt = await response.text()
                 // let temp = JSON.parse(txt)
-                let temp = lodash.attempt(JSON.parse, txt)
-                if (lodash.isError(temp)) {
+                let temp = _.attempt(JSON.parse, txt)
+                if (_.isError(temp)) {
                     return txt
                 } else {
                     return temp
