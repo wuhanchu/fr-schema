@@ -88,7 +88,8 @@
         "umi-request": "^1.2.7",
         "wavesurfer.js": "^3.0.0",
         "xlsx": "^0.14.4",
-        "zip-js": "^0.0.2"
+        "zip-js": "^0.0.2",
+        "smart-arraytotree": "^1.1.0"
     },
     "devDependencies": {
         "@ant-design/colors": "^3.1.0",

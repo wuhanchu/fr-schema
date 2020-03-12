@@ -45,7 +45,7 @@ function SearchPage(props) {
                         project_id
                     })
                     setState({
-                        data: response.data.list,
+                        data: response.list,
                         loading: false
                     })
                 }}

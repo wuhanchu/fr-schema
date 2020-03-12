@@ -9,10 +9,6 @@ class SecurityLayout extends React.Component {
         isReady: false
     }
 
-    constructor(props) {
-        super(props)
-    }
-
     componentDidMount() {
         const { dispatch } = this.props
 
@@ -51,5 +47,5 @@ class SecurityLayout extends React.Component {
 
 export default connect(({ user, loading }) => ({
     currentUser: user.currentUser,
-    loading: loading.models.user || !user.init
+    loading: loading.models.user
 }))(SecurityLayout)
