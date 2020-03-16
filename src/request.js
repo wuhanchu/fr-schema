@@ -114,7 +114,7 @@ export default function request(obj, options = {}) {
      * Produce fingerprints based on url and parameters
      * Maybe url has the same parameters
      */
-    const fingerprint = url + (options.body ? JSON.stringify(options.body) : "")
+    const fingerprint = url + (options.body? JSON.stringify(options.body) : "")
     const hashcode = hash
         .sha256()
         .update(fingerprint)
@@ -163,7 +163,7 @@ export default function request(obj, options = {}) {
         const cached = sessionStorage.getItem(hashcode)
         const whenCached = sessionStorage.getItem(`${hashcode}:timestamp`)
         if (cached !== null && whenCached !== null) {
-            const age = (Date.now() - whenCached) / 1000
+            const age = (Date.now() - whenCached)/1000
             if (age < expirys) {
                 const response = new Response(new Blob([cached]))
                 return response.json()
@@ -181,7 +181,7 @@ export default function request(obj, options = {}) {
         }
 
         token = JSON.parse(token)
-        if (token.expires > Date.now()) {
+        if (!token.expires || token.expires > Date.now()) {
             resolve(token)
         } else if (!options.skipOauth) {
             return new OAuthToken(oauth(), token)
