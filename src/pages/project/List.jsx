@@ -1,4 +1,14 @@
-import { Divider, Form, Popconfirm, Modal } from "antd"
+import {
+    Divider,
+    Form,
+    Popconfirm,
+    Modal,
+    Avatar,
+    Row,
+    Col,
+    Input,
+    Button
+} from "antd"
 import { connect } from "dva"
 import ListPage from "@/outter/fr-schema-antd-utils/src/components/Page/ListPage"
 import schemas from "@/schemas"
@@ -6,6 +16,7 @@ import React, { Fragment } from "react"
 import QuestionBaseList from "@/pages/question/components/BaseList"
 import SearchPageModal from "@/pages/question/components/SearchPageModal"
 
+import Dialogue from "./Dialogue"
 @connect(({ global }) => ({
     dict: global.dict
 }))
@@ -13,10 +24,15 @@ import SearchPageModal from "@/pages/question/components/SearchPageModal"
 class List extends ListPage {
     constructor(props) {
         super(props, {
-            operateWidth: 200,
+            operateWidth: 250,
             schema: schemas.project.schema,
             service: schemas.project.service
         })
+    }
+
+    handleHideDialogue = () => {
+        this.setState({ visibleDialogue: false })
+        console.log("cuole")
     }
 
     renderOperateColumnExtend(record) {
@@ -42,14 +58,28 @@ class List extends ListPage {
                 >
                     搜索
                 </a>
+                <Divider type="vertical" />
+                <a
+                    onClick={() => {
+                        this.setState({ record, visibleDialogue: true })
+                    }}
+                >
+                    对话
+                </a>
             </Fragment>
         )
     }
 
     renderExtend() {
+        const {
+            visibleQuestion,
+            record,
+            visibleSearch,
+            visibleDialogue
+        } = this.state
         return (
             <Fragment>
-                {this.state.visibleQuestion && (
+                {visibleQuestion && (
                     <Modal
                         width={"90%"}
                         visible={true}
@@ -62,21 +92,28 @@ class List extends ListPage {
                         <QuestionBaseList
                             meta={{
                                 queryArgs: {
-                                    project_id: "eq." + this.state.record.id
+                                    project_id: "eq." + record.id
                                 },
-                                addArgs: { project_id: this.state.record.id }
+                                addArgs: { project_id: record.id }
                             }}
                         />
                     </Modal>
                 )}
-                {this.state.visibleSearch && (
+                {visibleSearch && (
                     <SearchPageModal
                         onCancel={() => {
                             this.setState({ visibleSearch: false })
                         }}
-                        title={this.state.record.name + "知识搜索"}
-                        record={this.state.record}
+                        title={record.name + "知识搜索"}
+                        record={record}
                     />
+                )}
+                {visibleDialogue && (
+                    <Dialogue
+                        record={record}
+                        visibleDialogue={visibleDialogue}
+                        handleHideDialogue={this.handleHideDialogue}
+                    ></Dialogue>
                 )}
             </Fragment>
         )
