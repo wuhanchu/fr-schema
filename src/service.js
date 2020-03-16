@@ -145,7 +145,7 @@ export function createApi(
                 otherParams[key] = item
             })
 
-            const limit = pageSize || limit || 10
+            limit = pageSize || limit || 10
             const response = await request(
                 {
                     method: "GET",
