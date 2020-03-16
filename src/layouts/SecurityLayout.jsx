@@ -1,12 +1,28 @@
 import React from "react"
 import { connect } from "dva"
 import { Redirect } from "umi"
-import { stringify } from "querystring"
+import queryString, { stringify } from "querystring"
 import PageLoading from "@/components/PageLoading"
 
 class SecurityLayout extends React.Component {
     state = {
         isReady: false
+    }
+
+    constructor(props) {
+        super(props)
+        // get the query access_token
+        const param = queryString.parse(location.search.replace("?", ""))
+        const access_token = param.access_token
+        if (access_token) {
+            localStorage.setItem(
+                "token",
+                JSON.stringify({
+                    access_token,
+                    token_type: "Bearer"
+                })
+            )
+        }
     }
 
     componentDidMount() {
