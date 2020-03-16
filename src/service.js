@@ -11,8 +11,8 @@ export function createBasicApi(module, subModule) {
                 "/" +
                 config.apiVersion +
                 module +
-                (!lodash.isNil(args.id)? "/" + args.id : "") +
-                (subModule? "/" + subModule : "")
+                (!lodash.isNil(args.id) ? "/" + args.id : "") +
+                (subModule ? "/" + subModule : "")
 
             if (!lodash.isEmpty(args)) {
                 url +=
@@ -40,8 +40,8 @@ export function createBasicApi(module, subModule) {
                     config.apiVersion +
                     module +
                     "/" +
-                    (!lodash.isNil(args.id)? args.id : "") +
-                    (subModule? "/" + subModule : "")
+                    (!lodash.isNil(args.id) ? args.id : "") +
+                    (subModule ? "/" + subModule : "")
                 ).replace("//", "/"),
                 data: args
             })
@@ -54,8 +54,8 @@ export function createBasicApi(module, subModule) {
                     config.apiVersion +
                     module +
                     "/" +
-                    (!lodash.isNil(args.id)? args.id : "") +
-                    (subModule? "/" + subModule : "")
+                    (!lodash.isNil(args.id) ? args.id : "") +
+                    (subModule ? "/" + subModule : "")
                 ).replace("//", "/"),
                 data: args
             })
@@ -69,7 +69,7 @@ export function createBasicApi(module, subModule) {
                     "/" +
                     config.apiVersion +
                     module +
-                    (subModule? "/" + subModule : "")
+                    (subModule ? "/" + subModule : "")
                 ).replace("//", "/"),
                 data: formData
             })
@@ -109,7 +109,7 @@ function addParamPrefix(params, prefix) {
 
     Object.keys(params).forEach(key => {
         result[key] =
-            key != "select" &&
+            !["select", "limit", "offset"].includes(key) &&
             params[key] &&
             params[key].toString().indexOf(".") < 1
                 ? prefix + params[key]
@@ -135,7 +135,7 @@ export function createApi(
 ) {
     return {
         get: async (args = {}, inSchema = schema) => {
-            let { currentPage, pageSize, ...otherParams } = args
+            let { currentPage, pageSize, limit, ...otherParams } = args
             // convert moment
             Object.keys(otherParams).forEach(key => {
                 const item = args[key]
@@ -145,7 +145,7 @@ export function createApi(
                 otherParams[key] = item
             })
 
-            const limit = pageSize || 10
+            const limit = pageSize || limit || 10
             const response = await request(
                 {
                     method: "GET",
@@ -155,7 +155,7 @@ export function createApi(
                         module +
                         "?" +
                         queryString.stringify({
-                            offset: limit*((currentPage || 1) - 1),
+                            offset: limit * ((currentPage || 1) - 1),
                             limit,
                             ...addParamPrefix(otherParams, prefix)
                         })
@@ -248,7 +248,7 @@ export function createApi(
                     "/" +
                     config.apiVersion +
                     module +
-                    (!lodash.isNil(id)? "?id=" + prefix + id : "")
+                    (!lodash.isNil(id) ? "?id=" + prefix + id : "")
                 ).replace("//", "/"),
                 data: convertToRemote(others, inSchema || schema)
             })
@@ -259,7 +259,7 @@ export function createApi(
                 "/" +
                 config.apiVersion +
                 module +
-                (!lodash.isNil(id)? "?id=" + prefix + id : "")
+                (!lodash.isNil(id) ? "?id=" + prefix + id : "")
             ).replace("//", "/")
             return request({
                 method: "PUT",
@@ -274,7 +274,7 @@ export function createApi(
                     "/" +
                     config.apiVersion +
                     module +
-                    (!lodash.isNil(args.id)? "?id=" + prefix + args.id : "")
+                    (!lodash.isNil(args.id) ? "?id=" + prefix + args.id : "")
                 ).replace("//", "/")
             }),
 
