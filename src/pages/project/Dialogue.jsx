@@ -47,56 +47,50 @@ class Dialogue extends React.Component {
                 <div
                     dangerouslySetInnerHTML={{
                         __html:
-                            response.list[0] && response.list[0].answer_mark
+                            response.list[0] &&
+                            response.list[0].answer_mark &&
+                            response.list[0].compatibility > 0.7
                                 ? response.list[0].answer_mark
                                 : "暂时未找到您要的信息"
                     }}
                 ></div>
             ),
-            actions: [
-                <div>
-                    <div>你的问题：</div>
+            actions:
+                response.list[0] &&
+                response.list[0].answer_mark &&
+                response.list[0].compatibility < 0.7
+                    ? [
+                          <div>
+                              <div>猜你想问：</div>
 
-                    {list.length ? (
-                        list.map((data, item) => {
-                            if (item != 1) {
-                                return (
-                                    <div key={"comment-list-reply-to-" + item}>
-                                        <span>{item + 1 + "."}</span>
-                                        <a
-                                            onClick={() => {
-                                                this.handleSend(
-                                                    data.question_standard
-                                                )
-                                            }}
-                                        >
-                                            {data.question_standard}
-                                        </a>
-                                    </div>
-                                )
-                            } else {
-                                return (
-                                    <div key={"comment-list-reply-to-" + item}>
-                                        <div>猜你想问：</div>
-                                        <span>{item + 1 + "."}</span>
-                                        <a
-                                            onClick={() => {
-                                                this.handleSend(
-                                                    data.question_standard
-                                                )
-                                            }}
-                                        >
-                                            {data.question_standard}
-                                        </a>
-                                    </div>
-                                )
-                            }
-                        })
-                    ) : (
-                        <a>没猜到哦！请输入详细信息。</a>
-                    )}
-                </div>
-            ],
+                              {list.length ? (
+                                  list.map((data, item) => {
+                                      return (
+                                          <div
+                                              key={
+                                                  "comment-list-reply-to-" +
+                                                  item
+                                              }
+                                          >
+                                              <span>{item + 1 + "."}</span>
+                                              <a
+                                                  onClick={() => {
+                                                      this.handleSend(
+                                                          data.question_standard
+                                                      )
+                                                  }}
+                                              >
+                                                  {data.question_standard}
+                                              </a>
+                                          </div>
+                                      )
+                                  })
+                              ) : (
+                                  <a>没猜到哦！请输入详细信息。</a>
+                              )}
+                          </div>
+                      ]
+                    : null,
             id: this.state.data.length + 1,
             role: "my"
         })
