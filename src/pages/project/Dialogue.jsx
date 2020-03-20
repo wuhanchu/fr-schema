@@ -49,7 +49,7 @@ class Dialogue extends React.Component {
                         __html:
                             response.list[0] &&
                             response.list[0].answer_mark &&
-                            response.list[0].compatibility > 0.7
+                            response.list[0].compatibility > 0.9
                                 ? response.list[0].answer_mark
                                 : "暂时未找到您要的信息"
                     }}
@@ -58,32 +58,61 @@ class Dialogue extends React.Component {
             actions:
                 response.list[0] &&
                 response.list[0].answer_mark &&
-                response.list[0].compatibility < 0.7
+                (response.list[0].compatibility < 0.9 || sendValue.length < 10)
                     ? [
                           <div>
-                              <div>猜你想问：</div>
+                              {sendValue.length < 10 && (
+                                  <div>
+                                      <div>您的问题：</div>
 
-                              {list.length ? (
-                                  list.map((data, item) => {
-                                      return (
+                                      {list.length ? (
                                           <div
                                               key={
-                                                  "comment-list-reply-to-" +
-                                                  item
+                                                  "comment-list-reply-to-" + -1
                                               }
                                           >
-                                              <span>{item + 1 + "."}</span>
+                                              <span>{}</span>
                                               <a
                                                   onClick={() => {
                                                       this.handleSend(
-                                                          data.question_standard
+                                                          list[0]
+                                                              .question_standard
                                                       )
                                                   }}
                                               >
-                                                  {data.question_standard}
+                                                  {list[0].question_standard}
                                               </a>
                                           </div>
-                                      )
+                                      ) : (
+                                          <a>没猜到哦！请输入详细信息。</a>
+                                      )}
+                                  </div>
+                              )}
+
+                              <div>猜你想问：</div>
+
+                              {list.length > 1 ? (
+                                  list.map((data, item) => {
+                                      if (item != 0)
+                                          return (
+                                              <div
+                                                  key={
+                                                      "comment-list-reply-to-" +
+                                                      item
+                                                  }
+                                              >
+                                                  <span>{item + 1 + "."}</span>
+                                                  <a
+                                                      onClick={() => {
+                                                          this.handleSend(
+                                                              data.question_standard
+                                                          )
+                                                      }}
+                                                  >
+                                                      {data.question_standard}
+                                                  </a>
+                                              </div>
+                                          )
                                   })
                               ) : (
                                   <a>没猜到哦！请输入详细信息。</a>
@@ -95,7 +124,6 @@ class Dialogue extends React.Component {
             role: "my"
         })
         let card = document.getElementById("card")
-        console.log(card)
 
         setTimeout(() => {
             card.scrollTop = card.scrollHeight
@@ -140,8 +168,6 @@ class Dialogue extends React.Component {
                 }}
                 title={"对话"}
                 width={900}
-                // height={500}
-                // style={{height: "500px", overflowY: "scroll"}}
                 footer={this.renderFooter()}
             >
                 <Card
