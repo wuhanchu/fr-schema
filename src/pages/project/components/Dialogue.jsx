@@ -4,6 +4,7 @@ import {
     Form,
     Popconfirm,
     Modal,
+    Spin,
     Avatar,
     Row,
     Col,
@@ -19,7 +20,15 @@ import rebotSvg from "../../../assets/rebot.svg"
 class Dialogue extends React.Component {
     state = {
         sendValue: "",
-        data: []
+        isSpin: false,
+        data: [
+            {
+                actions: null,
+                content: "您有什么问题？",
+                id: 0,
+                role: "my"
+            }
+        ]
     }
 
     handleSend = async sendValue => {
@@ -31,7 +40,11 @@ class Dialogue extends React.Component {
             id: this.state.data.length + 1,
             role: "interlocutors"
         })
-        this.setState({ data: this.state.data, sendValue: "" })
+        let card = document.getElementById("card")
+        setTimeout(() => {
+            card.scrollTop = card.scrollHeight
+        }, 10)
+        this.setState({ data: this.state.data, sendValue: "", isSpin: true })
         const response = await schemas.question.service.search({
             search: sendValue.replace(/\s+/g, "|"),
             project_id: record.id
@@ -59,83 +72,104 @@ class Dialogue extends React.Component {
                 response.list[0] &&
                 response.list[0].answer_mark &&
                 (response.list[0].compatibility < 0.9 || sendValue.length < 10)
-                    ? [
-                          <div>
-                              {sendValue.length < 10 && (
-                                  <div>
-                                      <div>您的问题：</div>
+                    ? (sendValue.length > 10 ||
+                          response.list[0].compatibility < 0.9) &&
+                      list.length <= 1
+                        ? null
+                        : [
+                              <Fragment>
+                                  {sendValue.length < 10 &&
+                                      response.list[0].compatibility > 0.9 && (
+                                          <div>
+                                              <div>匹配问题：</div>
 
-                                      {list.length ? (
-                                          <div
-                                              key={
-                                                  "comment-list-reply-to-" + -1
-                                              }
-                                          >
-                                              <span>{}</span>
-                                              <a
-                                                  onClick={() => {
-                                                      this.handleSend(
-                                                          list[0]
-                                                              .question_standard
-                                                      )
-                                                  }}
-                                              >
-                                                  {list[0].question_standard}
-                                              </a>
-                                          </div>
-                                      ) : (
-                                          <a>没猜到哦！请输入详细信息。</a>
-                                      )}
-                                  </div>
-                              )}
-
-                              <div>猜你想问：</div>
-
-                              {list.length > 1 ? (
-                                  list.map((data, item) => {
-                                      if (item != 0)
-                                          return (
-                                              <div
-                                                  key={
-                                                      "comment-list-reply-to-" +
-                                                      item
-                                                  }
-                                              >
-                                                  <span>{item + 1 + "."}</span>
-                                                  <a
-                                                      onClick={() => {
-                                                          this.handleSend(
-                                                              data.question_standard
-                                                          )
-                                                      }}
+                                              {list.length ? (
+                                                  <div
+                                                      key={
+                                                          "comment-list-reply-to-" +
+                                                          -1
+                                                      }
                                                   >
-                                                      {data.question_standard}
+                                                      <span>{}</span>
+                                                      <a
+                                                          onClick={() => {
+                                                              this.handleSend(
+                                                                  list[0]
+                                                                      .question_standard
+                                                              )
+                                                          }}
+                                                      >
+                                                          {
+                                                              list[0]
+                                                                  .question_standard
+                                                          }
+                                                      </a>
+                                                  </div>
+                                              ) : (
+                                                  <a>
+                                                      没猜到哦！请输入详细信息。
                                                   </a>
-                                              </div>
-                                          )
-                                  })
-                              ) : (
-                                  <a>没猜到哦！请输入详细信息。</a>
-                              )}
-                          </div>
-                      ]
+                                              )}
+                                          </div>
+                                      )}
+
+                                  {list.length > 1 && (
+                                      <div>
+                                          <div>猜你想问：</div>
+
+                                          {list.length > 1 ? (
+                                              list.map((data, item) => {
+                                                  if (item != 0)
+                                                      return (
+                                                          <div
+                                                              key={
+                                                                  "comment-list-reply-to-" +
+                                                                  item
+                                                              }
+                                                          >
+                                                              <span>
+                                                                  {item + "."}
+                                                              </span>
+                                                              <a
+                                                                  onClick={() => {
+                                                                      this.handleSend(
+                                                                          data.question_standard
+                                                                      )
+                                                                  }}
+                                                              >
+                                                                  {
+                                                                      data.question_standard
+                                                                  }
+                                                              </a>
+                                                          </div>
+                                                      )
+                                              })
+                                          ) : (
+                                              <a>没猜到哦！请输入详细信息。</a>
+                                          )}
+                                      </div>
+                                  )}
+                              </Fragment>
+                          ]
                     : null,
             id: this.state.data.length + 1,
             role: "my"
         })
-        let card = document.getElementById("card")
 
         setTimeout(() => {
             card.scrollTop = card.scrollHeight
         }, 100)
         console.log(this.state.data)
-        this.setState({ data: this.state.data })
+        this.setState({ data: this.state.data, isSpin: false })
     }
 
     renderFooter() {
         const { sendValue } = this.state
         return (
-            <Row style={{ margin: "0px 0px", height: "32px" }}>
+            <Row
+                gutter="24"
+                style={{ margin: "0px 0px", height: "32px", width: "100%" }}
+            >
                 <Col lg={21}>
                     <Input
                         value={this.state.sendValue}
@@ -162,26 +196,28 @@ class Dialogue extends React.Component {
     render() {
         return (
             <Fragment>
-                <Card
-                    bordered={null}
-                    style={{
-                        margin: "-24px",
-                        height: "500px",
-                        overflow: "scroll",
-                        overflowX: "hidden"
-                    }}
-                    ref={"card"}
-                    id="card"
-                >
-                    <CharRecords
-                        status={0 && 1 ? "ongoing" : ""}
-                        goingTip={"暂无数据"}
-                        iconMy={<Avatar src={rebotSvg} />}
-                        iconInterlocutors={<Avatar src={mySvg} />}
-                        value={this.state.data}
-                    ></CharRecords>
-                </Card>
-                {this.renderFooter()}
+                <Spin tip="回答中。。。" spinning={this.state.isSpin}>
+                    <Card
+                        bordered={null}
+                        style={{
+                            margin: "-24px",
+                            height: "500px",
+                            overflow: "scroll",
+                            overflowX: "hidden"
+                        }}
+                        ref={"card"}
+                        id="card"
+                    >
+                        <CharRecords
+                            status={0 && 1 ? "ongoing" : ""}
+                            goingTip={"暂无数据"}
+                            iconMy={<Avatar src={rebotSvg} />}
+                            iconInterlocutors={<Avatar src={mySvg} />}
+                            value={this.state.data}
+                        ></CharRecords>
+                    </Card>
+                    {this.renderFooter()}
+                </Spin>
             </Fragment>
         )
     }
