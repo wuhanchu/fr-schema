@@ -15,8 +15,8 @@ import schemas from "@/schemas"
 import React, { Fragment } from "react"
 import QuestionBaseList from "@/pages/question/components/BaseList"
 import SearchPageModal from "@/pages/question/components/SearchPageModal"
+import DialogueModal from "@/pages/project/components/DialogueModal"
 
-import Dialogue from "./Dialogue"
 @connect(({ global }) => ({
     dict: global.dict
 }))
@@ -109,11 +109,11 @@ class List extends ListPage {
                     />
                 )}
                 {visibleDialogue && (
-                    <Dialogue
+                    <DialogueModal
                         record={record}
                         visibleDialogue={visibleDialogue}
                         handleHideDialogue={this.handleHideDialogue}
-                    ></Dialogue>
+                    ></DialogueModal>
                 )}
             </Fragment>
         )

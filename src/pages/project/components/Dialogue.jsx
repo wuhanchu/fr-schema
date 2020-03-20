@@ -1,4 +1,4 @@
-import React from "react"
+import React, { Fragment } from "react"
 import {
     Divider,
     Form,
@@ -13,8 +13,8 @@ import {
 } from "antd"
 import schemas from "@/schemas"
 import CharRecords from "@/components/Extra/Chat/ChatRecords"
-import mySvg from "../../assets/userhead.svg"
-import rebotSvg from "../../assets/rebot.svg"
+import mySvg from "../../../assets/userhead.svg"
+import rebotSvg from "../../../assets/rebot.svg"
 
 class Dialogue extends React.Component {
     state = {
@@ -135,7 +135,7 @@ class Dialogue extends React.Component {
     renderFooter() {
         const { sendValue } = this.state
         return (
-            <Row style={{ margin: "10px 10px" }}>
+            <Row style={{ margin: "0px 0px", height: "32px" }}>
                 <Col lg={21}>
                     <Input
                         value={this.state.sendValue}
@@ -161,15 +161,7 @@ class Dialogue extends React.Component {
     }
     render() {
         return (
-            <Modal
-                visible={this.props.visibleDialogue}
-                onCancel={() => {
-                    this.props.handleHideDialogue()
-                }}
-                title={"对话"}
-                width={900}
-                footer={this.renderFooter()}
-            >
+            <Fragment>
                 <Card
                     bordered={null}
                     style={{
@@ -189,7 +181,8 @@ class Dialogue extends React.Component {
                         value={this.state.data}
                     ></CharRecords>
                 </Card>
-            </Modal>
+                {this.renderFooter()}
+            </Fragment>
         )
     }
 }
