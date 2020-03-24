@@ -17,6 +17,7 @@ import CharRecords from "@/components/Extra/Chat/ChatRecords"
 import mySvg from "../../../assets/userhead.svg"
 import rebotSvg from "../../../assets/rebot.svg"
 import utils from "@/outter/fr-schema-antd-utils/src/utils"
+import style from "./Dialogue.less"
 
 const { url } = utils
 
@@ -170,58 +171,71 @@ class Dialogue extends React.Component {
     renderFooter() {
         const { sendValue } = this.state
         return (
-            <Row
-                gutter="24"
-                style={{ margin: "0px 0px", height: "32px", width: "100%" }}
-            >
-                <Col lg={21}>
+            <div className={style.footWrapper}>
+                <div style={{ width: "100%", display: "flex", height: "42px" }}>
                     <Input
                         value={this.state.sendValue}
                         onChange={e => {
                             this.setState({ sendValue: e.target.value })
                         }}
+                        style={{ flex: "1 1 auto" }}
                         placeholder={"请输入消息".toString()}
                         onPressEnter={this.handleSend.bind(this, sendValue)}
                         disabled={this.state.action}
                     ></Input>
-                </Col>
-                <Col lg={3}>
-                    <Button
-                        disabled={this.state.action}
-                        type="primary"
-                        onClick={this.handleSend.bind(this, sendValue)}
-                    >
-                        发送
-                    </Button>
-                </Col>
-            </Row>
+                    <div style={{ flex: "0 0 74px", marginLeft: "20px" }}>
+                        <Button
+                            disabled={this.state.action}
+                            type="primary"
+                            onClick={this.handleSend.bind(this, sendValue)}
+                        >
+                            发送
+                        </Button>
+                    </div>
+                </div>
+            </div>
         )
     }
     render() {
         return (
             <Fragment>
-                <Spin tip="回答中。。。" spinning={this.state.isSpin}>
-                    <Card
-                        bordered={null}
-                        style={{
-                            margin: "-24px",
-                            height: "500px",
-                            overflow: "scroll",
-                            overflowX: "hidden"
-                        }}
-                        ref={"card"}
-                        id="card"
+                <div
+                    style={{
+                        width: "100%",
+                        height: this.props.height ? this.props.height : "100%"
+                    }}
+                >
+                    <Spin
+                        tip="回答中。。。"
+                        spinning={this.state.isSpin}
+                        wrapperClassName={style.Spin}
                     >
-                        <CharRecords
-                            status={0 && 1 ? "ongoing" : ""}
-                            goingTip={"暂无数据"}
-                            iconMy={<Avatar src={rebotSvg} />}
-                            iconInterlocutors={<Avatar src={mySvg} />}
-                            value={this.state.data}
-                        ></CharRecords>
-                    </Card>
-                    {this.renderFooter()}
-                </Spin>
+                        <div className={style.wrapper}>
+                            <Card
+                                bordered={null}
+                                style={{
+                                    margin: "0px",
+                                    flex: 1,
+                                    // width: "98%",
+                                    padding: "0",
+                                    overflow: "scroll",
+                                    overflowX: "hidden"
+                                }}
+                                ref={"card"}
+                                id="card"
+                            >
+                                <CharRecords
+                                    status={0 && 1 ? "ongoing" : ""}
+                                    goingTip={"暂无数据"}
+                                    iconMy={<Avatar src={rebotSvg} />}
+                                    iconInterlocutors={<Avatar src={mySvg} />}
+                                    value={this.state.data}
+                                ></CharRecords>
+                            </Card>
+                            {this.renderFooter()}
+                        </div>
+                    </Spin>
+                </div>
             </Fragment>
         )
     }

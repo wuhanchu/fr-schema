@@ -15,7 +15,7 @@ export default function DialogueModal(props) {
             footer={null}
             {...props}
         >
-            <Dialogue {...props} />
+            <Dialogue height="500px" {...props} />
         </Modal>
     )
 }
