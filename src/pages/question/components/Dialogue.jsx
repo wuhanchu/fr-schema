@@ -16,6 +16,9 @@ import schemas from "@/schemas"
 import CharRecords from "@/components/Extra/Chat/ChatRecords"
 import mySvg from "../../../assets/userhead.svg"
 import rebotSvg from "../../../assets/rebot.svg"
+import utils from "@/outter/fr-schema-antd-utils/src/utils"
+
+const { url } = utils
 
 class Dialogue extends React.Component {
     state = {
@@ -33,6 +36,7 @@ class Dialogue extends React.Component {
 
     handleSend = async sendValue => {
         const { record } = this.props
+        let project_id = url.getUrlParams("project_id") || record.id
 
         this.state.data.push({
             actions: null,
@@ -47,7 +51,7 @@ class Dialogue extends React.Component {
         this.setState({ data: this.state.data, sendValue: "", isSpin: true })
         const response = await schemas.question.service.search({
             search: sendValue.replace(/\s+/g, "|"),
-            project_id: record.id
+            project_id: project_id
         })
         let list
         if (response.list.length > 3) {

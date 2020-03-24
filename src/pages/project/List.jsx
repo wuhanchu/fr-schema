@@ -15,7 +15,7 @@ import schemas from "@/schemas"
 import React, { Fragment } from "react"
 import QuestionBaseList from "@/pages/question/components/BaseList"
 import SearchPageModal from "@/pages/question/components/SearchPageModal"
-import DialogueModal from "@/pages/project/components/DialogueModal"
+import DialogueModal from "@/pages/question/components/DialogueModal"
 
 @connect(({ global }) => ({
     dict: global.dict

@@ -1,6 +1,6 @@
 import React from "react"
 import { Modal } from "antd"
-import Dialogue from "@/pages/project/components/Dialogue"
+import Dialogue from "@/pages/question/components/Dialogue"
 
 export default function DialogueModal(props) {
     return (

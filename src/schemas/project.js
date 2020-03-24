@@ -3,6 +3,11 @@ import { schemas } from "@/outter/fr-schema-antd-utils/src"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 
 const schema = {
+    id: {
+        title: "编号",
+        sorter: true,
+        infoHide: true
+    },
     name: {
         title: "名称",
         sorter: true,

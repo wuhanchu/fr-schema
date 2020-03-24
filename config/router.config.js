@@ -37,6 +37,11 @@ export default [
                 path: "/outter/question/search",
                 name: "search",
                 component: "./question/components/SearchPage"
+            },
+            {
+                path: "/outter/question/dialogue",
+                name: "dialogue",
+                component: "./question/components/Dialogue"
             }
         ]
     },
