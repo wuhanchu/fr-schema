@@ -239,11 +239,9 @@ export default function request(obj, options = {}) {
 
                     let contentRange = response.headers.get("content-range")
                     if (
-                        !_.isEmpty(contentRange) &&
-                        contentRange instanceof String
+                        !_.isNil(contentRange)
                     ) {
-                        total = response.headers
-                            .get("content-range")
+                        total = contentRange
                             .split("/")[1]
                     }
 
