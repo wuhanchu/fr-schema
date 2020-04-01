@@ -204,8 +204,7 @@ export function createApi(
         },
         getDetail: async (args = {}, inSchema = schema) => {
             const { id } = args
-            console.debug("getDetail config", config)
-            console.debug("getDetail module", module)
+
             if (!id) {
                 return null
             }
