@@ -124,6 +124,34 @@ class Dialogue extends React.Component {
 
                                           {list.length > 1 ? (
                                               list.map((data, item) => {
+                                                  if (
+                                                      item == 0 &&
+                                                      sendValue.length < 10
+                                                  ) {
+                                                      return (
+                                                          <div
+                                                              key={
+                                                                  "comment-list-reply-to-" +
+                                                                  item
+                                                              }
+                                                          >
+                                                              <span>
+                                                                  {/* {item + "."} */}
+                                                              </span>
+                                                              <a
+                                                                  onClick={() => {
+                                                                      this.handleSend(
+                                                                          data.question_standard
+                                                                      )
+                                                                  }}
+                                                              >
+                                                                  {
+                                                                      data.question_standard
+                                                                  }
+                                                              </a>
+                                                          </div>
+                                                      )
+                                                  }
                                                   if (item != 0)
                                                       return (
                                                           <div
@@ -133,7 +161,7 @@ class Dialogue extends React.Component {
                                                               }
                                                           >
                                                               <span>
-                                                                  {item + "."}
+                                                                  {/* {item + "."} */}
                                                               </span>
                                                               <a
                                                                   onClick={() => {
