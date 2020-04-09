@@ -19,7 +19,7 @@ const config = {
     OAUTH_CONFIG: {
         clientId: "yAl9PO9sA4NKYhcrXfAOXxlD",
         clientSecret: "DarmrCkeA04rV8t8vA4mTXhMvn7nEUweE07JgvWhEVpGsukK",
-        accessTokenUri: BASE_PATH + "api/flask_user_auth/auth/token",
+        accessTokenUri: BASE_PATH + "api/user_auth/auth/token",
         scopes: "profile"
     }
 

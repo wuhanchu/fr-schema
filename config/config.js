@@ -145,10 +145,10 @@ export default {
             changeOrigin: true,
             pathRewrite: { "^/api": "" }
         },
-        "/api/flask_user_auth": {
+        "/api/user_auth": {
             target: process.env.AUTH_URL,
             changeOrigin: true,
-            pathRewrite: { "^/api/flask_user_auth": "" }
+            pathRewrite: { "^/api/user_auth": "" }
         }
     },
     ...extend
