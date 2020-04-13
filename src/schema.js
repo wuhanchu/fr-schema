@@ -1,6 +1,6 @@
 import actions from "./actions"
 import moment from "moment"
-import { DATE_FORMAT, DATE_TIME_FORMAT, DTAE_TIME_FORMAT } from "./moment"
+import { DATE_FORMAT, DATE_TIME_FORMAT } from "./moment"
 import { addRemark, reverseDictValue } from "./dict"
 import validator from "async-validator"
 import * as _ from "lodash"
@@ -66,7 +66,7 @@ export function getInfoColumn(schema, infoAction = actions.add) {
         !schema[key].infoHide && result.push({ dataIndex: key, ...schema[key] })
     })
 
-    result.sort(function(a, b) {
+    result.sort(function (a, b) {
         return (
             (a.orderIndex === undefined || a.orderIndex === null
                 ? 9999
@@ -134,7 +134,7 @@ function formRemote(item, schema) {
 
         // 除数
         if (schema[key].divisor) {
-            result[key] = result[key] && result[key] / schema[key].divisor
+            result[key] = result[key] && result[key]/schema[key].divisor
         }
         if (schema[key].decimal) {
             result[key] =
@@ -299,7 +299,16 @@ export async function convertFormImport(
                     result[realKey] = [result[realKey], value]
                 }
 
-                // The following data is assembled into the last key
+                if (result[realKey] instanceof Array) {
+                    let temp = []
+                    result[realKey].forEach(item => {
+                        if (!_.isNil(item) && item.trim() !== "") {
+                            temp.push(item)
+                        }
+                    })
+
+                    result[realKey] = temp
+                }
             })
 
             //  校验
@@ -331,7 +340,7 @@ export async function convertFormImport(
         .then(allResult => {
             dataResult = allResult
         })
-        .catch(function(r) {
+        .catch(function (r) {
             throw new Error(throwMessage)
         })
 
@@ -388,7 +397,7 @@ export function decorateItem(item, schema) {
                 break
             case schemaFieldType.Select:
                 if (item[key] instanceof Array) {
-                    result[key + "_remark"] = item[key].join("|")
+                    result[key + "_remark"] = !_.isEmpty(item[key]) && item[key].join("|")
                 }
                 break
 
