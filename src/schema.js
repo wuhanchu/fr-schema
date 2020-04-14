@@ -66,7 +66,7 @@ export function getInfoColumn(schema, infoAction = actions.add) {
         !schema[key].infoHide && result.push({ dataIndex: key, ...schema[key] })
     })
 
-    result.sort(function (a, b) {
+    result.sort(function(a, b) {
         return (
             (a.orderIndex === undefined || a.orderIndex === null
                 ? 9999
@@ -134,7 +134,7 @@ function formRemote(item, schema) {
 
         // 除数
         if (schema[key].divisor) {
-            result[key] = result[key] && result[key]/schema[key].divisor
+            result[key] = result[key] && result[key] / schema[key].divisor
         }
         if (schema[key].decimal) {
             result[key] =
@@ -340,7 +340,7 @@ export async function convertFormImport(
         .then(allResult => {
             dataResult = allResult
         })
-        .catch(function (r) {
+        .catch(function(r) {
             throw new Error(throwMessage)
         })
 
@@ -395,9 +395,14 @@ export function decorateItem(item, schema) {
                         item[key] && item[key].format(DATE_FORMAT)
                 }
                 break
+            case schemaFieldType.MultiSelect:
             case schemaFieldType.Select:
-                if (item[key] instanceof Array) {
-                    result[key + "_remark"] = !_.isEmpty(item[key]) && item[key].join("|")
+                if (result[key] instanceof Array) {
+                    result[key + "_remark"] =
+                        !_.isEmpty(item[key]) &&
+                        (result[key + "_remark"]
+                            ? result[key + "_remark"].join("|")
+                            : result[key].join("|"))
                 }
                 break
 
