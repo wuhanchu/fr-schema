@@ -73,118 +73,111 @@ class Dialogue extends React.Component {
                     }}
                 ></div>
             ),
-            actions:
-                response.list[0] &&
+            actions: response.list[0] &&
                 response.list[0].answer_mark &&
-                (response.list[0].compatibility < 0.9 || sendValue.length < 10)
-                    ? (sendValue.length > 10 ||
-                          response.list[0].compatibility < 0.9) &&
-                      list.length <= 1
-                        ? null
-                        : [
-                              <Fragment>
-                                  {sendValue.length < 10 &&
-                                      response.list[0].compatibility > 0.9 && (
-                                          <div>
-                                              <div>匹配问题：</div>
+                (response.list[0].compatibility < 0.9 ||
+                    sendValue.length < 10) && [
+                    <Fragment>
+                        {sendValue.length < 10 &&
+                            response.list[0].compatibility > 0.9 && (
+                                <div>
+                                    <div>匹配问题：</div>
 
-                                              {list.length ? (
-                                                  <div
-                                                      key={
-                                                          "comment-list-reply-to-" +
-                                                          -1
-                                                      }
-                                                  >
-                                                      <span>{}</span>
-                                                      <a
-                                                          onClick={() => {
-                                                              this.handleSend(
-                                                                  list[0]
-                                                                      .question_standard
-                                                              )
-                                                          }}
-                                                      >
-                                                          {
-                                                              list[0]
-                                                                  .question_standard
-                                                          }
-                                                      </a>
-                                                  </div>
-                                              ) : (
-                                                  <a>
-                                                      没猜到哦！请输入详细信息。
-                                                  </a>
-                                              )}
-                                          </div>
-                                      )}
+                                    {list.length ? (
+                                        <div
+                                            key={"comment-list-reply-to-" + -1}
+                                        >
+                                            <span>{}</span>
+                                            <a
+                                                onClick={() => {
+                                                    this.handleSend(
+                                                        list[0]
+                                                            .question_standard
+                                                    )
+                                                }}
+                                            >
+                                                {list[0].question_standard}
+                                            </a>
+                                        </div>
+                                    ) : (
+                                        <a>没猜到哦！请输入详细信息。</a>
+                                    )}
+                                </div>
+                            )}
 
-                                  {list.length > 1 && (
-                                      <div>
-                                          <div>猜你想问：</div>
+                        {(list.length > 1 || sendValue.length < 10) && (
+                            <div>
+                                {!(
+                                    sendValue.length < 10 &&
+                                    response.list[0].compatibility > 0.9 &&
+                                    list.length == 1
+                                ) && <div>猜你想问：</div>}
 
-                                          {list.length > 1 ? (
-                                              list.map((data, item) => {
-                                                  if (
-                                                      item == 0 &&
-                                                      sendValue.length < 10
-                                                  ) {
-                                                      return (
-                                                          <div
-                                                              key={
-                                                                  "comment-list-reply-to-" +
-                                                                  item
-                                                              }
-                                                          >
-                                                              <span>
-                                                                  {/* {item + "."} */}
-                                                              </span>
-                                                              <a
-                                                                  onClick={() => {
-                                                                      this.handleSend(
-                                                                          data.question_standard
-                                                                      )
-                                                                  }}
-                                                              >
-                                                                  {
-                                                                      data.question_standard
-                                                                  }
-                                                              </a>
-                                                          </div>
-                                                      )
-                                                  }
-                                                  if (item != 0)
-                                                      return (
-                                                          <div
-                                                              key={
-                                                                  "comment-list-reply-to-" +
-                                                                  item
-                                                              }
-                                                          >
-                                                              <span>
-                                                                  {/* {item + "."} */}
-                                                              </span>
-                                                              <a
-                                                                  onClick={() => {
-                                                                      this.handleSend(
-                                                                          data.question_standard
-                                                                      )
-                                                                  }}
-                                                              >
-                                                                  {
-                                                                      data.question_standard
-                                                                  }
-                                                              </a>
-                                                          </div>
-                                                      )
-                                              })
-                                          ) : (
-                                              <a>没猜到哦！请输入详细信息。</a>
-                                          )}
-                                      </div>
-                                  )}
-                              </Fragment>
-                          ]
-                    : null,
+                                {list.length > 1 || sendValue.length < 10 ? (
+                                    list.map((data, item) => {
+                                        if (
+                                            item == 0 &&
+                                            sendValue.length < 10
+                                        ) {
+                                            if (
+                                                sendValue.length < 10 &&
+                                                response.list[0].compatibility >
+                                                    0.9
+                                            ) {
+                                                return null
+                                            }
+                                            return (
+                                                <div
+                                                    key={
+                                                        "comment-list-reply-to-" +
+                                                        item
+                                                    }
+                                                >
+                                                    <span>
+                                                        {/* {item + "."} */}
+                                                    </span>
+                                                    <a
+                                                        onClick={() => {
+                                                            this.handleSend(
+                                                                data.question_standard
+                                                            )
+                                                        }}
+                                                    >
+                                                        {data.question_standard}
+                                                    </a>
+                                                </div>
+                                            )
+                                        }
+                                        if (item != 0)
+                                            return (
+                                                <div
+                                                    key={
+                                                        "comment-list-reply-to-" +
+                                                        item
+                                                    }
+                                                >
+                                                    <span>
+                                                        {/* {item + "."} */}
+                                                    </span>
+                                                    <a
+                                                        onClick={() => {
+                                                            this.handleSend(
+                                                                data.question_standard
+                                                            )
+                                                        }}
+                                                    >
+                                                        {data.question_standard}
+                                                    </a>
+                                                </div>
+                                            )
+                                    })
+                                ) : (
+                                    <a>没猜到哦！请输入详细信息。</a>
+                                )}
+                            </div>
+                        )}
+                    </Fragment>
+                ],
             id: this.state.data.length + 1,
             role: "my"
         })
