@@ -49,7 +49,12 @@ yarn installe
 ### 运行
 
 ```bash
+--本地环境
 npm start
+--开发环境
+npm start:dev
+--测试环境
+npm start:test
 ```
 
 ### 编译
