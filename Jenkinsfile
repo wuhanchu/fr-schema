@@ -112,7 +112,7 @@ pipeline {
                 stage('Deploy Test') {
                     when {
                         branch 'master'
-                        buildingTag()
+                        tag "*_dataknown"
                      }
 
                     steps {
