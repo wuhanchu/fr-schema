@@ -29,7 +29,7 @@ pipeline {
             }
         }
 
-        stage('Npm Build') {
+        stage('Build') {
             agent {
                 docker {
                      reuseNode true
@@ -56,7 +56,7 @@ pipeline {
 
                 stage('Deploy Standard') {
                     when {
-                        allOf{ branch 'master'; buildingTag(); not { tag '*datanown* '}}
+                        allOf{ branch 'master';  buildingTag();  not { tag '*datanown*'}}
                      }
 
                     steps {
