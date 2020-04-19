@@ -13,6 +13,7 @@ pipeline {
         stage('Build') {
             agent {
                 docker {
+                    alwaysPull true
                     image 'server.aiknown.cn:31003/flask_rest_frame/node:lts-alpine'
                     registryUrl 'https://server.aiknown.cn:31003' 
                     registryCredentialsId 'harbor'
