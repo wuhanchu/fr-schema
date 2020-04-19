@@ -78,7 +78,6 @@ pipeline {
                 }
 
                 stage('Docker Build Tag') {
-                    
                     when { allOf{ branch 'master'; buildingTag() }
                     steps{
                         sh 'docker build . -f ./docker/Dockerfile.hub -t server.aiknown.cn:31003/${GROUP}/${PROJECT}:${TAG_NAME}'
@@ -105,7 +104,7 @@ pipeline {
                 }
 
                 stage('Push Tag') {
-                    when { allOf{ branch 'master'; buildingTag() }
+                    when { allOf{ branch 'master'; buildingTag() }}
 
                     steps{
                         withDockerRegistry(registry: [url: "https://server.aiknown.cn:31003", credentialsId: 'harbor']) {
