@@ -2,9 +2,9 @@ pipeline {
     triggers {
         pollSCM ('* * * * *')
     }
-    agent {
-        label 'whatever'
-    }
+    
+    agent none
+
 
     environment {
         GROUP = "z_know_info"
