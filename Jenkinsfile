@@ -32,18 +32,20 @@ pipeline {
         stage('Build') {
             
             parallel {
-                agent {
-                    docker {
-                        reuseNode true
-                        alwaysPull true
-                        image 'server.aiknown.cn:31003/flask_rest_frame/node:lts-alpine'
-                        registryUrl 'https://server.aiknown.cn:31003' 
-                        registryCredentialsId 'harbor'
-                        args '-v jenkins:/var/jenkins_home -v jenkins_yarn_cache:/usr/local/share/.cache/yarn' 
-                    }
-                }
+                
 
                 stage('Deploy Dataknown') {
+                    agent {
+                        docker {
+                            reuseNode true
+                            alwaysPull true
+                            image 'server.aiknown.cn:31003/flask_rest_frame/node:lts-alpine'
+                            registryUrl 'https://server.aiknown.cn:31003' 
+                            registryCredentialsId 'harbor'
+                            args '-v jenkins:/var/jenkins_home -v jenkins_yarn_cache:/usr/local/share/.cache/yarn' 
+                        }
+                    }
+
                     when {
                         anyOf {branch 'develop'; tag '*datanown*'}
                      }
@@ -59,6 +61,17 @@ pipeline {
                     when {
                         allOf{ branch 'master';  buildingTag();  not { tag '*datanown*'}}
                      }
+
+                     agent {
+                        docker {
+                            reuseNode true
+                            alwaysPull true
+                            image 'server.aiknown.cn:31003/flask_rest_frame/node:lts-alpine'
+                            registryUrl 'https://server.aiknown.cn:31003' 
+                            registryCredentialsId 'harbor'
+                            args '-v jenkins:/var/jenkins_home -v jenkins_yarn_cache:/usr/local/share/.cache/yarn' 
+                        }
+                    }
 
                     steps {
                         sshagent(credentials : ['dataknown_test']) {
