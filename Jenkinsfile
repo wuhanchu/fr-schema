@@ -1,7 +1,9 @@
 pipeline {
-    agent any
     triggers {
         pollSCM ('* * * * *')
+    }
+    agent {
+        label 'whatever'
     }
 
     environment {
@@ -25,7 +27,6 @@ pipeline {
                 sh 'yarn config set registry https://registry.npm.taobao.org && yarn install'
                 sh 'npm run build'
             }
-
         }
 
         stage('Docker Build') {
