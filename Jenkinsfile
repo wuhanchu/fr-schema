@@ -26,7 +26,7 @@ pipeline {
             }
             steps{
                 sh 'pwd'
-                sh 'yarn config set registry https://registry.npm.taobao.org && yarn install'
+                sh 'npm config set registry https://registry.npm.taobao.org && npm install -g cnpm && cnpm install'
                 sh 'npm run build'
             }
         }
