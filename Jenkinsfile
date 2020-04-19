@@ -7,7 +7,6 @@ pipeline {
         label 'master'
     }
 
-
     environment {
         GROUP = "z_know_info"
         PROJECT = "z_know_info_web"
