@@ -14,7 +14,7 @@ pipeline {
         SERVER_DEV = "192.168.1.150"
         SERVER_URL_DEV = "http://172.17.0.1:32029"
         AUTH_URL_DEV  = "http://172.17.0.1:32024"
-        PORT_DEV  = "32028"
+        PORT_DEV  = "32030"
 
         SERVER_TEST = "192.168.1.34"
         SERVER_URL_TEST = "http://172.17.0.1:40017"
