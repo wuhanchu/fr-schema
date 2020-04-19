@@ -26,7 +26,7 @@ pipeline {
             }
             steps{
                 sh 'pwd'
-                sh 'yarn config set registry https://registry.npm.taobao.org && yarn install --prefer-offline --ignore-optional'
+                sh 'yarn config set registry https://registry.npm.taobao.org && yarn install --prefer-offline '
                 sh 'npm run build'
             }
         }
