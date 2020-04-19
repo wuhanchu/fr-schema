@@ -29,7 +29,7 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Npm Build') {
             agent {
                 docker {
                      reuseNode true
@@ -40,10 +40,31 @@ pipeline {
                     args '-v jenkins:/var/jenkins_home -v jenkins_yarn_cache:/usr/local/share/.cache/yarn' 
                 }
             }
-            steps{
-                sh 'pwd'
-                sh 'yarn config set registry https://registry.npm.taobao.org && yarn install --prefer-offline --ignore-optional'
-                sh 'npm run build'
+
+            parallel {
+                stage('Deploy Dataknown') {
+                    when {
+                        anyOf {branch 'develop'; tag '*datanown*'}
+                     }
+
+                    steps{
+                        sh 'pwd'
+                        sh 'yarn config set registry https://registry.npm.taobao.org && yarn install --prefer-offline --ignore-optional'
+                        sh 'npm run build:dataknown'
+                    }
+                }
+
+                stage('Deploy Standard') {
+                    when {
+                        allOf{ branch 'master'; buildingTag(); not { tag '*datanown* '}}
+                     }
+
+                    steps {
+                        sshagent(credentials : ['dataknown_test']) {
+                             sh "ssh  -t  root@${SERVER_TEST} -o StrictHostKeyChecking=no  'docker pull server.aiknown.cn:31003/${GROUP}/${PROJECT}:${TAG_NAME} &&  docker rm -f  ${PROJECT}; docker run --restart=always -d -p ${PORT_TEST}:80 -e SERVER_URL=${SERVER_URL_TEST} -e AUTH_URL=${AUTH_URL_TEST} --name ${PROJECT} server.aiknown.cn:31003/${GROUP}/${PROJECT}:${TAG_NAME};'"
+                        }
+                    }
+                }
             }
         }
 
@@ -57,10 +78,8 @@ pipeline {
                 }
 
                 stage('Docker Build Tag') {
-                    when {
-                        branch 'master'
-                        tag "*"
-                     }
+                    
+                    when { allOf{ branch 'master'; buildingTag() }
                     steps{
                         sh 'docker build . -f ./docker/Dockerfile.hub -t server.aiknown.cn:31003/${GROUP}/${PROJECT}:${TAG_NAME}'
                     }
@@ -86,10 +105,7 @@ pipeline {
                 }
 
                 stage('Push Tag') {
-                    when {
-                        branch 'master'
-                        tag "*"
-                     }
+                    when { allOf{ branch 'master'; buildingTag() }
 
                     steps{
                         withDockerRegistry(registry: [url: "https://server.aiknown.cn:31003", credentialsId: 'harbor']) {
@@ -118,7 +134,6 @@ pipeline {
                 stage('Deploy Test') {
                     when {
                         branch 'master'
-                        tag "*_dataknown"
                      }
 
                     steps {
