@@ -78,7 +78,7 @@ pipeline {
                 }
 
                 stage('Docker Build Tag') {
-                    when { allOf{ branch 'master'; buildingTag() }
+                    when { allOf{ branch 'master'; buildingTag() }}
                     steps{
                         sh 'docker build . -f ./docker/Dockerfile.hub -t server.aiknown.cn:31003/${GROUP}/${PROJECT}:${TAG_NAME}'
                     }
@@ -94,17 +94,10 @@ pipeline {
             }
 
             parallel {
-                stage('Push Branch') {
-                    steps {
-                        withDockerRegistry(registry: [url: "https://server.aiknown.cn:31003", credentialsId: 'harbor']) {
-                            sh 'docker push server.aiknown.cn:31003/${GROUP}/${PROJECT}:${BRANCH_NAME}'
-                            sh 'docker rmi server.aiknown.cn:31003/${GROUP}/${PROJECT}:${BRANCH_NAME}'
-                        }
-                    }
-                }
+                
 
                 stage('Push Tag') {
-                    when { allOf{ branch 'master'; buildingTag() }}
+                    when { allOf { branch 'master'; buildingTag() }}
 
                     steps{
                         withDockerRegistry(registry: [url: "https://server.aiknown.cn:31003", credentialsId: 'harbor']) {
