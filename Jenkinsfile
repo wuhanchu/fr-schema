@@ -23,6 +23,12 @@ pipeline {
     }
 
     stages {
+        stage('READY') {
+            steps{
+                sh 'echo ${TAG_NAME}'
+            }
+        }
+
         stage('Build') {
             agent {
                 docker {
@@ -43,14 +49,14 @@ pipeline {
 
         stage('Docker Build') {
             parallel {
-                stage('Deploy Develop Branch') {
+                stage('Docker Build Branch') {
                     steps{
                         sh 'pwd'
                         sh 'docker build . -f ./docker/Dockerfile.hub -t server.aiknown.cn:31003/${GROUP}/${PROJECT}:${BRANCH_NAME}'
                     }
                 }
 
-                stage('Deploy Develop Tag') {
+                stage('Docker Build Tag') {
                     when {
                         branch 'master'
                         tag "*"
