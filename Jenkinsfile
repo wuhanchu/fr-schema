@@ -21,6 +21,7 @@ pipeline {
                 }
             }
             steps{
+                sh 'pwd'
                 sh 'yarn config set registry https://registry.npm.taobao.org && yarn install'
                 sh 'npm run build'
             }
@@ -29,6 +30,7 @@ pipeline {
 
         stage('Docker Build') {
             steps{
+                sh 'pwd'
                 sh 'docker build . -f ./docker/Dockerfile.hub -t server.aiknown.cn:31003/${GROUP}/${PROJECT}:${BRANCH_NAME}'
             }
         }
