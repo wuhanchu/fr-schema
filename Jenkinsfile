@@ -31,7 +31,6 @@ pipeline {
         }
 
         stage('Build') {
-            
             parallel {
                 stage('Deploy Dataknown') {
                     agent {
@@ -117,7 +116,7 @@ pipeline {
                 }
 
                 stage('Push Tag') {
-                    when { buildingTag() }}
+                    when { buildingTag() }
 
                     steps{
                         withDockerRegistry(registry: [url: "https://server.aiknown.cn:31003", credentialsId: 'harbor']) {
