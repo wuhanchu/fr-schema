@@ -10,6 +10,13 @@ pipeline {
     }
 
     stages {
+         stage('Ready') {
+            
+            steps {
+                sh 'docker pull server.aiknown.cn:31003/flask_rest_frame/node:lts-alpine'
+            }
+        }
+
         stage('Build') {
             agent {
                 docker {
