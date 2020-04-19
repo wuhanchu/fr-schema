@@ -25,6 +25,7 @@ pipeline {
     stages {
         stage('READY') {
             steps{
+                sh 'echo ${BRANCH_NAME}'
                 sh 'echo ${TAG_NAME}'
             }
         }
@@ -32,8 +33,6 @@ pipeline {
         stage('Build') {
             
             parallel {
-                
-
                 stage('Deploy Dataknown') {
                     agent {
                         docker {
@@ -47,7 +46,7 @@ pipeline {
                     }
 
                     when {
-                        anyOf {branch 'develop'; tag '*datanown*'}
+                        anyOf {branch 'develop'; branch 'master'; tag '*datanown*'}
                      }
 
                     steps{
@@ -59,7 +58,7 @@ pipeline {
 
                 stage('Deploy Standard') {
                     when {
-                        allOf{ branch 'master';  buildingTag();  not { tag '*datanown*'}}
+                        allOf{ buildingTag();  not { tag '*datanown*'}}
                      }
 
                      agent {
@@ -92,7 +91,7 @@ pipeline {
                 }
 
                 stage('Docker Build Tag') {
-                    when { allOf{ branch 'master'; buildingTag() }}
+                    when { buildingTag()}
                     steps{
                         sh 'docker build . -f ./docker/Dockerfile.hub -t server.aiknown.cn:31003/${GROUP}/${PROJECT}:${TAG_NAME}'
                     }
@@ -118,7 +117,7 @@ pipeline {
                 }
 
                 stage('Push Tag') {
-                    when { allOf { branch 'master'; buildingTag() }}
+                    when { buildingTag() }}
 
                     steps{
                         withDockerRegistry(registry: [url: "https://server.aiknown.cn:31003", credentialsId: 'harbor']) {
