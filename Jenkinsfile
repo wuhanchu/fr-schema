@@ -2,7 +2,7 @@ pipeline {
     triggers {
         pollSCM ('* * * * *')
     }
-    
+
     agent {
         label 'master'
     }
@@ -10,6 +10,16 @@ pipeline {
     environment {
         GROUP = "z_know_info"
         PROJECT = "z_know_info_web"
+
+        SERVER_DEV = "192.168.1.150"
+        SERVER_URL_DEV = "http://172.17.0.1:32029"
+        AUTH_URL_DEV  = "http://172.17.0.1:32024"
+        PORT_DEV  = "32028"
+
+        SERVER_TEST = "192.168.1.34"
+        SERVER_URL_TEST = "http://172.17.0.1:40017"
+        AUTH_URL_TEST = "http://172.17.0.1:40016"
+        PORT_TEST  = "40010"
     }
 
     stages {
@@ -32,9 +42,23 @@ pipeline {
         }
 
         stage('Docker Build') {
-            steps{
-                sh 'pwd'
-                sh 'docker build . -f ./docker/Dockerfile.hub -t server.aiknown.cn:31003/${GROUP}/${PROJECT}:${BRANCH_NAME}'
+            parallel {
+                stage('Deploy Develop Branch') {
+                    steps{
+                        sh 'pwd'
+                        sh 'docker build . -f ./docker/Dockerfile.hub -t server.aiknown.cn:31003/${GROUP}/${PROJECT}:${BRANCH_NAME}'
+                    }
+                }
+
+                stage('Deploy Develop Tag') {
+                    when {
+                        branch 'master'
+                        buildingTag()
+                     }
+                    steps{
+                        sh 'docker build . -f ./docker/Dockerfile.hub -t server.aiknown.cn:31003/${GROUP}/${PROJECT}:${TAG_NAME}'
+                    }
+                }
             }
         }
 
@@ -44,10 +68,29 @@ pipeline {
                 currentBuild.result == null || currentBuild.result == 'SUCCESS'
               }
             }
-            steps {
-                withDockerRegistry(registry: [url: "https://server.aiknown.cn:31003", credentialsId: 'harbor']) {
-                    sh 'docker push server.aiknown.cn:31003/${GROUP}/${PROJECT}:${BRANCH_NAME}'
-                    sh 'docker rmi server.aiknown.cn:31003/${GROUP}/${PROJECT}:${BRANCH_NAME}'
+
+            parallel {
+                stage('Push Branch') {
+                    steps {
+                        withDockerRegistry(registry: [url: "https://server.aiknown.cn:31003", credentialsId: 'harbor']) {
+                            sh 'docker push server.aiknown.cn:31003/${GROUP}/${PROJECT}:${BRANCH_NAME}'
+                            sh 'docker rmi server.aiknown.cn:31003/${GROUP}/${PROJECT}:${BRANCH_NAME}'
+                        }
+                    }
+                }
+
+                stage('Push Tag') {
+                    when {
+                        branch 'master'
+                        buildingTag()
+                     }
+
+                    steps{
+                        withDockerRegistry(registry: [url: "https://server.aiknown.cn:31003", credentialsId: 'harbor']) {
+                            sh 'docker push server.aiknown.cn:31003/${GROUP}/${PROJECT}:${TAG_NAME}'
+                            sh 'docker rmi server.aiknown.cn:31003/${GROUP}/${PROJECT}:${TAG_NAME}'
+                        }
+                    }
                 }
             }
         }
@@ -59,9 +102,22 @@ pipeline {
                         branch 'develop'
                      }
 
-                    steps {         
+                    steps {
                         sshagent(credentials : ['dataknown_dev']) {
-                             sh "ssh  -t  root@192.168.1.150 -o StrictHostKeyChecking=no  'docker pull server.aiknown.cn:31003/${GROUP}/${PROJECT}:${BRANCH_NAME} &&  docker rm -f  ${PROJECT}; docker run --restart=always -d -p 8083:80 -e SERVER_URL=http://127.0.0.1:5000 --name ${PROJECT} server.aiknown.cn:31003/${GROUP}/${PROJECT}:${BRANCH_NAME};'"
+                             sh "ssh  -t  root@${SERVER_DEV} -o StrictHostKeyChecking=no  'docker pull server.aiknown.cn:31003/${GROUP}/${PROJECT}:${BRANCH_NAME} &&  docker rm -f  ${PROJECT}; docker run --restart=always -d -p ${PORT_DEV}:80 -e SERVER_URL=${SERVER_URL_DEV} -e AUTH_URL=${AUTH_URL_DEV}  --name ${PROJECT} server.aiknown.cn:31003/${GROUP}/${PROJECT}:${BRANCH_NAME};'"
+                        }
+                    }
+                }
+
+                stage('Deploy Test') {
+                    when {
+                        branch 'master'
+                        buildingTag()
+                     }
+
+                    steps {
+                        sshagent(credentials : ['dataknown_test']) {
+                             sh "ssh  -t  root@${SERVER_TEST} -o StrictHostKeyChecking=no  'docker pull server.aiknown.cn:31003/${GROUP}/${PROJECT}:${TAG_NAME} &&  docker rm -f  ${PROJECT}; docker run --restart=always -d -p ${PORT_TEST}:80 -e SERVER_URL=${SERVER_URL_TEST} -e AUTH_URL=${AUTH_URL_TEST} --name ${PROJECT} server.aiknown.cn:31003/${GROUP}/${PROJECT}:${TAG_NAME};'"
                         }
                     }
                 }
@@ -69,4 +125,3 @@ pipeline {
         }
     }
 }
- 
