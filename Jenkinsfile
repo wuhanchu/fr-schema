@@ -4,7 +4,7 @@ pipeline {
     }
     
     agent {
-        label 'normal'
+        label 'master'
     }
 
 
