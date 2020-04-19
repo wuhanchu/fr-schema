@@ -5,7 +5,7 @@ pipeline {
     }
 
     environment {
-        GROUP = "z_know_info",
+        GROUP = "z_know_info"
         PROJECT = "z_know_info_web"
     }
 
