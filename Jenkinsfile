@@ -59,11 +59,9 @@ pipeline {
                         branch 'develop'
                      }
 
-                     
-
                     steps {         
                         sshagent(credentials : ['dataknown_dev']) {
-                             sh "ssh   root@192.168.1.150 'docker pull server.aiknown.cn:31003/${GROUP}/${PROJECT}:${BRANCH_NAME} &&  docker rm -f  ${PROJECT}; docker run --restart=always -d -p 8083:80 -e SERVER_URL=http://127.0.0.1:5000 --name ${PROJECT} server.aiknown.cn:31003/${GROUP}/${PROJECT}:${BRANCH_NAME};'"
+                             sh "ssh  -t  root@192.168.1.150 -o StrictHostKeyChecking=no  'docker pull server.aiknown.cn:31003/${GROUP}/${PROJECT}:${BRANCH_NAME} &&  docker rm -f  ${PROJECT}; docker run --restart=always -d -p 8083:80 -e SERVER_URL=http://127.0.0.1:5000 --name ${PROJECT} server.aiknown.cn:31003/${GROUP}/${PROJECT}:${BRANCH_NAME};'"
                         }
                     }
                 }
