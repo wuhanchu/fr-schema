@@ -53,7 +53,7 @@ pipeline {
                 stage('Deploy Develop Tag') {
                     when {
                         branch 'master'
-                        buildingTag()
+                        tag "*"
                      }
                     steps{
                         sh 'docker build . -f ./docker/Dockerfile.hub -t server.aiknown.cn:31003/${GROUP}/${PROJECT}:${TAG_NAME}'
@@ -82,7 +82,7 @@ pipeline {
                 stage('Push Tag') {
                     when {
                         branch 'master'
-                        buildingTag()
+                        tag "*"
                      }
 
                     steps{
