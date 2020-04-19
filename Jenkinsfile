@@ -10,17 +10,12 @@ pipeline {
     }
 
     stages {
-         stage('Ready') {
-            
-            steps {
-                sh 'docker pull server.aiknown.cn:31003/flask_rest_frame/node:lts-alpine'
-            }
-        }
-
         stage('Build') {
             agent {
                 docker {
                     image 'server.aiknown.cn:31003/flask_rest_frame/node:lts-alpine'
+                    registryUrl 'https://server.aiknown.cn:31003'
+                    registryCredentialsId 'harbor'
                     args '-v jenkins-data:/var/jenkins_home -v jenkins_yarn_cache:/usr/local/share/.cache/yarn'
                 }
             }
