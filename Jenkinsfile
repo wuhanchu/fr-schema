@@ -4,12 +4,17 @@ pipeline {
         pollSCM ('* * * * *')
     }
 
+    environment {
+        GROUP:"z_know_info",
+        PROJECT:"z_know_info_web"
+    }
+
     stages {
-        stage('Build') { 
+        stage('Build') {
             agent {
                 docker {
-                    image 'node:lts-alpine' 
-                    args '-v jenkins-data:/var/jenkins_home -v jenkins_yarn_cache:/usr/local/share/.cache/yarn' 
+                    image 'server.aiknown.cn:31003/flask_rest_frame/node:lts-alpine'
+                    args '-v jenkins-data:/var/jenkins_home -v jenkins_yarn_cache:/usr/local/share/.cache/yarn'
                 }
             }
             steps{
@@ -21,31 +26,41 @@ pipeline {
 
         stage('Docker Build') {
             steps{
-                sh 'docker build . -f ./docker/Dockerfile.hub -t server.aiknown.cn:31003/library/z_antd_design_pro_strater:master' 
+                sh 'docker build . -f ./docker/Dockerfile.hub -t server.aiknown.cn:31003/${GROUP}/${PROJECT} server.aiknown.cn:31003/${GROUP}/${PROJECT}:${BRANCH_NAME}'
             }
         }
 
         stage('Push') {
             when {
               expression {
-                currentBuild.result == null || currentBuild.result == 'SUCCESS' 
+                currentBuild.result == null || currentBuild.result == 'SUCCESS'
               }
             }
             steps {
-                withDockerRegistry(registry: [url: "https://server.aiknown.cn:31003", credentialsId: 'dataknown_harbor']) {
-                    sh 'docker push server.aiknown.cn:31003/library/z_antd_design_pro_strater:master'
-                    sh 'docker rmi server.aiknown.cn:31003/library/z_antd_design_pro_strater:master'
+                withDockerRegistry(registry: [url: "https://server.aiknown.cn:31003", credentialsId: 'harbor']) {
+                    sh 'docker push server.aiknown.cn:31003/${GROUP}/${PROJECT}:${BRANCH_NAME}'
+                    sh 'docker rmi server.aiknown.cn:31003/${GROUP}/${PROJECT}:${BRANCH_NAME}'
                 }
             }
         }
 
         stage('Deploy') {
-            steps{
+            parallel {
+                
+                stage('Deploy Develop') {
+                    when {
+                        branch 'develop'
+                     }
 
-                sshagent(credentials : ['centos']) {
-                    sh "docker pull server.aiknown.cn:31003/library/z_antd_design_pro_strater:master"
-                    sh "docker rm -f  z_antd_design_pro_strater_master"
-                    sh "docker run --restart=always -d -p 8083:80 -e SERVER_URL='http://127.0.0.1:5000' --name z_antd_design_pro_strater_master server.aiknown.cn:31003/library/z_antd_design_pro_strater:master"
+                    steps {
+                        sshagent(credentials : ['dataknown_dev']) {
+                                sh """
+                                    docker pull server.aiknown.cn:31003/${GROUP}/${PROJECT}:${BRANCH_NAME}
+                                    docker rm -f  ${PROJECT}
+                                    docker run --restart=always -d -p 8083:80 -e SERVER_URL='http://127.0.0.1:5000' --name ${PROJECT}_master server.aiknown.cn:31003/${GROUP}/${PROJECT}:develop
+                                """
+                        }
+                    }
                 }
             }
         }
