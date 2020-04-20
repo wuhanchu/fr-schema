@@ -83,9 +83,15 @@ pipeline {
         stage('Docker Build') {
             parallel {
                 stage('Docker Build Branch') {
+                     when { 
+                         anyOf {
+                            branch 'master'
+                            branch 'develop'
+                        }
+                    }
                     steps{
                         sh 'pwd'
-                        sh 'docker build . -f ./docker/Dockerfile.hub -t server.aiknown.cn:31003/${GROUP}/${PROJECT}:${BRANCH_NAME}'
+                        sh 'docker build . -f ./docker/Dockerfile.hub -BRANCH_NAMEt server.aiknown.cn:31003/${GROUP}/${PROJECT}:${BRANCH_NAME}'
                     }
                 }
 
@@ -107,6 +113,12 @@ pipeline {
 
             parallel {
                 stage('Push Branch') {
+                    when { 
+                         anyOf {
+                            branch 'master'
+                            branch 'develop'
+                        }
+                    }
                     steps {
                         withDockerRegistry(registry: [url: "https://server.aiknown.cn:31003", credentialsId: 'harbor']) {
                             sh 'docker push server.aiknown.cn:31003/${GROUP}/${PROJECT}:${BRANCH_NAME}'
