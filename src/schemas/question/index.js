@@ -4,17 +4,20 @@ import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 const schema = {
     id: {
         title: "编号",
+        width: 80,
         sorter: true,
         addHide: true,
         readOnly: true
     },
     group: {
         title: "分组",
+        width: 80,
         required: true,
         sorter: true
     },
     label: {
         title: "标签",
+        width: 80,
         type: schemaFieldType.Select,
         props: {
             mode: "tags"
