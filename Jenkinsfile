@@ -89,6 +89,7 @@ pipeline {
                             branch 'develop'
                         }
                     }
+                    
                     steps{
                         sh 'pwd'
                         sh 'docker build . -f ./docker/Dockerfile.hub -t server.aiknown.cn:31003/${GROUP}/${PROJECT}:${BRANCH_NAME}'
