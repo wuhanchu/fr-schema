@@ -1,28 +1,18 @@
 import React, { Fragment } from "react"
-import {
-    Divider,
-    Form,
-    Popconfirm,
-    Modal,
-    Spin,
-    Avatar,
-    Row,
-    Col,
-    Input,
-    Button,
-    Card
-} from "antd"
+import { AutoComplete, Avatar, Button, Card, Input, Spin } from "antd"
 import schemas from "@/schemas"
 import CharRecords from "@/components/Extra/Chat/ChatRecords"
 import mySvg from "../../../assets/userhead.svg"
 import rebotSvg from "../../../assets/rebot.svg"
 import utils from "@/outter/fr-schema-antd-utils/src/utils"
 import style from "./Dialogue.less"
+import * as _ from "lodash"
 
 const { url } = utils
 
 class Dialogue extends React.Component {
     state = {
+        dataSource: [],
         sendValue: "",
         isSpin: false,
         data: [
@@ -35,9 +25,39 @@ class Dialogue extends React.Component {
         ]
     }
 
-    handleSend = async sendValue => {
-        const { record } = this.props
-        let project_id = url.getUrlParams("project_id") || record.id
+    constructor(props) {
+        super(props)
+        const { record } = props
+        this.project_id = url.getUrlParams("project_id") || record.id
+    }
+
+    componentDidMount() {
+        schemas.question.service
+            .get({ project_id: this.project_id })
+            .then(response => {
+                let allData = []
+                response.list.forEach(item => {
+                    allData.push(item.question_standard)
+                })
+                this.allData = allData
+            })
+    }
+
+    handleChange = value => {
+        this.setState({
+            sendValue: value,
+            dataSource:
+                this.allData &&
+                this.allData.filter(item => item.indexOf(value) >= 0)
+        })
+    }
+
+    handleSend = async () => {
+        const { sendValue } = this.state
+
+        if (_.isNil(sendValue)) {
+            return
+        }
 
         this.state.data.push({
             actions: null,
@@ -52,7 +72,7 @@ class Dialogue extends React.Component {
         this.setState({ data: this.state.data, sendValue: "", isSpin: true })
         const response = await schemas.question.service.search({
             search: sendValue.replace(/\s+/g, "|"),
-            project_id: project_id
+            project_id: this.project_id
         })
         let list
         if (response.list.length > 3) {
@@ -191,24 +211,43 @@ class Dialogue extends React.Component {
 
     renderFooter() {
         const { sendValue } = this.state
+        const others = {}
+        if (_.isNil(sendValue) || sendValue === "") {
+            others.value = ""
+        }
         return (
             <div className={style.footWrapper}>
                 <div style={{ width: "100%", display: "flex", height: "42px" }}>
-                    <Input
-                        value={this.state.sendValue}
-                        onChange={e => {
-                            this.setState({ sendValue: e.target.value })
+                    <AutoComplete
+                        dropdownMatchSelectWidth={252}
+                        style={{ width: "100%" }}
+                        onChange={value => {
+                            this.handleChange(value)
                         }}
-                        style={{ flex: "1 1 auto" }}
-                        placeholder={"请输入消息".toString()}
-                        onPressEnter={this.handleSend.bind(this, sendValue)}
-                        disabled={this.state.action}
-                    ></Input>
+                        onSearch={value => {
+                            this.selectOpen = true
+                            this.handleChange(value)
+                        }}
+                        dataSource={this.state.dataSource}
+                        {...others}
+                    >
+                        <Input
+                            onPressEnter={e => {
+                                setTimeout(() => {
+                                    if (this.selectOpen) {
+                                        this.selectOpen = false
+                                    } else {
+                                        !this.selectOpen && this.handleSend()
+                                    }
+                                })
+                            }}
+                        ></Input>
+                    </AutoComplete>
                     <div style={{ flex: "0 0 74px", marginLeft: "20px" }}>
                         <Button
                             disabled={this.state.action}
                             type="primary"
-                            onClick={this.handleSend.bind(this, sendValue)}
+                            onClick={this.handleSend}
                         >
                             发送
                         </Button>
@@ -217,6 +256,7 @@ class Dialogue extends React.Component {
             </div>
         )
     }
+
     render() {
         return (
             <Fragment>

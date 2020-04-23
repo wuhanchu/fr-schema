@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from "react"
-import { Card, Divider, Empty, Input, List, Spin } from "antd"
+import { Card, Empty, Input, List, Spin, AutoComplete } from "antd"
 import schemas from "@/schemas"
 import { contentHeight } from "@/styles/global"
 import * as _ from "lodash"
@@ -10,6 +10,7 @@ const { url } = utils
 function SearchPage(props) {
     const [state, setState] = useState({
         data: null,
+        allData: [],
         loading: false
     })
 
@@ -23,35 +24,72 @@ function SearchPage(props) {
         height = contentHeight - 200
     }
 
+    useEffect(
+        () =>
+            schemas.question.service
+                .get({ project_id: project_id })
+                .then(response => {
+                    let allData = []
+                    response.list.forEach(item => {
+                        allData.push(item.question_standard)
+                    })
+                    setState({
+                        ...state,
+                        allData
+                    })
+                }),
+        []
+    )
+
+    const handleChange = value => {
+        setState({
+            ...state,
+            dataSource:
+                state.allData &&
+                state.allData.filter(item => item.indexOf(value) >= 0)
+        })
+    }
+
+    const handleSearch = async value => {
+        if (_.isNil(value)) {
+            setState({
+                data: [],
+                loading: false
+            })
+            return
+        }
+
+        setState({
+            loading: true
+        })
+
+        const response = await schemas.question.service.search({
+            search: value.replace(/\s+/g, "|"),
+            project_id
+        })
+        setState({
+            ...state,
+            data: response.list,
+            loading: false
+        })
+    }
+
     return (
         <Fragment>
-            <Input.Search
-                placeholder="输入想要搜索的问题"
-                onSearch={async value => {
-                    if (_.isNil(value)) {
-                        setState({
-                            data: [],
-                            loading: false
-                        })
-                        return
-                    }
-
-                    setState({
-                        loading: true
-                    })
-
-                    const response = await schemas.question.service.search({
-                        search: value.replace(/\s+/g, "|"),
-                        project_id
-                    })
-                    setState({
-                        data: response.list,
-                        loading: false
-                    })
-                }}
-                enterButton
-                style={{ paddingBottom: 8 }}
-            />
+            <AutoComplete
+                dropdownMatchSelectWidth={252}
+                style={{ width: "100%" }}
+                onSearch={handleChange}
+                onSelect={handleSearch}
+                dataSource={state.dataSource}
+            >
+                <Input.Search
+                    placeholder="输入想要搜索的问题"
+                    onChange={handleSearch}
+                    enterButton
+                    style={{ paddingBottom: 8 }}
+                />
+            </AutoComplete>
             <Spin tip="查询中" spinning={loading}>
                 <Card>
                     {data && data.length > 0 ? (
