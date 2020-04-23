@@ -71,7 +71,7 @@ class Dialogue extends React.Component {
         }, 10)
         this.setState({ data: this.state.data, sendValue: "", isSpin: true })
         const response = await schemas.question.service.search({
-            search: sendValue.replace(/\s+/g, "|"),
+            search: sendValue,
             project_id: this.project_id
         })
         let list
@@ -110,9 +110,13 @@ class Dialogue extends React.Component {
                                             <span>{}</span>
                                             <a
                                                 onClick={() => {
-                                                    this.handleSend(
-                                                        list[0]
-                                                            .question_standard
+                                                    this.setState(
+                                                        {
+                                                            sendValue:
+                                                                list[0]
+                                                                    .question_standard
+                                                        },
+                                                        this.handleSend
                                                     )
                                                 }}
                                             >
@@ -133,10 +137,10 @@ class Dialogue extends React.Component {
                                     list.length == 1
                                 ) && <div>猜你想问：</div>}
 
-                                {list.length > 1 || sendValue.length < 10 ? (
-                                    list.map((data, item) => {
+                                {list.length > 0 || sendValue.length < 10 ? (
+                                    list.map((data, index) => {
                                         if (
-                                            item == 0 &&
+                                            index == 0 &&
                                             sendValue.length < 10
                                         ) {
                                             if (
@@ -150,16 +154,18 @@ class Dialogue extends React.Component {
                                                 <div
                                                     key={
                                                         "comment-list-reply-to-" +
-                                                        item
+                                                        index
                                                     }
                                                 >
-                                                    <span>
-                                                        {/* {item + "."} */}
-                                                    </span>
+                                                    <span>{index + ": "}</span>
                                                     <a
                                                         onClick={() => {
-                                                            this.handleSend(
-                                                                data.question_standard
+                                                            this.setState(
+                                                                {
+                                                                    sendValue:
+                                                                        data.question_standard
+                                                                },
+                                                                this.handleSend
                                                             )
                                                         }}
                                                     >
@@ -168,21 +174,23 @@ class Dialogue extends React.Component {
                                                 </div>
                                             )
                                         }
-                                        if (item != 0)
+                                        if (index != 0)
                                             return (
                                                 <div
                                                     key={
                                                         "comment-list-reply-to-" +
-                                                        item
+                                                        index
                                                     }
                                                 >
-                                                    <span>
-                                                        {/* {item + "."} */}
-                                                    </span>
+                                                    <span>{index + ": "}</span>
                                                     <a
                                                         onClick={() => {
-                                                            this.handleSend(
-                                                                data.question_standard
+                                                            this.setState(
+                                                                {
+                                                                    sendValue:
+                                                                        data.question_standard
+                                                                },
+                                                                this.handleSend
                                                             )
                                                         }}
                                                     >
@@ -224,9 +232,8 @@ class Dialogue extends React.Component {
                         onChange={value => {
                             this.handleChange(value)
                         }}
-                        onSearch={value => {
+                        onSelect={value => {
                             this.selectOpen = true
-                            this.handleChange(value)
                         }}
                         dataSource={this.state.dataSource}
                         {...others}

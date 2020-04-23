@@ -44,13 +44,16 @@ function SearchPage(props) {
     const handleChange = value => {
         setState({
             ...state,
+            value,
             dataSource:
+                value &&
                 state.allData &&
                 state.allData.filter(item => item.indexOf(value) >= 0)
         })
     }
 
-    const handleSearch = async value => {
+    const handleSearch = async () => {
+        const { value } = state
         if (_.isNil(value)) {
             setState({
                 data: [],
@@ -64,7 +67,7 @@ function SearchPage(props) {
         })
 
         const response = await schemas.question.service.search({
-            search: value.replace(/\s+/g, "|"),
+            search: value,
             project_id
         })
         setState({
@@ -79,14 +82,16 @@ function SearchPage(props) {
             <AutoComplete
                 dropdownMatchSelectWidth={252}
                 style={{ width: "100%" }}
-                onSearch={handleChange}
+                onChange={handleChange}
                 onSelect={handleSearch}
+                defaultOpen={false}
+                defaultValue={null}
                 dataSource={state.dataSource}
             >
                 <Input.Search
                     placeholder="输入想要搜索的问题"
-                    onChange={handleSearch}
                     enterButton
+                    onPressEnter={handleSearch}
                     style={{ paddingBottom: 8 }}
                 />
             </AutoComplete>
