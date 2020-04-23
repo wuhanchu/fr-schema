@@ -27,7 +27,7 @@ function SearchPage(props) {
     useEffect(
         () =>
             schemas.question.service
-                .get({ project_id: project_id })
+                .get({ project_id: project_id, limit: 999 })
                 .then(response => {
                     let allData = []
                     response.list.forEach(item => {

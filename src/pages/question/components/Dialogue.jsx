@@ -33,7 +33,7 @@ class Dialogue extends React.Component {
 
     componentDidMount() {
         schemas.question.service
-            .get({ project_id: this.project_id })
+            .get({ project_id: this.project_id, limit: 999 })
             .then(response => {
                 let allData = []
                 response.list.forEach(item => {
