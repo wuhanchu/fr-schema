@@ -56,7 +56,7 @@ function SearchPage(props) {
         event && event.preventDefault && event.preventDefault()
         event && event.stopPropagation && event.stopPropagation()
 
-        const { value } = state
+        let value = searchValue || state.value
         if (_.isNil(value)) {
             setState({
                 data: [],
@@ -75,6 +75,7 @@ function SearchPage(props) {
         })
         setState({
             ...state,
+            value,
             data: response.list,
             loading: false
         })
