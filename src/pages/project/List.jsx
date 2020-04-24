@@ -83,6 +83,7 @@ class List extends ListPage {
                     <Modal
                         width={"90%"}
                         visible={true}
+                        footer={null}
                         onCancel={() => {
                             this.setState({
                                 visibleQuestion: false
