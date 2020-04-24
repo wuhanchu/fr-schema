@@ -86,9 +86,9 @@ class Dialogue extends React.Component {
                     dangerouslySetInnerHTML={{
                         __html:
                             response.list[0] &&
-                            response.list[0].answer_mark &&
+                            response.list[0].answer &&
                             response.list[0].compatibility > 0.9
-                                ? response.list[0].answer_mark
+                                ? response.list[0].answer
                                 : "暂时未找到您要的信息"
                     }}
                 ></div>

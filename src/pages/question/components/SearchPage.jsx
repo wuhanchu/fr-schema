@@ -52,7 +52,10 @@ function SearchPage(props) {
         })
     }
 
-    const handleSearch = async () => {
+    const handleSearch = async (searchValue, event) => {
+        event && event.preventDefault && event.preventDefault()
+        event && event.stopPropagation && event.stopPropagation()
+
         const { value } = state
         if (_.isNil(value)) {
             setState({
@@ -91,7 +94,7 @@ function SearchPage(props) {
                 <Input.Search
                     placeholder="输入想要搜索的问题"
                     enterButton
-                    onPressEnter={handleSearch}
+                    onSearch={handleSearch}
                     style={{ paddingBottom: 8 }}
                 />
             </AutoComplete>
@@ -111,7 +114,7 @@ function SearchPage(props) {
                                         title={
                                             <div
                                                 dangerouslySetInnerHTML={{
-                                                    __html: item.question_standard_mark
+                                                    __html: item.question_standard
                                                         .replace(
                                                             /<b>/g,
                                                             "<b style='color:red;'>"
@@ -123,7 +126,7 @@ function SearchPage(props) {
                                         description={
                                             <div
                                                 dangerouslySetInnerHTML={{
-                                                    __html: item.answer_mark
+                                                    __html: item.answer
                                                         .replace(
                                                             /<b>/g,
                                                             "<b style='color:red;'>"
