@@ -66,7 +66,7 @@ export default [
                     {
                         name: "system",
                         path: "/system",
-                        icon: "project",
+                        authority: ["system"],
                         routes: [
                             {
                                 path: "/system/user",
