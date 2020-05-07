@@ -1,4 +1,4 @@
-import fetch from "dva/fetch"
+import {fetch} from "dva"
 import { Collapse } from "antd"
 import hash from "hash.js"
 import oauth, { OAuthToken } from "./oauth"
