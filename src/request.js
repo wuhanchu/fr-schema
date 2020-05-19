@@ -1,8 +1,9 @@
-import {fetch} from "dva"
+import { fetch } from "dva"
 import { Collapse } from "antd"
 import hash from "hash.js"
 import oauth, { OAuthToken } from "./oauth"
 import * as _ from "lodash"
+import { getDvaApp } from 'umi'
 
 const { Panel } = Collapse
 
@@ -193,7 +194,7 @@ export default function request(obj, options = {}) {
                     resolve(token.data)
                 })
                 .catch(e => {
-                    window.g_app._store.dispatch({
+                    getDvaApp()._store.dispatch({
                         type: "login/logout"
                     })
                 })
@@ -262,9 +263,9 @@ export default function request(obj, options = {}) {
         })
         .catch(e => {
             const status = e.status
-            if (status === 401 && window.g_app._store) {
+            if (status === 401 && getDvaApp()._store) {
                 if (!window.location.href.includes("login")) {
-                    window.g_app._store.dispatch({
+                    getDvaApp()._store.dispatch({
                         type: "login/logout"
                     })
                     throw e
