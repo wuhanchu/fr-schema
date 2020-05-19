@@ -176,7 +176,7 @@ export default function request(obj, options = {}) {
 
     return new Promise((resolve, reject) => {
         let token = localStorage.getItem("token")
-        if (!token) {
+        if (!token || options.skipOauth) {
             resolve(null)
             return
         }

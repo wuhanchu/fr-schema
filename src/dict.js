@@ -56,21 +56,21 @@ export function addRemark(obj, model = {}) {
         obj.forEach(item => {
             Object.keys(model).forEach(key => {
                 model[key].dict &&
-                    (item[key + "_remark"] = convertDict(
-                        item[key],
-                        model[key].dict,
-                        model[key].type !== schemaFieldType.Select
-                    ))
+                (item[key + "_remark"] = convertDict(
+                    item[key],
+                    model[key].dict,
+                    model[key].type !== schemaFieldType.Select
+                ))
             })
         })
     } else {
         Object.keys(model).forEach(key => {
             model[key].dict &&
-                (obj[key + "_remark"] = convertDict(
-                    obj[key],
-                    model[key].dict,
-                    model[key].type !== schemaFieldType.Select
-                ))
+            (obj[key + "_remark"] = convertDict(
+                obj[key],
+                model[key].dict,
+                model[key].type !== schemaFieldType.Select
+            ))
         })
     }
 
@@ -88,7 +88,7 @@ export function convertDict(value, dict, split = true) {
     if (value instanceof Array) {
         result = value.map(value => getDictValue(value, dict))
     } else if (typeof value === "string" && value) {
-        const list = split ? value.split && value.split(",") : [value]
+        const list = split? value.split && value.split(",") : [value]
         result = list.map(value => getDictValue(value, dict))
         result = result.join()
     } else {
@@ -127,7 +127,7 @@ export function getDictValue(value, dict) {
     Object.keys(dict).some(key => {
         if (value !== undefined && value !== null) {
             String(value) == String(dict[key].value) &&
-                (result = dict[key].remark)
+            (result = dict[key].remark)
         }
 
         return result
@@ -154,7 +154,7 @@ export function reverseDictValueSingle(remark) {
     Object.keys(dict).some(key => {
         if (remark !== undefined && remark !== null) {
             String(remark) == String(dict[key].remark) &&
-                (result = dict[key].value)
+            (result = dict[key].value)
         }
 
         return result

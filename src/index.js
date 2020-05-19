@@ -44,15 +44,15 @@ const init = (outConfig, outRequest = null) => {
 const initSysDict = value => {
     sysDict = {}
     value &&
-        value.forEach(item => {
-            sysDict[item.type] ||
-                (sysDict[item.type] = listToDict(
-                    value,
-                    { type: item.type },
-                    "value",
-                    "label"
-                ))
-        })
+    value.forEach(item => {
+        sysDict[item.type] ||
+        (sysDict[item.type] = listToDict(
+            value,
+            { type: item.type },
+            "value",
+            "label"
+        ))
+    })
     return sysDict
 }
 

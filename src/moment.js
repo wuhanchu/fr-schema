@@ -13,9 +13,9 @@ export const TME_FORMAT = "HH:mm:ss"
 export function getTimeShow(inSeconds) {
     const d = moment.duration(inSeconds, "milliseconds")
     const hours = Math.floor(d.asHours())
-    const mins = Math.floor(d.asMinutes()) - hours * 60
-    const seconds = Math.floor(d.asSeconds()) - hours * 60 * 60 - mins * 60
-    return `${hours ? hours.toString().padStart(2, "0") : "00"}:${
-        mins ? mins.toString().padStart(2, "0") : "00"
+    const mins = Math.floor(d.asMinutes()) - hours*60
+    const seconds = Math.floor(d.asSeconds()) - hours*60*60 - mins*60
+    return `${hours? hours.toString().padStart(2, "0") : "00"}:${
+        mins? mins.toString().padStart(2, "0") : "00"
     }:${seconds.toString().padStart(2, "0")}`
 }

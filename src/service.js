@@ -1,8 +1,9 @@
 import queryString from "query-string"
-import { config, request } from "./index"
+import { request } from "./index"
 import { convertFromRemote, convertToRemote } from "./schema"
 import actions from "./actions"
 import * as lodash from "lodash"
+import config from "@/../config/defaultSettings"
 
 export function createBasicApi(module, subModule) {
     return {
@@ -234,23 +235,25 @@ export function createApi(
         },
         post: (args, inSchema = schema) =>
             request({
-                method: "POST",
-                url: ("/" + config.apiVersion + module).replace("//", "/"),
-                data: convertToRemote(args, inSchema || schema, actions.add)
-            }),
+                    method: "POST",
+                    url: ("/" + config.apiVersion + module).replace("//", "/"),
+                    data: convertToRemote(args, inSchema || schema, actions.add)
+                },
+                options),
 
         patch: (args, inSchema = schema) => {
             const { id, ...others } = args
             return request({
-                method: "PATCH",
-                url: (
-                    "/" +
-                    config.apiVersion +
-                    module +
-                    (!lodash.isNil(id)? "?id=" + prefix + id : "")
-                ).replace("//", "/"),
-                data: convertToRemote(others, inSchema || schema)
-            })
+                    method: "PATCH",
+                    url: (
+                        "/" +
+                        config.apiVersion +
+                        module +
+                        (!lodash.isNil(id)? "?id=" + prefix + id : "")
+                    ).replace("//", "/"),
+                    data: convertToRemote(others, inSchema || schema)
+                },
+                options)
         },
         put: (args, inSchema = schema) => {
             const { id, ...others } = args
@@ -261,21 +264,23 @@ export function createApi(
                 (!lodash.isNil(id)? "?id=" + prefix + id : "")
             ).replace("//", "/")
             return request({
-                method: "PUT",
-                url,
-                data: convertToRemote(others, inSchema || schema)
-            })
+                    method: "PUT",
+                    url,
+                    data: convertToRemote(others, inSchema || schema)
+                },
+                options)
         },
         delete: args =>
             request({
-                method: "DELETE",
-                url: (
-                    "/" +
-                    config.apiVersion +
-                    module +
-                    (!lodash.isNil(args.id)? "?id=" + prefix + args.id : "")
-                ).replace("//", "/")
-            }),
+                    method: "DELETE",
+                    url: (
+                        "/" +
+                        config.apiVersion +
+                        module +
+                        (!lodash.isNil(args.id)? "?id=" + prefix + args.id : "")
+                    ).replace("//", "/")
+                },
+                options),
 
         upInsert: (args, inSchema = schema) =>
             request(
@@ -293,14 +298,15 @@ export function createApi(
             ),
         deleteMulti: args =>
             request({
-                method: "DELETE",
-                url: (
-                    "/" +
-                    config.apiVersion +
-                    module +
-                    "?" +
-                    queryString.stringify(args)
-                ).replace("//", "/")
-            })
+                    method: "DELETE",
+                    url: (
+                        "/" +
+                        config.apiVersion +
+                        module +
+                        "?" +
+                        queryString.stringify(args)
+                    ).replace("//", "/")
+                },
+                options)
     }
 }
