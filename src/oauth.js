@@ -5,7 +5,5 @@ import { getConfig } from "./index"
 
 export default () => {
     let oauthConfig = getConfig()
-    oauthConfig = oauthConfig.OAUTH_CONFIG
-    oauthConfig.accessTokenUri = BASE_PATH + oauthConfig.accessTokenUri
     return new ClientOAuth2(oauthConfig)
 }
