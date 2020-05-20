@@ -15,14 +15,6 @@ export function createBasicApi(module, subModule) {
                 (!lodash.isNil(args.id)? "/" + args.id : "") +
                 (subModule? "/" + subModule : "")
 
-            if (!lodash.isEmpty(args)) {
-                url +=
-                    "?" +
-                    queryString.stringify({
-                        ...args,
-                        token: user && user.user && user.user.token
-                    })
-            }
 
             url = url.replace("//", "/")
 
