@@ -4,6 +4,6 @@ export const OAuthToken = ClientOAuth2.Token
 import { getConfig } from "./index"
 
 export default () => {
-    let oauthConfig = getConfig()
-    return new ClientOAuth2(oauthConfig)
+    let config = getConfig()
+    return new ClientOAuth2(config.oauth)
 }
