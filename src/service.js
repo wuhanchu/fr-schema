@@ -124,7 +124,7 @@ export function createApi(
     module,
     schema = {},
     options = { form: false },
-    prefix = ""
+    prefix = "eq."
 ) {
     return {
         get: async (args = {}, inSchema = schema) => {

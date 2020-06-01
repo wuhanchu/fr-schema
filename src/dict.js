@@ -78,7 +78,7 @@ export function addRemark(obj, model = {}) {
 }
 
 /**
- * convert value to dict reamrk
+ * convert value to dict remark
  * @param value
  * @param dict
  * @returns {*}
