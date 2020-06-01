@@ -111,6 +111,10 @@ export default function request(obj, options = {}) {
         url = obj.url
     }
 
+    if (!options) {
+        options = {}
+    }
+
     /**
      * Produce fingerprints based on url and parameters
      * Maybe url has the same parameters
