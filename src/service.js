@@ -15,7 +15,6 @@ export function createBasicApi(module, subModule) {
                 (!lodash.isNil(args.id)? "/" + args.id : "") +
                 (subModule? "/" + subModule : "")
 
-
             url = url.replace("//", "/")
 
             const response = await request({
@@ -129,6 +128,7 @@ export function createApi(
     return {
         get: async (args = {}, inSchema = schema) => {
             let { currentPage, pageSize, limit, ...otherParams } = args
+
             // convert moment
             Object.keys(otherParams).forEach(key => {
                 const item = args[key]
@@ -137,6 +137,11 @@ export function createApi(
                 }
                 otherParams[key] = item
             })
+
+            //默认 ID 排序
+            if (!otherParams.order) {
+                otherParams.order = "id.desc"
+            }
 
             limit = pageSize || limit || 10
             const response = await request(
