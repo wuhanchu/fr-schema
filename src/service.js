@@ -103,7 +103,7 @@ function addParamPrefix(params, prefix) {
         result[key] =
             !["select", "limit", "offset"].includes(key) &&
             params[key] &&
-            params[key].toString().indexOf(".") < 1
+            !(params[key].toString().indexOf(".") >= 0)
                 ? prefix + params[key]
                 : params[key]
     })
