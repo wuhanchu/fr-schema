@@ -51,6 +51,9 @@ export function getSchemaShow(schema) {
 export function getInfoColumn(schema, infoAction = actions.add) {
     let result = []
     Object.keys(schema).forEach(key => {
+        if (!schema[key]) {
+            return
+        }
         if (infoAction === actions.add && schema[key].addHide) {
             return
         }
