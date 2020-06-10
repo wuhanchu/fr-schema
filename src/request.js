@@ -41,7 +41,7 @@ const checkStatus = async response => {
 
     try {
         const data = JSON.parse(text)
-        error.message = data.message
+        error.message = data.description || data.message
         error.detail = data.detail || data.traceback
     } catch (e) {
         error.message =
