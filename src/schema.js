@@ -1,46 +1,46 @@
-import actions from "./actions"
-import moment from "moment"
-import { DATE_FORMAT, DATE_TIME_FORMAT } from "./moment"
-import { addRemark, reverseDictValue } from "./dict"
-import validator from "async-validator"
-import * as _ from "lodash"
+import actions from './actions';
+import moment from 'moment';
+import { DATE_FORMAT, DATE_TIME_FORMAT } from './moment';
+import { addRemark, reverseDictValue } from './dict';
+import validator from 'async-validator';
+import * as _ from 'lodash';
 
 /**
  * schema字段类型
  * @type {{Select: string}}
  */
 export const schemaFieldType = {
-    Select: "Select",
-    MultiSelect: "MultiSelect",
-    DatePicker: "DatePicker",
-    RangePicker: "RangePicker",
-    TextArea: "TextArea",
-    Password: "Password",
-    TreeSelect: "TreeSelect",
-    Slider: "Slider",
-    Table: "Table",
-    Input: "Input",
-    InputNumber: "InputNumber",
-    Upload: "Upload",
-    Transfer: "Transfer"
-}
+    Select: 'Select',
+    MultiSelect: 'MultiSelect',
+    DatePicker: 'DatePicker',
+    RangePicker: 'RangePicker',
+    TextArea: 'TextArea',
+    Password: 'Password',
+    TreeSelect: 'TreeSelect',
+    Slider: 'Slider',
+    Table: 'Table',
+    Input: 'Input',
+    InputNumber: 'InputNumber',
+    Upload: 'Upload',
+    Transfer: 'Transfer',
+};
 
 /**
  * 获取只读对象
  */
 export function getSchemaShow(schema) {
-    let result = {}
+    let result = {};
 
     Object.keys(schema).forEach(key => {
         result[key] = {
             ...schema[key],
             readOnly: true,
             partialUpdate: false,
-            required: false
-        }
-    })
+            required: false,
+        };
+    });
 
-    return result
+    return result;
 }
 
 /**
@@ -49,27 +49,27 @@ export function getSchemaShow(schema) {
  * @returns {Array}
  */
 export function getInfoColumn(schema, infoAction = actions.add) {
-    let result = []
+    let result = [];
     Object.keys(schema).forEach(key => {
         if (!schema[key]) {
-            return
+            return;
         }
         if (infoAction === actions.add && schema[key].addHide) {
-            return
+            return;
         }
 
         if (infoAction === actions.edit && schema[key].editHide) {
-            return
+            return;
         }
 
         if (infoAction === actions.show && schema[key].showHide) {
-            return
+            return;
         }
 
-        !schema[key].infoHide && result.push({ dataIndex: key, ...schema[key] })
-    })
+        !schema[key].infoHide && result.push({ dataIndex: key, ...schema[key] });
+    });
 
-    result.sort(function (a, b) {
+    result.sort(function(a, b) {
         return (
             (a.orderIndex === undefined || a.orderIndex === null
                 ? 9999
@@ -77,10 +77,10 @@ export function getInfoColumn(schema, infoAction = actions.add) {
             (b.orderIndex === undefined || b.orderIndex === null
                 ? 9999
                 : b.orderIndex)
-        )
-    })
+        );
+    });
 
-    return result
+    return result;
 }
 
 /**
@@ -90,17 +90,17 @@ export function getInfoColumn(schema, infoAction = actions.add) {
  * @returns {*}
  */
 export function convertFromRemote(inData, schema) {
-    let result = null
+    let result = null;
     if (inData == null || schema == null) {
-        return inData
+        return inData;
     }
 
     if (inData instanceof Array) {
-        result = inData.map(item => formRemote(item, schema))
+        result = inData.map(item => formRemote(item, schema));
     } else {
-        result = formRemote(inData, schema)
+        result = formRemote(inData, schema);
     }
-    return result
+    return result;
 }
 
 /**
@@ -110,43 +110,43 @@ export function convertFromRemote(inData, schema) {
  * @returns {{[p: string]: *}}
  */
 function formRemote(item, schema) {
-    let result = { ...item }
+    let result = { ...item };
     Object.keys(schema).forEach(key => {
         if (!item[key] || !schema[key]) {
-            return
+            return;
         }
 
         switch (schema[key].type) {
             case schemaFieldType.DatePicker:
-                let value = item[key]
+                let value = item[key];
                 if (!value) {
-                    return null
+                    return null;
                 }
 
-                const reg = /^[\d]+$/
+                const reg = /^[\d]+$/;
                 if (reg.test(value)) {
-                    value = parseInt(item[key])
+                    value = parseInt(item[key]);
                 }
 
                 result[key] =
-                    typeof value === "number"
+                    typeof value === 'number'
                         ? moment.unix(value)
-                        : moment(value)
-                break
+                        : moment(value);
+                break;
         }
 
         // 除数
         if (schema[key].divisor) {
-            result[key] = result[key] && result[key]/schema[key].divisor
+            result[key] = result[key] && result[key]/schema[key].divisor;
         }
         if (schema[key].decimal) {
             result[key] =
                 result[key] !== undefined &&
                 result[key] !== null &&
-                Number.parseFloat(result[key]).toFixed(schema[key].decimal)
+                Number.parseFloat(result[key]).toFixed(schema[key].decimal);
         }
-    })
-    return result
+    });
+    return result;
 }
 
 /**
@@ -158,39 +158,39 @@ function formRemote(item, schema) {
  */
 function toRemote(item, schema, action = actions.edit) {
     if (!schema || item instanceof FormData) {
-        return item
+        return item;
     }
 
-    let result = { ...item }
+    let result = { ...item };
     Object.keys(schema).forEach(key => {
         if (
             action === actions.edit &&
             schema[key].readOnly &&
             !schema[key].primaryKey
         ) {
-            delete result[key]
-            return
+            delete result[key];
+            return;
         }
 
         if (!item[key]) {
-            return
+            return;
         }
 
         switch (schema[key].type) {
-            case "DatePicker":
-                result[key] = moment(item[key])
+            case 'DatePicker':
+                result[key] = moment(item[key]);
                 if (schema[key].submitFormat) {
-                    result[key] = result[key].format(schema[key].submitFormat)
+                    result[key] = result[key].format(schema[key].submitFormat);
                 } else {
-                    result[key] = result[key].valueOf()
+                    result[key] = result[key].valueOf();
                 }
 
-                break
+                break;
             default:
         }
-    })
+    });
 
-    return result
+    return result;
 }
 
 /**
@@ -201,29 +201,29 @@ function toRemote(item, schema, action = actions.edit) {
  * @returns {*}
  */
 export const convertToRemote = (data, schema, action = actions.edit) => {
-    let result = null
+    let result = null;
     if (data instanceof Array) {
-        result = data.map(item => toRemote(item, schema, action))
+        result = data.map(item => toRemote(item, schema, action));
     } else {
-        result = toRemote(data, schema, action)
+        result = toRemote(data, schema, action);
     }
-    return result
-}
+    return result;
+};
 
 /**
  * 获取主键key
  * @param schema
  */
 export function getPrimaryKey(schema) {
-    let primaryKey = "id"
+    let primaryKey = 'id';
     Object.keys(schema).some(key => {
-        if (schema[key].primaryKey) {
-            primaryKey = key
-            return true
+        if (schema[key] && schema[key].primaryKey) {
+            primaryKey = key;
+            return true;
         }
-    })
+    });
 
-    return primaryKey
+    return primaryKey;
 }
 
 /**
@@ -237,117 +237,117 @@ export async function convertFormImport(
     data,
     schema,
     sliceNum = 1,
-    errorKey = "id"
+    errorKey = 'id',
 ) {
     // 转换schema 根据 中文标题做key
-    let convertMap = {}
+    let convertMap = {};
     Object.keys(schema).forEach(dataIndex => {
-        const fieldDefine = schema[dataIndex]
-        convertMap[fieldDefine.title] = { ...schema[dataIndex], dataIndex }
-    })
+        const fieldDefine = schema[dataIndex];
+        convertMap[fieldDefine.title] = { ...schema[dataIndex], dataIndex };
+    });
 
     // 添加 A,B,C，D... 等的匹配
     Object.keys(data[0]).forEach(key => {
-        convertMap[key] = convertMap[data[0][key]]
-    })
+        convertMap[key] = convertMap[data[0][key]];
+    });
 
     // 生成validate descriptor
-    let descriptor = {}
+    let descriptor = {};
     Object.keys(schema).forEach(key => {
-        const { required, rules } = schema[key]
+        const { required, rules } = schema[key];
         descriptor[key] = {
             required,
-            ...(rules || {})
-        }
-    })
+            ...(rules || {}),
+        };
+    });
 
     // 批量验证
-    let dataResult = []
-    let throwMessage = null
+    let dataResult = [];
+    let throwMessage = null;
     const handlePromiseList = data.slice(sliceNum).map(item => {
         return new Promise(async (resolve, reject) => {
-            let result = {}
+            let result = {};
 
             // convert the data
-            let lastFiledDefine = null
+            let lastFiledDefine = null;
             Object.keys(item).forEach(key => {
-                let filedDefine = convertMap[key]
+                let filedDefine = convertMap[key];
                 if (!filedDefine) {
-                    filedDefine = lastFiledDefine
+                    filedDefine = lastFiledDefine;
                 }
 
                 if (_.isNil(filedDefine) || filedDefine.addHide) {
-                    return
+                    return;
                 }
 
                 // 获取key
-                const realKey = filedDefine.dataIndex
+                const realKey = filedDefine.dataIndex;
                 if (!realKey) {
-                    return
+                    return;
                 }
 
                 // 获取值
-                lastFiledDefine = filedDefine
-                let value = item[key]
+                lastFiledDefine = filedDefine;
+                let value = item[key];
 
                 if (filedDefine.dict) {
-                    value = reverseDictValue(value, filedDefine.dict)
+                    value = reverseDictValue(value, filedDefine.dict);
                 }
 
                 if (_.isNil(result[realKey])) {
-                    result[realKey] = value
+                    result[realKey] = value;
                 } else if (result[realKey] instanceof Array) {
-                    result[realKey].push(value)
+                    result[realKey].push(value);
                 } else {
-                    result[realKey] = [result[realKey], value]
+                    result[realKey] = [result[realKey], value];
                 }
 
                 if (result[realKey] instanceof Array) {
-                    let temp = []
+                    let temp = [];
                     result[realKey].forEach(item => {
-                        if (!_.isNil(item) && item.trim() !== "") {
-                            temp.push(item)
+                        if (!_.isNil(item) && item.trim() !== '') {
+                            temp.push(item);
                         }
-                    })
+                    });
 
-                    result[realKey] = temp
+                    result[realKey] = temp;
                 }
-            })
+            });
 
             //  校验
             await new validator(descriptor).validate(
                 result,
                 (errors, fields) => {
                     if (errors) {
-                        console.error("item", item)
-                        console.error("errors", errors)
-                        console.error("fields", fields)
+                        console.error('item', item);
+                        console.error('errors', errors);
+                        console.error('fields', fields);
 
-                        let errorStr = ""
+                        let errorStr = '';
                         errors.forEach(error => {
-                            errorStr += `字段[${schema[error.field].title}]错误[${error.message}];`
-                        })
+                            errorStr += `字段[${schema[error.field].title}]错误[${error.message}];`;
+                        });
 
-                        throwMessage = `数据[${result[errorKey]}]出现问题: ${errorStr}。`
-                        reject(throwMessage)
+                        throwMessage = `数据[${result[errorKey]}]出现问题: ${errorStr}。`;
+                        reject(throwMessage);
                     }
-                }
-            )
+                },
+            );
 
-            const convertResult = toRemote(result, schema, actions.add)
-            resolve(convertResult)
-        })
-    })
+            const convertResult = toRemote(result, schema, actions.add);
+            resolve(convertResult);
+        });
+    });
 
     await Promise.all(handlePromiseList)
         .then(allResult => {
-            dataResult = allResult
+            dataResult = allResult;
         })
-        .catch(function (r) {
-            throw new Error(throwMessage)
-        })
+        .catch(function(r) {
+            throw new Error(throwMessage);
+        });
 
-    return dataResult
+    return dataResult;
 }
 
 /**
@@ -358,10 +358,10 @@ export async function convertFormImport(
  */
 export function decorateList(list, schema) {
     const result = list.map(item => {
-        return decorateItem(item, schema)
-    })
+        return decorateItem(item, schema);
+    });
 
-    return result
+    return result;
 }
 
 /**
@@ -373,51 +373,51 @@ export function decorateList(list, schema) {
 export function decorateItem(item, schema) {
     // 检查
     if (!schema || !item) {
-        return item
+        return item;
     }
 
-    let result = { ...item }
-    result = addRemark(result, schema)
+    let result = { ...item };
+    result = addRemark(result, schema);
 
     Object.keys(schema).forEach(key => {
         switch (schema[key].type) {
-            case "DatePicker":
+            case 'DatePicker':
                 if (!item[key]) {
-                    break
+                    break;
                 }
 
                 if (!item[key].format) {
-                    break
+                    break;
                 }
 
                 if (schema[key].props && schema[key].props.showTime) {
-                    result[key + "_remark"] =
-                        item[key] && item[key].format(DATE_TIME_FORMAT)
+                    result[key + '_remark'] =
+                        item[key] && item[key].format(DATE_TIME_FORMAT);
                 } else {
-                    result[key + "_remark"] =
-                        item[key] && item[key].format(DATE_FORMAT)
+                    result[key + '_remark'] =
+                        item[key] && item[key].format(DATE_FORMAT);
                 }
-                break
+                break;
             case schemaFieldType.MultiSelect:
             case schemaFieldType.Select:
                 if (result[key] instanceof Array) {
-                    result[key + "_remark"] =
+                    result[key + '_remark'] =
                         !_.isEmpty(item[key]) &&
-                        (result[key + "_remark"]
-                            ? result[key + "_remark"].join("|")
-                            : result[key].join("|"))
+                        (result[key + '_remark']
+                            ? result[key + '_remark'].join('|')
+                            : result[key].join('|'));
                 }
-                break
+                break;
 
             default:
                 if (schema[key].unit) {
-                    result[key + "_remark"] =
+                    result[key + '_remark'] =
                         item[key] !== null &&
                         item[key] !== undefined &&
-                        item[key] + schema[key].unit
+                        item[key] + schema[key].unit;
                 }
         }
-    })
+    });
 
-    return result
+    return result;
 }
