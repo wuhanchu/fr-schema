@@ -12,19 +12,19 @@ export function createBasicApi(module, subModule) {
                 "/" +
                 config.apiVersion +
                 module +
-                (!lodash.isNil(args.id)? "/" + args.id : "") +
-                (subModule? "/" + subModule : "")
+                (!lodash.isNil(args.id) ? "/" + args.id : "") +
+                (subModule ? "/" + subModule : "")
 
             url = url.replace("//", "/")
 
             const response = await request({
                 method: "GET",
-                url
+                url,
             })
 
             return response
         },
-        put: args => {
+        put: (args) => {
             return request({
                 method: "PUT",
                 url: (
@@ -32,13 +32,13 @@ export function createBasicApi(module, subModule) {
                     config.apiVersion +
                     module +
                     "/" +
-                    (!lodash.isNil(args.id)? args.id : "") +
-                    (subModule? "/" + subModule : "")
+                    (!lodash.isNil(args.id) ? args.id : "") +
+                    (subModule ? "/" + subModule : "")
                 ).replace("//", "/"),
-                data: args
+                data: args,
             })
         },
-        patch: args => {
+        patch: (args) => {
             return request({
                 method: "PATCH",
                 url: (
@@ -46,13 +46,13 @@ export function createBasicApi(module, subModule) {
                     config.apiVersion +
                     module +
                     "/" +
-                    (!lodash.isNil(args.id)? args.id : "") +
-                    (subModule? "/" + subModule : "")
+                    (!lodash.isNil(args.id) ? args.id : "") +
+                    (subModule ? "/" + subModule : "")
                 ).replace("//", "/"),
-                data: args
+                data: args,
             })
         },
-        post: args => {
+        post: (args) => {
             const formData = objToFrom(args)
 
             return request({
@@ -61,11 +61,11 @@ export function createBasicApi(module, subModule) {
                     "/" +
                     config.apiVersion +
                     module +
-                    (subModule? "/" + subModule : "")
+                    (subModule ? "/" + subModule : "")
                 ).replace("//", "/"),
-                data: formData
+                data: formData,
             })
-        }
+        },
     }
 }
 
@@ -80,7 +80,7 @@ export function objToFrom(data) {
     }
 
     const formData = new FormData()
-    Object.keys(data).forEach(key => {
+    Object.keys(data).forEach((key) => {
         if (data[key] !== undefined) {
             formData.append(key, data[key])
         }
@@ -99,7 +99,7 @@ function addParamPrefix(params, prefix) {
         return params
     }
 
-    Object.keys(params).forEach(key => {
+    Object.keys(params).forEach((key) => {
         result[key] =
             !["select", "limit", "offset"].includes(key) &&
             params[key] &&
@@ -130,7 +130,7 @@ export function createApi(
             let { currentPage, pageSize, limit, ...otherParams } = args
 
             // convert moment
-            Object.keys(otherParams).forEach(key => {
+            Object.keys(otherParams).forEach((key) => {
                 const item = args[key]
                 if (item === undefined) {
                     return
@@ -153,17 +153,17 @@ export function createApi(
                         module +
                         "?" +
                         queryString.stringify({
-                            offset: limit*((currentPage || 1) - 1),
+                            offset: limit * ((currentPage || 1) - 1),
                             limit,
-                            ...addParamPrefix(otherParams, prefix)
+                            ...addParamPrefix(otherParams, prefix),
                         })
-                    ).replace("//", "/")
+                    ).replace("//", "/"),
                 },
                 {
                     headers: {
-                        Prefer: "count=exact"
+                        Prefer: "count=exact",
                     },
-                    ...options
+                    ...options,
                 }
             )
 
@@ -176,7 +176,7 @@ export function createApi(
                 list: inSchema
                     ? convertFromRemote(list || [], inSchema || schema)
                     : list,
-                pagination: { current: currentPage, pageSize, total }
+                pagination: { current: currentPage, pageSize, total },
             }
         },
         getBasic: async (args = {}, inSchema = schema) => {
@@ -191,10 +191,10 @@ export function createApi(
                         (Object.keys(args).length > 0
                             ? "?" + queryString.stringify(args)
                             : "")
-                    ).replace("//", "/")
+                    ).replace("//", "/"),
                 },
                 {
-                    ...options
+                    ...options,
                 }
             )
 
@@ -217,13 +217,13 @@ export function createApi(
                         "?id=" +
                         prefix +
                         id
-                    ).replace("//", "/")
+                    ).replace("//", "/"),
                 },
                 {
                     headers: {
-                        Accept: "application/vnd.pgrst.object+json"
+                        Accept: "application/vnd.pgrst.object+json",
                     },
-                    ...options
+                    ...options,
                 }
             )
 
@@ -231,26 +231,34 @@ export function createApi(
             return result
         },
         post: (args, inSchema = schema) =>
-            request({
+            request(
+                {
                     method: "POST",
                     url: ("/" + config.apiVersion + module).replace("//", "/"),
-                    data: convertToRemote(args, inSchema || schema, actions.add)
+                    data: convertToRemote(
+                        args,
+                        inSchema || schema,
+                        actions.add
+                    ),
                 },
-                options),
+                options
+            ),
 
         patch: (args, inSchema = schema) => {
             const { id, ...others } = args
-            return request({
+            return request(
+                {
                     method: "PATCH",
                     url: (
                         "/" +
                         config.apiVersion +
                         module +
-                        (!lodash.isNil(id)? "?id=" + prefix + id : "")
+                        (!lodash.isNil(id) ? "?id=" + prefix + id : "")
                     ).replace("//", "/"),
-                    data: convertToRemote(others, inSchema || schema)
+                    data: convertToRemote(others, inSchema || schema),
                 },
-                options)
+                options
+            )
         },
         put: (args, inSchema = schema) => {
             const { id, ...others } = args
@@ -258,43 +266,54 @@ export function createApi(
                 "/" +
                 config.apiVersion +
                 module +
-                (!lodash.isNil(id)? "?id=" + prefix + id : "")
+                (!lodash.isNil(id) ? "?id=" + prefix + id : "")
             ).replace("//", "/")
-            return request({
+            return request(
+                {
                     method: "PUT",
                     url,
-                    data: convertToRemote(others, inSchema || schema)
+                    data: convertToRemote(others, inSchema || schema),
                 },
-                options)
+                options
+            )
         },
-        delete: args =>
-            request({
+        delete: (args) =>
+            request(
+                {
                     method: "DELETE",
                     url: (
                         "/" +
                         config.apiVersion +
                         module +
-                        (!lodash.isNil(args.id)? "?id=" + prefix + args.id : "")
-                    ).replace("//", "/")
+                        (!lodash.isNil(args.id)
+                            ? "?id=" + prefix + args.id
+                            : "")
+                    ).replace("//", "/"),
                 },
-                options),
+                options
+            ),
 
         upInsert: (args, inSchema = schema) =>
             request(
                 {
                     method: "POST",
                     url: ("/" + config.apiVersion + module).replace("//", "/"),
-                    data: convertToRemote(args, inSchema || schema, actions.add)
+                    data: convertToRemote(
+                        args,
+                        inSchema || schema,
+                        actions.add
+                    ),
                 },
                 {
                     headers: {
-                        Prefer: "resolution=merge-duplicates"
+                        Prefer: "resolution=merge-duplicates",
                     },
-                    ...options
+                    ...options,
                 }
             ),
-        deleteMulti: args =>
-            request({
+        deleteMulti: (args) =>
+            request(
+                {
                     method: "DELETE",
                     url: (
                         "/" +
@@ -302,8 +321,9 @@ export function createApi(
                         module +
                         "?" +
                         queryString.stringify(args)
-                    ).replace("//", "/")
+                    ).replace("//", "/"),
                 },
-                options)
+                options
+            ),
     }
 }

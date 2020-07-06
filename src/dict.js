@@ -7,42 +7,42 @@ export default {
     yesOrNo: {
         yes: {
             value: true,
-            remark: "是"
+            remark: "是",
         },
         no: {
             value: false,
-            remark: "否"
-        }
+            remark: "否",
+        },
     },
     yesOrNoNum: {
         yes: {
             value: 1,
-            remark: "是"
+            remark: "是",
         },
         no: {
             value: 0,
-            remark: "否"
-        }
+            remark: "否",
+        },
     },
     level: {
         normal: {
             value: "normal",
             remark: "正常",
-            default: true
+            default: true,
         },
         warn: {
             value: "warn",
-            remark: "告警"
+            remark: "告警",
         },
         error: {
             value: "error",
-            remark: "错误"
+            remark: "错误",
         },
         disable: {
             value: "disable",
-            remark: "禁用"
-        }
-    }
+            remark: "禁用",
+        },
+    },
 }
 
 /**
@@ -53,24 +53,24 @@ export default {
  */
 export function addRemark(obj, model = {}) {
     if (obj instanceof Array) {
-        obj.forEach(item => {
-            Object.keys(model).forEach(key => {
+        obj.forEach((item) => {
+            Object.keys(model).forEach((key) => {
                 model[key].dict &&
-                (item[key + "_remark"] = convertDict(
-                    item[key],
-                    model[key].dict,
-                    model[key].type !== schemaFieldType.Select
-                ))
+                    (item[key + "_remark"] = convertDict(
+                        item[key],
+                        model[key].dict,
+                        model[key].type !== schemaFieldType.Select
+                    ))
             })
         })
     } else {
-        Object.keys(model).forEach(key => {
+        Object.keys(model).forEach((key) => {
             model[key].dict &&
-            (obj[key + "_remark"] = convertDict(
-                obj[key],
-                model[key].dict,
-                model[key].type !== schemaFieldType.Select
-            ))
+                (obj[key + "_remark"] = convertDict(
+                    obj[key],
+                    model[key].dict,
+                    model[key].type !== schemaFieldType.Select
+                ))
         })
     }
 
@@ -86,10 +86,10 @@ export function addRemark(obj, model = {}) {
 export function convertDict(value, dict, split = true) {
     let result = null
     if (value instanceof Array) {
-        result = value.map(value => getDictValue(value, dict))
+        result = value.map((value) => getDictValue(value, dict))
     } else if (typeof value === "string" && value) {
-        const list = split? value.split && value.split(",") : [value]
-        result = list.map(value => getDictValue(value, dict))
+        const list = split ? value.split && value.split(",") : [value]
+        result = list.map((value) => getDictValue(value, dict))
         result = result.join()
     } else {
         result = getDictValue(value, dict)
@@ -107,7 +107,7 @@ export function convertDict(value, dict, split = true) {
 export function callSchemaDictFunc(inSchema, dict) {
     let schema = clone(inSchema)
 
-    Object.values(schema).forEach(column => {
+    Object.values(schema).forEach((column) => {
         if (column && column.dictFunc) {
             column.dict = column.dictFunc(dict)
         }
@@ -124,10 +124,10 @@ export function callSchemaDictFunc(inSchema, dict) {
  */
 export function getDictValue(value, dict) {
     let result = null
-    Object.keys(dict).some(key => {
+    Object.keys(dict).some((key) => {
         if (value !== undefined && value !== null) {
             String(value) == String(dict[key].value) &&
-            (result = dict[key].remark)
+                (result = dict[key].remark)
         }
 
         return result
@@ -143,7 +143,7 @@ export function getDictValue(value, dict) {
  */
 export function reverseDictValue(remark, dict) {
     if (remark instanceof Array) {
-        return remark.map(item => reverseDictValueSingle(item))
+        return remark.map((item) => reverseDictValueSingle(item))
     } else {
         return reverseDictValueSingle(remark)
     }
@@ -151,10 +151,10 @@ export function reverseDictValue(remark, dict) {
 
 export function reverseDictValueSingle(remark) {
     let result = null
-    Object.keys(dict).some(key => {
+    Object.keys(dict).some((key) => {
         if (remark !== undefined && remark !== null) {
             String(remark) == String(dict[key].remark) &&
-            (result = dict[key].value)
+                (result = dict[key].value)
         }
 
         return result
@@ -189,11 +189,11 @@ export function listToDict(
         return result
     }
 
-    list.forEach(item => {
+    list.forEach((item) => {
         //check the dict Whether it matches
         if (condition) {
             if (
-                Object.keys(condition).some(key => {
+                Object.keys(condition).some((key) => {
                     return item[key] !== condition[key]
                 })
             ) {
@@ -215,7 +215,7 @@ export function listToDict(
             ...item,
             value: item[idKey],
             remark: item[remarkKey],
-            condition: tempCondition
+            condition: tempCondition,
         }
     })
     return result

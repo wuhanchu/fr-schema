@@ -3,7 +3,7 @@ import { Collapse } from "antd"
 import hash from "hash.js"
 import oauth, { OAuthToken } from "./oauth"
 import * as _ from "lodash"
-import { getDvaApp } from 'umi'
+import { getDvaApp } from "umi"
 
 const { Panel } = Collapse
 
@@ -22,14 +22,14 @@ const codeMessage = {
     500: "服务器发生错误，请检查服务器。",
     502: "网关错误。",
     503: "服务不可用，服务器暂时过载或维护。",
-    504: "网关超时。"
+    504: "网关超时。",
 }
 
 /**
  * 检查返回数据是否是错误的
  * @param {返回对象} response
  */
-const checkStatus = async response => {
+const checkStatus = async (response) => {
     if (response.status >= 200 && response.status < 300) {
         return response
     }
@@ -64,11 +64,11 @@ const cachedSave = (response, hashcode) => {
         response
             .clone()
             .text()
-            .then(content => {
+            .then((content) => {
                 sessionStorage.setItem(hashcode, content)
                 sessionStorage.setItem(`${hashcode}:timestamp`, Date.now())
             })
-            .catch(e => {
+            .catch((e) => {
                 console.log("cachedSave", e.message)
             })
     }
@@ -84,7 +84,7 @@ export function getXhrOptions() {
     if (token) {
         token = JSON.parse(token)
         options.headers = [
-            { key: "Authorization", value: `Bearer ${token.access_token}` }
+            { key: "Authorization", value: `Bearer ${token.access_token}` },
         ]
     }
 
@@ -119,25 +119,22 @@ export default function request(obj, options = {}) {
      * Produce fingerprints based on url and parameters
      * Maybe url has the same parameters
      */
-    const fingerprint = url + (options.body? JSON.stringify(options.body) : "")
-    const hashcode = hash
-        .sha256()
-        .update(fingerprint)
-        .digest("hex")
+    const fingerprint = url + (options.body ? JSON.stringify(options.body) : "")
+    const hashcode = hash.sha256().update(fingerprint).digest("hex")
 
     const defaultOptions = {
         credentials: "include",
         header: {
             "Cache-Control": "no-cache",
-            Pragma: "no-cache"
-        }
+            Pragma: "no-cache",
+        },
     }
 
     const newOptions = {
         ...defaultOptions,
         body: obj.data,
         ...obj,
-        ...options
+        ...options,
     }
     if (
         newOptions.method === "POST" ||
@@ -149,14 +146,14 @@ export default function request(obj, options = {}) {
             newOptions.headers = {
                 Accept: "application/json",
                 "Content-Type": "application/json; charset=utf-8",
-                ...newOptions.headers
+                ...newOptions.headers,
             }
             newOptions.body = JSON.stringify(newOptions.body)
         } else {
             // newOptions.body is FormData
             newOptions.headers = {
                 Accept: "application/json",
-                ...newOptions.headers
+                ...newOptions.headers,
             }
         }
     }
@@ -168,7 +165,7 @@ export default function request(obj, options = {}) {
         const cached = sessionStorage.getItem(hashcode)
         const whenCached = sessionStorage.getItem(`${hashcode}:timestamp`)
         if (cached !== null && whenCached !== null) {
-            const age = (Date.now() - whenCached)/1000
+            const age = (Date.now() - whenCached) / 1000
             if (age < expirys) {
                 const response = new Response(new Blob([cached]))
                 return response.json()
@@ -191,22 +188,22 @@ export default function request(obj, options = {}) {
         } else if (!options.skipOauth) {
             return new OAuthToken(oauth(), token)
                 .refresh()
-                .then(token => {
+                .then((token) => {
                     token.data.expires = token.expires.getTime()
                     // 设置
                     localStorage.setItem("token", JSON.stringify(token.data))
                     resolve(token.data)
                 })
-                .catch(e => {
+                .catch((e) => {
                     getDvaApp()._store.dispatch({
-                        type: "login/logout"
+                        type: "login/logout",
                     })
                 })
         } else {
             resolve(null)
         }
     })
-        .then(token => {
+        .then((token) => {
             if (token) {
                 newOptions.headers = newOptions.headers || {}
                 newOptions.headers.Authorization = `Bearer ${token.access_token}`
@@ -215,8 +212,8 @@ export default function request(obj, options = {}) {
             return fetch(url, newOptions)
         })
         .then(checkStatus)
-        .then(response => cachedSave(response, hashcode))
-        .then(async response => {
+        .then((response) => cachedSave(response, hashcode))
+        .then(async (response) => {
             // DELETE and 204 do not return data by default
             // using .json will report an error.
 
@@ -243,11 +240,8 @@ export default function request(obj, options = {}) {
                     let total = null
 
                     let contentRange = response.headers.get("content-range")
-                    if (
-                        !_.isNil(contentRange)
-                    ) {
-                        total = contentRange
-                            .split("/")[1]
+                    if (!_.isNil(contentRange)) {
+                        total = contentRange.split("/")[1]
                     }
 
                     return { list: result, total: total && parseInt(total) }
@@ -265,12 +259,12 @@ export default function request(obj, options = {}) {
                 }
             }
         })
-        .catch(e => {
+        .catch((e) => {
             const status = e.status
             if (status === 401 && getDvaApp()._store) {
                 if (!window.location.href.includes("login")) {
                     getDvaApp()._store.dispatch({
-                        type: "login/logout"
+                        type: "login/logout",
                     })
                     throw e
                 }

@@ -41,18 +41,18 @@ const init = (outConfig, outRequest = null) => {
  * 初始化系统字典
  * @param value
  */
-const initSysDict = value => {
+const initSysDict = (value) => {
     sysDict = {}
     value &&
-    value.forEach(item => {
-        sysDict[item.type] ||
-        (sysDict[item.type] = listToDict(
-            value,
-            { type: item.type },
-            "value",
-            "label"
-        ))
-    })
+        value.forEach((item) => {
+            sysDict[item.type] ||
+                (sysDict[item.type] = listToDict(
+                    value,
+                    { type: item.type },
+                    "value",
+                    "label"
+                ))
+        })
     return sysDict
 }
 
@@ -60,7 +60,7 @@ const initSysDict = value => {
  *  初始化全局字典
  * @param value
  */
-const initGlobalDict = value => {
+const initGlobalDict = (value) => {
     globalDict = value
 }
 
@@ -71,19 +71,19 @@ export default {
     params: {
         config,
         sysDict,
-        globalDict
+        globalDict,
     },
     utils: {
         getXhrOptions,
         request,
         moment,
         string,
-        dict: dictUtils
+        dict: dictUtils,
     },
     oauth,
     dict,
     actions,
     model,
     ...service,
-    ...schema
+    ...schema,
 }

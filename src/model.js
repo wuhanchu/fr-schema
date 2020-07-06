@@ -4,8 +4,8 @@ export const basicModel = {
         save(state, action) {
             return {
                 ...state,
-                ...action.payload
+                ...action.payload,
             }
-        }
-    }
+        },
+    },
 }
