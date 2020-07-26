@@ -27,7 +27,7 @@ const codeMessage = {
 
 /**
  * 检查返回数据是否是错误的
- * @param {返回对象} response
+ * @param  response
  */
 const checkStatus = async (response) => {
     if (response.status >= 200 && response.status < 300) {
@@ -119,7 +119,7 @@ export default function request(obj, options = {}) {
      * Produce fingerprints based on url and parameters
      * Maybe url has the same parameters
      */
-    const fingerprint = url + (options.body ? JSON.stringify(options.body) : "")
+    const fingerprint = url + (options.body? JSON.stringify(options.body) : "")
     const hashcode = hash.sha256().update(fingerprint).digest("hex")
 
     const defaultOptions = {
@@ -165,7 +165,7 @@ export default function request(obj, options = {}) {
         const cached = sessionStorage.getItem(hashcode)
         const whenCached = sessionStorage.getItem(`${hashcode}:timestamp`)
         if (cached !== null && whenCached !== null) {
-            const age = (Date.now() - whenCached) / 1000
+            const age = (Date.now() - whenCached)/1000
             if (age < expirys) {
                 const response = new Response(new Blob([cached]))
                 return response.json()
@@ -214,12 +214,6 @@ export default function request(obj, options = {}) {
         .then(checkStatus)
         .then((response) => cachedSave(response, hashcode))
         .then(async (response) => {
-            // DELETE and 204 do not return data by default
-            // using .json will report an error.
-
-            // if (newOptions.method === "DELETE" || response.status === 204) {
-            //     return response.text()
-            // }
             if (options.skipConvert) {
                 return response
             }
@@ -246,7 +240,7 @@ export default function request(obj, options = {}) {
 
                     return { list: result, total: total && parseInt(total) }
                 } else {
-                    return result
+                    return { list: result.data, ...result }
                 }
             } else {
                 let txt = await response.text()
@@ -278,8 +272,6 @@ export default function request(obj, options = {}) {
                     })
                 }
             }
-
-            // throw e
 
             return new Promise((resolve, reject) => {
                 reject(e)

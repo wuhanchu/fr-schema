@@ -5,6 +5,12 @@ import actions from "./actions"
 import * as lodash from "lodash"
 import config from "@/../config/defaultSettings"
 
+/**
+ * @deprecated  创建基础 API
+ * @param module
+ * @param subModule
+ * @returns {{patch: (function(*=): *), post: (function(*=): *), get: (function(*=): *), put: (function(*=): *)}}
+ */
 export function createBasicApi(module, subModule) {
     return {
         get: async (args = {}) => {
@@ -12,8 +18,8 @@ export function createBasicApi(module, subModule) {
                 "/" +
                 config.apiVersion +
                 module +
-                (!lodash.isNil(args.id) ? "/" + args.id : "") +
-                (subModule ? "/" + subModule : "")
+                (!lodash.isNil(args.id)? "/" + args.id : "") +
+                (subModule? "/" + subModule : "")
 
             url = url.replace("//", "/")
 
@@ -32,8 +38,8 @@ export function createBasicApi(module, subModule) {
                     config.apiVersion +
                     module +
                     "/" +
-                    (!lodash.isNil(args.id) ? args.id : "") +
-                    (subModule ? "/" + subModule : "")
+                    (!lodash.isNil(args.id)? args.id : "") +
+                    (subModule? "/" + subModule : "")
                 ).replace("//", "/"),
                 data: args,
             })
@@ -46,8 +52,8 @@ export function createBasicApi(module, subModule) {
                     config.apiVersion +
                     module +
                     "/" +
-                    (!lodash.isNil(args.id) ? args.id : "") +
-                    (subModule ? "/" + subModule : "")
+                    (!lodash.isNil(args.id)? args.id : "") +
+                    (subModule? "/" + subModule : "")
                 ).replace("//", "/"),
                 data: args,
             })
@@ -61,7 +67,7 @@ export function createBasicApi(module, subModule) {
                     "/" +
                     config.apiVersion +
                     module +
-                    (subModule ? "/" + subModule : "")
+                    (subModule? "/" + subModule : "")
                 ).replace("//", "/"),
                 data: formData,
             })
@@ -139,7 +145,7 @@ export function createApi(
             })
 
             //默认 ID 排序
-            if (!otherParams.order) {
+            if (otherParams.order === undefined) {
                 otherParams.order = "id.desc"
             }
 
@@ -153,7 +159,7 @@ export function createApi(
                         module +
                         "?" +
                         queryString.stringify({
-                            offset: limit * ((currentPage || 1) - 1),
+                            offset: limit*((currentPage || 1) - 1),
                             limit,
                             ...addParamPrefix(otherParams, prefix),
                         })
@@ -253,7 +259,7 @@ export function createApi(
                         "/" +
                         config.apiVersion +
                         module +
-                        (!lodash.isNil(id) ? "?id=" + prefix + id : "")
+                        (!lodash.isNil(id)? "?id=" + (prefix? prefix + id : id) : "")
                     ).replace("//", "/"),
                     data: convertToRemote(others, inSchema || schema),
                 },
@@ -266,7 +272,7 @@ export function createApi(
                 "/" +
                 config.apiVersion +
                 module +
-                (!lodash.isNil(id) ? "?id=" + prefix + id : "")
+                (!lodash.isNil(id)? "?id=" + (prefix? prefix + id : id) : "")
             ).replace("//", "/")
             return request(
                 {

@@ -107,7 +107,7 @@ export function convertFromRemote(inData, schema) {
  * single item convert form remote
  * @param item
  * @param schema
- * @returns {{[p: string]: *}}
+ * @returns {*}
  */
 function formRemote(item, schema) {
     let result = { ...item }
@@ -137,7 +137,7 @@ function formRemote(item, schema) {
 
         // 除数
         if (schema[key].divisor) {
-            result[key] = result[key] && result[key] / schema[key].divisor
+            result[key] = result[key] && result[key]/schema[key].divisor
         }
         if (schema[key].decimal) {
             result[key] =
@@ -201,7 +201,7 @@ function toRemote(item, schema, action = actions.edit) {
  * @returns {*}
  */
 export const convertToRemote = (data, schema, action = actions.edit) => {
-    let result = null
+    let result
     if (data instanceof Array) {
         result = data.map((item) => toRemote(item, schema, action))
     } else {
@@ -345,7 +345,7 @@ export async function convertFormImport(
         .then((allResult) => {
             dataResult = allResult
         })
-        .catch(function (r) {
+        .catch(function () {
             throw new Error(throwMessage)
         })
 
@@ -359,16 +359,14 @@ export async function convertFormImport(
  * @returns {*|any[]}
  */
 export function decorateList(list, schema) {
-    const result = list.map((item) => {
+    return list.map((item) => {
         return decorateItem(item, schema)
     })
-
-    return result
 }
 
 /**
  * 渲染单个数据
- * @param list
+ * @param item
  * @param schema
  * @returns {any[]}
  */

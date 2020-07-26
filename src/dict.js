@@ -1,8 +1,13 @@
-import { sysDict } from "./index"
 import { schemaFieldType } from "./schema"
 import clone from "clone"
 import * as _ from "lodash"
 
+export let sysDict = null
+
+/**
+ * 字段模块
+ * @module dict
+ */
 export default {
     yesOrNo: {
         yes: {
@@ -56,21 +61,21 @@ export function addRemark(obj, model = {}) {
         obj.forEach((item) => {
             Object.keys(model).forEach((key) => {
                 model[key].dict &&
-                    (item[key + "_remark"] = convertDict(
-                        item[key],
-                        model[key].dict,
-                        model[key].type !== schemaFieldType.Select
-                    ))
+                (item[key + "_remark"] = convertDict(
+                    item[key],
+                    model[key].dict,
+                    model[key].type !== schemaFieldType.Select
+                ))
             })
         })
     } else {
         Object.keys(model).forEach((key) => {
             model[key].dict &&
-                (obj[key + "_remark"] = convertDict(
-                    obj[key],
-                    model[key].dict,
-                    model[key].type !== schemaFieldType.Select
-                ))
+            (obj[key + "_remark"] = convertDict(
+                obj[key],
+                model[key].dict,
+                model[key].type !== schemaFieldType.Select
+            ))
         })
     }
 
@@ -88,7 +93,7 @@ export function convertDict(value, dict, split = true) {
     if (value instanceof Array) {
         result = value.map((value) => getDictValue(value, dict))
     } else if (typeof value === "string" && value) {
-        const list = split ? value.split && value.split(",") : [value]
+        const list = split? value.split && value.split(",") : [value]
         result = list.map((value) => getDictValue(value, dict))
         result = result.join()
     } else {
@@ -127,7 +132,7 @@ export function getDictValue(value, dict) {
     Object.keys(dict).some((key) => {
         if (value !== undefined && value !== null) {
             String(value) == String(dict[key].value) &&
-                (result = dict[key].remark)
+            (result = dict[key].remark)
         }
 
         return result
@@ -154,7 +159,7 @@ export function reverseDictValueSingle(remark) {
     Object.keys(dict).some((key) => {
         if (remark !== undefined && remark !== null) {
             String(remark) == String(dict[key].remark) &&
-                (result = dict[key].value)
+            (result = dict[key].value)
         }
 
         return result
@@ -165,11 +170,6 @@ export function reverseDictValueSingle(remark) {
 
 /**
  * convert list data to schema dict
- * @param list
- */
-
-/**
- *
  * @param list 转换的列表
  * @param condition 过滤条件
  * @param idKey 作为id 的key数值
@@ -179,7 +179,7 @@ export function reverseDictValueSingle(remark) {
 export function listToDict(
     list,
     condition,
-    idKey = "id",
+    valueKey = "id",
     remarkKey = "name",
     showCondition
 ) {
@@ -211,9 +211,9 @@ export function listToDict(
         }
 
         // 返回
-        result[item[idKey]] = {
+        result[item[valueKey]] = {
             ...item,
-            value: item[idKey],
+            value: item[valueKey],
             remark: item[remarkKey],
             condition: tempCondition,
         }
@@ -228,3 +228,4 @@ export function listToDict(
 export function getSysDict(type) {
     return sysDict[type]
 }
+
