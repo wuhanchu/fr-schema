@@ -3,7 +3,7 @@ import { request } from "./index"
 import { convertFromRemote, convertToRemote } from "./schema"
 import actions from "./actions"
 import * as lodash from "lodash"
-import config from "@/../config/defaultSettings"
+import config from "../../../../config/settting/standard"
 
 /**
  * @deprecated  创建基础 API
