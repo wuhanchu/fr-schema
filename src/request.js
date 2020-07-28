@@ -240,7 +240,7 @@ export default function request(obj, options = {}) {
 
                     return { list: result, total: total && parseInt(total) }
                 } else {
-                    return { list: result.data, ...result }
+                    return { list: result.data, total: result.count, ...result }
                 }
             } else {
                 let txt = await response.text()

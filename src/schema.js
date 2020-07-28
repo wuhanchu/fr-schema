@@ -129,7 +129,7 @@ function formRemote(item, schema) {
                 }
 
                 result[key] =
-                    typeof value === "number"
+                    typeof value === "number" && value.length == 10
                         ? moment.unix(value)
                         : moment(value)
                 break
