@@ -3,7 +3,8 @@ import { request } from "./index"
 import { convertFromRemote, convertToRemote } from "./schema"
 import actions from "./actions"
 import * as lodash from "lodash"
-import config from "../../../../config/settting/standard"
+
+const config = SETTING
 
 /**
  * @deprecated  创建基础 API
@@ -150,6 +151,8 @@ export function createApi(
             }
 
             limit = pageSize || limit || 10
+
+            console.debug("config", config)
             const response = await request(
                 {
                     method: "GET",
