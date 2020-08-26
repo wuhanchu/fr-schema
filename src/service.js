@@ -19,8 +19,8 @@ export function createBasicApi(module, subModule) {
                 "/" +
                 config.apiVersion +
                 module +
-                (!lodash.isNil(args.id)? "/" + args.id : "") +
-                (subModule? "/" + subModule : "")
+                (!lodash.isNil(args.id) ? "/" + args.id : "") +
+                (subModule ? "/" + subModule : "")
 
             url = url.replace("//", "/")
 
@@ -39,8 +39,8 @@ export function createBasicApi(module, subModule) {
                     config.apiVersion +
                     module +
                     "/" +
-                    (!lodash.isNil(args.id)? args.id : "") +
-                    (subModule? "/" + subModule : "")
+                    (!lodash.isNil(args.id) ? args.id : "") +
+                    (subModule ? "/" + subModule : "")
                 ).replace("//", "/"),
                 data: args,
             })
@@ -53,8 +53,8 @@ export function createBasicApi(module, subModule) {
                     config.apiVersion +
                     module +
                     "/" +
-                    (!lodash.isNil(args.id)? args.id : "") +
-                    (subModule? "/" + subModule : "")
+                    (!lodash.isNil(args.id) ? args.id : "") +
+                    (subModule ? "/" + subModule : "")
                 ).replace("//", "/"),
                 data: args,
             })
@@ -68,7 +68,7 @@ export function createBasicApi(module, subModule) {
                     "/" +
                     config.apiVersion +
                     module +
-                    (subModule? "/" + subModule : "")
+                    (subModule ? "/" + subModule : "")
                 ).replace("//", "/"),
                 data: formData,
             })
@@ -130,7 +130,8 @@ export function createApi(
     module,
     schema = {},
     options = { form: false },
-    prefix = "eq."
+    prefix = "eq.",
+    order = "id.desc"
 ) {
     return {
         get: async (args = {}, inSchema = schema) => {
@@ -147,7 +148,7 @@ export function createApi(
 
             //默认 ID 排序
             if (otherParams.order === undefined) {
-                otherParams.order = "id.desc"
+                otherParams.order = order
             }
 
             limit = pageSize || limit || 10
@@ -162,7 +163,7 @@ export function createApi(
                         module +
                         "?" +
                         queryString.stringify({
-                            offset: limit*((currentPage || 1) - 1),
+                            offset: limit * ((currentPage || 1) - 1),
                             limit,
                             ...addParamPrefix(otherParams, prefix),
                         })
@@ -262,7 +263,9 @@ export function createApi(
                         "/" +
                         config.apiVersion +
                         module +
-                        (!lodash.isNil(id)? "?id=" + (prefix? prefix + id : id) : "")
+                        (!lodash.isNil(id)
+                            ? "?id=" + (prefix ? prefix + id : id)
+                            : "")
                     ).replace("//", "/"),
                     data: convertToRemote(others, inSchema || schema),
                 },
@@ -275,7 +278,7 @@ export function createApi(
                 "/" +
                 config.apiVersion +
                 module +
-                (!lodash.isNil(id)? "?id=" + (prefix? prefix + id : id) : "")
+                (!lodash.isNil(id) ? "?id=" + (prefix ? prefix + id : id) : "")
             ).replace("//", "/")
             return request(
                 {
