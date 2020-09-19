@@ -19,8 +19,8 @@ export function createBasicApi(module, subModule) {
                 "/" +
                 config.apiVersion +
                 module +
-                (!lodash.isNil(args.id) ? "/" + args.id : "") +
-                (subModule ? "/" + subModule : "")
+                (!lodash.isNil(args.id)? "/" + args.id : "") +
+                (subModule? "/" + subModule : "")
 
             url = url.replace("//", "/")
 
@@ -39,8 +39,8 @@ export function createBasicApi(module, subModule) {
                     config.apiVersion +
                     module +
                     "/" +
-                    (!lodash.isNil(args.id) ? args.id : "") +
-                    (subModule ? "/" + subModule : "")
+                    (!lodash.isNil(args.id)? args.id : "") +
+                    (subModule? "/" + subModule : "")
                 ).replace("//", "/"),
                 data: args,
             })
@@ -53,8 +53,8 @@ export function createBasicApi(module, subModule) {
                     config.apiVersion +
                     module +
                     "/" +
-                    (!lodash.isNil(args.id) ? args.id : "") +
-                    (subModule ? "/" + subModule : "")
+                    (!lodash.isNil(args.id)? args.id : "") +
+                    (subModule? "/" + subModule : "")
                 ).replace("//", "/"),
                 data: args,
             })
@@ -68,7 +68,7 @@ export function createBasicApi(module, subModule) {
                     "/" +
                     config.apiVersion +
                     module +
-                    (subModule ? "/" + subModule : "")
+                    (subModule? "/" + subModule : "")
                 ).replace("//", "/"),
                 data: formData,
             })
@@ -163,7 +163,7 @@ export function createApi(
                         module +
                         "?" +
                         queryString.stringify({
-                            offset: limit * ((currentPage || 1) - 1),
+                            offset: limit*((currentPage || 1) - 1),
                             limit,
                             ...addParamPrefix(otherParams, prefix),
                         })
@@ -264,8 +264,24 @@ export function createApi(
                         config.apiVersion +
                         module +
                         (!lodash.isNil(id)
-                            ? "?id=" + (prefix ? prefix + id : id)
+                            ? "?id=" + (prefix? prefix + id : id)
                             : "")
+                    ).replace("//", "/"),
+                    data: convertToRemote(others, inSchema || schema),
+                },
+                options
+            )
+        },
+        //批量修改
+        patchBatch: (args, inSchema = schema, queryArgs) => {
+            const { id, ...others } = args
+            return request(
+                {
+                    method: "PATCH",
+                    url: (
+                        "/" +
+                        config.apiVersion +
+                        module + "/" + queryString.stringify(queryArgs)
                     ).replace("//", "/"),
                     data: convertToRemote(others, inSchema || schema),
                 },
@@ -278,7 +294,7 @@ export function createApi(
                 "/" +
                 config.apiVersion +
                 module +
-                (!lodash.isNil(id) ? "?id=" + (prefix ? prefix + id : id) : "")
+                (!lodash.isNil(id)? "?id=" + (prefix? prefix + id : id) : "")
             ).replace("//", "/")
             return request(
                 {
