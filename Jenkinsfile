@@ -11,7 +11,7 @@ pipeline {
         GROUP = "z_know_info"
         PROJECT = "z_know_info_web"
 
-        SERVER_DEV = "192.168.1.150"
+        SERVER_DEV = "192.168.1.155"
         SERVER_URL_DEV = "http://172.17.0.1:32029"
         AUTH_URL_DEV  = "http://172.17.0.1:32024"
         PORT_DEV  = "32030"
@@ -38,9 +38,9 @@ pipeline {
                             reuseNode true
                             alwaysPull true
                             image 'server.aiknown.cn:31003/z_ai_demo/node:lts-alpine'
-                            registryUrl 'https://server.aiknown.cn:31003' 
+                            registryUrl 'https://server.aiknown.cn:31003'
                             registryCredentialsId 'harbor'
-                            args '-v jenkins:/var/jenkins_home -v jenkins_yarn_cache:/usr/local/share/.cache/yarn' 
+                            args '-v jenkins:/var/jenkins_home -v jenkins_yarn_cache:/usr/local/share/.cache/yarn'
                         }
                     }
 
@@ -65,9 +65,9 @@ pipeline {
                             reuseNode true
                             alwaysPull true
                             image 'server.aiknown.cn:31003/z_ai_demo/node:lts-alpine'
-                            registryUrl 'https://server.aiknown.cn:31003' 
+                            registryUrl 'https://server.aiknown.cn:31003'
                             registryCredentialsId 'harbor'
-                            args '-v jenkins:/var/jenkins_home -v jenkins_yarn_cache:/usr/local/share/.cache/yarn' 
+                            args '-v jenkins:/var/jenkins_home -v jenkins_yarn_cache:/usr/local/share/.cache/yarn'
                         }
                     }
 
@@ -83,13 +83,13 @@ pipeline {
         stage('Docker Build') {
             parallel {
                 stage('Docker Build Branch') {
-                     when { 
+                     when {
                          anyOf {
                             branch 'master'
                             branch 'develop'
                         }
                     }
-                    
+
                     steps{
                         sh 'pwd'
                         sh 'docker build . -f ./docker/Dockerfile.hub -t server.aiknown.cn:31003/${GROUP}/${PROJECT}:${BRANCH_NAME}'
@@ -114,7 +114,7 @@ pipeline {
 
             parallel {
                 stage('Push Branch') {
-                    when { 
+                    when {
                          anyOf {
                             branch 'master'
                             branch 'develop'
