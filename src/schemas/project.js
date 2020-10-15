@@ -23,7 +23,10 @@ const schema = {
 }
 
 const service = createApi("project", schema, null, "eq.")
-
+service.export = async args => {
+    const res = await createApi(`/project/mark`, schema).post(args)
+    return res
+}
 export default {
     schema,
     service

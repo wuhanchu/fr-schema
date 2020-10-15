@@ -7,7 +7,9 @@ import {
     Row,
     Col,
     Input,
-    Button
+    Button,
+    Card,
+    message
 } from "antd"
 import { connect } from "dva"
 import ListPage from "@/outter/fr-schema-antd-utils/src/components/Page/ListPage"
@@ -24,7 +26,7 @@ import DialogueModal from "@/pages/question/components/DialogueModal"
 class List extends ListPage {
     constructor(props) {
         super(props, {
-            operateWidth: 250,
+            operateWidth: 300,
             schema: schemas.project.schema,
             service: schemas.project.service
         })
@@ -66,6 +68,14 @@ class List extends ListPage {
                 >
                     对话
                 </a>
+                <Divider type="vertical" />
+                <a
+                    onClick={() => {
+                        this.setState({ record, visibleExport: true })
+                    }}
+                >
+                    导出
+                </a>
             </Fragment>
         )
     }
@@ -75,7 +85,8 @@ class List extends ListPage {
             visibleQuestion,
             record,
             visibleSearch,
-            visibleDialogue
+            visibleDialogue,
+            visibleExport
         } = this.state
         return (
             <Fragment>
@@ -115,6 +126,63 @@ class List extends ListPage {
                         visibleDialogue={visibleDialogue}
                         handleHideDialogue={this.handleHideDialogue}
                     ></DialogueModal>
+                )}
+                {visibleExport && (
+                    <Modal
+                        // width={"90%"}
+                        visible={true}
+                        // footer={null}
+                        onOk={async () => {
+                            if (!this.state.mark_project_id) {
+                                message.error("请输入标注狗项目id")
+                                return
+                            }
+                            await this.service.export({
+                                project_id: this.state.record.id,
+                                mark_project_id: parseInt(
+                                    this.state.mark_project_id
+                                )
+                            })
+                            this.setState({
+                                visibleExport: false
+                            })
+                        }}
+                        onCancel={() => {
+                            this.setState({
+                                visibleExport: false
+                            })
+                        }}
+                    >
+                        <Card bordered={false}>
+                            <Row gutter={24} style={{ marginTop: "20px" }}>
+                                <Col
+                                    lg={6}
+                                    style={{
+                                        lineHeight: "32px",
+                                        textAlign: "right"
+                                    }}
+                                >
+                                    <span
+                                        style={{
+                                            lineHeight: "32px",
+                                            textAlign: "right"
+                                        }}
+                                    >
+                                        标注狗项目id
+                                    </span>
+                                </Col>
+                                <Col lg={18}>
+                                    <Input
+                                        onChange={e => {
+                                            this.setState({
+                                                mark_project_id: e.target.value
+                                            })
+                                        }}
+                                    ></Input>
+                                </Col>
+                            </Row>
+                        </Card>
+                    </Modal>
                 )}
             </Fragment>
         )
