@@ -131,10 +131,11 @@ class List extends ListPage {
                     <Modal
                         // width={"90%"}
                         visible={true}
+                        title={"导出"}
                         // footer={null}
                         onOk={async () => {
                             if (!this.state.mark_project_id) {
-                                message.error("请输入标注狗项目id")
+                                message.error("请输入标注狗项目ID")
                                 return
                             }
                             await this.service.export({
@@ -154,7 +155,7 @@ class List extends ListPage {
                         }}
                     >
                         <Card bordered={false}>
-                            <Row gutter={24} style={{ marginTop: "20px" }}>
+                            <Row gutter={24}>
                                 <Col
                                     lg={6}
                                     style={{
