@@ -5,10 +5,8 @@
  */
 import ProLayout, { DefaultFooter } from "@ant-design/pro-layout"
 import React, { useEffect } from "react"
-import Link from "umi/link"
 import { connect } from "dva"
-import { Icon } from "antd"
-import { formatMessage } from "umi-plugin-react/locale"
+import { formatMessage, Link } from "umi"
 import Authorized from "@/utils/Authorized"
 import RightContent from "@/components/GlobalHeader/RightContent"
 import { isAntDesignPro } from "@/utils/utils"

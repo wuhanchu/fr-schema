@@ -1,7 +1,7 @@
 export default [
     {
         path: "/user",
-        component: "../layouts/UserLayout",
+        component: '../outter/fr-schema-antd-utils/src/layouts/UserLayout',
         routes: [
             {
                 path: "/user",
@@ -79,10 +79,11 @@ export default [
                                 component: "./authority/role/List"
                             },
                             {
-                                path: "/system/license",
-                                name: "license",
-                                component: "./authority/permission/License"
-                            }
+                                authority: ['license_get'],
+                                path: '/system/license',
+                                name: 'license',
+                                component: './authority/permission/license/License',
+                            },
                         ]
                     },
 

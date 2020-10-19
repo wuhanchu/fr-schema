@@ -1,167 +1,113 @@
-import { Badge, Icon, Spin, Tabs } from "antd"
-import React, { Component } from "react"
-import classNames from "classnames"
-import NoticeList from "./NoticeList"
-import HeaderDropdown from "../HeaderDropdown"
-import styles from "./index.less"
-const { TabPane } = Tabs
-export default class NoticeIcon extends Component {
-    static Tab = NoticeList
-    static defaultProps = {
-        onItemClick: () => {},
-        onPopupVisibleChange: () => {},
-        onTabChange: () => {},
-        onClear: () => {},
-        onViewMore: () => {},
-        loading: false,
-        clearClose: false,
-        emptyImage:
-            "https://gw.alipayobjects.com/zos/rmsportal/wAhyIChODzsoKIOBHcBk.svg"
-    }
-    state = {
-        visible: false
-    }
-    onItemClick = (item, tabProps) => {
-        const { onItemClick } = this.props
+import { BellOutlined } from '@ant-design/icons';
+import { Badge, Spin, Tabs } from 'antd';
+import useMergeValue from 'use-merge-value';
+import React from 'react';
+import classNames from 'classnames';
+import NoticeList from './NoticeList';
+import HeaderDropdown from '../HeaderDropdown';
+import styles from './index.less';
 
-        if (onItemClick) {
-            onItemClick(item, tabProps)
-        }
-    }
-    onClear = (name, key) => {
-        const { onClear } = this.props
+const { TabPane } = Tabs;
 
-        if (onClear) {
-            onClear(name, key)
-        }
-    }
-    onTabChange = tabType => {
-        const { onTabChange } = this.props
+const NoticeIcon = props => {
+  const getNotificationBox = () => {
+    const {
+      children,
+      loading,
+      onClear,
+      onTabChange,
+      onItemClick,
+      onViewMore,
+      clearText,
+      viewMoreText,
+    } = props;
 
-        if (onTabChange) {
-            onTabChange(tabType)
-        }
-    }
-    onViewMore = (tabProps, event) => {
-        const { onViewMore } = this.props
-
-        if (onViewMore) {
-            onViewMore(tabProps, event)
-        }
+    if (!children) {
+      return null;
     }
 
-    getNotificationBox() {
-        const { children, loading, clearText, viewMoreText } = this.props
+    const panes = [];
+    React.Children.forEach(children, child => {
+      if (!child) {
+        return;
+      }
 
-        if (!children) {
-            return null
-        }
+      const { list, title, count, tabKey, showClear, showViewMore } = child.props;
+      const len = list && list.length ? list.length : 0;
+      const msgCount = count || count === 0 ? count : len;
+      const tabTitle = msgCount > 0 ? `${title} (${msgCount})` : title;
+      panes.push(
+        <TabPane tab={tabTitle} key={tabKey}>
+          <NoticeList
+            clearText={clearText}
+            viewMoreText={viewMoreText}
+            data={list}
+            onClear={() => onClear && onClear(title, tabKey)}
+            onClick={item => onItemClick && onItemClick(item, child.props)}
+            onViewMore={event => onViewMore && onViewMore(child.props, event)}
+            showClear={showClear}
+            showViewMore={showViewMore}
+            title={title}
+            {...child.props}
+          />
+        </TabPane>,
+      );
+    });
+    return (
+      <Spin spinning={loading} delay={300}>
+        <Tabs className={styles.tabs} onChange={onTabChange}>
+          {panes}
+        </Tabs>
+      </Spin>
+    );
+  };
 
-        const panes = React.Children.map(children, child => {
-            if (!child) {
-                return null
-            }
+  const { className, count, bell } = props;
+  const [visible, setVisible] = useMergeValue(false, {
+    value: props.popupVisible,
+    onChange: props.onPopupVisibleChange,
+  });
+  const noticeButtonClass = classNames(className, styles.noticeButton);
+  const notificationBox = getNotificationBox();
+  const NoticeBellIcon = bell || <BellOutlined className={styles.icon} />;
+  const trigger = (
+    <span
+      className={classNames(noticeButtonClass, {
+        opened: visible,
+      })}
+    >
+      <Badge
+        count={count}
+        style={{
+          boxShadow: 'none',
+        }}
+        className={styles.badge}
+      >
+        {NoticeBellIcon}
+      </Badge>
+    </span>
+  );
 
-            const {
-                list,
-                title,
-                count,
-                tabKey,
-                showClear,
-                showViewMore
-            } = child.props
-            const len = list && list.length ? list.length : 0
-            const msgCount = count || count === 0 ? count : len
-            const tabTitle = msgCount > 0 ? `${title} (${msgCount})` : title
-            return (
-                <TabPane tab={tabTitle} key={title}>
-                    <NoticeList
-                        clearText={clearText}
-                        viewMoreText={viewMoreText}
-                        data={list}
-                        onClear={() => this.onClear(title, tabKey)}
-                        onClick={item => this.onItemClick(item, child.props)}
-                        onViewMore={event =>
-                            this.onViewMore(child.props, event)
-                        }
-                        showClear={showClear}
-                        showViewMore={showViewMore}
-                        title={title}
-                        {...child.props}
-                    />
-                </TabPane>
-            )
-        })
-        return (
-            <>
-                <Spin spinning={loading} delay={300}>
-                    <Tabs className={styles.tabs} onChange={this.onTabChange}>
-                        {panes}
-                    </Tabs>
-                </Spin>
-            </>
-        )
-    }
+  if (!notificationBox) {
+    return trigger;
+  }
 
-    handleVisibleChange = visible => {
-        const { onPopupVisibleChange } = this.props
-        this.setState({
-            visible
-        })
+  return (
+    <HeaderDropdown
+      placement="bottomRight"
+      overlay={notificationBox}
+      overlayClassName={styles.popover}
+      trigger={['click']}
+      visible={visible}
+      onVisibleChange={setVisible}
+    >
+      {trigger}
+    </HeaderDropdown>
+  );
+};
 
-        if (onPopupVisibleChange) {
-            onPopupVisibleChange(visible)
-        }
-    }
-
-    render() {
-        const { className, count, popupVisible, bell } = this.props
-        const { visible } = this.state
-        const noticeButtonClass = classNames(className, styles.noticeButton)
-        const notificationBox = this.getNotificationBox()
-        const NoticeBellIcon = bell || (
-            <Icon type="bell" className={styles.icon} />
-        )
-        const trigger = (
-            <span
-                className={classNames(noticeButtonClass, {
-                    opened: visible
-                })}
-            >
-                <Badge
-                    count={count}
-                    style={{
-                        boxShadow: "none"
-                    }}
-                    className={styles.badge}
-                >
-                    {NoticeBellIcon}
-                </Badge>
-            </span>
-        )
-
-        if (!notificationBox) {
-            return trigger
-        }
-
-        const popoverProps = {}
-
-        if ("popupVisible" in this.props) {
-            popoverProps.visible = popupVisible
-        }
-
-        return (
-            <HeaderDropdown
-                placement="bottomRight"
-                overlay={notificationBox}
-                overlayClassName={styles.popover}
-                trigger={["click"]}
-                visible={visible}
-                onVisibleChange={this.handleVisibleChange}
-                {...popoverProps}
-            >
-                {trigger}
-            </HeaderDropdown>
-        )
-    }
-}
+NoticeIcon.defaultProps = {
+  emptyImage: 'https://gw.alipayobjects.com/zos/rmsportal/wAhyIChODzsoKIOBHcBk.svg',
+};
+NoticeIcon.Tab = NoticeList;
+export default NoticeIcon;
