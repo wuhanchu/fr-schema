@@ -1,4 +1,5 @@
-import { Form } from "antd"
+import { Form } from '@ant-design/compatible';
+import '@ant-design/compatible/assets/index.css';
 import schemas from "@/schemas"
 import DataList from "@/outter/fr-schema-antd-utils/src/components/Page/DataList"
 import ImportModal from "@/outter/fr-schema-antd-utils/src/components/modal/ImportModal"

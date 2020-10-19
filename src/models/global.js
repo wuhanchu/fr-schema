@@ -1,5 +1,5 @@
 import frSchema from "@/outter/fr-schema/src"
-import config from "@/config"
+const config = SETTING;
 
 const GlobalModel = {
     namespace: "global",

@@ -67,16 +67,17 @@ let config = defineConfig({
     },
     ignoreMomentLocale: true,
     proxy: {
+        "/api/user_auth": {
+            target: process.env.AUTH_URL,
+            changeOrigin: true,
+            pathRewrite: { "^/api/user_auth": "" }
+        },
         "/api": {
             target: process.env.SERVER_URL,
             changeOrigin: true,
             pathRewrite: { "^/api": "" }
         },
-        "/api/user_auth": {
-            target: process.env.AUTH_URL,
-            changeOrigin: true,
-            pathRewrite: { "^/api/user_auth": "" }
-        }
+        
     },
     manifest: {
         basePath: '/',
