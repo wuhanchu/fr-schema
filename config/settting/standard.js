@@ -1,16 +1,16 @@
-let { REACT_APP_ENV, BASE_PATH } = process.env;
+let { REACT_APP_ENV, BASE_PATH } = process.env
 
 if (!BASE_PATH) {
-    BASE_PATH = '';
+    BASE_PATH = ""
 }
 
 export default {
-    navTheme: 'dark',
+    navTheme: "dark",
 
     // 拂晓蓝
-    primaryColor: '#1890ff',
-    layout: 'sidemenu',
-    contentWidth: 'Fluid',
+    primaryColor: "#1890ff",
+    layout: "sidemenu",
+    contentWidth: "Fluid",
     fixedHeader: false,
     autoHideHeader: false,
     fixSiderbar: false,
@@ -21,25 +21,25 @@ export default {
     pwa: false,
 
     // basic info
-    title: '知料', // 基础信息
-    product_key: 'z_markgo',
+    title: "知料", // 基础信息
+    product_key: "z_markgo",
 
-    copyright: '上海掌数科技有限公司', // 版本信息
+    copyright: "上海掌数科技有限公司", // 版本信息
 
-    apiVersion: BASE_PATH + '/api/',
-    DATE_FORMAT: 'YYYY-MM-DD',
-    DATE_TIME_FORMAT: 'YYYY-MM-DD HH:mm:ss',
+    apiVersion: BASE_PATH + "/api/know_info/",
+    DATE_FORMAT: "YYYY-MM-DD",
+    DATE_TIME_FORMAT: "YYYY-MM-DD HH:mm:ss",
 
     // oauth config
     oauth: {
-        clientId: 'yAl9PO9sA4NKYhcrXfAOXxlD',
-        clientSecret: 'DarmrCkeA04rV8t8vA4mTXhMvn7nEUweE07JgvWhEVpGsukK',
-        accessTokenUri: BASE_PATH + '/api/user_auth/auth/token',
-        scopes: 'profile',
+        clientId: "yAl9PO9sA4NKYhcrXfAOXxlD",
+        clientSecret: "DarmrCkeA04rV8t8vA4mTXhMvn7nEUweE07JgvWhEVpGsukK",
+        accessTokenUri: BASE_PATH + "/api/user_auth/auth/token",
+        scopes: "profile",
     },
 
     // iconfont
-    iconfontUrl: '//at.alicdn.com/t/font_1368817_ytmlcctjr8d.js',
+    iconfontUrl: "//at.alicdn.com/t/font_1368817_ytmlcctjr8d.js",
     BASE_PATH,
-    fileServer: '/file_server/',
-};
+    fileServer: "/file_server/",
+}

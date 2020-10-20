@@ -3,7 +3,7 @@ import { Card, Empty, Input, List, Spin, AutoComplete } from "antd"
 import schemas from "@/schemas"
 import { contentHeight } from "@/styles/global"
 import * as _ from "lodash"
-import utils from "@/outter/fr-schema-antd-utils/src/utils"
+import utils from "@/outter/fr-schema-antd-utils/src"
 
 const { url } = utils
 
@@ -11,7 +11,7 @@ function SearchPage(props) {
     const [state, setState] = useState({
         data: null,
         allData: [],
-        loading: false
+        loading: false,
     })
 
     const { data, loading } = state
@@ -28,27 +28,27 @@ function SearchPage(props) {
         () =>
             schemas.question.service
                 .get({ project_id: project_id, limit: 999 })
-                .then(response => {
+                .then((response) => {
                     let allData = []
-                    response.list.forEach(item => {
+                    response.list.forEach((item) => {
                         allData.push(item.question_standard)
                     })
                     setState({
                         ...state,
-                        allData
+                        allData,
                     })
                 }),
         []
     )
 
-    const handleChange = value => {
+    const handleChange = (value) => {
         setState({
             ...state,
             value,
             dataSource:
                 value &&
                 state.allData &&
-                state.allData.filter(item => item.indexOf(value) >= 0)
+                state.allData.filter((item) => item.indexOf(value) >= 0),
         })
     }
 
@@ -60,24 +60,24 @@ function SearchPage(props) {
         if (_.isNil(value)) {
             setState({
                 data: [],
-                loading: false
+                loading: false,
             })
             return
         }
 
         setState({
-            loading: true
+            loading: true,
         })
 
         const response = await schemas.question.service.search({
             search: value,
-            project_id
+            project_id,
         })
         setState({
             ...state,
             value,
             data: response.list,
-            loading: false
+            loading: false,
         })
     }
 
@@ -105,11 +105,11 @@ function SearchPage(props) {
                         <List
                             style={{
                                 maxHeight: height,
-                                overflowY: "scroll"
+                                overflowY: "scroll",
                             }}
                             itemLayout="horizontal"
                             dataSource={data}
-                            renderItem={item => (
+                            renderItem={(item) => (
                                 <List.Item>
                                     <List.Item.Meta
                                         title={
@@ -120,7 +120,10 @@ function SearchPage(props) {
                                                             /<b>/g,
                                                             "<b style='color:red;'>"
                                                         )
-                                                        .replace(/\n/g, "<br/>")
+                                                        .replace(
+                                                            /\n/g,
+                                                            "<br/>"
+                                                        ),
                                                 }}
                                             ></div>
                                         }
@@ -132,7 +135,10 @@ function SearchPage(props) {
                                                             /<b>/g,
                                                             "<b style='color:red;'>"
                                                         )
-                                                        .replace(/\n/g, "<br/>")
+                                                        .replace(
+                                                            /\n/g,
+                                                            "<br/>"
+                                                        ),
                                                 }}
                                             ></div>
                                         }
