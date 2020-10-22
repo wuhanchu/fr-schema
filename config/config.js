@@ -57,7 +57,6 @@ let config = defineConfig({
     },
     mountElementId: "know_info",
     base: "know_info",
-    outputPath: `./dist/know_info`,
     publicPath: `/know_info/`,
     qiankun: {
         slave: {},
@@ -72,15 +71,15 @@ let config = defineConfig({
             changeOrigin: true,
             pathRewrite: { "^/api/user_auth": "" },
         },
-        "/api/know_info/user_auth": {
+        "/z_know_info/api/user_auth": {
             target: process.env.AUTH_URL,
             changeOrigin: true,
-            pathRewrite: { "^/api/know_info/user_auth": "" },
+            pathRewrite: { "^/z_know_info/api/user_auth": "" },
         },
-        "/api/know_info": {
+        "/z_know_info/api": {
             target: process.env.SERVER_URL,
             changeOrigin: true,
-            pathRewrite: { "^/api/know_info": "" },
+            pathRewrite: { "^/z_know_info/api": "" },
         },
         "/api": {
             target: process.env.SERVER_URL,

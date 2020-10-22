@@ -26,7 +26,7 @@ export default {
 
     copyright: "上海掌数科技有限公司", // 版本信息
 
-    apiVersion: BASE_PATH + "/api/know_info/",
+    apiVersion: BASE_PATH + "/api/",
     DATE_FORMAT: "YYYY-MM-DD",
     DATE_TIME_FORMAT: "YYYY-MM-DD HH:mm:ss",
 

@@ -45,22 +45,23 @@ export default [
             },
         ],
     },
-    {
-        path: "/out",
-        component: "../layouts/BlankLayout",
-        routes: [
-            {
-                path: "/out/project",
-                name: "project",
-                icon: "project",
-                component: "./project/List",
-            },
-        ],
-    },
+
     {
         path: "/",
         component: "../layouts/SecurityLayout",
         routes: [
+            {
+                path: "/out",
+                component: "../layouts/OutLayout",
+                routes: [
+                    {
+                        path: "/out/project",
+                        name: "projects",
+                        icon: "project",
+                        component: "./project/List",
+                    },
+                ],
+            },
             {
                 path: "/",
                 component: "../layouts/BasicLayout",
