@@ -55,9 +55,7 @@ let config = defineConfig({
         SETTING: setting,
         BASE_PATH: BASE_PATH,
     },
-    mountElementId: "know_info",
-    base: "know_info",
-    publicPath: `/know_info/`,
+    mountElementId: "z_know_info",
     qiankun: {
         slave: {},
     },
@@ -86,9 +84,6 @@ let config = defineConfig({
             changeOrigin: true,
             pathRewrite: { "^/api": "" },
         },
-    },
-    manifest: {
-        basePath: "/",
     },
     ...extend,
 })
