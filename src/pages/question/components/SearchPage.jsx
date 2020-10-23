@@ -5,7 +5,7 @@ import { contentHeight } from "@/styles/global"
 import * as _ from "lodash"
 import utils from "@/outter/fr-schema-antd-utils/src"
 
-const { url } = utils
+const { url } = utils.utils
 
 function SearchPage(props) {
     const [state, setState] = useState({
@@ -24,22 +24,20 @@ function SearchPage(props) {
         height = contentHeight - 200
     }
 
-    useEffect(
-        () =>
-            schemas.question.service
-                .get({ project_id: project_id, limit: 999 })
-                .then((response) => {
-                    let allData = []
-                    response.list.forEach((item) => {
-                        allData.push(item.question_standard)
-                    })
-                    setState({
-                        ...state,
-                        allData,
-                    })
-                }),
-        []
-    )
+    useEffect(() => {
+        schemas.question.service
+            .get({ project_id: project_id, limit: 999 })
+            .then((response) => {
+                let allData = []
+                response.list.forEach((item) => {
+                    allData.push(item.question_standard)
+                })
+                setState({
+                    ...state,
+                    allData,
+                })
+            })
+    }, [])
 
     const handleChange = (value) => {
         setState({

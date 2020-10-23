@@ -8,7 +8,7 @@ import utils from "@/outter/fr-schema-antd-utils/src"
 import style from "./Dialogue.less"
 import * as _ from "lodash"
 
-const { url } = utils
+const { url } = utils.utils
 
 class Dialogue extends React.Component {
     state = {
