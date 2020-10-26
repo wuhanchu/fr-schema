@@ -86,7 +86,6 @@ pipeline {
                      when {
                          anyOf {
                             branch 'master'
-                            branch 'develop'
                         }
                     }
 
@@ -97,7 +96,12 @@ pipeline {
                 }
 
                 stage('Docker Build Tag') {
-                    when { buildingTag()}
+                    when {
+                        anyOf{
+                            buildingTag()
+                            branch 'develop'
+                        }
+                    }
                     steps{
                         sh 'docker build . -f ./docker/Dockerfile.hub -t server.aiknown.cn:31003/${GROUP}/${PROJECT}:${TAG_NAME}'
                     }
@@ -143,17 +147,17 @@ pipeline {
 
         stage('Deploy') {
             parallel {
-                // stage('Deploy Develop') {
-                //     when {
-                //         branch 'develop'
-                //      }
+                stage('Deploy Develop') {
+                    when {
+                        branch 'develop'
+                     }
 
-                //     steps {
-                //         sshagent(credentials : ['dataknown_dev']) {
-                //              sh "ssh  -t  root@${SERVER_DEV} -o StrictHostKeyChecking=no  'docker pull server.aiknown.cn:31003/${GROUP}/${PROJECT}:${BRANCH_NAME} &&  docker rm -f  ${PROJECT};docker run --restart=always -d -p ${PORT_DEV}:80 -e SERVER_URL=${SERVER_URL_DEV} -e AUTH_URL=${AUTH_URL_DEV}  --name ${PROJECT} server.aiknown.cn:31003/${GROUP}/${PROJECT}:${BRANCH_NAME};'"
-                //         }
-                //     }
-                // }
+                    steps {
+                        sshagent(credentials : ['dataknown_dev']) {
+                             sh "ssh  -t  root@${SERVER_DEV} -o StrictHostKeyChecking=no  'docker pull server.aiknown.cn:31003/${GROUP}/${PROJECT}:${BRANCH_NAME} &&  docker rm -f  ${PROJECT};docker run --restart=always -d -p ${PORT_DEV}:80 -e SERVER_URL=${SERVER_URL_DEV} -e AUTH_URL=${AUTH_URL_DEV}  --name ${PROJECT} server.aiknown.cn:31003/${GROUP}/${PROJECT}:${BRANCH_NAME};'"
+                        }
+                    }
+                }
 
                 stage('Deploy Test') {
                     when {
