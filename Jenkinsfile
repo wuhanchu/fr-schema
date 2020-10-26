@@ -45,7 +45,7 @@ pipeline {
                     }
 
                     when {
-                        anyOf {branch 'develop'; branch 'master'; tag '*datanown*'}
+                        anyOf {branch 'master'; tag '*datanown*'}
                      }
 
                     steps{
@@ -57,7 +57,7 @@ pipeline {
 
                 stage('Build Standard') {
                     when {
-                        allOf{ buildingTag();  not { tag '*datanown*'}}
+                       anyOf {branch 'develop'; allOf{ buildingTag();  not { tag '*datanown*'}}}
                      }
 
                      agent {
@@ -86,6 +86,7 @@ pipeline {
                      when {
                          anyOf {
                             branch 'master'
+                            branch 'develop'
                         }
                     }
 
@@ -96,12 +97,7 @@ pipeline {
                 }
 
                 stage('Docker Build Tag') {
-                    when {
-                        anyOf{
-                            buildingTag()
-                            branch 'develop'
-                        }
-                    }
+                    when { buildingTag()}
                     steps{
                         sh 'docker build . -f ./docker/Dockerfile.hub -t server.aiknown.cn:31003/${GROUP}/${PROJECT}:${TAG_NAME}'
                     }
