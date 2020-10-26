@@ -4,11 +4,11 @@ import schemas from "@/schemas"
 import CharRecords from "@/components/Extra/Chat/ChatRecords"
 import mySvg from "../../../assets/userhead.svg"
 import rebotSvg from "../../../assets/rebot.svg"
-import utils from "@/outter/fr-schema-antd-utils/src/utils"
+import utils from "@/outter/fr-schema-antd-utils/src"
 import style from "./Dialogue.less"
 import * as _ from "lodash"
 
-const { url } = utils
+const { url } = utils.utils
 
 class Dialogue extends React.Component {
     state = {
@@ -20,9 +20,9 @@ class Dialogue extends React.Component {
                 actions: null,
                 content: "您有什么问题？",
                 id: 0,
-                role: "my"
-            }
-        ]
+                role: "my",
+            },
+        ],
     }
 
     constructor(props) {
@@ -34,21 +34,21 @@ class Dialogue extends React.Component {
     componentDidMount() {
         schemas.question.service
             .get({ project_id: this.project_id, limit: 999 })
-            .then(response => {
+            .then((response) => {
                 let allData = []
-                response.list.forEach(item => {
+                response.list.forEach((item) => {
                     allData.push(item.question_standard)
                 })
                 this.allData = allData
             })
     }
 
-    handleChange = value => {
+    handleChange = (value) => {
         this.setState({
             sendValue: value,
             dataSource:
                 this.allData &&
-                this.allData.filter(item => item.indexOf(value) >= 0)
+                this.allData.filter((item) => item.indexOf(value) >= 0),
         })
     }
 
@@ -63,7 +63,7 @@ class Dialogue extends React.Component {
             actions: null,
             content: sendValue,
             id: this.state.data.length + 1,
-            role: "interlocutors"
+            role: "interlocutors",
         })
         let card = document.getElementById("card")
         setTimeout(() => {
@@ -72,7 +72,7 @@ class Dialogue extends React.Component {
         this.setState({ data: this.state.data, sendValue: "", isSpin: true })
         const response = await schemas.question.service.search({
             search: sendValue,
-            project_id: this.project_id
+            project_id: this.project_id,
         })
         let list
         if (response.list.length > 3) {
@@ -89,7 +89,7 @@ class Dialogue extends React.Component {
                             response.list[0].answer &&
                             response.list[0].compatibility > 0.9
                                 ? response.list[0].answer
-                                : "暂时未找到您要的信息"
+                                : "暂时未找到您要的信息",
                     }}
                 ></div>
             ),
@@ -114,7 +114,7 @@ class Dialogue extends React.Component {
                                                         {
                                                             sendValue:
                                                                 list[0]
-                                                                    .question_standard
+                                                                    .question_standard,
                                                         },
                                                         this.handleSend
                                                     )
@@ -163,7 +163,7 @@ class Dialogue extends React.Component {
                                                             this.setState(
                                                                 {
                                                                     sendValue:
-                                                                        data.question_standard
+                                                                        data.question_standard,
                                                                 },
                                                                 this.handleSend
                                                             )
@@ -188,7 +188,7 @@ class Dialogue extends React.Component {
                                                             this.setState(
                                                                 {
                                                                     sendValue:
-                                                                        data.question_standard
+                                                                        data.question_standard,
                                                                 },
                                                                 this.handleSend
                                                             )
@@ -204,10 +204,10 @@ class Dialogue extends React.Component {
                                 )}
                             </div>
                         )}
-                    </Fragment>
+                    </Fragment>,
                 ],
             id: this.state.data.length + 1,
-            role: "my"
+            role: "my",
         })
 
         setTimeout(() => {
@@ -229,17 +229,17 @@ class Dialogue extends React.Component {
                     <AutoComplete
                         dropdownMatchSelectWidth={252}
                         style={{ width: "100%" }}
-                        onChange={value => {
+                        onChange={(value) => {
                             this.handleChange(value)
                         }}
-                        onSelect={value => {
+                        onSelect={(value) => {
                             this.selectOpen = true
                         }}
                         dataSource={this.state.dataSource}
                         {...others}
                     >
                         <Input
-                            onPressEnter={e => {
+                            onPressEnter={(e) => {
                                 setTimeout(() => {
                                     if (this.selectOpen) {
                                         this.selectOpen = false
@@ -270,7 +270,7 @@ class Dialogue extends React.Component {
                 <div
                     style={{
                         width: "100%",
-                        height: this.props.height ? this.props.height : "100%"
+                        height: this.props.height ? this.props.height : "100%",
                     }}
                 >
                     <Spin
@@ -287,7 +287,7 @@ class Dialogue extends React.Component {
                                     // width: "98%",
                                     padding: "0",
                                     overflow: "scroll",
-                                    overflowX: "hidden"
+                                    overflowX: "hidden",
                                 }}
                                 ref={"card"}
                                 id="card"

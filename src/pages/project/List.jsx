@@ -1,6 +1,5 @@
 import {
     Divider,
-    Form,
     Popconfirm,
     Modal,
     Avatar,
@@ -15,6 +14,8 @@ import { connect } from "dva"
 import ListPage from "@/outter/fr-schema-antd-utils/src/components/Page/ListPage"
 import schemas from "@/schemas"
 import React, { Fragment } from "react"
+import { Form } from '@ant-design/compatible';
+import '@ant-design/compatible/assets/index.css';
 import QuestionBaseList from "@/pages/question/components/BaseList"
 import SearchPageModal from "@/pages/question/components/SearchPageModal"
 import DialogueModal from "@/pages/question/components/DialogueModal"

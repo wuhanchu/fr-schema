@@ -8,6 +8,7 @@ export default function SearchPageModal(props) {
             visible={true}
             title={"知识搜索"}
             width={1000}
+            
             footer={null}
             closable={true}
             {...props}

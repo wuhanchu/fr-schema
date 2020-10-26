@@ -1,155 +1,91 @@
-import defaultSettings from "./defaultSettings" // https://umijs.org/config/
-
-import slash from "slash2"
-import webpackPlugin from "./plugin.config"
+// https://umijs.org/config/
+import { defineConfig } from "umi"
+// import proxy from './proxy';
 import routes from "./router.config"
-const { pwa, primaryColor } = defaultSettings // preview.pro.ant.design only do not use in your production ;
-// preview.pro.ant.design 专用环境变量，请不要在你的项目中使用它。
+import settingMap from "./settting"
 
-const { ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION } = process.env
-const isAntDesignProPreview =
-    ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION === "site"
-const plugins = [
-    [
-        "umi-plugin-react",
-        {
-            antd: true,
-            dva: {
-                hmr: true
-            },
-            locale: {
-                // default false
-                enable: true,
-                // default zh-CN
-                default: "zh-CN",
-                // default true, when it is true, will use `navigator.language` overwrite default
-                baseNavigator: true
-            },
-            // dynamicImport: {
-            //   loadingComponent: './components/PageLoading/index',
-            //   webpackChunkName: true,
-            //   level: 3,
-            // },
-            pwa: pwa
-                ? {
-                      workboxPluginMode: "InjectManifest",
-                      workboxOptions: {
-                          importWorkboxFrom: "local"
-                      }
-                  }
-                : false // default close dll, because issue https://github.com/ant-design/ant-design-pro/issues/4665
-            // dll features https://webpack.js.org/plugins/dll-plugin/
-            // dll: {
-            //   include: ['dva', 'dva/router', 'dva/saga', 'dva/fetch'],
-            //   exclude: ['@babel/runtime', 'netlify-lambda'],
-            // },
-        }
-    ],
-    [
-        "umi-plugin-pro-block",
-        {
-            moveMock: false,
-            moveService: false,
-            modifyRequest: true,
-            autoAddMenu: true
-        }
-    ]
-] // 针对 preview.pro.ant.design 的 GA 统计代码
+const { REACT_APP_ENV, SETTING } = process.env
 
-if (isAntDesignProPreview) {
-    plugins.push([
-        "umi-plugin-ga",
-        {
-            code: "UA-72788897-6"
-        }
-    ])
-    plugins.push([
-        "umi-plugin-pro",
-        {
-            serverUrl: "https://ant-design-pro.netlify.com"
-        }
-    ])
-}
+//获取 setting
+// 加载微应用
 
-// 根据环境变量设置信息
+let setting = settingMap[SETTING] || settingMap["standard"]
+
 let extend = {}
-let basePath = process.env.BASE_PATH || "/"
-
-if (basePath) {
+let BASE_PATH = setting.BASE_PATH
+if (BASE_PATH) {
     extend = {
         ...extend,
-        base: basePath,
-        publicPath: basePath,
-        runtimePublicPath: true
+        base: BASE_PATH + "/",
+        publicPath: BASE_PATH + "/",
+        runtimePublicPath: true,
     }
+} else {
+    BASE_PATH = ""
 }
 
-export default {
-    plugins,
-    block: {
-        defaultGitUrl: "https://github.com/ant-design/pro-blocks"
-    },
+let config = defineConfig({
     hash: true,
-    targets: {
-        ie: 11
+    dva: {
+        hmr: true,
     },
-    devtool: isAntDesignProPreview ? "source-map" : false,
+
+    locale: {
+        // default zh-CN
+        default: "zh-CN",
+        // default true, when it is true, will use `navigator.language` overwrite default
+        antd: true,
+        baseNavigator: true,
+    },
+    dynamicImport: {
+        loading: "@/components/PageLoading/index",
+    },
+    targets: {
+        ie: 11,
+    },
+    // umi routes: https://umijs.org/docs/routing
     routes,
+    // Theme for antd: https://ant.design/docs/react/customize-theme-cn
     theme: {
-        "primary-color": primaryColor
+        // ...darkTheme,
+        "primary-color": setting.primaryColor,
     },
     define: {
-        BASE_PATH: basePath,
-        ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION:
-            ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION || "" // preview.pro.ant.design only do not use in your production ; preview.pro.ant.design 专用环境变量，请不要在你的项目中使用它。
+        CONFIG: setting,
+        SETTING: setting,
+        BASE_PATH: BASE_PATH,
     },
-    ignoreMomentLocale: true,
-    lessLoaderOptions: {
-        javascriptEnabled: true
-    },
-    disableRedirectHoist: true,
-    cssLoaderOptions: {
-        modules: true,
-        getLocalIdent: (context, _, localName) => {
-            if (
-                context.resourcePath.includes("node_modules") ||
-                context.resourcePath.includes("ant.design.pro.less") ||
-                context.resourcePath.includes("global.less")
-            ) {
-                return localName
-            }
-
-            const match = context.resourcePath.match(/src(.*)/)
-
-            if (match && match[1]) {
-                const antdProPath = match[1].replace(".less", "")
-                const arr = slash(antdProPath)
-                    .split("/")
-                    .map(a => a.replace(/([A-Z])/g, "-$1"))
-                    .map(a => a.toLowerCase())
-                return `antd-pro${arr.join("-")}-${localName}`.replace(
-                    /--/g,
-                    "-"
-                )
-            }
-            return localName
-        }
+    mountElementId: "z_know_info",
+    qiankun: {
+        slave: {},
     },
     manifest: {
-        basePath: "/"
+        basePath: "/",
     },
-    chainWebpack: webpackPlugin,
+    ignoreMomentLocale: true,
     proxy: {
-        "/api": {
-            target: process.env.SERVER_URL,
-            changeOrigin: true,
-            pathRewrite: { "^/api": "" }
-        },
         "/api/user_auth": {
             target: process.env.AUTH_URL,
             changeOrigin: true,
-            pathRewrite: { "^/api/user_auth": "" }
-        }
+            pathRewrite: { "^/api/user_auth": "" },
+        },
+        "/z_know_info/api/user_auth": {
+            target: process.env.AUTH_URL,
+            changeOrigin: true,
+            pathRewrite: { "^/z_know_info/api/user_auth": "" },
+        },
+        "/z_know_info/api": {
+            target: process.env.SERVER_URL,
+            changeOrigin: true,
+            pathRewrite: { "^/z_know_info/api": "" },
+        },
+        "/api": {
+            target: process.env.SERVER_URL,
+            changeOrigin: true,
+            pathRewrite: { "^/api": "" },
+        },
     },
-    ...extend
-}
+    ...extend,
+})
+
+export default config

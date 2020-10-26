@@ -1,132 +1,86 @@
-import { AutoComplete, Icon, Input } from "antd"
-import React, { Component } from "react"
-import classNames from "classnames"
-import debounce from "lodash/debounce"
-import styles from "./index.less"
-export default class HeaderSearch extends Component {
-    static defaultProps = {
-        defaultActiveFirstOption: false,
-        onPressEnter: () => {},
-        onSearch: () => {},
-        onChange: () => {},
-        className: "",
-        placeholder: "",
-        dataSource: [],
-        defaultOpen: false,
-        onVisibleChange: () => {}
-    }
+import { SearchOutlined } from '@ant-design/icons';
+import { AutoComplete, Input } from 'antd';
+import useMergeValue from 'use-merge-value';
+import React, { useRef } from 'react';
+import classNames from 'classnames';
+import styles from './index.less';
 
-    static getDerivedStateFromProps(props) {
-        if ("open" in props) {
-            return {
-                searchMode: props.open
-            }
+const HeaderSearch = props => {
+  const {
+    className,
+    defaultValue,
+    onVisibleChange,
+    placeholder,
+    open,
+    defaultOpen,
+    ...restProps
+  } = props;
+  const inputRef = useRef(null);
+  const [value, setValue] = useMergeValue(defaultValue, {
+    value: props.value,
+    onChange: props.onChange,
+  });
+  const [searchMode, setSearchMode] = useMergeValue(defaultOpen || false, {
+    value: props.open,
+    onChange: onVisibleChange,
+  });
+  const inputClass = classNames(styles.input, {
+    [styles.show]: searchMode,
+  });
+  return (
+    <div
+      className={classNames(className, styles.headerSearch)}
+      onClick={() => {
+        setSearchMode(true);
+
+        if (searchMode && inputRef.current) {
+          inputRef.current.focus();
         }
-
-        return null
-    }
-
-    inputRef = null
-
-    constructor(props) {
-        super(props)
-        this.state = {
-            searchMode: props.defaultOpen,
-            value: ""
+      }}
+      onTransitionEnd={({ propertyName }) => {
+        if (propertyName === 'width' && !searchMode) {
+          if (onVisibleChange) {
+            onVisibleChange(searchMode);
+          }
         }
-        this.debouncePressEnter = debounce(this.debouncePressEnter, 500, {
-            leading: true,
-            trailing: false
-        })
-    }
-
-    onKeyDown = e => {
-        if (e.key === "Enter") {
-            this.debouncePressEnter()
-        }
-    }
-    onChange = value => {
-        if (typeof value === "string") {
-            const { onSearch, onChange } = this.props
-            this.setState({
-                value
-            })
-
-            if (onSearch) {
-                onSearch(value)
+      }}
+    >
+      <SearchOutlined
+        key="Icon"
+        style={{
+          cursor: 'pointer',
+        }}
+      />
+      <AutoComplete
+        key="AutoComplete"
+        className={inputClass}
+        value={value}
+        style={{
+          height: 28,
+          marginTop: -6,
+        }}
+        options={restProps.options}
+        onChange={setValue}
+      >
+        <Input
+          ref={inputRef}
+          defaultValue={defaultValue}
+          aria-label={placeholder}
+          placeholder={placeholder}
+          onKeyDown={e => {
+            if (e.key === 'Enter') {
+              if (restProps.onSearch) {
+                restProps.onSearch(value);
+              }
             }
+          }}
+          onBlur={() => {
+            setSearchMode(false);
+          }}
+        />
+      </AutoComplete>
+    </div>
+  );
+};
 
-            if (onChange) {
-                onChange(value)
-            }
-        }
-    }
-    enterSearchMode = () => {
-        const { onVisibleChange } = this.props
-        onVisibleChange(true)
-        this.setState(
-            {
-                searchMode: true
-            },
-            () => {
-                const { searchMode } = this.state
-
-                if (searchMode && this.inputRef) {
-                    this.inputRef.focus()
-                }
-            }
-        )
-    }
-    leaveSearchMode = () => {
-        this.setState({
-            searchMode: false,
-            value: ""
-        })
-    }
-    debouncePressEnter = () => {
-        const { onPressEnter } = this.props
-        const { value } = this.state
-        onPressEnter(value)
-    }
-
-    render() {
-        const { className, placeholder, open, ...restProps } = this.props
-        const { searchMode, value } = this.state
-        delete restProps.defaultOpen // for rc-select not affected
-
-        const inputClass = classNames(styles.input, {
-            [styles.show]: searchMode
-        })
-        return (
-            <span
-                className={classNames(className, styles.headerSearch)}
-                onClick={this.enterSearchMode}
-                onTransitionEnd={({ propertyName }) => {
-                    if (propertyName === "width" && !searchMode) {
-                        const { onVisibleChange } = this.props
-                        onVisibleChange(searchMode)
-                    }
-                }}
-            >
-                <Icon type="search" key="Icon" />
-                <AutoComplete
-                    key="AutoComplete"
-                    {...restProps}
-                    className={inputClass}
-                    value={value}
-                    onChange={this.onChange}
-                >
-                    <Input
-                        ref={node => {
-                            this.inputRef = node
-                        }}
-                        aria-label={placeholder}
-                        placeholder={placeholder}
-                        onKeyDown={this.onKeyDown}
-                        onBlur={this.leaveSearchMode}
-                    />
-                </AutoComplete>
-            </span>
-        )
-    }
-}
+export default HeaderSearch;
