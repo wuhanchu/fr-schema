@@ -314,7 +314,7 @@ export function createApi(
                         config.apiVersion +
                         module +
                         (!lodash.isNil(args.id)
-                            ? "?id=" + prefix + args.id
+                            ? "?id=" + (prefix? prefix + args.id : args.id)
                             : "")
                     ).replace("//", "/"),
                 },
