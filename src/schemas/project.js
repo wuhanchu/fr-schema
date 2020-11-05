@@ -6,28 +6,32 @@ const schema = {
     id: {
         title: "编号",
         sorter: true,
-        infoHide: true
+        infoHide: true,
     },
     name: {
         title: "名称",
         sorter: true,
-        required: true
+        required: true,
     },
     remark: {
         title: "备注",
         type: schemaFieldType.TextArea,
         props: {
-            autoSize: true
-        }
-    }
+            autoSize: true,
+        },
+    },
 }
 
 const service = createApi("project", schema, null, "eq.")
-service.export = async args => {
+service.export = async (args) => {
     const res = await createApi(`project/mark`, schema).post(args)
+    return res
+}
+service.import = async (args) => {
+    const res = await createApi(`project/mark/sync`, schema).post(args)
     return res
 }
 export default {
     schema,
-    service
+    service,
 }

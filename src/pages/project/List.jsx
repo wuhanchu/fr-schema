@@ -8,28 +8,28 @@ import {
     Input,
     Button,
     Card,
-    message
+    message,
 } from "antd"
 import { connect } from "dva"
 import ListPage from "@/outter/fr-schema-antd-utils/src/components/Page/ListPage"
 import schemas from "@/schemas"
 import React, { Fragment } from "react"
-import { Form } from '@ant-design/compatible';
-import '@ant-design/compatible/assets/index.css';
+import { Form } from "@ant-design/compatible"
+import "@ant-design/compatible/assets/index.css"
 import QuestionBaseList from "@/pages/question/components/BaseList"
 import SearchPageModal from "@/pages/question/components/SearchPageModal"
 import DialogueModal from "@/pages/question/components/DialogueModal"
 
 @connect(({ global }) => ({
-    dict: global.dict
+    dict: global.dict,
 }))
 @Form.create()
 class List extends ListPage {
     constructor(props) {
         super(props, {
-            operateWidth: 300,
+            operateWidth: 350,
             schema: schemas.project.schema,
-            service: schemas.project.service
+            service: schemas.project.service,
         })
     }
 
@@ -47,7 +47,7 @@ class List extends ListPage {
                     onClick={() =>
                         this.setState({
                             record,
-                            visibleQuestion: true
+                            visibleQuestion: true,
                         })
                     }
                 >
@@ -77,6 +77,14 @@ class List extends ListPage {
                 >
                     导出
                 </a>
+                <Divider type="vertical" />
+                <a
+                    onClick={() => {
+                        this.setState({ record, visibleImport: true })
+                    }}
+                >
+                    导入
+                </a>
             </Fragment>
         )
     }
@@ -87,7 +95,8 @@ class List extends ListPage {
             record,
             visibleSearch,
             visibleDialogue,
-            visibleExport
+            visibleExport,
+            visibleImport,
         } = this.state
         return (
             <Fragment>
@@ -98,16 +107,16 @@ class List extends ListPage {
                         footer={null}
                         onCancel={() => {
                             this.setState({
-                                visibleQuestion: false
+                                visibleQuestion: false,
                             })
                         }}
                     >
                         <QuestionBaseList
                             meta={{
                                 queryArgs: {
-                                    project_id: "eq." + record.id
+                                    project_id: "eq." + record.id,
                                 },
-                                addArgs: { project_id: record.id }
+                                addArgs: { project_id: record.id },
                             }}
                         />
                     </Modal>
@@ -143,15 +152,15 @@ class List extends ListPage {
                                 project_id: this.state.record.id,
                                 mark_project_id: parseInt(
                                     this.state.mark_project_id
-                                )
+                                ),
                             })
                             this.setState({
-                                visibleExport: false
+                                visibleExport: false,
                             })
                         }}
                         onCancel={() => {
                             this.setState({
-                                visibleExport: false
+                                visibleExport: false,
                             })
                         }}
                     >
@@ -161,13 +170,13 @@ class List extends ListPage {
                                     lg={6}
                                     style={{
                                         lineHeight: "32px",
-                                        textAlign: "right"
+                                        textAlign: "right",
                                     }}
                                 >
                                     <span
                                         style={{
                                             lineHeight: "32px",
-                                            textAlign: "right"
+                                            textAlign: "right",
                                         }}
                                     >
                                         标注狗项目id
@@ -175,9 +184,67 @@ class List extends ListPage {
                                 </Col>
                                 <Col lg={18}>
                                     <Input
-                                        onChange={e => {
+                                        onChange={(e) => {
                                             this.setState({
-                                                mark_project_id: e.target.value
+                                                mark_project_id: e.target.value,
+                                            })
+                                        }}
+                                    ></Input>
+                                </Col>
+                            </Row>
+                        </Card>
+                    </Modal>
+                )}
+                {visibleImport && (
+                    <Modal
+                        // width={"90%"}
+                        visible={true}
+                        title={"从标注狗导入"}
+                        // footer={null}
+                        onOk={async () => {
+                            if (!this.state.mark_project_id) {
+                                message.error("请输入标注狗项目ID")
+                                return
+                            }
+                            await this.service.export({
+                                project_id: this.state.record.id,
+                                mark_project_id: parseInt(
+                                    this.state.mark_project_id
+                                ),
+                            })
+                            this.setState({
+                                visibleImport: false,
+                            })
+                        }}
+                        onCancel={() => {
+                            this.setState({
+                                visibleImport: false,
+                            })
+                        }}
+                    >
+                        <Card bordered={false}>
+                            <Row gutter={24}>
+                                <Col
+                                    lg={6}
+                                    style={{
+                                        lineHeight: "32px",
+                                        textAlign: "right",
+                                    }}
+                                >
+                                    <span
+                                        style={{
+                                            lineHeight: "32px",
+                                            textAlign: "right",
+                                        }}
+                                    >
+                                        标注狗项目id
+                                    </span>
+                                </Col>
+                                <Col lg={18}>
+                                    <Input
+                                        onChange={(e) => {
+                                            this.setState({
+                                                mark_project_id: e.target.value,
                                             })
                                         }}
                                     ></Input>
