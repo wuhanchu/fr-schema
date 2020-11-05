@@ -1,5 +1,5 @@
-import { Form } from '@ant-design/compatible';
-import '@ant-design/compatible/assets/index.css';
+import { Form } from "@ant-design/compatible"
+import "@ant-design/compatible/assets/index.css"
 import schemas from "@/schemas"
 import DataList from "@/outter/fr-schema-antd-utils/src/components/Page/DataList"
 import ImportModal from "@/outter/fr-schema-antd-utils/src/components/modal/ImportModal"
@@ -11,6 +11,9 @@ import clone from "clone"
 @Form.create()
 class BaseList extends DataList {
     constructor(props) {
+        const importTemplateUrl = (
+            BASE_PATH + "/import/掌数_知料_知识库信息导入.xlsx"
+        ).replace("//", "/")
         super(props, {
             operateWidth: 100,
             schema: clone(schemas.question.schema),
@@ -18,8 +21,7 @@ class BaseList extends DataList {
             allowExport: true,
             showSelect: true,
             allowImport: true,
-            importTemplateUrl:
-                BASE_PATH + "import/掌数_知料_知识库信息导入.xlsx"
+            importTemplateUrl,
         })
     }
 
@@ -27,23 +29,22 @@ class BaseList extends DataList {
         const response = await this.service.get({
             ...this.meta.queryArgs,
             select: "label",
-            limit: 9999
+            limit: 9999,
         })
 
         let labelDictList = {}
-        response.list.forEach(item => {
+        response.list.forEach((item) => {
             if (!_.isNil(item.label)) {
-                item.label.forEach(value => {
+                item.label.forEach((value) => {
                     labelDictList[value] = {
                         value: value,
-                        remark: value
+                        remark: value,
                     }
                 })
             }
         })
 
         this.schema.label.dict = labelDictList
-
         await super.componentDidMount()
     }
 
@@ -56,13 +57,13 @@ class BaseList extends DataList {
                 label: {
                     ...label,
                     props: {
-                        mode: "multiple"
-                    }
+                        mode: "multiple",
+                    },
                 },
                 question_standard: {
                     ...question_standard,
-                    type: schemaFieldType.Input
-                }
+                    type: schemaFieldType.Input,
+                },
             },
             5
         )
@@ -73,7 +74,7 @@ class BaseList extends DataList {
      * 处理搜索触发事件
      * @param e
      */
-    handleSearch = e => {
+    handleSearch = (e) => {
         e.preventDefault()
 
         const { form } = this.props
@@ -83,16 +84,16 @@ class BaseList extends DataList {
             const values = {
                 ...allValues,
                 updatedAt:
-                    fieldsValue.updatedAt && fieldsValue.updatedAt.valueOf()
+                    fieldsValue.updatedAt && fieldsValue.updatedAt.valueOf(),
             }
 
             this.setState({
-                formValues: values
+                formValues: values,
             })
 
             // refresh the list
             const formValues = {}
-            Object.keys(values).forEach(key => {
+            Object.keys(values).forEach((key) => {
                 if (_.isNil(values[key])) {
                     return
                 }
@@ -115,7 +116,7 @@ class BaseList extends DataList {
             this.setState(
                 {
                     pagination: null,
-                    formValues
+                    formValues,
                 },
                 async () => {
                     this.refreshList()
@@ -132,10 +133,10 @@ class BaseList extends DataList {
                 errorKey={"question_standard"}
                 sliceNum={4}
                 onCancel={() => this.setState({ visibleImport: false })}
-                onChange={data => this.setState({ importData: data })}
+                onChange={(data) => this.setState({ importData: data })}
                 onOk={async () => {
                     // to convert
-                    const data = this.state.importData.map(item => {
+                    const data = this.state.importData.map((item) => {
                         const { label, question_extend, ...others } = item
                         let question_extend_data = question_extend
                         if (question_extend instanceof String) {
@@ -146,7 +147,7 @@ class BaseList extends DataList {
                             ...this.meta.addArgs,
                             label: label && label.split("|"),
                             question_extend: question_extend_data,
-                            ...others
+                            ...others,
                         }
                     })
                     await this.service.upInsert(data)
