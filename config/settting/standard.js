@@ -26,7 +26,7 @@ export default {
 
     copyright: "上海掌数科技有限公司", // 版本信息
 
-    apiVersion: BASE_PATH + "/z_know_info/api/",
+    apiVersion: BASE_PATH + "/api/",
     DATE_FORMAT: "YYYY-MM-DD",
     DATE_TIME_FORMAT: "YYYY-MM-DD HH:mm:ss",
 
@@ -34,7 +34,7 @@ export default {
     oauth: {
         clientId: "yAl9PO9sA4NKYhcrXfAOXxlD",
         clientSecret: "DarmrCkeA04rV8t8vA4mTXhMvn7nEUweE07JgvWhEVpGsukK",
-        accessTokenUri: BASE_PATH + "/z_know_info/api/user_auth/auth/token",
+        accessTokenUri: BASE_PATH + "/api/user_auth/auth/token",
         scopes: "profile",
     },
 
