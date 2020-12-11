@@ -7,41 +7,44 @@ const schema = {
         width: 80,
         sorter: true,
         addHide: true,
-        readOnly: true
+        readOnly: true,
     },
     group: {
         title: "分组",
         width: 80,
+        searchPrefix: "like",
+
         required: true,
-        sorter: true
+        sorter: true,
     },
     label: {
         title: "标签",
         width: 80,
         type: schemaFieldType.Select,
         props: {
-            mode: "tags"
-        }
+            mode: "tags",
+        },
     },
     question_standard: {
         title: "标准问",
         required: true,
+        searchPrefix: "like",
         type: schemaFieldType.TextArea,
-        sorter: true
+        sorter: true,
     },
     answer: {
         title: "答案",
         required: true,
-        type: schemaFieldType.TextArea
+        type: schemaFieldType.TextArea,
     },
     question_extend: {
         title: "扩展问",
         type: schemaFieldType.Select,
         exportConcat: true,
         props: {
-            mode: "tags"
-        }
-    }
+            mode: "tags",
+        },
+    },
 }
 
 const service = createApi("question", schema, null, "eq.")
@@ -49,5 +52,5 @@ service.search = createApi("rpc/question_search", schema).getBasic
 
 export default {
     schema,
-    service
+    service,
 }

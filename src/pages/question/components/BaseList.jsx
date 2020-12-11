@@ -33,9 +33,11 @@ class BaseList extends DataList {
         })
 
         let labelDictList = {}
+        console.log(response)
         response.list.forEach((item) => {
             if (!_.isNil(item.label)) {
                 item.label.forEach((value) => {
+                    console.log(value)
                     labelDictList[value] = {
                         value: value,
                         remark: value,
@@ -44,6 +46,7 @@ class BaseList extends DataList {
             }
         })
 
+        console.log(labelDictList)
         this.schema.label.dict = labelDictList
         await super.componentDidMount()
     }
@@ -56,9 +59,6 @@ class BaseList extends DataList {
                 group,
                 label: {
                     ...label,
-                    props: {
-                        mode: "multiple",
-                    },
                 },
                 question_standard: {
                     ...question_standard,
@@ -70,61 +70,16 @@ class BaseList extends DataList {
         return this.createSearchBar(filters)
     }
 
-    /**
-     * 处理搜索触发事件
-     * @param e
-     */
-    handleSearch = (e) => {
-        e.preventDefault()
-
-        const { form } = this.props
-        form.validateFields((err, fieldsValue) => {
-            if (err) return
-            const allValues = form.getFieldsValue()
-            const values = {
-                ...allValues,
-                updatedAt:
-                    fieldsValue.updatedAt && fieldsValue.updatedAt.valueOf(),
-            }
-
-            this.setState({
-                formValues: values,
-            })
-
-            // refresh the list
-            const formValues = {}
-            Object.keys(values).forEach((key) => {
-                if (_.isNil(values[key])) {
-                    return
-                }
-
-                switch (key) {
-                    case "label":
-                        formValues[key] = "ov.{" + values[key] + "}"
-                        break
-                    case "question_standard":
-                        formValues[key] = "like.%" + values[key] + "%"
-                        break
-                    case "group":
-                        formValues[key] = "like.%" + values[key] + "%"
-                        break
-                    default:
-                        formValues[key] = values[key]
-                }
-            })
-
-            this.setState(
-                {
-                    pagination: null,
-                    formValues,
-                },
-                async () => {
-                    this.refreshList()
-                }
-            )
-        })
+    handleSearch = (fieldsValue) => {
+        console.log(fieldsValue["label"])
+        if (fieldsValue["label"].length) {
+            fieldsValue.label = "ov.{" + fieldsValue["label"] + "}"
+        } else {
+            fieldsValue.label = undefined
+        }
+        this.onSearch(fieldsValue)
+        // e.preventDefault()
     }
-
     renderImportModal() {
         return (
             <ImportModal
