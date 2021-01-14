@@ -17,7 +17,7 @@ const schema = {
         title: "备注",
         type: schemaFieldType.TextArea,
         props: {
-            autoSize: true,
+            autoSize: { minRows: 2, maxRows: 6 },
         },
     },
 }

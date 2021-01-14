@@ -4,14 +4,12 @@ import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 const schema = {
     id: {
         title: "编号",
-        width: 80,
         sorter: true,
         addHide: true,
         readOnly: true,
     },
     group: {
         title: "分组",
-        width: 80,
         searchPrefix: "like",
 
         required: true,
@@ -19,7 +17,6 @@ const schema = {
     },
     label: {
         title: "标签",
-        width: 80,
         type: schemaFieldType.Select,
         props: {
             mode: "tags",
@@ -30,20 +27,25 @@ const schema = {
         required: true,
         searchPrefix: "like",
         type: schemaFieldType.TextArea,
+        props: {
+            autoSize: { minRows: 2, maxRows: 6 },
+        },
         sorter: true,
-    },
-    answer: {
-        title: "答案",
-        required: true,
-        type: schemaFieldType.TextArea,
     },
     question_extend: {
         title: "扩展问",
         type: schemaFieldType.Select,
+        listHide: true,
         exportConcat: true,
         props: {
             mode: "tags",
         },
+    },
+    answer: {
+        title: "答案",
+        required: true,
+        listHide: true,
+        type: schemaFieldType.TextArea,
     },
 }
 
