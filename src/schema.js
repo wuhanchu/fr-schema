@@ -24,6 +24,7 @@ export const schemaFieldType = {
     InputNumber: "InputNumber",
     Upload: "Upload",
     Transfer: "Transfer",
+    BraftEditor: 'BraftEditor'
 }
 
 /**
