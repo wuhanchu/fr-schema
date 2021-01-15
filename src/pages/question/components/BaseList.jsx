@@ -2,6 +2,8 @@ import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
 import schemas from "@/schemas"
 import DataList from "@/outter/fr-schema-antd-utils/src/components/Page/DataList"
+import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
+
 import ImportModal from "@/outter/fr-schema-antd-utils/src/components/modal/ImportModal"
 import React from "react"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
@@ -68,6 +70,47 @@ class BaseList extends DataList {
             5
         )
         return this.createSearchBar(filters)
+    }
+
+    /**
+     * 渲染信息弹出框
+     * @param customProps 定制的属性
+     * @returns {*}
+     */
+    renderInfoModal(customProps = {}) {
+        if (this.props.renderInfoModal) {
+            return this.props.renderInfoModal()
+        }
+        const { form } = this.props
+        const renderForm = this.props.renderForm || this.renderForm
+        const { resource, title, addArgs } = this.meta
+        const { visibleModal, infoData, action } = this.state
+        const updateMethods = {
+            handleVisibleModal: this.handleVisibleModal.bind(this),
+            handleUpdate: this.handleUpdate.bind(this),
+            handleAdd: this.handleAdd.bind(this),
+        }
+
+        return (
+            visibleModal && (
+                <InfoModal
+                    renderForm={renderForm}
+                    title={title}
+                    width={"900px"}
+                    action={action}
+                    resource={resource}
+                    {...updateMethods}
+                    visible={visibleModal}
+                    values={infoData}
+                    addArgs={addArgs}
+                    meta={this.meta}
+                    service={this.service}
+                    schema={this.schema}
+                    {...this.meta.infoProps}
+                    {...customProps}
+                />
+            )
+        )
     }
 
     handleSearch = (fieldsValue) => {

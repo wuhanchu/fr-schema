@@ -6,6 +6,7 @@ const schema = {
         title: "编号",
         sorter: true,
         addHide: true,
+        editHide: true,
         readOnly: true,
     },
     group: {
@@ -45,7 +46,15 @@ const schema = {
         title: "答案",
         required: true,
         listHide: true,
-        type: schemaFieldType.TextArea,
+        type: schemaFieldType.BraftEditor,
+        lineWidth: "580px",
+        props: {
+            style: {
+                height: "350px",
+                border: "1px solid #d9d9d9",
+                overflow: "hidden",
+            },
+        },
     },
 }
 
