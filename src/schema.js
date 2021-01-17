@@ -110,7 +110,10 @@ export function convertFromRemote(inData, schema) {
  * @returns {*}
  */
 function formRemote(item, schema) {
-    let result = { ...item }
+    let result = item
+    if (item instanceof Object) {
+        result = {...item}
+    }
     Object.keys(schema).forEach((key) => {
         if (!item[key] || !schema[key]) {
             return
