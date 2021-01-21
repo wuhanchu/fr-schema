@@ -12,7 +12,9 @@ const schema = {
     group: {
         title: "分组",
         searchPrefix: "like",
-
+        itemProps: {
+            labelCol: { span: 4 },
+        },
         required: true,
         sorter: true,
     },
@@ -22,7 +24,11 @@ const schema = {
         props: {
             mode: "tags",
         },
+        itemProps: {
+            labelCol: { span: 4 },
+        },
     },
+
     question_standard: {
         title: "标准问",
         required: true,
@@ -30,6 +36,9 @@ const schema = {
         type: schemaFieldType.TextArea,
         props: {
             autoSize: { minRows: 2, maxRows: 6 },
+        },
+        itemProps: {
+            labelCol: { span: 4 },
         },
         sorter: true,
     },
@@ -41,7 +50,11 @@ const schema = {
         props: {
             mode: "tags",
         },
+        itemProps: {
+            labelCol: { span: 4 },
+        },
     },
+
     answer: {
         title: "答案",
         required: true,
@@ -54,6 +67,9 @@ const schema = {
                 border: "1px solid #d9d9d9",
                 overflow: "hidden",
             },
+        },
+        itemProps: {
+            labelCol: { span: 4 },
         },
     },
 }

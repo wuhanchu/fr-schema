@@ -96,7 +96,7 @@ class BaseList extends DataList {
                 <InfoModal
                     renderForm={renderForm}
                     title={title}
-                    width={"900px"}
+                    width={"820px"}
                     action={action}
                     resource={resource}
                     {...updateMethods}
