@@ -9,6 +9,19 @@ const schema = {
         editHide: true,
         readOnly: true,
     },
+    question_standard: {
+        title: "标准问",
+        required: true,
+        searchPrefix: "like",
+        type: schemaFieldType.TextArea,
+        props: {
+            autoSize: { minRows: 2, maxRows: 6 },
+        },
+        itemProps: {
+            labelCol: { span: 4 },
+        },
+        sorter: true,
+    },
     group: {
         title: "分组",
         searchPrefix: "like",
@@ -27,20 +40,6 @@ const schema = {
         itemProps: {
             labelCol: { span: 4 },
         },
-    },
-
-    question_standard: {
-        title: "标准问",
-        required: true,
-        searchPrefix: "like",
-        type: schemaFieldType.TextArea,
-        props: {
-            autoSize: { minRows: 2, maxRows: 6 },
-        },
-        itemProps: {
-            labelCol: { span: 4 },
-        },
-        sorter: true,
     },
     question_extend: {
         title: "扩展问",
