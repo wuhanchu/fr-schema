@@ -16,6 +16,7 @@ const schema = {
         searchPrefix: "like",
         type: schemaFieldType.TextArea,
         props: {
+            // 最小高度
             autoSize: { minRows: 2, maxRows: 6 },
         },
         itemProps: {
