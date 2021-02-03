@@ -242,13 +242,15 @@ export function createApi(
             return result
         },
         post: (args, inSchema = schema) =>{
-            Object.keys(inSchema).forEach((key) => {
-                if(inSchema[key].type===schemaFieldType.AceEditor){
-                    if(typeof(args[key])!=="object" && args[key]){
-                        args[key] = JSON.parse(args[key])
+            if(inSchema){
+                Object.keys(inSchema).forEach((key) => {
+                    if(inSchema[key].type===schemaFieldType.AceEditor){
+                        if(typeof(args[key])!=="object" && args[key]){
+                            args[key] = JSON.parse(args[key])
+                        }
                     }
-                }
-            });
+                });
+            }
             return request(
                 {
                     method: "POST",
@@ -265,16 +267,19 @@ export function createApi(
             
 
         patch: (args, inSchema = schema) => {
-            Object.keys(inSchema).forEach((key) => {
-                if(inSchema[key].type===schemaFieldType.AceEditor){
-                    if(typeof(args[key])!=="object" && args[key]){
-                        args[key] = JSON.parse(args[key])
+            if(inSchema){
+                Object.keys(inSchema).forEach((key) => {
+                    if(inSchema[key].type===schemaFieldType.AceEditor){
+                        if(typeof(args[key])!=="object" && args[key]){
+                            args[key] = JSON.parse(args[key])
+                        }
                     }
-                }
-                if ((args[key] == null || args[key] === '') && schema[key].editHide !== true) {
-                    args[key] = null;
-                }
-            });
+                    if ((args[key] == null || args[key] === '') && schema[key].editHide !== true) {
+                        args[key] = null;
+                    }
+                });
+            }
+            
             const { id, ...others } = args
            
             return request(
