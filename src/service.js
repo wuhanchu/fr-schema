@@ -3,6 +3,7 @@ import { request } from "./index"
 import { convertFromRemote, convertToRemote } from "./schema"
 import actions from "./actions"
 import * as lodash from "lodash"
+import { schemaFieldType } from "./schema"
 
 const config = SETTING
 
@@ -240,8 +241,15 @@ export function createApi(
             const result = convertFromRemote(response, inSchema)
             return result
         },
-        post: (args, inSchema = schema) =>
-            request(
+        post: (args, inSchema = schema) =>{
+            Object.keys(inSchema).forEach((key) => {
+                if(inSchema[key].type===schemaFieldType.AceEditor){
+                    if(typeof(args[key])!=="object" && args[key]){
+                        args[key] = JSON.parse(args[key])
+                    }
+                }
+            });
+            return request(
                 {
                     method: "POST",
                     url: ("/" + config.apiVersion + module).replace("//", "/"),
@@ -252,10 +260,23 @@ export function createApi(
                     ),
                 },
                 options
-            ),
+            )
+        },
+            
 
         patch: (args, inSchema = schema) => {
+            Object.keys(inSchema).forEach((key) => {
+                if(inSchema[key].type===schemaFieldType.AceEditor){
+                    if(typeof(args[key])!=="object" && args[key]){
+                        args[key] = JSON.parse(args[key])
+                    }
+                }
+                if ((args[key] == null || args[key] === '') && schema[key].editHide !== true) {
+                    args[key] = null;
+                }
+            });
             const { id, ...others } = args
+           
             return request(
                 {
                     method: "PATCH",

@@ -12,6 +12,7 @@ import * as _ from "lodash"
 export const schemaFieldType = {
     Select: "Select",
     JsonViewer: "JsonViewer",
+    AceEditor: 'AceEditor',
     MultiSelect: "MultiSelect",
     DatePicker: "DatePicker",
     RangePicker: "RangePicker",
