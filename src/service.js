@@ -274,9 +274,6 @@ export function createApi(
                             args[key] = JSON.parse(args[key])
                         }
                     }
-                    if ((args[key] == null || args[key] === '') && schema[key].editHide !== true) {
-                        args[key] = null;
-                    }
                 });
             }
             
