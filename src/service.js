@@ -1,11 +1,11 @@
-import queryString from "query-string"
-import { request } from "./index"
-import { convertFromRemote, convertToRemote } from "./schema"
-import actions from "./actions"
-import * as lodash from "lodash"
-import { schemaFieldType } from "./schema"
+import queryString from 'query-string';
+import { request } from './index';
+import { convertFromRemote, convertToRemote } from './schema';
+import actions from './actions';
+import * as lodash from 'lodash';
+import { schemaFieldType } from './schema';
 
-const config = SETTING
+const config = SETTING;
 
 /**
  * @deprecated  创建基础 API
@@ -17,64 +17,64 @@ export function createBasicApi(module, subModule) {
     return {
         get: async (args = {}) => {
             let url =
-                "/" +
+                '/' +
                 config.apiVersion +
                 module +
-                (!lodash.isNil(args.id)? "/" + args.id : "") +
-                (subModule? "/" + subModule : "")
+                (!lodash.isNil(args.id) ? '/' + args.id : '') +
+                (subModule ? '/' + subModule : '');
 
-            url = url.replace("//", "/")
+            url = url.replace('//', '/');
 
             const response = await request({
-                method: "GET",
+                method: 'GET',
                 url,
-            })
+            });
 
-            return response
+            return response;
         },
         put: (args) => {
             return request({
-                method: "PUT",
+                method: 'PUT',
                 url: (
-                    "/" +
+                    '/' +
                     config.apiVersion +
                     module +
-                    "/" +
-                    (!lodash.isNil(args.id)? args.id : "") +
-                    (subModule? "/" + subModule : "")
-                ).replace("//", "/"),
+                    '/' +
+                    (!lodash.isNil(args.id) ? args.id : '') +
+                    (subModule ? '/' + subModule : '')
+                ).replace('//', '/'),
                 data: args,
-            })
+            });
         },
         patch: (args) => {
             return request({
-                method: "PATCH",
+                method: 'PATCH',
                 url: (
-                    "/" +
+                    '/' +
                     config.apiVersion +
                     module +
-                    "/" +
-                    (!lodash.isNil(args.id)? args.id : "") +
-                    (subModule? "/" + subModule : "")
-                ).replace("//", "/"),
+                    '/' +
+                    (!lodash.isNil(args.id) ? args.id : '') +
+                    (subModule ? '/' + subModule : '')
+                ).replace('//', '/'),
                 data: args,
-            })
+            });
         },
         post: (args) => {
-            const formData = objToFrom(args)
+            const formData = objToFrom(args);
 
             return request({
-                method: "POST",
+                method: 'POST',
                 url: (
-                    "/" +
+                    '/' +
                     config.apiVersion +
                     module +
-                    (subModule? "/" + subModule : "")
-                ).replace("//", "/"),
+                    (subModule ? '/' + subModule : '')
+                ).replace('//', '/'),
                 data: formData,
-            })
+            });
         },
-    }
+    };
 }
 
 /**
@@ -84,16 +84,16 @@ export function createBasicApi(module, subModule) {
  */
 export function objToFrom(data) {
     if (data instanceof FormData) {
-        return data
+        return data;
     }
 
-    const formData = new FormData()
+    const formData = new FormData();
     Object.keys(data).forEach((key) => {
         if (data[key] !== undefined) {
-            formData.append(key, data[key])
+            formData.append(key, data[key]);
         }
-    })
-    return formData
+    });
+    return formData;
 }
 
 /**
@@ -102,21 +102,21 @@ export function objToFrom(data) {
  * @param {*} prefix
  */
 function addParamPrefix(params, prefix) {
-    const result = {}
+    const result = {};
     if (!prefix) {
-        return params
+        return params;
     }
 
     Object.keys(params).forEach((key) => {
         result[key] =
-            !["select", "limit", "offset"].includes(key) &&
+            !['select', 'limit', 'offset'].includes(key) &&
             params[key] &&
-            !(params[key].toString().indexOf(".") >= 0)
+            !(params[key].toString().indexOf('.') >= 0)
                 ? prefix + params[key]
-                : params[key]
-    })
+                : params[key];
+    });
 
-    return result
+    return result;
 }
 
 /**
@@ -131,250 +131,232 @@ export function createApi(
     module,
     schema = {},
     options = { form: false },
-    prefix = "eq.",
-    order = "id.desc"
+    prefix = 'eq.',
+    order = 'id.desc',
 ) {
     return {
         get: async (args = {}, inSchema = schema) => {
-            let { currentPage, pageSize, limit, ...otherParams } = args
+            let { currentPage, pageSize, limit, ...otherParams } = args;
 
             // convert moment
             Object.keys(otherParams).forEach((key) => {
-                const item = args[key]
+                const item = args[key];
                 if (item === undefined) {
-                    return
+                    return;
                 }
-                otherParams[key] = item
-            })
+                otherParams[key] = item;
+            });
 
             //默认 ID 排序
             if (otherParams.order === undefined) {
-                otherParams.order = order
+                otherParams.order = order;
             }
 
-            limit = pageSize || limit || 10
+            limit = pageSize || limit || 10;
 
-            console.debug("config", config)
             const response = await request(
                 {
-                    method: "GET",
+                    method: 'GET',
                     url: (
-                        "/" +
+                        '/' +
                         config.apiVersion +
                         module +
-                        "?" +
+                        '?' +
                         queryString.stringify({
-                            offset: limit*((currentPage || 1) - 1),
+                            offset: limit * ((currentPage || 1) - 1),
                             limit,
                             ...addParamPrefix(otherParams, prefix),
                         })
-                    ).replace("//", "/"),
+                    ).replace('//', '/'),
                 },
                 {
                     headers: {
-                        Prefer: "count=exact",
+                        Prefer: 'count=exact',
                     },
                     ...options,
-                }
-            )
+                },
+            );
 
             if (!response) {
-                return
+                return;
             }
 
-            const { total, list } = response || {}
+            const { total, list } = response || {};
             return {
-                list: inSchema
-                    ? convertFromRemote(list || [], inSchema || schema)
-                    : list,
+                list: inSchema ? convertFromRemote(list || [], inSchema || schema) : list,
                 pagination: { current: currentPage, pageSize, total },
-            }
+            };
         },
         getBasic: async (args = {}, inSchema = schema) => {
             // convert moment
             const response = await request(
                 {
-                    method: "GET",
+                    method: 'GET',
                     url: (
-                        "/" +
+                        '/' +
                         config.apiVersion +
                         module +
-                        (Object.keys(args).length > 0
-                            ? "?" + queryString.stringify(args)
-                            : "")
-                    ).replace("//", "/"),
+                        (Object.keys(args).length > 0 ? '?' + queryString.stringify(args) : '')
+                    ).replace('//', '/'),
                 },
                 {
                     ...options,
-                }
-            )
+                },
+            );
 
-            return response
+            return response;
         },
         getDetail: async (args = {}, inSchema = schema) => {
-            const { id } = args
+            const { id } = args;
 
             if (!id) {
-                return null
+                return null;
             }
 
             const response = await request(
                 {
-                    method: "GET",
-                    url: (
-                        "/" +
-                        config.apiVersion +
-                        module +
-                        "?id=" +
-                        prefix +
-                        id
-                    ).replace("//", "/"),
+                    method: 'GET',
+                    url: ('/' + config.apiVersion + module + '?id=' + prefix + id).replace(
+                        '//',
+                        '/',
+                    ),
                 },
                 {
                     headers: {
-                        Accept: "application/vnd.pgrst.object+json",
+                        Accept: 'application/vnd.pgrst.object+json',
                     },
                     ...options,
-                }
-            )
+                },
+            );
 
-            const result = convertFromRemote(response, inSchema)
-            return result
+            const result = convertFromRemote(response, inSchema);
+            return result;
         },
-        post: (args, inSchema = schema) =>{
-            if(inSchema){
+        post: (args, inSchema = schema) => {
+            if (inSchema) {
                 Object.keys(inSchema).forEach((key) => {
-                    if(inSchema[key].type===schemaFieldType.AceEditor){
-                        if(typeof(args[key])!=="object" && args[key]){
-                            args[key] = JSON.parse(args[key])
+                    if (inSchema[key].type === schemaFieldType.AceEditor) {
+                        if (typeof args[key] !== 'object' && args[key]) {
+                            args[key] = JSON.parse(args[key]);
                         }
                     }
                 });
             }
             return request(
                 {
-                    method: "POST",
-                    url: ("/" + config.apiVersion + module).replace("//", "/"),
-                    data: convertToRemote(
-                        args,
-                        inSchema || schema,
-                        actions.add
-                    ),
+                    method: 'POST',
+                    url: ('/' + config.apiVersion + module).replace('//', '/'),
+                    data: convertToRemote(args, inSchema || schema, actions.add),
                 },
-                options
-            )
+                options,
+            );
         },
-            
 
         patch: (args, inSchema = schema) => {
-            if(inSchema){
+            if (inSchema) {
                 Object.keys(inSchema).forEach((key) => {
-                    if(inSchema[key].type===schemaFieldType.AceEditor){
-                        if(typeof(args[key])!=="object" && args[key]){
-                            args[key] = JSON.parse(args[key])
+                    if (inSchema[key].type === schemaFieldType.AceEditor) {
+                        if (typeof args[key] !== 'object' && args[key]) {
+                            args[key] = JSON.parse(args[key]);
                         }
                     }
                 });
             }
-            
-            const { id, ...others } = args
-           
+
+            const { id, ...others } = args;
+
             return request(
                 {
-                    method: "PATCH",
+                    method: 'PATCH',
                     url: (
-                        "/" +
+                        '/' +
                         config.apiVersion +
                         module +
-                        (!lodash.isNil(id)
-                            ? "?id=" + (prefix? prefix + id : id)
-                            : "")
-                    ).replace("//", "/"),
+                        (!lodash.isNil(id) ? '?id=' + (prefix ? prefix + id : id) : '')
+                    ).replace('//', '/'),
                     data: convertToRemote(others, inSchema || schema),
                 },
-                options
-            )
+                options,
+            );
         },
         //批量修改
         patchBatch: (args, inSchema = schema, queryArgs) => {
-            const { id, ...others } = args
+            const { id, ...others } = args;
             return request(
                 {
-                    method: "PATCH",
+                    method: 'PATCH',
                     url: (
-                        "/" +
+                        '/' +
                         config.apiVersion +
-                        module + "/" + queryString.stringify(queryArgs)
-                    ).replace("//", "/"),
+                        module +
+                        '/' +
+                        queryString.stringify(queryArgs)
+                    ).replace('//', '/'),
                     data: convertToRemote(others, inSchema || schema),
                 },
-                options
-            )
+                options,
+            );
         },
         put: (args, inSchema = schema) => {
-            const { id, ...others } = args
+            const { id, ...others } = args;
             const url = (
-                "/" +
+                '/' +
                 config.apiVersion +
                 module +
-                (!lodash.isNil(id)? "?id=" + (prefix? prefix + id : id) : "")
-            ).replace("//", "/")
+                (!lodash.isNil(id) ? '?id=' + (prefix ? prefix + id : id) : '')
+            ).replace('//', '/');
             return request(
                 {
-                    method: "PUT",
+                    method: 'PUT',
                     url,
                     data: convertToRemote(others, inSchema || schema),
                 },
-                options
-            )
+                options,
+            );
         },
         delete: (args) =>
             request(
                 {
-                    method: "DELETE",
+                    method: 'DELETE',
                     url: (
-                        "/" +
+                        '/' +
                         config.apiVersion +
                         module +
                         (!lodash.isNil(args.id)
-                            ? "?id=" + (prefix? prefix + args.id : args.id)
-                            : "")
-                    ).replace("//", "/"),
+                            ? '?id=' + (prefix ? prefix + args.id : args.id)
+                            : '')
+                    ).replace('//', '/'),
                 },
-                options
+                options,
             ),
 
         upInsert: (args, inSchema = schema) =>
             request(
                 {
-                    method: "POST",
-                    url: ("/" + config.apiVersion + module).replace("//", "/"),
-                    data: convertToRemote(
-                        args,
-                        inSchema || schema,
-                        actions.add
-                    ),
+                    method: 'POST',
+                    url: ('/' + config.apiVersion + module).replace('//', '/'),
+                    data: convertToRemote(args, inSchema || schema, actions.add),
                 },
                 {
                     headers: {
-                        Prefer: "resolution=merge-duplicates",
+                        Prefer: 'resolution=merge-duplicates',
                     },
                     ...options,
-                }
+                },
             ),
         deleteMulti: (args) =>
             request(
                 {
-                    method: "DELETE",
+                    method: 'DELETE',
                     url: (
-                        "/" +
+                        '/' +
                         config.apiVersion +
                         module +
-                        "?" +
+                        '?' +
                         queryString.stringify(args)
-                    ).replace("//", "/"),
+                    ).replace('//', '/'),
                 },
-                options
+                options,
             ),
-    }
+    };
 }
