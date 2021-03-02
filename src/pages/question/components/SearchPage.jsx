@@ -71,6 +71,7 @@ function SearchPage(props) {
             search: value,
             project_id,
         })
+        console.log(response.list)
         setState({
             ...state,
             value,
@@ -111,19 +112,39 @@ function SearchPage(props) {
                                 <List.Item>
                                     <List.Item.Meta
                                         title={
-                                            <div
-                                                dangerouslySetInnerHTML={{
-                                                    __html: item.question_standard
-                                                        .replace(
-                                                            /<b>/g,
-                                                            "<b style='color:red;'>"
+                                            <div>
+                                                <span
+                                                    dangerouslySetInnerHTML={{
+                                                        __html: item.question_standard
+                                                            .replace(
+                                                                /<b>/g,
+                                                                "<b style='color:red;'>"
+                                                            )
+                                                            .replace(
+                                                                /\n/g,
+                                                                "<br/>"
+                                                            ),
+                                                    }}
+                                                ></span>
+                                                {item.label && (
+                                                    <span>
+                                                        (标签:
+                                                        {item.label.map(
+                                                            (item) => {
+                                                                console.log(
+                                                                    item
+                                                                )
+                                                                return (
+                                                                    "<" +
+                                                                    item +
+                                                                    ">"
+                                                                )
+                                                            }
+                                                        )}
                                                         )
-                                                        .replace(
-                                                            /\n/g,
-                                                            "<br/>"
-                                                        ),
-                                                }}
-                                            ></div>
+                                                    </span>
+                                                )}
+                                            </div>
                                         }
                                         description={
                                             <div
