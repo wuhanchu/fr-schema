@@ -51,8 +51,8 @@ function SearchPage(props) {
     }
 
     const handleSearch = async (searchValue, event) => {
-        event && event.preventDefault && event.preventDefault()
-        event && event.stopPropagation && event.stopPropagation()
+        // event && event.preventDefault && event.preventDefault()
+        // event && event.stopPropagation && event.stopPropagation()
 
         let value = searchValue || state.value
         if (_.isNil(value)) {
