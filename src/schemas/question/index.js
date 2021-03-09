@@ -1,5 +1,6 @@
 import { createApi } from "@/outter/fr-schema/src/service"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
+import { verifyJson } from "@/outter/fr-schema-antd-utils/src/utils/component"
 
 const schema = {
     id: {
@@ -58,7 +59,16 @@ const schema = {
             labelCol: { span: 4 },
         },
     },
-
+    info: {
+        title: "属性说明",
+        listHide: true,
+        // // required: true,
+        type: schemaFieldType.AceEditor,
+        itemProps: {
+            labelCol: { span: 4 },
+        },
+        decoratorProps: { rules: verifyJson },
+    },
     answer: {
         title: "答案",
         required: true,
