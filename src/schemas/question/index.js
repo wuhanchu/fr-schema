@@ -1,5 +1,6 @@
 import { createApi } from "@/outter/fr-schema/src/service"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
+import { verifyJson } from "@/outter/fr-schema-antd-utils/src/utils/component"
 
 const schema = {
     id: {
@@ -9,12 +10,14 @@ const schema = {
         editHide: true,
         readOnly: true,
     },
+
     question_standard: {
         title: "标准问",
         required: true,
         searchPrefix: "like",
         type: schemaFieldType.TextArea,
         props: {
+            // 最小高度
             autoSize: { minRows: 2, maxRows: 6 },
         },
         itemProps: {
@@ -22,13 +25,28 @@ const schema = {
         },
         sorter: true,
     },
+    question_extend: {
+        title: "扩展问",
+        // type: schemaFieldType.Select,
+        type: schemaFieldType.TextArea,
+        props: {
+            autoSize: { minRows: 2, maxRows: 6 },
+        },
+        listHide: true,
+        exportConcat: true,
+        extra: "每行表示一个问题",
+        itemProps: {
+            labelCol: { span: 4 },
+        },
+    },
+
     group: {
         title: "分组",
         searchPrefix: "like",
         itemProps: {
             labelCol: { span: 4 },
         },
-        required: true,
+        // required: true,
         sorter: true,
     },
     label: {
@@ -41,19 +59,16 @@ const schema = {
             labelCol: { span: 4 },
         },
     },
-    question_extend: {
-        title: "扩展问",
-        type: schemaFieldType.Select,
+    info: {
+        title: "属性说明",
         listHide: true,
-        exportConcat: true,
-        props: {
-            mode: "tags",
-        },
+        // // required: true,
+        type: schemaFieldType.AceEditor,
         itemProps: {
             labelCol: { span: 4 },
         },
+        decoratorProps: { rules: verifyJson },
     },
-
     answer: {
         title: "答案",
         required: true,
@@ -66,6 +81,30 @@ const schema = {
                 border: "1px solid #d9d9d9",
                 overflow: "hidden",
             },
+            controls: [
+                "undo",
+                "redo",
+                "separator",
+                "font-size",
+                "line-height",
+                "letter-spacing",
+                "text-color",
+                "bold",
+                "italic",
+                "underline",
+                "text-indent",
+                "text-align",
+                "list-ul",
+                "list-ol",
+                "blockquote",
+                "code",
+                "separator",
+                "link",
+                {
+                    key: "fullscreen",
+                    text: <b>全屏</b>,
+                },
+            ],
         },
         itemProps: {
             labelCol: { span: 4 },
@@ -74,6 +113,48 @@ const schema = {
 }
 
 const service = createApi("question", schema, null, "eq.")
+service.get = async function (args) {
+    const res = await createApi("question", schema, null, "eq.").get(args)
+    let list = res.list.map((item) => {
+        console.log({
+            ...item,
+            question_extend: item.question_extend
+                ? item.question_extend.join("\n")
+                : null,
+        })
+        return {
+            ...item,
+            question_extend: item.question_extend
+                ? item.question_extend.join("\n")
+                : null,
+        }
+    })
+    return { ...res, list: list }
+}
+service.post = async function (args) {
+    let question_extend = null
+    if (args.question_extend) {
+        question_extend = args.question_extend.split("\n")
+    }
+    const res = await createApi("question", schema, null, "eq.").post({
+        ...args,
+        question_extend: question_extend,
+    })
+
+    return res
+}
+service.patch = async function (args) {
+    let question_extend = null
+    if (args.question_extend) {
+        question_extend = args.question_extend.split("\n")
+    }
+    const res = await createApi("question", schema, null, "eq.").patch({
+        ...args,
+        question_extend: question_extend,
+    })
+
+    return res
+}
 service.search = createApi("rpc/question_search", schema).getBasic
 
 export default {

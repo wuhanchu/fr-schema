@@ -23,6 +23,9 @@ class BaseList extends DataList {
             allowExport: true,
             showSelect: true,
             allowImport: true,
+            infoProps: {
+                offline: true,
+            },
             importTemplateUrl,
         })
     }
