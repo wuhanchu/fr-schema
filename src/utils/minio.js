@@ -7,8 +7,8 @@ let isHttps = document.location.protocol !== "http:"
 console.log(document.location.protocol)
 // 你的minio配置信息
 if (document.domain === "server.aiknown.cn") {
-    endPoint = "192.168.1.34"
-    port = 9000
+    endPoint = "server.aiknown.cn"
+    port = 31321
 }
 var minioClient = new Minio.Client({
     endPoint: endPoint,
