@@ -9,7 +9,7 @@ console.log(document.location.protocol)
 if (document.domain === "server.aiknown.cn") {
     endPoint = "server.aiknown.cn"
     port = 31321
-    isHttps = false
+    isHttps = true
 }
 var minioClient = new Minio.Client({
     endPoint: endPoint,
