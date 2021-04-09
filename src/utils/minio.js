@@ -6,10 +6,14 @@ let port = parseInt(window.location.port)
 let isHttps = document.location.protocol !== "http:"
 console.log(document.location.protocol)
 // 你的minio配置信息
+if (document.domain === "server.aiknown.cn") {
+    endPoint = "192.168.1.34"
+    port = 9000
+}
 var minioClient = new Minio.Client({
     endPoint: endPoint,
     port: port,
-    useSSL: isHttps,
+    useSSL: false,
     accessKey: "admin",
     secretKey: "dataknown1234",
 })
