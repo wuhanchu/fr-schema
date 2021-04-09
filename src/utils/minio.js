@@ -3,11 +3,13 @@ const stream = require("stream")
 
 let endPoint = document.domain
 let port = parseInt(window.location.port)
+let isHttps = document.location.protocol !== "http:"
+console.log(document.location.protocol)
 // 你的minio配置信息
 var minioClient = new Minio.Client({
     endPoint: endPoint,
     port: port,
-    useSSL: false,
+    useSSL: isHttps,
     accessKey: "admin",
     secretKey: "dataknown1234",
 })
