@@ -112,7 +112,6 @@ class Dialogue extends React.Component {
                                                     bodyStyle={{ padding: 0 }}
                                                     bordered={false}
                                                     onClick={() => {
-                                                        console.log(111)
                                                         let href = downloadFile(
                                                             item.bucketName,
                                                             item.fileName
@@ -124,7 +123,7 @@ class Dialogue extends React.Component {
                                                             <div
                                                                 style={{
                                                                     height:
-                                                                        "44px",
+                                                                        "22px",
                                                                     overflow:
                                                                         "hidden",
                                                                 }}
