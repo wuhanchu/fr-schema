@@ -4,6 +4,8 @@ import schemas from "@/schemas"
 import { contentHeight } from "@/styles/global"
 import * as _ from "lodash"
 import utils from "@/outter/fr-schema-antd-utils/src"
+import style from "@/pages/question/components/Dialogue.less"
+import { downloadFile } from "@/utils/minio"
 
 const { url } = utils.utils
 
@@ -125,41 +127,112 @@ function SearchPage(props) {
                                                                 "<br/>"
                                                             ),
                                                     }}
-                                                ></span>
-                                                {item.label && (
-                                                    <span>
-                                                        (标签:
-                                                        {item.label.map(
-                                                            (item) => {
-                                                                console.log(
-                                                                    item
-                                                                )
-                                                                return (
-                                                                    "<" +
-                                                                    item +
-                                                                    ">"
-                                                                )
-                                                            }
-                                                        )}
-                                                        )
-                                                    </span>
-                                                )}
+                                                />
+                                                {item.label &&
+                                                    item.label.length !== 0 && (
+                                                        <span>
+                                                            (标签:
+                                                            {item.label.map(
+                                                                (item) => {
+                                                                    console.log(
+                                                                        item
+                                                                    )
+                                                                    return (
+                                                                        "<" +
+                                                                        item +
+                                                                        ">"
+                                                                    )
+                                                                }
+                                                            )}
+                                                            )
+                                                        </span>
+                                                    )}
                                             </div>
                                         }
                                         description={
-                                            <div
-                                                dangerouslySetInnerHTML={{
-                                                    __html: item.answer
-                                                        .replace(
-                                                            /<b>/g,
-                                                            "<b style='color:red;'>"
-                                                        )
-                                                        .replace(
-                                                            /\n/g,
-                                                            "<br/>"
-                                                        ),
-                                                }}
-                                            ></div>
+                                            <>
+                                                <div
+                                                    dangerouslySetInnerHTML={{
+                                                        __html: item.answer
+                                                            .replace(
+                                                                /<b>/g,
+                                                                "<b style='color:red;'>"
+                                                            )
+                                                            .replace(
+                                                                /\n/g,
+                                                                "<br/>"
+                                                            ),
+                                                    }}
+                                                />
+                                                {item.attachment &&
+                                                    item.attachment.length !==
+                                                        0 && (
+                                                        <>
+                                                            <div>附件</div>
+                                                            {item.attachment.map(
+                                                                (
+                                                                    itemStr,
+                                                                    index
+                                                                ) => {
+                                                                    let item = JSON.parse(
+                                                                        itemStr
+                                                                    )
+                                                                    console.log(
+                                                                        item
+                                                                    )
+                                                                    return (
+                                                                        <Card.Grid
+                                                                            className={
+                                                                                style.projectGrid
+                                                                            }
+                                                                            key={
+                                                                                item.id
+                                                                            }
+                                                                            title={
+                                                                                "点击下载"
+                                                                            }
+                                                                        >
+                                                                            <Card
+                                                                                bodyStyle={{
+                                                                                    padding: 0,
+                                                                                }}
+                                                                                bordered={
+                                                                                    false
+                                                                                }
+                                                                                onClick={() => {
+                                                                                    console.log(
+                                                                                        111
+                                                                                    )
+                                                                                    let href = downloadFile(
+                                                                                        item.bucketName,
+                                                                                        item.fileName
+                                                                                    )
+                                                                                }}
+                                                                            >
+                                                                                <Card.Meta
+                                                                                    description={
+                                                                                        <div
+                                                                                            style={{
+                                                                                                height:
+                                                                                                    "22px",
+                                                                                                overflow:
+                                                                                                    "hidden",
+                                                                                            }}
+                                                                                        >
+                                                                                            {
+                                                                                                item.fileName
+                                                                                            }
+                                                                                        </div>
+                                                                                    }
+                                                                                />
+                                                                            </Card>
+                                                                        </Card.Grid>
+                                                                    )
+                                                                }
+                                                            )}
+                                                        </>
+                                                    )}
+                                            </>
                                         }
                                     />
                                 </List.Item>

@@ -7,6 +7,7 @@ import rebotSvg from "../../../assets/rebot.svg"
 import utils from "@/outter/fr-schema-antd-utils/src"
 import style from "./Dialogue.less"
 import * as _ from "lodash"
+import { downloadFile } from "@/utils/minio"
 
 const { url } = utils.utils
 
@@ -82,16 +83,64 @@ class Dialogue extends React.Component {
         }
         this.state.data.push({
             content: (
-                <div
-                    dangerouslySetInnerHTML={{
-                        __html:
-                            response.list[0] &&
-                            response.list[0].answer &&
-                            response.list[0].compatibility > 0.9
-                                ? response.list[0].answer
-                                : "暂时未找到您要的信息",
-                    }}
-                ></div>
+                <>
+                    <div
+                        dangerouslySetInnerHTML={{
+                            __html:
+                                response.list[0] &&
+                                response.list[0].answer &&
+                                response.list[0].compatibility > 0.9
+                                    ? response.list[0].answer
+                                    : "暂时未找到您要的信息",
+                        }}
+                    />
+                    {response.list[0] &&
+                        response.list[0].attachment &&
+                        response.list[0].compatibility > 0.9 &&
+                        response.list[0].attachment.length !== 0 && (
+                            <Card title={"附件"}>
+                                {response.list[0].attachment.map(
+                                    (itemStr, index) => {
+                                        let item = JSON.parse(itemStr)
+                                        return (
+                                            <Card.Grid
+                                                className={style.projectGrid}
+                                                key={item.id}
+                                                title={"点击下载"}
+                                            >
+                                                <Card
+                                                    bodyStyle={{ padding: 0 }}
+                                                    bordered={false}
+                                                    onClick={() => {
+                                                        console.log(111)
+                                                        let href = downloadFile(
+                                                            item.bucketName,
+                                                            item.fileName
+                                                        )
+                                                    }}
+                                                >
+                                                    <Card.Meta
+                                                        description={
+                                                            <div
+                                                                style={{
+                                                                    height:
+                                                                        "44px",
+                                                                    overflow:
+                                                                        "hidden",
+                                                                }}
+                                                            >
+                                                                {item.fileName}
+                                                            </div>
+                                                        }
+                                                    />
+                                                </Card>
+                                            </Card.Grid>
+                                        )
+                                    }
+                                )}
+                            </Card>
+                        )}
+                </>
             ),
             actions: response.list[0] &&
                 response.list[0].answer_mark &&
