@@ -1,6 +1,7 @@
 import { createApi } from "@/outter/fr-schema/src/service"
 import { schemas } from "@/outter/fr-schema-antd-utils/src"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
+import { verifyJson } from "@/outter/fr-schema-antd-utils/src/utils/component"
 
 const schema = {
     id: {
@@ -19,6 +20,13 @@ const schema = {
         props: {
             autoSize: { minRows: 2, maxRows: 6 },
         },
+    },
+    config: {
+        title: "属性说明",
+        listHide: true,
+        // // required: true,
+        type: schemaFieldType.AceEditor,
+        decoratorProps: { rules: verifyJson },
     },
 }
 

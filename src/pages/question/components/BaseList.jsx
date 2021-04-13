@@ -31,9 +31,20 @@ class BaseList extends DataList {
         const importTemplateUrl = (
             BASE_PATH + "/import/掌数_知料_知识库信息导入.xlsx"
         ).replace("//", "/")
+        // let data = props.record.config
+        let config =
+            props.record.config && props.record.config.info_schema
+                ? props.record.config.info_schema
+                : {}
+
+        console.log(config)
+        Object.keys(config).forEach(function (key) {
+            console.log(config[key])
+            config[key].isExpand = true
+        })
         super(props, {
             operateWidth: 150,
-            schema: clone(schemas.question.schema),
+            schema: clone({ ...schemas.question.schema, ...config }),
             service: schemas.question.service,
             allowExport: true,
             showSelect: true,
@@ -136,7 +147,6 @@ class BaseList extends DataList {
                 <InfoModal
                     renderForm={renderForm}
                     title={title}
-                    // width={"820px"}
                     action={action}
                     resource={resource}
                     {...updateMethods}

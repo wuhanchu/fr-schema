@@ -48,13 +48,6 @@ const schema = {
             mode: "tags",
         },
     },
-    info: {
-        title: "属性说明",
-        listHide: true,
-        // // required: true,
-        type: schemaFieldType.AceEditor,
-        decoratorProps: { rules: verifyJson },
-    },
 
     answer: {
         title: "答案",
@@ -130,17 +123,13 @@ const service = createApi("question", schema, null, "eq.")
 service.get = async function (args) {
     const res = await createApi("question", schema, null, "eq.").get(args)
     let list = res.list.map((item) => {
-        console.log({
-            ...item,
-            question_extend: item.question_extend
-                ? item.question_extend.join("\n")
-                : null,
-        })
+        console.log(item)
         return {
             ...item,
             question_extend: item.question_extend
                 ? item.question_extend.join("\n")
                 : null,
+            ...item.info,
         }
     })
     return { ...res, list: list }
@@ -149,8 +138,21 @@ service.getMinioConfig = async function (args) {
     const res = await createApi("minio", schema, null, "").get(args)
     return res
 }
-service.post = async function (args) {
+service.post = async function (args, schema) {
     let question_extend = null
+    Object.keys(schema).forEach(function (key) {
+        if (schema[key].isExpand) {
+            if (args["info"]) {
+                args["info"][key] = args[key]
+                args[key] = undefined
+            } else {
+                args["info"] = {}
+                args["info"][key] = args[key]
+                args[key] = undefined
+            }
+        }
+    })
+
     if (args.question_extend) {
         question_extend = args.question_extend.split("\n")
     }
@@ -161,8 +163,20 @@ service.post = async function (args) {
 
     return res
 }
-service.patch = async function (args) {
+service.patch = async function (args, schema) {
     let question_extend = null
+    Object.keys(schema).forEach(function (key) {
+        if (schema[key].isExpand) {
+            if (args["info"]) {
+                args["info"][key] = args[key]
+                args[key] = undefined
+            } else {
+                args["info"] = {}
+                args["info"][key] = args[key]
+                args[key] = undefined
+            }
+        }
+    })
     if (args.question_extend) {
         question_extend = args.question_extend.split("\n")
     }

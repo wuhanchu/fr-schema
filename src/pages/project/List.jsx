@@ -118,6 +118,7 @@ class List extends ListPage {
                                 },
                                 addArgs: { project_id: record.id },
                             }}
+                            record={record}
                         />
                     </Modal>
                 )}
