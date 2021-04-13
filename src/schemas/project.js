@@ -22,7 +22,7 @@ const schema = {
         },
     },
     config: {
-        title: "属性说明",
+        title: "配置",
         listHide: true,
         // // required: true,
         type: schemaFieldType.AceEditor,
