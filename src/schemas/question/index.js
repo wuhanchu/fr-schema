@@ -166,7 +166,7 @@ service.post = async function (args, schema) {
 service.patch = async function (args, schema) {
     let question_extend = null
     Object.keys(schema).forEach(function (key) {
-        if (schema[key].isExpand) {
+        if (schema[key].isExpand && args[key]) {
             if (args["info"]) {
                 args["info"][key] = args[key]
                 args[key] = undefined

@@ -224,10 +224,13 @@ class BaseList extends DataList {
                         <Button
                             type="primary"
                             onClick={async () => {
-                                await this.service.patch({
-                                    id: this.state.record.id,
-                                    attachment: this.state.attachment,
-                                })
+                                await this.service.patch(
+                                    {
+                                        id: this.state.record.id,
+                                        attachment: this.state.attachment,
+                                    },
+                                    this.schema
+                                )
                                 message.success("修改成功！")
                                 this.setState({
                                     showAnnex: false,

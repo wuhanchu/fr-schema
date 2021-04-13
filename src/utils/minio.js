@@ -97,6 +97,7 @@ export function uploadFile(bucketName, file, callback) {
                                 // 将数据返回
                                 callback({
                                     url: presignedUrl,
+                                    // url: isHttps? "https://" + endPoint + ":" + port + "/" + bucketName + '/' + fileName:"http://" + endPoint + ":" + port + "/" + bucketName + '/' + fileName,
                                     bucketName,
                                     fileName: file.name,
                                 })
