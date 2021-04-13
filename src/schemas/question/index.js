@@ -21,9 +21,6 @@ const schema = {
             // 最小高度
             autoSize: { minRows: 2, maxRows: 6 },
         },
-        itemProps: {
-            labelCol: { span: 4 },
-        },
         sorter: true,
     },
     question_extend: {
@@ -36,17 +33,11 @@ const schema = {
         listHide: true,
         exportConcat: true,
         extra: "每行表示一个问题",
-        itemProps: {
-            labelCol: { span: 4 },
-        },
     },
 
     group: {
         title: "分组",
         searchPrefix: "like",
-        itemProps: {
-            labelCol: { span: 4 },
-        },
         // required: true,
         sorter: true,
     },
@@ -56,26 +47,13 @@ const schema = {
         props: {
             mode: "tags",
         },
-        itemProps: {
-            labelCol: { span: 4 },
-        },
     },
     info: {
         title: "属性说明",
         listHide: true,
         // // required: true,
         type: schemaFieldType.AceEditor,
-        itemProps: {
-            labelCol: { span: 4 },
-        },
         decoratorProps: { rules: verifyJson },
-    },
-    status: {
-        title: "状态",
-        listHide: true,
-        itemProps: {
-            labelCol: { span: 4 },
-        },
     },
 
     answer: {
@@ -83,11 +61,11 @@ const schema = {
         required: true,
         listHide: true,
         type: schemaFieldType.BraftEditor,
-        span: 24,
-        lineWidth: "780px",
+        // span: 24,
+        lineWidth: "300px",
         props: {
             style: {
-                height: "300px",
+                height: "200px",
                 border: "1px solid #d9d9d9",
                 overflow: "hidden",
             },
@@ -120,33 +98,30 @@ const schema = {
                 },
             },
             controls: [
-                "undo",
-                "redo",
-                "separator",
+                // "undo",
+                // "redo",
+                // "separator",
                 "font-size",
-                "line-height",
-                "letter-spacing",
+                // "line-height",
+                // "letter-spacing",
                 "text-color",
                 "bold",
                 "italic",
-                "underline",
-                "text-indent",
-                "text-align",
-                "list-ul",
+                // "underline",
+                // "text-indent",
+                // "text-align",
+                // "list-ul",
                 // "list-ol",
                 "media",
                 "blockquote",
                 "code",
-                "separator",
+                // "separator",
                 "link",
                 {
                     key: "fullscreen",
                     text: <b>全屏</b>,
                 },
             ],
-        },
-        itemProps: {
-            labelCol: { span: 4 },
         },
     },
 }
@@ -169,6 +144,10 @@ service.get = async function (args) {
         }
     })
     return { ...res, list: list }
+}
+service.getMinioConfig = async function (args) {
+    const res = await createApi("minio", schema, null, "").get(args)
+    return res
 }
 service.post = async function (args) {
     let question_extend = null

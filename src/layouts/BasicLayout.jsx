@@ -16,11 +16,11 @@ import config from "@/config"
 /**
  * use Authorized check all menu item
  */
-const menuDataRender = menuList =>
-    menuList.map(item => {
+const menuDataRender = (menuList) =>
+    menuList.map((item) => {
         const localItem = {
             ...item,
-            children: item.children ? menuDataRender(item.children) : []
+            children: item.children ? menuDataRender(item.children) : [],
         }
         return Authorized.check(item.authority, localItem, null)
     })
@@ -33,7 +33,7 @@ const footerRender = () => {
     return defaultFooterDom
 }
 
-const BasicLayout = props => {
+const BasicLayout = (props) => {
     const { dispatch, children, user, settings } = props
 
     /**
@@ -44,11 +44,14 @@ const BasicLayout = props => {
         if (dispatch) {
             if (user.init) {
                 dispatch({
-                    type: "global/queryDict"
+                    type: "global/queryDict",
                 })
                 dispatch({
-                    type: "settings/getSetting"
+                    type: "settings/getSetting",
                 })
+                // dispatch({
+                //     type: "global/init",
+                // })
             }
         }
     }, [user.init])
@@ -56,11 +59,11 @@ const BasicLayout = props => {
      * init variables
      */
 
-    const handleMenuCollapse = payload => {
+    const handleMenuCollapse = (payload) => {
         if (dispatch) {
             dispatch({
                 type: "global/changeLayoutCollapsed",
-                payload
+                payload,
             })
         }
     }
@@ -81,10 +84,10 @@ const BasicLayout = props => {
                     path: "/",
                     breadcrumbName: formatMessage({
                         id: "menu.home",
-                        defaultMessage: "Home"
-                    })
+                        defaultMessage: "Home",
+                    }),
                 },
-                ...routers
+                ...routers,
             ]}
             itemRender={(route, params, routes, paths) => {
                 const first = routes.indexOf(route) === 0
@@ -97,7 +100,9 @@ const BasicLayout = props => {
             formatMessage={formatMessage}
             footerRender={footerRender}
             menuDataRender={menuDataRender}
-            rightContentRender={rightProps => <RightContent {...rightProps} />}
+            rightContentRender={(rightProps) => (
+                <RightContent {...rightProps} />
+            )}
             {...props}
             {...settings}
             title={config.name}
@@ -110,5 +115,5 @@ const BasicLayout = props => {
 export default connect(({ global, settings, user }) => ({
     collapsed: global.collapsed,
     settings,
-    user
+    user,
 }))(BasicLayout)

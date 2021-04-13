@@ -40,8 +40,8 @@ class BaseList extends DataList {
             allowImport: true,
             infoProps: {
                 offline: true,
-                colNum: 2,
-                width: "1000px",
+                // colNum: 2,
+                // width: "1000px",
             },
             importTemplateUrl,
         })
@@ -136,7 +136,7 @@ class BaseList extends DataList {
                 <InfoModal
                     renderForm={renderForm}
                     title={title}
-                    width={"820px"}
+                    // width={"820px"}
                     action={action}
                     resource={resource}
                     {...updateMethods}
