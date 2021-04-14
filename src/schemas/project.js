@@ -1,24 +1,56 @@
 import { createApi } from "@/outter/fr-schema/src/service"
 import { schemas } from "@/outter/fr-schema-antd-utils/src"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
+import { verifyJson } from "@/outter/fr-schema-antd-utils/src/utils/component"
 
 const schema = {
     id: {
         title: "编号",
         sorter: true,
+
         infoHide: true,
     },
     name: {
         title: "名称",
         sorter: true,
+        span: 12,
+        width: "500px",
+        itemProps: {
+            labelCol: {
+                span: 4,
+            },
+        },
+        style: { width: "500px" },
         required: true,
     },
     remark: {
         title: "备注",
         type: schemaFieldType.TextArea,
+        style: { width: "500px" },
+        itemProps: {
+            labelCol: {
+                span: 4,
+            },
+        },
         props: {
             autoSize: { minRows: 2, maxRows: 6 },
         },
+    },
+    config: {
+        title: "配置",
+        listHide: true,
+        itemProps: {
+            labelCol: {
+                span: 4,
+            },
+        },
+        props: {
+            style: { width: "500px" },
+            height: "400px",
+        },
+        // // required: true,
+        type: schemaFieldType.AceEditor,
+        decoratorProps: { rules: verifyJson },
     },
 }
 
@@ -31,6 +63,8 @@ service.import = async (args) => {
     const res = await createApi(`project/mark/sync`, schema).post(args)
     return res
 }
+service.getMinioToken = createApi("minio/token", schema).getBasic
+
 export default {
     schema,
     service,

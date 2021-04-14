@@ -1,52 +1,55 @@
 import frSchema from "@/outter/fr-schema/src"
-const config = SETTING;
+import question from "@/schemas/question/index"
+const config = SETTING
 
 const GlobalModel = {
     namespace: "global",
     state: {
         collapsed: false,
-        notices: []
+        notices: [],
     },
     effects: {
         *fetchNotices(_, { call, put, select }) {
             const data = yield call(queryNotices)
             yield put({
                 type: "saveNotices",
-                payload: data
+                payload: data,
             })
             const unreadCount = yield select(
-                state => state.global.notices.filter(item => !item.read).length
+                (state) =>
+                    state.global.notices.filter((item) => !item.read).length
             )
             yield put({
                 type: "user/changeNotifyCount",
                 payload: {
                     totalCount: data.length,
-                    unreadCount
-                }
+                    unreadCount,
+                },
             })
         },
 
         *clearNotices({ payload }, { put, select }) {
             yield put({
                 type: "saveClearedNotices",
-                payload
+                payload,
             })
-            const count = yield select(state => state.global.notices.length)
+            const count = yield select((state) => state.global.notices.length)
             const unreadCount = yield select(
-                state => state.global.notices.filter(item => !item.read).length
+                (state) =>
+                    state.global.notices.filter((item) => !item.read).length
             )
             yield put({
                 type: "user/changeNotifyCount",
                 payload: {
                     totalCount: count,
-                    unreadCount
-                }
+                    unreadCount,
+                },
             })
         },
 
         *changeNoticeReadState({ payload }, { put, select }) {
-            const notices = yield select(state =>
-                state.global.notices.map(item => {
+            const notices = yield select((state) =>
+                state.global.notices.map((item) => {
                     const notice = { ...item }
 
                     if (notice.id === payload) {
@@ -58,22 +61,42 @@ const GlobalModel = {
             )
             yield put({
                 type: "saveNotices",
-                payload: notices
+                payload: notices,
             })
             yield put({
                 type: "user/changeNotifyCount",
                 payload: {
                     totalCount: notices.length,
-                    unreadCount: notices.filter(item => !item.read).length
-                }
+                    unreadCount: notices.filter((item) => !item.read).length,
+                },
             })
-        }
+        },
+        *init(_, { all, call, put, select }) {
+            let dict = {}
+            let data = {}
+
+            // query data
+            const res = yield all({
+                minioConfig: call(question.service.getMinioConfig, {
+                    pageSize: 10000,
+                }),
+            })
+
+            // update current dict
+            yield put({
+                type: "save",
+                payload: {
+                    init: true,
+                    minioConfig: res,
+                },
+            })
+        },
     },
     reducers: {
         changeLayoutCollapsed(
             state = {
                 notices: [],
-                collapsed: true
+                collapsed: true,
             },
             { payload }
         ) {
@@ -84,23 +107,23 @@ const GlobalModel = {
             return {
                 collapsed: false,
                 ...state,
-                notices: payload
+                notices: payload,
             }
         },
 
         saveClearedNotices(
             state = {
                 notices: [],
-                collapsed: true
+                collapsed: true,
             },
             { payload }
         ) {
             return {
                 collapsed: false,
                 ...state,
-                notices: state.notices.filter(item => item.type !== payload)
+                notices: state.notices.filter((item) => item.type !== payload),
             }
-        }
+        },
     },
     subscriptions: {
         setup({ history }) {
@@ -112,7 +135,7 @@ const GlobalModel = {
                     window.ga("send", "pageview", pathname + search)
                 }
             })
-        }
-    }
+        },
+    },
 }
 export default GlobalModel
