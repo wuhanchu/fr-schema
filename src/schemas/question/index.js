@@ -84,7 +84,9 @@ const schema = {
                     let bucketName = "zknowninfo"
                     // param.progress(100)
                     // await service.getMinioToken()
-                    let mininConfig = (await service.getMinioToken()).data
+                    let mininConfig = (
+                        await projectService.service.getMinioToken()
+                    ).data
                     console.log(mininConfig)
                     var minioClient = new Minio.Client({
                         endPoint: mininConfig.endpoint.split(":")[0],
