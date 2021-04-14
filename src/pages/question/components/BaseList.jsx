@@ -179,7 +179,9 @@ class BaseList extends DataList {
                 this.setState({
                     loadingAnnex: true,
                 })
-                let mininConfig = (await this.service.getMinioToken()).data
+                let mininConfig = (
+                    await schemas.project.service.getMinioToken()
+                ).data
 
                 var minioClient = new Minio.Client({
                     endPoint: mininConfig.endpoint.split(":")[0],

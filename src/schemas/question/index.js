@@ -229,7 +229,6 @@ service.patch = async function (args, schema) {
     return res
 }
 service.search = createApi("rpc/question_search", schema).getBasic
-service.getMinioToken = createApi("minio/token", schema).getBasic
 
 export default {
     schema,

@@ -63,7 +63,10 @@ service.import = async (args) => {
     const res = await createApi(`project/mark/sync`, schema).post(args)
     return res
 }
-service.getMinioToken = createApi("minio/token", schema).getBasic
+service.getMinioToken = async (args) => {
+    const res = await createApi(`file/auth`, schema).post({})
+    return res
+}
 
 export default {
     schema,
