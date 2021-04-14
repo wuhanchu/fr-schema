@@ -64,11 +64,11 @@ const schema = {
                 span: 4,
             },
         },
-        lineWidth: "300px",
+        lineWidth: "348px",
         props: {
             style: {
-                width: "348px",
-                height: "450px",
+                // width: "348px",
+                height: "388px",
 
                 border: "1px solid #d9d9d9",
                 overflow: "hidden",
@@ -129,6 +129,31 @@ const schema = {
                 },
             },
             // 全屏 fullscreen
+            controls: [
+                // "undo",
+                // "redo",
+                // "separator",
+                "font-size",
+                // "line-height",
+                // "letter-spacing",
+                "text-color",
+                "bold",
+                "italic",
+                // "underline",
+                // "text-indent",
+                // "text-align",
+                // "list-ul",
+                // "list-ol",
+                "media",
+                "blockquote",
+                "code",
+                // "separator",
+                "link",
+                {
+                    key: "fullscreen",
+                    text: <b>全屏</b>,
+                },
+            ],
         },
     },
 }
