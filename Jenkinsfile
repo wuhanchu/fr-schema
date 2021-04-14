@@ -39,6 +39,7 @@ pipeline {
                             alwaysPull true
                             image 'node:lts-alpine'
 
+                            args '-v jenkins:/var/jenkins_home -v jenkins_yarn_cache:/usr/local/share/.cache/yarn'
                         }
                     }
 
@@ -48,7 +49,7 @@ pipeline {
 
                     steps{
                         sh 'pwd'
-                        sh 'yarn config set registry https://registry.npm.taobao.org && yarn install --prefer-offline'
+                        sh 'yarn config set registry https://registry.npm.taobao.org && yarn install'
                         sh 'npm run build:dataknown'
                     }
                 }
@@ -63,12 +64,13 @@ pipeline {
                             reuseNode true
                             alwaysPull true
                             image 'node:lts-alpine'
+                            args '-v jenkins:/var/jenkins_home -v jenkins_yarn_cache:/usr/local/share/.cache/yarn'
                         }
                     }
 
                     steps {
                         sh 'pwd'
-                        sh 'yarn config set registry https://registry.npm.taobao.org && yarn install --prefer-offline'
+                        sh 'yarn config set registry https://registry.npm.taobao.org && yarn install'
                         sh 'npm run build'
                     }
                 }
