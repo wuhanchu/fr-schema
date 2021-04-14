@@ -39,7 +39,6 @@ pipeline {
                             alwaysPull true
                             image 'node:lts-alpine'
 
-                            args '-v jenkins:/var/jenkins_home -v jenkins_yarn_cache:/usr/local/share/.cache/yarn'
                         }
                     }
 
@@ -64,7 +63,6 @@ pipeline {
                             reuseNode true
                             alwaysPull true
                             image 'node:lts-alpine'
-                            args '-v jenkins:/var/jenkins_home -v jenkins_yarn_cache:/usr/local/share/.cache/yarn'
                         }
                     }
 
