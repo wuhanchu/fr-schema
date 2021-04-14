@@ -24,6 +24,7 @@ import { DeleteOutlined, UploadOutlined } from "@ant-design/icons"
 import { checkedAndUpload } from "@/utils/minio"
 
 const confirm = Modal.confirm
+const Minio = require("minio")
 
 @Form.create()
 class BaseList extends DataList {
@@ -174,23 +175,40 @@ class BaseList extends DataList {
             itemRender: () => {
                 ;<></>
             },
-            beforeUpload: (file, props, data) => {
+            beforeUpload: async (file, props, data) => {
                 this.setState({
                     loadingAnnex: true,
                 })
-                checkedAndUpload("zknowninfo", file, (res) => {
-                    // 输出url
-                    message.success(`文件上传成功`)
-                    // this.state.attachment.push(res)
-                    let attachment = []
-                    if (this.state.attachment)
-                        attachment = clone(this.state.attachment)
-                    attachment.push(res)
-                    this.setState({
-                        attachment,
-                        loadingAnnex: false,
-                    })
+                let mininConfig = (await this.service.getMinioToken()).data
+
+                var minioClient = new Minio.Client({
+                    endPoint: mininConfig.endpoint.split(":")[0],
+                    port: parseInt(mininConfig.endpoint.split(":")[1]),
+                    useSSL: mininConfig.secure,
+                    accessKey: mininConfig.AccessKeyId,
+                    secretKey: mininConfig.SecretAccessKey,
+                    sessionToken: mininConfig.SessionToken,
                 })
+
+                checkedAndUpload(
+                    "zknowninfo",
+                    file,
+                    minioClient,
+                    mininConfig,
+                    (res) => {
+                        // 输出url
+                        message.success(`文件上传成功`)
+                        // this.state.attachment.push(res)
+                        let attachment = []
+                        if (this.state.attachment)
+                            attachment = clone(this.state.attachment)
+                        attachment.push(res)
+                        this.setState({
+                            attachment,
+                            loadingAnnex: false,
+                        })
+                    }
+                )
             },
         }
 

@@ -1,7 +1,10 @@
 import { createApi } from "@/outter/fr-schema/src/service"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
+import projectService from "./../project"
 import { verifyJson } from "@/outter/fr-schema-antd-utils/src/utils/component"
 import { message } from "antd"
+import { checkedAndUpload } from "@/utils/minio"
+const Minio = require("minio")
 
 const schema = {
     id: {
@@ -58,63 +61,68 @@ const schema = {
         lineWidth: "300px",
         props: {
             style: {
-                height: "200px",
+                // width: "654px",
+                height: "450px",
+
                 border: "1px solid #d9d9d9",
                 overflow: "hidden",
             },
+            wrapperWidth: "900px",
+            wrapperStyle: {
+                marginLeft: "-34px",
+                marginTop: "20px",
+            },
             media: {
-                // uploadFn: (param) => {
-                //     console.log(param)
-                //     // param.progress(100)
-                //     checkedAndUpload('testxujinhao111', param.file, res => {
-                //         // 输出url
-                //         message.success(`文件上传成功`);
-                //         param.success({
-                //             url: res,
-                //             meta: {
-                //             id: 'xxx',
-                //             title: 'xxx',
-                //             alt: 'xxx',
-                //             loop: true, // 指定音视频是否循环播放
-                //             autoPlay: true, // 指定音视频是否自动播放
-                //             controls: true, // 指定音视频是否显示控制栏
-                //             //   poster: 'http://xxx/xx.png', // 指定视频播放器的封面
-                //             }
-                //         })
-                //     });
-                // }
-                accepts: {
-                    image:
-                        "image/png,image/jpeg,image/gif,image/webp,image/apng,image/svg",
-                    video: false,
-                    audio: false,
+                uploadFn: async (param) => {
+                    console.log(param)
+                    let bucketName = "zknowninfo"
+                    // param.progress(100)
+                    // await service.getMinioToken()
+                    let mininConfig = (await service.getMinioToken()).data
+                    console.log(mininConfig)
+                    var minioClient = new Minio.Client({
+                        endPoint: mininConfig.endpoint.split(":")[0],
+                        port: parseInt(mininConfig.endpoint.split(":")[1]),
+                        useSSL: mininConfig.secure,
+                        accessKey: mininConfig.AccessKeyId,
+                        secretKey: mininConfig.SecretAccessKey,
+                        sessionToken: mininConfig.SessionToken,
+                    })
+                    checkedAndUpload(
+                        bucketName,
+                        param.file,
+                        minioClient,
+                        mininConfig,
+                        (res) => {
+                            // 输出url
+                            let fileName = param.file.name
+                            message.success(`文件上传成功`)
+                            param.success({
+                                url: mininConfig.secure
+                                    ? "https://" +
+                                      mininConfig.endpoint +
+                                      "/" +
+                                      bucketName +
+                                      "/" +
+                                      fileName
+                                    : "http://" +
+                                      mininConfig.endpoint +
+                                      "/" +
+                                      bucketName +
+                                      "/" +
+                                      fileName,
+                                meta: {
+                                    loop: true, // 指定音视频是否循环播放
+                                    autoPlay: false, // 指定音视频是否自动播放
+                                    controls: false, // 指定音视频是否显示控制栏
+                                    //   poster: 'http://xxx/xx.png', // 指定视频播放器的封面
+                                },
+                            })
+                        }
+                    )
                 },
             },
-            controls: [
-                // "undo",
-                // "redo",
-                // "separator",
-                "font-size",
-                // "line-height",
-                // "letter-spacing",
-                "text-color",
-                "bold",
-                "italic",
-                // "underline",
-                // "text-indent",
-                // "text-align",
-                // "list-ul",
-                // "list-ol",
-                "media",
-                "blockquote",
-                "code",
-                // "separator",
-                "link",
-                {
-                    key: "fullscreen",
-                    text: <b>全屏</b>,
-                },
-            ],
+            // 全屏 fullscreen
         },
     },
 }
@@ -142,14 +150,15 @@ service.post = async function (args, schema) {
     let question_extend = null
     Object.keys(schema).forEach(function (key) {
         if (schema[key].isExpand) {
-            if (args["info"]) {
-                args["info"][key] = args[key]
-                args[key] = undefined
-            } else {
-                args["info"] = {}
-                args["info"][key] = args[key]
-                args[key] = undefined
+            if (args[key]) {
+                if (args["info"]) {
+                    args["info"][key] = args[key]
+                } else {
+                    args["info"] = {}
+                    args["info"][key] = args[key]
+                }
             }
+            args[key] = undefined
         }
     })
 
@@ -166,15 +175,16 @@ service.post = async function (args, schema) {
 service.patch = async function (args, schema) {
     let question_extend = null
     Object.keys(schema).forEach(function (key) {
-        if (schema[key].isExpand && args[key]) {
-            if (args["info"]) {
-                args["info"][key] = args[key]
-                args[key] = undefined
-            } else {
-                args["info"] = {}
-                args["info"][key] = args[key]
-                args[key] = undefined
+        if (schema[key].isExpand) {
+            if (args[key]) {
+                if (args["info"]) {
+                    args["info"][key] = args[key]
+                } else {
+                    args["info"] = {}
+                    args["info"][key] = args[key]
+                }
             }
+            args[key] = undefined
         }
     })
     if (args.question_extend) {
@@ -188,6 +198,7 @@ service.patch = async function (args, schema) {
     return res
 }
 service.search = createApi("rpc/question_search", schema).getBasic
+service.getMinioToken = createApi("minio/token", schema).getBasic
 
 export default {
     schema,

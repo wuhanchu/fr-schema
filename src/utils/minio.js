@@ -1,24 +1,24 @@
 const Minio = require("minio")
 const stream = require("stream")
 
-let endPoint = document.domain
-let port = parseInt(window.location.port)
-let isHttps = document.location.protocol !== "http:"
-console.log(document.location.protocol)
-// 你的minio配置信息
-if (document.domain === "server.aiknown.cn") {
-    endPoint = "server.aiknown.cn"
-    port = 31321
-    isHttps = true
-}
-var minioClient = new Minio.Client({
-    endPoint: endPoint,
-    port: port,
-    useSSL: isHttps,
-    accessKey: "admin",
-    secretKey: "dataknown1234",
-})
-console.log(minioClient)
+// let endPoint = 'server.aiknown.cn'
+// let port = 32123
+// let isHttps = false
+// console.log(document.location.protocol)
+// // 你的minio配置信息
+// if (document.domain === "server.aiknown.cn") {
+//     endPoint = "server.aiknown.cn"
+//     port = 31321
+//     isHttps = true
+// }
+// var minioClient = new Minio.Client({
+//     endPoint: endPoint,
+//     port: port,
+//     useSSL: isHttps,
+//     accessKey: "FJS8ZI8LN22F6Q08RFWW",
+//     secretKey: "Xx1h02bOmKyXNRn0Hc2P2+B312zyhrDpwvkSJcLH",
+//     sessionToken: 'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3NLZXkiOiJGSlM4Wkk4TE4yMkY2UTA4UkZXVyIsImV4cCI6MzYwMDAwMDAwMDAwMCwicG9saWN5IjoiZ2xvYmFsLXBvbGljeSIsInNlc3Npb25Qb2xpY3kiOiJleUpXWlhKemFXOXVJam9pTWpBeE1pMHhNQzB4TnlJc0lsTjBZWFJsYldWdWRDSTZXM3NpVTJsa0lqb2lJaXdpUldabVpXTjBJam9pUVd4c2IzY2lMQ0pCWTNScGIyNGlPbHNpY3pNNktpSmRMQ0pTWlhOdmRYSmpaU0k2SW1GeWJqcGhkM002Y3pNNk9qcDZhMjV2ZDI1cGJtWnZMeW9pZlYxOSJ9.1RWlTMPG-EtUgKav6mTBpo82bG0azS7M8rkneCiF6wuLOz97UWUc69X0qBOtZWIcYf15QYOuJIWlEPqiZBwzHg'
+// })
 
 // base64转blob
 export function toBlob(base64Data) {
@@ -50,9 +50,17 @@ export function toBlob(base64Data) {
  * @param {*} bucketName 桶名
  * @param {*} file info为antd上传组件的file
  * @param {*} callback 回调函数，返回下载url
+ * @param {*} minioClient minio对象
+ * @param {*} mininConfig 配置
  */
 
-export function uploadFile(bucketName, file, callback) {
+export function uploadFile(
+    bucketName,
+    file,
+    minioClient,
+    mininConfig,
+    callback
+) {
     // 获取文件类型及大小
     const fileName = file.name
     const mineType = file.type
@@ -96,8 +104,20 @@ export function uploadFile(bucketName, file, callback) {
                                 if (err1) return
                                 // 将数据返回
                                 callback({
-                                    url: presignedUrl,
-                                    // url: isHttps? "https://" + endPoint + ":" + port + "/" + bucketName + '/' + fileName:"http://" + endPoint + ":" + port + "/" + bucketName + '/' + fileName,
+                                    // url: presignedUrl,
+                                    url: mininConfig.secure
+                                        ? "https://" +
+                                          mininConfig.endpoint +
+                                          "/" +
+                                          bucketName +
+                                          "/" +
+                                          fileName
+                                        : "http://" +
+                                          mininConfig.endpoint +
+                                          "/" +
+                                          bucketName +
+                                          "/" +
+                                          fileName,
                                     bucketName,
                                     fileName: file.name,
                                 })
@@ -112,7 +132,13 @@ export function uploadFile(bucketName, file, callback) {
 
 // 先判断桶是否存在, 如果可确保桶已经存在，则直接调用upload方法
 
-export function checkedAndUpload(bucketName, info, callback) {
+export function checkedAndUpload(
+    bucketName,
+    info,
+    minioClient,
+    mininConfig,
+    callback
+) {
     minioClient.bucketExists(bucketName, (err) => {
         if (err) {
             minioClient.makeBucket(bucketName, "us-east-1", (err1) => {
@@ -120,10 +146,10 @@ export function checkedAndUpload(bucketName, info, callback) {
                     console.error(`文件上传失败`)
                     return
                 }
-                uploadFile(bucketName, info, callback)
+                uploadFile(bucketName, info, minioClient, mininConfig, callback)
             })
         } else {
-            uploadFile(bucketName, info, callback)
+            uploadFile(bucketName, info, minioClient, mininConfig, callback)
         }
     })
 }
@@ -166,15 +192,17 @@ function saveAs(data, name) {
     save_link.click()
 }
 
-export function downloadFile(bucketName, objectName) {
-    return minioClient.presignedGetObject(
-        bucketName,
-        objectName,
-        24 * 60 * 60,
-        function (err, presignedUrl) {
-            if (err) return console.log(err)
-            downloadUrlFile(presignedUrl, objectName)
-            return presignedUrl
-        }
-    )
+export function downloadFile(bucketName, objectName, url) {
+    // return minioClient.presignedGetObject(
+    //     bucketName,
+    //     objectName,
+    //     24 * 60 * 60,
+    //     function (err, presignedUrl) {
+    //         if (err) return console.log(err)
+    //         downloadUrlFile(presignedUrl, objectName)
+    //         return presignedUrl
+    //     }
+    // )
+    console.log(url)
+    downloadUrlFile(url, objectName)
 }

@@ -114,7 +114,8 @@ class Dialogue extends React.Component {
                                                     onClick={() => {
                                                         let href = downloadFile(
                                                             item.bucketName,
-                                                            item.fileName
+                                                            item.fileName,
+                                                            item.url
                                                         )
                                                     }}
                                                 >

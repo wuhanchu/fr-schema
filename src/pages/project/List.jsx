@@ -30,6 +30,11 @@ class List extends ListPage {
             operateWidth: 350,
             schema: schemas.project.schema,
             service: schemas.project.service,
+            infoProps: {
+                // offline: true,
+                // colNum: 2,
+                width: "800px",
+            },
         })
     }
 

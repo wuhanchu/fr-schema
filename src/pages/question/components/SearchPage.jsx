@@ -205,7 +205,8 @@ function SearchPage(props) {
                                                                                     )
                                                                                     let href = downloadFile(
                                                                                         item.bucketName,
-                                                                                        item.fileName
+                                                                                        item.fileName,
+                                                                                        item.url
                                                                                     )
                                                                                 }}
                                                                             >
