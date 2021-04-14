@@ -58,10 +58,16 @@ const schema = {
         listHide: true,
         type: schemaFieldType.BraftEditor,
         // span: 24,
+        position: "right",
+        itemProps: {
+            labelCol: {
+                span: 4,
+            },
+        },
         lineWidth: "300px",
         props: {
             style: {
-                // width: "654px",
+                width: "348px",
                 height: "450px",
 
                 border: "1px solid #d9d9d9",

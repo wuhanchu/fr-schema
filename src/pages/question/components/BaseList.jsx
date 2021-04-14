@@ -52,8 +52,8 @@ class BaseList extends DataList {
             allowImport: true,
             infoProps: {
                 offline: true,
-                // colNum: 2,
-                // width: "1000px",
+                width: "1000px",
+                isCustomize: true,
             },
             importTemplateUrl,
         })
