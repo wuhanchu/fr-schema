@@ -105,19 +105,21 @@ export function uploadFile(
                                 // 将数据返回
                                 callback({
                                     // url: presignedUrl,
-                                    url: mininConfig.secure
-                                        ? "https://" +
-                                          mininConfig.endpoint +
-                                          "/" +
-                                          bucketName +
-                                          "/" +
-                                          fileName
-                                        : "http://" +
-                                          mininConfig.endpoint +
-                                          "/" +
-                                          bucketName +
-                                          "/" +
-                                          fileName,
+                                    url: encodeURI(
+                                        mininConfig.secure
+                                            ? "https://" +
+                                                  mininConfig.endpoint +
+                                                  "/" +
+                                                  bucketName +
+                                                  "/" +
+                                                  fileName
+                                            : "http://" +
+                                                  mininConfig.endpoint +
+                                                  "/" +
+                                                  bucketName +
+                                                  "/" +
+                                                  fileName
+                                    ),
                                     bucketName,
                                     fileName: file.name,
                                 })
