@@ -177,57 +177,24 @@ function SearchPage(props) {
                                                                     let item = JSON.parse(
                                                                         itemStr
                                                                     )
-                                                                    console.log(
-                                                                        item
-                                                                    )
                                                                     return (
-                                                                        <Card.Grid
-                                                                            className={
-                                                                                style.projectGrid
-                                                                            }
-                                                                            key={
-                                                                                item.id
-                                                                            }
-                                                                            title={
-                                                                                "点击下载"
-                                                                            }
+                                                                        <a
+                                                                            style={{
+                                                                                marginRight:
+                                                                                    "20px",
+                                                                            }}
+                                                                            onClick={() => {
+                                                                                let href = downloadFile(
+                                                                                    item.bucketName,
+                                                                                    item.fileName,
+                                                                                    item.url
+                                                                                )
+                                                                            }}
                                                                         >
-                                                                            <Card
-                                                                                bodyStyle={{
-                                                                                    padding: 0,
-                                                                                }}
-                                                                                bordered={
-                                                                                    false
-                                                                                }
-                                                                                onClick={() => {
-                                                                                    console.log(
-                                                                                        111
-                                                                                    )
-                                                                                    let href = downloadFile(
-                                                                                        item.bucketName,
-                                                                                        item.fileName,
-                                                                                        item.url
-                                                                                    )
-                                                                                }}
-                                                                            >
-                                                                                <Card.Meta
-                                                                                    description={
-                                                                                        <div
-                                                                                            style={{
-                                                                                                height:
-                                                                                                    "22px",
-                                                                                                overflow:
-                                                                                                    "hidden",
-                                                                                            }}
-                                                                                        >
-                                                                                            {
-                                                                                                item.fileName
-                                                                                            }
-                                                                                        </div>
-                                                                                    }
-                                                                                />
-                                                                            </Card>
-                                                                        </Card.Grid>
+                                                                            {
+                                                                                item.fileName
+                                                                            }
+                                                                        </a>
                                                                     )
                                                                 }
                                                             )}

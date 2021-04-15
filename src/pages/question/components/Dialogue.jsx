@@ -98,47 +98,60 @@ class Dialogue extends React.Component {
                         response.list[0].attachment &&
                         response.list[0].compatibility > 0.9 &&
                         response.list[0].attachment.length !== 0 && (
-                            <Card title={"附件"}>
+                            <div>
+                                <div style={{ marginTop: "10px" }}>附件:</div>
                                 {response.list[0].attachment.map(
                                     (itemStr, index) => {
                                         let item = JSON.parse(itemStr)
                                         return (
-                                            <Card.Grid
-                                                className={style.projectGrid}
-                                                key={item.id}
-                                                title={"点击下载"}
+                                            // <Card.Grid
+                                            //     className={style.projectGrid}
+                                            //     key={item.id}
+                                            //     title={"点击下载"}
+                                            // >
+                                            <a
+                                                style={{ marginRight: "20px" }}
+                                                onClick={() => {
+                                                    let href = downloadFile(
+                                                        item.bucketName,
+                                                        item.fileName,
+                                                        item.url
+                                                    )
+                                                }}
                                             >
-                                                <Card
-                                                    bodyStyle={{ padding: 0 }}
-                                                    bordered={false}
-                                                    onClick={() => {
-                                                        let href = downloadFile(
-                                                            item.bucketName,
-                                                            item.fileName,
-                                                            item.url
-                                                        )
-                                                    }}
-                                                >
-                                                    <Card.Meta
-                                                        description={
-                                                            <div
-                                                                style={{
-                                                                    height:
-                                                                        "22px",
-                                                                    overflow:
-                                                                        "hidden",
-                                                                }}
-                                                            >
-                                                                {item.fileName}
-                                                            </div>
-                                                        }
-                                                    />
-                                                </Card>
-                                            </Card.Grid>
+                                                {item.fileName}
+                                            </a>
+                                            //     <Card
+                                            //         bodyStyle={{ padding: 0 }}
+                                            //         bordered={false}
+                                            //         onClick={() => {
+                                            //             let href = downloadFile(
+                                            //                 item.bucketName,
+                                            //                 item.fileName,
+                                            //                 item.url
+                                            //             )
+                                            //         }}
+                                            //     >
+                                            //         <Card.Meta
+                                            //             description={
+                                            //                 <div
+                                            //                     style={{
+                                            //                         height:
+                                            //                             "22px",
+                                            //                         overflow:
+                                            //                             "hidden",
+                                            //                     }}
+                                            //                 >
+                                            //                     {item.fileName}
+                                            //                 </div>
+                                            //             }
+                                            //         />
+                                            //     </Card>
+                                            // </Card.Grid>
                                         )
                                     }
                                 )}
-                            </Card>
+                            </div>
                         )}
                 </>
             ),
