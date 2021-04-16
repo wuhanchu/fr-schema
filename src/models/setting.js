@@ -1,8 +1,15 @@
 import { message } from "antd"
-import defaultSettings from "../../config/defaultSettings"
+import settingMap from "@/../config/settting/index"
 import themeColorClient from "../components/SettingDrawer/themeColorClient"
 
-const updateTheme = newPrimaryColor => {
+const { REACT_APP_ENV, SETTING } = process.env
+
+//获取 setting
+// 加载微应用
+
+let defaultSettings = settingMap[SETTING] || settingMap["standard"]
+
+const updateTheme = (newPrimaryColor) => {
     if (newPrimaryColor) {
         const timeOut = 0
         const hideMessage = message.loading("正在切换主题！", timeOut)
@@ -12,7 +19,7 @@ const updateTheme = newPrimaryColor => {
     }
 }
 
-const updateColorWeak = colorWeak => {
+const updateColorWeak = (colorWeak) => {
     const root = document.getElementById("root")
 
     if (root) {
@@ -27,7 +34,7 @@ const SettingModel = {
         getSetting(state = defaultSettings) {
             const setting = {}
             const urlParams = new URL(window.location.href)
-            Object.keys(state).forEach(key => {
+            Object.keys(state).forEach((key) => {
                 if (urlParams.searchParams.has(key)) {
                     const value = urlParams.searchParams.get(key)
                     setting[key] = value === "1" ? true : value
@@ -45,12 +52,12 @@ const SettingModel = {
 
         changeSetting(state = defaultSettings, { payload }) {
             const urlParams = new URL(window.location.href)
-            Object.keys(defaultSettings).forEach(key => {
+            Object.keys(defaultSettings).forEach((key) => {
                 if (urlParams.searchParams.has(key)) {
                     urlParams.searchParams.delete(key)
                 }
             })
-            Object.keys(payload).forEach(key => {
+            Object.keys(payload).forEach((key) => {
                 if (key === "collapse") {
                     return
                 }
@@ -78,7 +85,7 @@ const SettingModel = {
             updateColorWeak(!!colorWeak)
             window.history.replaceState(null, "setting", urlParams.href)
             return { ...state, ...payload }
-        }
-    }
+        },
+    },
 }
 export default SettingModel

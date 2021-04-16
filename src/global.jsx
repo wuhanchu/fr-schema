@@ -1,7 +1,15 @@
 import { Button, message, notification } from "antd"
 import React from "react"
 import { formatMessage } from "umi"
-import defaultSettings from "../config/defaultSettings"
+import settingMap from "@/../config/settting/index"
+
+const { REACT_APP_ENV, SETTING } = process.env
+
+//获取 setting
+// 加载微应用
+
+let defaultSettings = settingMap[SETTING] || settingMap["standard"]
+
 const { pwa } = defaultSettings // if pwa is true
 
 if (pwa) {
@@ -9,12 +17,12 @@ if (pwa) {
     window.addEventListener("sw.offline", () => {
         message.warning(
             formatMessage({
-                id: "app.pwa.offline"
+                id: "app.pwa.offline",
             })
         )
     }) // Pop up a prompt on the page asking the user if they want to use the latest version
 
-    window.addEventListener("sw.updated", event => {
+    window.addEventListener("sw.updated", (event) => {
         const e = event
 
         const reloadSW = async () => {
@@ -29,7 +37,7 @@ if (pwa) {
             await new Promise((resolve, reject) => {
                 const channel = new MessageChannel()
 
-                channel.port1.onmessage = msgEvent => {
+                channel.port1.onmessage = (msgEvent) => {
                     if (msgEvent.data.error) {
                         reject(msgEvent.data.error)
                     } else {
@@ -39,7 +47,7 @@ if (pwa) {
 
                 worker.postMessage(
                     {
-                        type: "skip-waiting"
+                        type: "skip-waiting",
                     },
                     [channel.port2]
                 )
@@ -59,20 +67,20 @@ if (pwa) {
                 }}
             >
                 {formatMessage({
-                    id: "app.pwa.serviceworker.updated.ok"
+                    id: "app.pwa.serviceworker.updated.ok",
                 })}
             </Button>
         )
         notification.open({
             message: formatMessage({
-                id: "app.pwa.serviceworker.updated"
+                id: "app.pwa.serviceworker.updated",
             }),
             description: formatMessage({
-                id: "app.pwa.serviceworker.updated.hint"
+                id: "app.pwa.serviceworker.updated.hint",
             }),
             btn,
             key,
-            onClose: async () => {}
+            onClose: async () => {},
         })
     })
 } else if ("serviceWorker" in navigator) {
@@ -80,20 +88,20 @@ if (pwa) {
     const { serviceWorker } = navigator
 
     if (serviceWorker.getRegistrations) {
-        serviceWorker.getRegistrations().then(sws => {
-            sws.forEach(sw => {
+        serviceWorker.getRegistrations().then((sws) => {
+            sws.forEach((sw) => {
                 sw.unregister()
             })
         })
     }
 
-    serviceWorker.getRegistration().then(sw => {
+    serviceWorker.getRegistration().then((sw) => {
         if (sw) sw.unregister()
     }) // remove all caches
 
     if (window.caches && window.caches.keys) {
-        caches.keys().then(keys => {
-            keys.forEach(key => {
+        caches.keys().then((keys) => {
+            keys.forEach((key) => {
                 caches.delete(key)
             })
         })
