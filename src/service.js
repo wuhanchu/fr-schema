@@ -150,6 +150,8 @@ export function createApi(
             //默认 ID 排序
             if (otherParams.order === undefined) {
                 otherParams.order = order;
+            }else {
+                otherParams.order = otherParams.order + '.nullslast'
             }
 
             limit = pageSize || limit || 10;
