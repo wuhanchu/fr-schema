@@ -64,7 +64,7 @@ const schema = {
                 span: 4,
             },
         },
-        lineWidth: "348px",
+        lineWidth: "480px",
         props: {
             style: {
                 // width: "348px",
