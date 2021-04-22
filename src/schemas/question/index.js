@@ -51,7 +51,9 @@ const schema = {
             mode: "tags",
         },
     },
-
+    global_key: {
+        title: "全局变量",
+    },
     answer: {
         title: "答案",
         required: true,
