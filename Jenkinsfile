@@ -11,7 +11,7 @@ pipeline {
         GROUP = "z_know_info"
         PROJECT = "z_know_info_web"
 
-        SERVER_DEV = "192.168.1.155"
+        SERVER_DEV = "192.168.1.152"
         SERVER_URL_DEV = "http://172.17.0.1:32029"
         AUTH_URL_DEV  = "http://172.17.0.1:32024"
         PORT_DEV  = "32030"
