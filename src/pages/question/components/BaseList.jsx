@@ -19,7 +19,6 @@ import React from "react"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import * as _ from "lodash"
 import clone from "clone"
-import styles from "./style.less"
 import { DeleteOutlined, UploadOutlined } from "@ant-design/icons"
 import { checkedAndUpload } from "@/utils/minio"
 
@@ -294,8 +293,14 @@ class BaseList extends DataList {
                             spinning={this.state.loadingAnnex}
                             tip="文件上传中..."
                         >
-                            <div className={styles.salesRank}>
-                                <ul className={styles.rankingList}>
+                            <div>
+                                <ul
+                                    style={{
+                                        margin: "25px 0 0",
+                                        padding: "0",
+                                        listStyle: "none",
+                                    }}
+                                >
                                     {this.state.attachment &&
                                         this.state.attachment.map(
                                             (item, index) => {
@@ -303,22 +308,56 @@ class BaseList extends DataList {
                                                 if (typeof item === "string")
                                                     itemObj = JSON.parse(item)
                                                 return (
-                                                    <li key={itemObj.fileName}>
+                                                    <li
+                                                        key={itemObj.fileName}
+                                                        style={{
+                                                            display: "flex",
+                                                            alignItems:
+                                                                "center",
+                                                            marginTop: "16px",
+                                                            zoom: 1,
+                                                        }}
+                                                    >
                                                         <span
-                                                            className={`${
-                                                                styles.rankingItemNumber
-                                                            } ${
-                                                                index < 3
-                                                                    ? styles.active
-                                                                    : ""
-                                                            }`}
+                                                            style={{
+                                                                display:
+                                                                    "inline-block",
+                                                                width: "20px",
+                                                                height: "20px",
+                                                                marginTop:
+                                                                    "1.5px",
+                                                                marginRight:
+                                                                    "16px",
+                                                                fontWeight:
+                                                                    "600",
+                                                                fontSize:
+                                                                    "12px",
+                                                                lineHeight:
+                                                                    "20px",
+                                                                textAlign:
+                                                                    "center",
+                                                                // backgroundColor: @tag-default-bg;
+                                                                borderRadius:
+                                                                    "20px",
+                                                                color: "#fff",
+                                                                backgroundColor:
+                                                                    "#314659",
+                                                            }}
                                                         >
                                                             {index + 1}
                                                         </span>
                                                         <span
-                                                            className={
-                                                                styles.rankingItemTitle
-                                                            }
+                                                            style={{
+                                                                flex: 1,
+                                                                marginRight:
+                                                                    "8px",
+                                                                overflow:
+                                                                    "hidden",
+                                                                whiteRpace:
+                                                                    "nowrap",
+                                                                textOverflow:
+                                                                    "ellipsis",
+                                                            }}
                                                             title={
                                                                 itemObj.fileName
                                                             }

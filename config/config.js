@@ -56,9 +56,9 @@ let config = defineConfig({
         BASE_PATH: BASE_PATH,
     },
     mountElementId: "z_know_info",
-    qiankun: {
-        slave: {},
-    },
+    // qiankun: {
+    //     slave: {},
+    // },
     manifest: {
         basePath: "/",
     },

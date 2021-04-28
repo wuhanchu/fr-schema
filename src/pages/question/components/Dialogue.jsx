@@ -5,7 +5,7 @@ import CharRecords from "@/components/Extra/Chat/ChatRecords"
 import mySvg from "../../../assets/userhead.svg"
 import rebotSvg from "../../../assets/rebot.svg"
 import utils from "@/outter/fr-schema-antd-utils/src"
-import style from "./Dialogue.less"
+import style from "@/global.less"
 import * as _ from "lodash"
 import { downloadFile } from "@/utils/minio"
 
@@ -104,11 +104,6 @@ class Dialogue extends React.Component {
                                     (itemStr, index) => {
                                         let item = JSON.parse(itemStr)
                                         return (
-                                            // <Card.Grid
-                                            //     className={style.projectGrid}
-                                            //     key={item.id}
-                                            //     title={"点击下载"}
-                                            // >
                                             <a
                                                 style={{ marginRight: "20px" }}
                                                 onClick={() => {
@@ -286,7 +281,16 @@ class Dialogue extends React.Component {
             others.value = ""
         }
         return (
-            <div className={style.footWrapper}>
+            <div
+                style={{
+                    height: "42px",
+                    border: "none",
+                    padding: 0,
+                    flex: "0, 0, 62px",
+                    marginLeft: "20px",
+                    marginRight: "20px",
+                }}
+            >
                 <div style={{ width: "100%", display: "flex", height: "42px" }}>
                     <AutoComplete
                         dropdownMatchSelectWidth={252}
@@ -338,9 +342,16 @@ class Dialogue extends React.Component {
                     <Spin
                         tip="回答中。。。"
                         spinning={this.state.isSpin}
-                        wrapperClassName={style.Spin}
+                        wrapperClassName={style.Spins}
                     >
-                        <div className={style.wrapper}>
+                        <div
+                            style={{
+                                width: "100%",
+                                height: "100%",
+                                display: "flex",
+                                flexDirection: "column",
+                            }}
+                        >
                             <Card
                                 bordered={null}
                                 style={{

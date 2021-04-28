@@ -29,6 +29,26 @@ ol {
     list-style: none;
 }
 
+.Spins {
+    width: 100%;
+    height: 100%;
+}
+.element::-webkit-scrollbar {
+    width: 0 !important;
+}
+:global {
+    .ant-spin-container {
+        width: 100%;
+        height: 100%;
+    }
+    .ant-card-body {
+        width: 100%;
+    }
+    .ant-card::-webkit-scrollbar {
+        width: 0 !important;
+    }
+}
+
 @media (max-width: @screen-xs) {
     .ant-table {
         width: 100%;

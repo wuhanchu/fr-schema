@@ -4,7 +4,6 @@ import schemas from "@/schemas"
 import { contentHeight } from "@/styles/global"
 import * as _ from "lodash"
 import utils from "@/outter/fr-schema-antd-utils/src"
-import style from "@/pages/question/components/Dialogue.less"
 import { downloadFile } from "@/utils/minio"
 
 const { url } = utils.utils
