@@ -22,7 +22,7 @@
     "prettier": "prettier -c --write \"src/**/*\"",
     "start": "cross-env AUTH_URL=http://server.aiknown.cn:32024  SERVER_URL=http://server.aiknown.cn:32029  umi dev",
     "start:dev:out": "cross-env AUTH_URL=http://server.aiknown.cn:32024  SERVER_URL=http://server.aiknown.cn:32029 BASE_PATH=/z_know_info umi dev",
-    "start:dev": "cross-env AUTH_URL=http://server.aiknown.cn:32024  SERVER_URL=http://server.aiknown.cn:32029  umi dev",
+    "start:dev": "cross-env AUTH_URL=http://server.aiknown.cn:36024  SERVER_URL=http://server.aiknown.cn:36017  umi dev",
     "start:dev:server": "cross-env AUTH_URL=http://server.aiknown.cn:32024   SERVER_URL=http://127.0.0.1:5001  umi dev",
     "start:dev:local": "cross-env AUTH_URL=http://server.aiknown.cn:32024  SERVER_URL=http://127.0.0.1:5001  umi dev",
     "start:test": "cross-env AUTH_URL=https://server.aiknown.cn:31018/api/user_auth  SERVER_URL=https://server.aiknown.cn:31018/api/z_know_info umi dev",

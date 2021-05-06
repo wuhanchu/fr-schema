@@ -86,37 +86,37 @@ const schema = {
                     let bucketName = "zknowninfo"
                     // param.progress(100)
                     // await service.getMinioToken()
-                    let mininConfig = (
+                    let minioConfig = (
                         await projectService.service.getMinioToken()
                     ).data
-                    console.log(mininConfig)
+                    console.log(minioConfig)
                     var minioClient = new Minio.Client({
-                        endPoint: mininConfig.endpoint.split(":")[0],
-                        port: parseInt(mininConfig.endpoint.split(":")[1]),
-                        useSSL: mininConfig.secure,
-                        accessKey: mininConfig.AccessKeyId,
-                        secretKey: mininConfig.SecretAccessKey,
-                        sessionToken: mininConfig.SessionToken,
+                        endPoint: minioConfig.endpoint,
+                        port: parseInt(minioConfig.port),
+                        useSSL: minioConfig.secure,
+                        accessKey: minioConfig.AccessKeyId,
+                        secretKey: minioConfig.SecretAccessKey,
+                        sessionToken: minioConfig.SessionToken,
                     })
                     checkedAndUpload(
                         bucketName,
                         param.file,
                         minioClient,
-                        mininConfig,
+                        minioConfig,
                         (res) => {
                             // 输出url
                             let fileName = param.file.name
                             message.success(`文件上传成功`)
                             param.success({
-                                url: mininConfig.secure
+                                url: minioConfig.secure
                                     ? "https://" +
-                                      mininConfig.endpoint +
+                                      minioConfig.endpoint +
                                       "/" +
                                       bucketName +
                                       "/" +
                                       fileName
                                     : "http://" +
-                                      mininConfig.endpoint +
+                                      minioConfig.endpoint +
                                       "/" +
                                       bucketName +
                                       "/" +

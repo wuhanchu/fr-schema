@@ -286,24 +286,24 @@ class BaseList extends DataList {
                 this.setState({
                     loadingAnnex: true,
                 })
-                let mininConfig = (
+                let minioConfig = (
                     await schemas.project.service.getMinioToken()
                 ).data
 
                 var minioClient = new Minio.Client({
-                    endPoint: mininConfig.endpoint.split(":")[0],
-                    port: parseInt(mininConfig.endpoint.split(":")[1]),
-                    useSSL: mininConfig.secure,
-                    accessKey: mininConfig.AccessKeyId,
-                    secretKey: mininConfig.SecretAccessKey,
-                    sessionToken: mininConfig.SessionToken,
+                    endPoint: minioConfig.endpoint,
+                    port: parseInt(minioConfig.port),
+                    useSSL: minioConfig.secure,
+                    accessKey: minioConfig.AccessKeyId,
+                    secretKey: minioConfig.SecretAccessKey,
+                    sessionToken: minioConfig.SessionToken,
                 })
 
                 checkedAndUpload(
                     "zknowninfo",
                     file,
                     minioClient,
-                    mininConfig,
+                    minioConfig,
                     (res) => {
                         // 输出url
                         message.success(`文件上传成功`)
@@ -521,11 +521,14 @@ class BaseList extends DataList {
                 importTemplateUrl={this.meta.importTemplateUrl}
                 schema={schemas.question.schema}
                 errorKey={"question_standard"}
+                title={"导入"}
                 sliceNum={4}
                 onCancel={() => this.setState({ visibleImport: false })}
                 onChange={(data) => this.setState({ importData: data })}
                 onOk={async () => {
                     // to convert
+                    console.log("this.state.importData")
+                    console.log(this.state.importData)
                     const data = this.state.importData.map((item) => {
                         const { label, question_extend, ...others } = item
                         console.log(item)
@@ -541,6 +544,7 @@ class BaseList extends DataList {
                             ...others,
                         }
                     })
+                    console.log(data)
                     await this.service.upInsert(data)
                     this.setState({ visibleImport: false })
                     this.refreshList()
