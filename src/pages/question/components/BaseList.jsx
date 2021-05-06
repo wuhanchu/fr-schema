@@ -2,6 +2,8 @@ import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
 import schemas from "@/schemas"
 import DataList from "@/outter/fr-schema-antd-utils/src/components/Page/DataList"
+import Authorized from "@/outter/fr-schema-antd-utils/src/components/Authorized/Authorized"
+import { exportDataByTemplate } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
 import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
 import {
     Divider,
@@ -21,6 +23,7 @@ import * as _ from "lodash"
 import clone from "clone"
 import { DeleteOutlined, UploadOutlined } from "@ant-design/icons"
 import { checkedAndUpload } from "@/utils/minio"
+import { flatMap } from "lodash"
 
 const confirm = Modal.confirm
 const Minio = require("minio")
@@ -109,6 +112,107 @@ class BaseList extends DataList {
         )
         return this.createSearchBar(filters)
     }
+
+    /**
+     * 操作栏按钮
+     */
+    renderOperationButtons() {
+        if (this.props.renderOperationButtons) {
+            return this.props.renderOperationButtons()
+        }
+
+        return (
+            <>
+                <Authorized
+                    authority={this.meta.authority && this.meta.authority.add}
+                    noMatch={null}
+                >
+                    {!this.props.readOnly && !this.meta.addHide && (
+                        <Button
+                            type="primary"
+                            onClick={() =>
+                                this.handleVisibleModal(true, null, actions.add)
+                            }
+                        >
+                            新增
+                        </Button>
+                    )}
+                </Authorized>
+                {this.meta.allowImport && (
+                    <Authorized
+                        authority={
+                            this.meta.authority && this.meta.authority.export
+                        }
+                        noMatch={null}
+                    >
+                        <Button
+                            onClick={() => {
+                                this.setState({ visibleImport: true })
+                            }}
+                        >
+                            导入
+                        </Button>
+                    </Authorized>
+                )}
+                {this.meta.allowExport && (
+                    <Authorized
+                        authority={
+                            this.meta.authority && this.meta.authority.export
+                        }
+                        noMatch={null}
+                    >
+                        <Button
+                            loading={this.state.exportLoading}
+                            onClick={async () => {
+                                this.setState(
+                                    { exportLoading: true },
+                                    async () => {
+                                        const columns = this.getColumns(
+                                            false
+                                        ).filter((item) => {
+                                            return item.isExpand !== true
+                                        })
+                                        let data = this.state.data.list
+                                        console.log("导出")
+                                        console.log(columns)
+                                        console.log(data)
+                                        if (this.props.exportMore) {
+                                            let data = await this.requestList({
+                                                pageSize: 1000000,
+                                            })
+                                            data = decorateList(
+                                                data.list,
+                                                this.schema
+                                            )
+                                        }
+
+                                        if (this.meta.importTemplateUrl) {
+                                            await exportDataByTemplate(
+                                                "导出数据",
+                                                data,
+                                                columns,
+                                                this.meta.importTemplateUrl
+                                            )
+                                        } else {
+                                            exportData(
+                                                "导出数据",
+                                                data,
+                                                columns
+                                            )
+                                        }
+                                        this.setState({ exportLoading: false })
+                                    }
+                                )
+                            }}
+                        >
+                            导出
+                        </Button>
+                    </Authorized>
+                )}
+            </>
+        )
+    }
+
     renderOperateColumnExtend(record) {
         return (
             <>
@@ -424,6 +528,7 @@ class BaseList extends DataList {
                     // to convert
                     const data = this.state.importData.map((item) => {
                         const { label, question_extend, ...others } = item
+                        console.log(item)
                         let question_extend_data = question_extend
                         if (question_extend instanceof String) {
                             question_extend_data = [question_extend]
