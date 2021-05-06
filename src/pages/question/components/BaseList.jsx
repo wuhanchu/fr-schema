@@ -167,11 +167,22 @@ class BaseList extends DataList {
                                 this.setState(
                                     { exportLoading: true },
                                     async () => {
-                                        const columns = this.getColumns(
+                                        let columns = this.getColumns(
                                             false
                                         ).filter((item) => {
                                             return item.isExpand !== true
                                         })
+                                        let extend = columns["4"]
+                                        columns["5"] = {
+                                            title: "答案",
+                                            required: true,
+                                            key: "answer",
+                                        }
+                                        columns["6"] = {
+                                            title: "扩展问",
+                                            required: true,
+                                            key: "question_extend",
+                                        }
                                         let data = this.state.data.list
                                         console.log("导出")
                                         console.log(columns)
@@ -532,10 +543,16 @@ class BaseList extends DataList {
                     const data = this.state.importData.map((item) => {
                         const { label, question_extend, ...others } = item
                         console.log(item)
-                        let question_extend_data = question_extend
-                        if (question_extend instanceof String) {
-                            question_extend_data = [question_extend]
+
+                        let question_extend_data =
+                            question_extend[0] && question_extend[0].split("\n")
+                        if (typeof question_extend === "string") {
+                            console.log("字符")
+                            question_extend_data = question_extend.split("\n")
                         }
+
+                        console.log("结果")
+                        console.log(question_extend_data)
 
                         return {
                             ...this.meta.addArgs,
