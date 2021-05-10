@@ -517,14 +517,12 @@ class BaseList extends DataList {
     }
 
     handleSearch = (fieldsValue) => {
-        console.log(fieldsValue["label"])
         if (fieldsValue["label"].length) {
             fieldsValue.label = "ov.{" + fieldsValue["label"] + "}"
         } else {
             fieldsValue.label = undefined
         }
         this.onSearch(fieldsValue)
-        // e.preventDefault()
     }
     renderImportModal() {
         return (
@@ -538,21 +536,14 @@ class BaseList extends DataList {
                 onChange={(data) => this.setState({ importData: data })}
                 onOk={async () => {
                     // to convert
-                    console.log("this.state.importData")
-                    console.log(this.state.importData)
                     const data = this.state.importData.map((item) => {
                         const { label, question_extend, ...others } = item
-                        console.log(item)
 
                         let question_extend_data =
                             question_extend[0] && question_extend[0].split("\n")
                         if (typeof question_extend === "string") {
-                            console.log("字符")
                             question_extend_data = question_extend.split("\n")
                         }
-
-                        console.log("结果")
-                        console.log(question_extend_data)
 
                         return {
                             ...this.meta.addArgs,
@@ -561,7 +552,6 @@ class BaseList extends DataList {
                             ...others,
                         }
                     })
-                    console.log(data)
                     await this.service.upInsert(data)
                     this.setState({ visibleImport: false })
                     this.refreshList()
