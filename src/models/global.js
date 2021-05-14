@@ -1,12 +1,23 @@
 import frSchema from "@/outter/fr-schema/src"
 import question from "@/schemas/question/index"
+
+import domain from "@/schemas/domain/index"
+
 const config = SETTING
+const { utils } = frSchema
 
 const GlobalModel = {
     namespace: "global",
     state: {
+        init: false,
         collapsed: false,
         notices: [],
+        dict: {
+            domain: {},
+        },
+        data: {
+            domain: [],
+        },
     },
     effects: {
         *fetchNotices(_, { call, put, select }) {
@@ -76,23 +87,37 @@ const GlobalModel = {
             let data = {}
 
             // query data
+
             const res = yield all({
-                minioConfig: call(question.service.getMinioConfig, {
-                    pageSize: 10000,
-                }),
+                domain: call(domain.service.get, { pageSize: 10000 }),
             })
 
+            Object.keys(res).forEach((key) => (data[key] = res[key].list))
+
+            dict.domain = utils.dict.listToDict(
+                data.domain,
+                null,
+                "key",
+                "name"
+            )
             // update current dict
             yield put({
                 type: "save",
                 payload: {
                     init: true,
-                    minioConfig: res,
+                    dict,
+                    data,
                 },
             })
         },
     },
     reducers: {
+        save(state, action) {
+            return {
+                ...state,
+                ...action.payload,
+            }
+        },
         changeLayoutCollapsed(
             state = {
                 notices: [],

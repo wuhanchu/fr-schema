@@ -34,7 +34,7 @@ const footerRender = () => {
 }
 
 const BasicLayout = (props) => {
-    const { dispatch, children, user, settings } = props
+    const { dispatch, children, user, settings, init, initCallback } = props
 
     /**
      * constructor
@@ -44,21 +44,23 @@ const BasicLayout = (props) => {
         if (dispatch) {
             if (user.init) {
                 dispatch({
-                    type: "global/queryDict",
-                })
-                dispatch({
-                    type: "settings/getSetting",
+                    type: "global/init",
                 })
                 // dispatch({
-                //     type: "global/init",
+                //     type: "global/queryDict",
+                // })
+                // dispatch({
+                //     type: "settings/getSetting",
                 // })
             }
         }
-    }, [user.init])
+    }, [])
     /**
      * init variables
      */
-
+    useEffect(() => {
+        initCallback && initCallback()
+    }, [init])
     const handleMenuCollapse = (payload) => {
         if (dispatch) {
             dispatch({
@@ -105,6 +107,7 @@ const BasicLayout = (props) => {
             )}
             {...props}
             {...settings}
+            loading={!init}
             title={config.name}
         >
             {children}
@@ -114,6 +117,7 @@ const BasicLayout = (props) => {
 
 export default connect(({ global, settings, user }) => ({
     collapsed: global.collapsed,
+    init: global.init,
     settings,
     user,
 }))(BasicLayout)

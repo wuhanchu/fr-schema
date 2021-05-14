@@ -107,7 +107,7 @@ class Dialogue extends React.Component {
                                             <a
                                                 style={{ marginRight: "20px" }}
                                                 onClick={() => {
-                                                    let href = downloadFile(
+                                                    downloadFile(
                                                         item.bucketName,
                                                         item.fileName,
                                                         item.url

@@ -23,7 +23,6 @@ import * as _ from "lodash"
 import clone from "clone"
 import { DeleteOutlined, UploadOutlined } from "@ant-design/icons"
 import { checkedAndUpload } from "@/utils/minio"
-import { flatMap } from "lodash"
 
 const confirm = Modal.confirm
 const Minio = require("minio")
@@ -34,7 +33,6 @@ class BaseList extends DataList {
         const importTemplateUrl = (
             BASE_PATH + "/import/掌数_知料_知识库信息导入.xlsx"
         ).replace("//", "/")
-        // let data = props.record.config
         let config =
             props.record.config && props.record.config.info_schema
                 ? props.record.config.info_schema
@@ -89,7 +87,6 @@ class BaseList extends DataList {
             attachment: [],
             loadingAnnex: false,
         })
-        console.log(labelDictList)
         this.schema.label.dict = labelDictList
         await super.componentDidMount()
     }
@@ -172,7 +169,6 @@ class BaseList extends DataList {
                                         ).filter((item) => {
                                             return item.isExpand !== true
                                         })
-                                        let extend = columns["4"]
                                         columns["5"] = {
                                             title: "答案",
                                             required: true,
@@ -184,18 +180,6 @@ class BaseList extends DataList {
                                             key: "question_extend",
                                         }
                                         let data = this.state.data.list
-                                        console.log("导出")
-                                        console.log(columns)
-                                        console.log(data)
-                                        if (this.props.exportMore) {
-                                            let data = await this.requestList({
-                                                pageSize: 1000000,
-                                            })
-                                            data = decorateList(
-                                                data.list,
-                                                this.schema
-                                            )
-                                        }
 
                                         if (this.meta.importTemplateUrl) {
                                             await exportDataByTemplate(
@@ -251,7 +235,6 @@ class BaseList extends DataList {
         if (this.props.renderInfoModal) {
             return this.props.renderInfoModal()
         }
-        const { form } = this.props
         const renderForm = this.props.renderForm || this.renderForm
         const { resource, title, addArgs } = this.meta
         const { visibleModal, infoData, action } = this.state
@@ -293,7 +276,7 @@ class BaseList extends DataList {
             itemRender: () => {
                 ;<></>
             },
-            beforeUpload: async (file, props, data) => {
+            beforeUpload: async (file) => {
                 this.setState({
                     loadingAnnex: true,
                 })

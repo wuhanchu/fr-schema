@@ -1,5 +1,4 @@
 import { createApi } from "@/outter/fr-schema/src/service"
-import { schemas } from "@/outter/fr-schema-antd-utils/src"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import { verifyJson } from "@/outter/fr-schema-antd-utils/src/utils/component"
 
@@ -14,13 +13,13 @@ const schema = {
         title: "名称",
         sorter: true,
         searchPrefix: "like",
+        required: true,
+        style: { width: "500px" },
         itemProps: {
             labelCol: {
                 span: 4,
             },
         },
-        style: { width: "500px" },
-        required: true,
     },
     domain_key: {
         title: "域",
@@ -33,21 +32,31 @@ const schema = {
             },
         },
     },
+    create_time: {
+        title: "创建时间",
+        required: true,
+        sorter: true,
+        addHide: true,
+        editHide: true,
+        props: {
+            showTime: true,
+        },
+        type: schemaFieldType.DatePicker,
+    },
+
     remark: {
-        title: "备注",
-        type: schemaFieldType.TextArea,
-        style: { width: "500px" },
         itemProps: {
             labelCol: {
                 span: 4,
             },
         },
-        props: {
-            autoSize: { minRows: 2, maxRows: 6 },
-        },
+        style: { width: "500px" },
+        title: "备注",
+        type: schemaFieldType.TextArea,
+        sorter: true,
     },
-    config: {
-        title: "配置",
+    content: {
+        title: "内容",
         listHide: true,
         itemProps: {
             labelCol: {
@@ -64,19 +73,7 @@ const schema = {
     },
 }
 
-const service = createApi("project", schema, null, "eq.")
-service.export = async (args) => {
-    const res = await createApi(`project/mark`, schema).post(args)
-    return res
-}
-service.import = async (args) => {
-    const res = await createApi(`project/mark/sync`, schema).post(args)
-    return res
-}
-service.getMinioToken = async (args) => {
-    const res = await createApi(`file/auth`, schema).post({})
-    return res
-}
+const service = createApi("story", schema, null, "eq.")
 
 export default {
     schema,

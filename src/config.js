@@ -8,7 +8,7 @@ const config = {
     name: "掌数知料", // 基础信息
     product_key: "z_know_info",
     // desc: "antd_pro_design 演示系统", // 基础信息
-    copyright: "wuhanchu", // 版本信息
+    copyright: "掌数知料", // 版本信息
 
     // api 前缀
     apiVersion: BASE_PATH + "api/",
@@ -20,8 +20,8 @@ const config = {
         clientId: "yAl9PO9sA4NKYhcrXfAOXxlD",
         clientSecret: "DarmrCkeA04rV8t8vA4mTXhMvn7nEUweE07JgvWhEVpGsukK",
         accessTokenUri: BASE_PATH + "api/user_auth/auth/token",
-        scopes: "profile"
-    }
+        scopes: "profile",
+    },
 
     // iconfont
     // iconfontUrl: "//at.alicdn.com/t/font_1368817_ytmlcctjr8d.js"

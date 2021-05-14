@@ -1,15 +1,4 @@
-import {
-    Divider,
-    Popconfirm,
-    Modal,
-    Avatar,
-    Row,
-    Col,
-    Input,
-    Button,
-    Card,
-    message,
-} from "antd"
+import { Divider, Modal, Row, Col, Input, Card, message } from "antd"
 import { connect } from "dva"
 import ListPage from "@/outter/fr-schema-antd-utils/src/components/Page/ListPage"
 import schemas from "@/schemas"
@@ -36,11 +25,11 @@ class List extends ListPage {
                 width: "800px",
             },
         })
+        this.schema.domain_key.dict = this.props.dict.domain
     }
 
     handleHideDialogue = () => {
         this.setState({ visibleDialogue: false })
-        console.log("cuole")
     }
 
     renderOperateColumnExtend(record) {
@@ -141,7 +130,7 @@ class List extends ListPage {
                         record={record}
                         visibleDialogue={visibleDialogue}
                         handleHideDialogue={this.handleHideDialogue}
-                    ></DialogueModal>
+                    />
                 )}
                 {visibleExport && (
                     <Modal
@@ -195,7 +184,7 @@ class List extends ListPage {
                                                 mark_project_id: e.target.value,
                                             })
                                         }}
-                                    ></Input>
+                                    />
                                 </Col>
                             </Row>
                         </Card>
@@ -253,7 +242,7 @@ class List extends ListPage {
                                                 mark_project_id: e.target.value,
                                             })
                                         }}
-                                    ></Input>
+                                    />
                                 </Col>
                             </Row>
                         </Card>
@@ -261,6 +250,18 @@ class List extends ListPage {
                 )}
             </Fragment>
         )
+    }
+
+    renderSearchBar() {
+        const { name, domain_key } = this.schema
+        const filters = this.createFilters(
+            {
+                name,
+                domain_key,
+            },
+            5
+        )
+        return this.createSearchBar(filters)
     }
 }
 

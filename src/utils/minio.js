@@ -1,25 +1,6 @@
 const Minio = require("minio")
 const stream = require("stream")
 
-// let endPoint = 'server.aiknown.cn'
-// let port = 32123
-// let isHttps = false
-// console.log(document.location.protocol)
-// // 你的minio配置信息
-// if (document.domain === "server.aiknown.cn") {
-//     endPoint = "server.aiknown.cn"
-//     port = 31321
-//     isHttps = true
-// }
-// var minioClient = new Minio.Client({
-//     endPoint: endPoint,
-//     port: port,
-//     useSSL: isHttps,
-//     accessKey: "FJS8ZI8LN22F6Q08RFWW",
-//     secretKey: "Xx1h02bOmKyXNRn0Hc2P2+B312zyhrDpwvkSJcLH",
-//     sessionToken: 'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3NLZXkiOiJGSlM4Wkk4TE4yMkY2UTA4UkZXVyIsImV4cCI6MzYwMDAwMDAwMDAwMCwicG9saWN5IjoiZ2xvYmFsLXBvbGljeSIsInNlc3Npb25Qb2xpY3kiOiJleUpXWlhKemFXOXVJam9pTWpBeE1pMHhNQzB4TnlJc0lsTjBZWFJsYldWdWRDSTZXM3NpVTJsa0lqb2lJaXdpUldabVpXTjBJam9pUVd4c2IzY2lMQ0pCWTNScGIyNGlPbHNpY3pNNktpSmRMQ0pTWlhOdmRYSmpaU0k2SW1GeWJqcGhkM002Y3pNNk9qcDZhMjV2ZDI1cGJtWnZMeW9pZlYxOSJ9.1RWlTMPG-EtUgKav6mTBpo82bG0azS7M8rkneCiF6wuLOz97UWUc69X0qBOtZWIcYf15QYOuJIWlEPqiZBwzHg'
-// })
-
 // base64转blob
 export function toBlob(base64Data) {
     let byteString = base64Data
