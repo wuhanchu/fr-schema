@@ -14,23 +14,11 @@ const schema = {
         sorter: true,
         searchPrefix: "like",
         required: true,
-        style: { width: "500px" },
-        itemProps: {
-            labelCol: {
-                span: 4,
-            },
-        },
     },
     domain_key: {
         title: "域",
         sorter: true,
         type: schemaFieldType.Select,
-        style: { width: "500px" },
-        itemProps: {
-            labelCol: {
-                span: 4,
-            },
-        },
     },
     create_time: {
         title: "创建时间",
@@ -45,12 +33,6 @@ const schema = {
     },
 
     remark: {
-        itemProps: {
-            labelCol: {
-                span: 4,
-            },
-        },
-        style: { width: "500px" },
         title: "备注",
         type: schemaFieldType.TextArea,
         sorter: true,
@@ -58,6 +40,8 @@ const schema = {
     content: {
         title: "内容",
         listHide: true,
+        addHide: true,
+        editHide: true,
         itemProps: {
             labelCol: {
                 span: 4,

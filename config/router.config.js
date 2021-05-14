@@ -68,7 +68,12 @@ export default [
                 routes: [
                     {
                         path: "/",
-                        redirect: "/domain/project",
+                        redirect: "/project",
+                    },
+                    {
+                        path: "/project",
+                        name: "project",
+                        component: "./project/List",
                     },
                     {
                         path: "/domain",
@@ -80,10 +85,11 @@ export default [
                                 name: "domainList",
                                 component: "./domain/List",
                             },
+
                             {
-                                path: "/domain/story",
-                                name: "story",
-                                component: "./story/List",
+                                path: "/domain/synonym",
+                                name: "synonym",
+                                component: "./synonym/List",
                             },
                             {
                                 path: "/domain/intent",
@@ -91,14 +97,9 @@ export default [
                                 component: "./intent/List",
                             },
                             {
-                                path: "/domain/synonym",
-                                name: "synonym",
-                                component: "./synonym/List",
-                            },
-                            {
-                                path: "/domain/project",
-                                name: "project",
-                                component: "./project/List",
+                                path: "/domain/story",
+                                name: "story",
+                                component: "./story/List",
                             },
                         ],
                     },
@@ -119,12 +120,6 @@ export default [
                             },
                         ],
                     },
-                    // {
-                    //     path: "/entityType",
-                    //     name: "entityType",
-                    //     component: "./entityType/List",
-                    // },
-
                     {
                         name: "system",
                         path: "/system",
