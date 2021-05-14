@@ -5,7 +5,6 @@ const schema = {
     id: {
         title: "编号",
         sorter: true,
-
         infoHide: true,
     },
     name: {

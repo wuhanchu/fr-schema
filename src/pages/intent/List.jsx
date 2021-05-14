@@ -4,7 +4,6 @@ import schemas from "@/schemas"
 import React from "react"
 import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
-import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 
 @connect(({ global }) => ({
     dict: global.dict,
