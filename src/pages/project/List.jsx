@@ -55,14 +55,14 @@ class List extends ListPage {
                 >
                     搜索
                 </a>
-                <Divider type="vertical" />
-                <a
-                    onClick={() => {
-                        this.setState({ record, visibleDialogue: true })
-                    }}
-                >
-                    对话
-                </a>
+                {/*<Divider type="vertical" />*/}
+                {/*<a*/}
+                {/*    onClick={() => {*/}
+                {/*        this.setState({ record, visibleDialogue: true })*/}
+                {/*    }}*/}
+                {/*>*/}
+                {/*    对话*/}
+                {/*</a>*/}
                 <Divider type="vertical" />
                 <a
                     onClick={() => {

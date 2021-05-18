@@ -2,8 +2,10 @@ import { connect } from "dva"
 import ListPage from "@/outter/fr-schema-antd-utils/src/components/Page/ListPage"
 import schemas from "@/schemas"
 import React from "react"
+import { Divider } from "antd"
 import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
+import YamlEdit from "./yamlEdiit"
 
 @connect(({ global }) => ({
     dict: global.dict,
@@ -31,6 +33,45 @@ class List extends ListPage {
             5
         )
         return this.createSearchBar(filters)
+    }
+
+    handleSetYamlEditVisible = (visible) => {
+        this.setState({
+            showYamlEdit: visible,
+        })
+    }
+
+    renderExtend() {
+        return (
+            <>
+                {this.state.showYamlEdit && (
+                    <YamlEdit
+                        handleSetYamlEditVisible={this.handleSetYamlEditVisible}
+                        service={this.service}
+                        refreshList={this.refreshList.bind(this)}
+                        record={this.state.record}
+                    />
+                )}
+            </>
+        )
+    }
+
+    renderOperateColumnExtend(record) {
+        return (
+            <>
+                <Divider type="vertical" />
+                <a
+                    onClick={() => {
+                        this.setState({
+                            showYamlEdit: true,
+                            record,
+                        })
+                    }}
+                >
+                    修改内容
+                </a>
+            </>
+        )
     }
 }
 

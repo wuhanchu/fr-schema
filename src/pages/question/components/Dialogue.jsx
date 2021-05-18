@@ -8,6 +8,7 @@ import utils from "@/outter/fr-schema-antd-utils/src"
 import style from "@/global.less"
 import * as _ from "lodash"
 import { downloadFile } from "@/utils/minio"
+import { contentHeight } from "@/styles/global"
 
 const { url } = utils.utils
 
@@ -30,9 +31,31 @@ class Dialogue extends React.Component {
         super(props)
         const { record } = props
         this.project_id = url.getUrlParams("project_id") || record.id
+        this.domain_id = url.getUrlParams("domain_id") || record.id
+
+        if (record && record.id) {
+            if (this.props.type === "domain_id") {
+                this.domain_id = record && record.id
+            } else {
+                this.project_id = record && record.id
+            }
+        }
     }
 
-    componentDidMount() {
+    async componentDidMount() {
+        if (this.props.type === "domain_id") {
+            let project = await schemas.project.service.get({
+                domain_key: this.props.record && this.props.record.key,
+                limit: 999,
+            })
+            this.project_id = "in.("
+            project.list.map((item, index) => {
+                if (index !== project.list.length - 1)
+                    this.project_id = this.project_id + item.id + ","
+                else this.project_id = this.project_id + item.id
+            })
+            this.project_id = this.project_id + ")"
+        }
         schemas.question.service
             .get({ project_id: this.project_id, limit: 999 })
             .then((response) => {
@@ -71,9 +94,16 @@ class Dialogue extends React.Component {
             card.scrollTop = card.scrollHeight
         }, 10)
         this.setState({ data: this.state.data, sendValue: "", isSpin: true })
+        let args = {}
+        if (this.props.type === "domain_id") {
+            args.domain_id = this.domain_id
+        } else {
+            args.project_id = this.project_id
+        }
         const response = await schemas.question.service.search({
             search: sendValue,
-            project_id: this.project_id,
+            engine_type: "db",
+            ...args,
         })
         let list
         if (response.list.length > 3) {

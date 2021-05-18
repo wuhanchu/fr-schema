@@ -82,14 +82,12 @@ const schema = {
             },
             media: {
                 uploadFn: async (param) => {
-                    console.log(param)
                     let bucketName = "zknowninfo"
                     // param.progress(100)
                     // await service.getMinioToken()
                     let minioConfig = (
                         await projectService.service.getMinioToken()
                     ).data
-                    console.log(minioConfig)
                     var minioClient = new Minio.Client({
                         endPoint: minioConfig.endpoint,
                         port: parseInt(minioConfig.port),
@@ -164,9 +162,8 @@ const schema = {
 
 const service = createApi("question", schema, null, "eq.")
 service.get = async function (args) {
-    const res = await createApi("question", schema, null, "eq.").get(args)
+    const res = await createApi("question", schema, null, null).get(args)
     let list = res.list.map((item) => {
-        console.log(item)
         return {
             ...item,
             question_extend: item.question_extend
@@ -232,7 +229,8 @@ service.patch = async function (args, schema) {
 
     return res
 }
-service.search = createApi("rpc/question_search", schema).getBasic
+// service.search = createApi("rpc/question_search", schema).getBasic
+service.search = createApi("search", schema).getBasic
 
 export default {
     schema,

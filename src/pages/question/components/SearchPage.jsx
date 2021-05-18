@@ -8,6 +8,39 @@ import { downloadFile } from "@/utils/minio"
 
 const { url } = utils.utils
 
+async function init(props, project_id, setState, state) {
+    if (props.type === "domain_id") {
+        let project = await schemas.project.service.get({
+            domain_key: props.record && props.record.key,
+            limit: 999,
+        })
+        project_id = "in.("
+        project.list.map((item, index) => {
+            if (index !== project.list.length - 1)
+                project_id = project_id + item.id + ","
+            else project_id = project_id + item.id
+        })
+        project_id = project_id + ")"
+    }
+
+    schemas.question.service
+        .get({
+            project_id:
+                props.type === "domain_id" ? project_id : "eq." + project_id,
+            limit: 9999,
+        })
+        .then((response) => {
+            let allData = []
+            response.list.forEach((item) => {
+                allData.push(item.question_standard)
+            })
+            setState({
+                ...state,
+                allData,
+            })
+        })
+}
+
 function SearchPage(props) {
     const [state, setState] = useState({
         data: null,
@@ -19,25 +52,20 @@ function SearchPage(props) {
 
     // 判断是否外嵌模式
     let project_id = url.getUrlParams("project_id")
+    let domain_id = url.getUrlParams("domain_id")
+
     let height = contentHeight
     if (props.record && props.record.id) {
-        project_id = props.record && props.record.id
         height = contentHeight - 200
+        if (props.type === "domain_id") {
+            domain_id = props.record && props.record.id
+        } else {
+            project_id = props.record && props.record.id
+        }
     }
-
+    console.log(project_id)
     useEffect(() => {
-        schemas.question.service
-            .get({ project_id: project_id, limit: 999 })
-            .then((response) => {
-                let allData = []
-                response.list.forEach((item) => {
-                    allData.push(item.question_standard)
-                })
-                setState({
-                    ...state,
-                    allData,
-                })
-            })
+        init(props, project_id, setState, state)
     }, [])
 
     const handleChange = (value) => {
@@ -52,9 +80,6 @@ function SearchPage(props) {
     }
 
     const handleSearch = async (searchValue, event) => {
-        // event && event.preventDefault && event.preventDefault()
-        // event && event.stopPropagation && event.stopPropagation()
-
         let value = searchValue || state.value
         if (_.isNil(value)) {
             setState({
@@ -67,12 +92,17 @@ function SearchPage(props) {
         setState({
             loading: true,
         })
-
+        let args = {}
+        if (props.type === "domain_id") {
+            args.domain_id = domain_id
+        } else {
+            args.project_id = project_id
+        }
         const response = await schemas.question.service.search({
             search: value,
-            project_id,
+            engine_type: "db",
+            ...args,
         })
-        console.log(response.list)
         setState({
             ...state,
             value,
@@ -152,15 +182,17 @@ function SearchPage(props) {
                                             <>
                                                 <div
                                                     dangerouslySetInnerHTML={{
-                                                        __html: item.answer
-                                                            .replace(
-                                                                /<b>/g,
-                                                                "<b style='color:red;'>"
-                                                            )
-                                                            .replace(
-                                                                /\n/g,
-                                                                "<br/>"
-                                                            ),
+                                                        __html:
+                                                            item.answer &&
+                                                            item.answer
+                                                                .replace(
+                                                                    /<b>/g,
+                                                                    "<b style='color:red;'>"
+                                                                )
+                                                                .replace(
+                                                                    /\n/g,
+                                                                    "<br/>"
+                                                                ),
                                                     }}
                                                 />
                                                 {item.attachment &&
