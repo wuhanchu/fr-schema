@@ -128,7 +128,7 @@ class BaseList extends DataList {
                         <Button
                             type="primary"
                             onClick={() =>
-                                this.handleVisibleModal(true, null, actions.add)
+                                this.handleVisibleModal(true, null, "add")
                             }
                         >
                             新增
