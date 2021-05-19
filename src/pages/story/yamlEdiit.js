@@ -6,7 +6,13 @@ import "codemirror/lib/codemirror.css"
 import "codemirror/mode/yaml/yaml"
 import "codemirror/theme/neat.css"
 import "codemirror/addon/fold/foldgutter.css"
+import "codemirror/addon/lint/lint.css"
+import "codemirror/theme/monokai.css"
+import "codemirror/addon/lint/lint"
+import "codemirror/addon/lint/yaml-lint"
 import jsyaml from "js-yaml"
+
+window.jsyaml = require("js-yaml")
 
 class yamlEdiit extends Component {
     constructor(props) {
@@ -19,7 +25,6 @@ class yamlEdiit extends Component {
     }
 
     handleChange(value) {
-        // const encodeValue = value.replace(" ", "&nbsp;");
         this.setState({ value: value })
     }
 
@@ -27,6 +32,8 @@ class yamlEdiit extends Component {
         const options = {
             theme: "neat",
             mode: "text/x-yaml",
+            gutters: ["CodeMirror-lint-markers"], // 语法检查器
+            lint: true, // 开启语法检查
             readOnly: false,
             lineNumbers: true,
             lineWrapping: true,
@@ -47,7 +54,6 @@ class yamlEdiit extends Component {
                     let errorMessage = ""
                     try {
                         isYaml = !!jsyaml.load(this.state.value)
-                        console.log(isYaml)
                         let record = {
                             content: this.props.record.content || {},
                             id: this.props.record.id,
@@ -59,7 +65,7 @@ class yamlEdiit extends Component {
                         this.props.handleSetYamlEditVisible(false)
                     } catch (e) {
                         errorMessage = e && e.message
-                        message.error("格式错误：" + errorMessage)
+                        message.error("语法错误！")
                     }
 
                     return {
@@ -68,7 +74,7 @@ class yamlEdiit extends Component {
                     }
                 }}
             >
-                <div style={{ height: "550px" }}>
+                <div style={{ height: "550px", position: "relative" }}>
                     <CodeMirror
                         value={value}
                         options={options}
