@@ -9,7 +9,7 @@ export default {
 
     // 拂晓蓝
     primaryColor: "#1890ff",
-    layout: "sidemenu",
+    layout: "topmenu",
     contentWidth: "Fluid",
     fixedHeader: false,
     autoHideHeader: false,
@@ -22,7 +22,7 @@ export default {
 
     // basic info
     title: "知料", // 基础信息
-    product_key: "z_markgo",
+    product_key: "z_know_info",
 
     copyright: "上海掌数科技有限公司", // 版本信息
 
