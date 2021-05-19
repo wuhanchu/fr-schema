@@ -37,6 +37,8 @@ const schema = {
 
 const service = createApi("domain", schema, null, "eq.")
 
+service.getServices = createApi("z_ai_service/service", schema, null, "eq.").get
+
 export default {
     schema,
     service,

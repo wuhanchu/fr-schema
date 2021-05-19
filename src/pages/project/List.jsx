@@ -7,7 +7,6 @@ import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
 import QuestionBaseList from "@/pages/question/components/BaseList"
 import SearchPageModal from "@/pages/question/components/SearchPageModal"
-import DialogueModal from "@/pages/question/components/DialogueModal"
 
 @connect(({ global }) => ({
     dict: global.dict,
@@ -123,13 +122,6 @@ class List extends ListPage {
                         }}
                         title={record.name + "知识搜索"}
                         record={record}
-                    />
-                )}
-                {visibleDialogue && (
-                    <DialogueModal
-                        record={record}
-                        visibleDialogue={visibleDialogue}
-                        handleHideDialogue={this.handleHideDialogue}
                     />
                 )}
                 {visibleExport && (

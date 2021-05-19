@@ -8,7 +8,6 @@ import utils from "@/outter/fr-schema-antd-utils/src"
 import style from "@/global.less"
 import * as _ from "lodash"
 import { downloadFile } from "@/utils/minio"
-import { contentHeight } from "@/styles/global"
 
 const { url } = utils.utils
 

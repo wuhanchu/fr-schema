@@ -69,6 +69,11 @@ let config = defineConfig({
             changeOrigin: true,
             pathRewrite: { "^/api/user_auth": "" },
         },
+        "/api/z_ai_service": {
+            target: "http://server.aiknown.cn:36032",
+            changeOrigin: true,
+            pathRewrite: { "^/api/z_ai_service": "" },
+        },
         "/z_know_info/api/user_auth": {
             target: process.env.AUTH_URL,
             changeOrigin: true,

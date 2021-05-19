@@ -23,6 +23,15 @@ class List extends ListPage {
             },
         })
     }
+
+    async componentDidMount() {
+        super.componentDidMount()
+        let aiService = await this.service.getServices({
+            limit: 10000,
+            ai_type: "eq.chat",
+        })
+    }
+
     handleSetYamlEditVisible = (visible) => {
         this.setState({
             showYamlEdit: visible,
