@@ -1,7 +1,6 @@
 import React, { Component } from "react"
 import CodeMirror from "react-codemirror"
-import Modal from "antd/lib/modal/Modal"
-import { message } from "antd"
+import { message, Modal } from "antd"
 import "codemirror/lib/codemirror.css"
 import "codemirror/mode/yaml/yaml"
 import "codemirror/theme/neat.css"
@@ -13,6 +12,8 @@ import "codemirror/addon/lint/yaml-lint"
 import jsyaml from "js-yaml"
 
 window.jsyaml = require("js-yaml")
+
+const confirm = Modal.confirm
 
 class yamlEdiit extends Component {
     constructor(props) {
@@ -47,7 +48,18 @@ class yamlEdiit extends Component {
                 okText={"确定"}
                 cancelText={"取消"}
                 onCancel={() => {
-                    this.props.handleSetYamlEditVisible(false)
+                    confirm({
+                        title: "提示",
+                        content: "关闭对话框将不会保留未确认内容！",
+                        okText: "关闭",
+                        cancelText: "取消",
+                        onOk: () => {
+                            this.props.handleSetYamlEditVisible(false)
+                        },
+                        onCancel: () => {
+                            return
+                        },
+                    })
                 }}
                 onOk={() => {
                     let isYaml = false
