@@ -1,6 +1,0 @@
----
-- name: demo
-  hosts: develope
-   tasks:
-  - name: create  user
-    user: name="{{ user }}"
