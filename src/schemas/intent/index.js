@@ -2,12 +2,6 @@ import { createApi } from "@/outter/fr-schema/src/service"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 
 const schema = {
-    id: {
-        title: "编号",
-        sorter: true,
-
-        infoHide: true,
-    },
     name: {
         title: "名称",
         style: { width: "500px" },
@@ -19,6 +13,17 @@ const schema = {
         },
         sorter: true,
         required: true,
+    },
+    domain_key: {
+        title: "域",
+        itemProps: {
+            labelCol: {
+                span: 4,
+            },
+        },
+        sorter: true,
+        style: { width: "500px" },
+        type: schemaFieldType.Select,
     },
     example: {
         title: "例子",
@@ -35,17 +40,7 @@ const schema = {
             mode: "tags",
         },
     },
-    domain_key: {
-        title: "域",
-        itemProps: {
-            labelCol: {
-                span: 4,
-            },
-        },
-        sorter: true,
-        style: { width: "500px" },
-        type: schemaFieldType.Select,
-    },
+
     create_time: {
         title: "创建时间",
         required: true,

@@ -8,6 +8,11 @@ const schema = {
         sorter: true,
         required: true,
     },
+    domain_key: {
+        title: "域",
+        sorter: true,
+        type: schemaFieldType.Select,
+    },
     key: {
         title: "编码",
         searchPrefix: "like",
@@ -20,11 +25,6 @@ const schema = {
         searchPrefix: "like",
         sorter: true,
         required: true,
-    },
-    domain_key: {
-        title: "域",
-        sorter: true,
-        type: schemaFieldType.Select,
     },
     create_time: {
         title: "创建时间",

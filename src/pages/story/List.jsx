@@ -48,7 +48,9 @@ class List extends ListPage {
                     <YamlEdit
                         handleSetYamlEditVisible={this.handleSetYamlEditVisible}
                         service={this.service}
+                        title={"内容"}
                         refreshList={this.refreshList.bind(this)}
+                        schemasName={"content"}
                         record={this.state.record}
                     />
                 )}
@@ -68,7 +70,7 @@ class List extends ListPage {
                         })
                     }}
                 >
-                    修改内容
+                    内容
                 </a>
             </>
         )

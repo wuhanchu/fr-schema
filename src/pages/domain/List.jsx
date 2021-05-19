@@ -7,6 +7,7 @@ import "@ant-design/compatible/assets/index.css"
 import SearchPageModal from "@/pages/question/components/SearchPageModal"
 import { Divider } from "antd"
 import DialogueModal from "@/pages/question/components/DialogueModal"
+import YamlEdit from "@/pages/story/yamlEdiit"
 
 @connect(({ global }) => ({
     dict: global.dict,
@@ -19,16 +20,14 @@ class List extends ListPage {
             service: schemas.domain.service,
             infoProps: {
                 offline: true,
-                width: "1100px",
-                isCustomize: true,
-                customize: {
-                    left: 12,
-                    right: 12,
-                },
             },
         })
     }
-
+    handleSetYamlEditVisible = (visible) => {
+        this.setState({
+            showYamlEdit: visible,
+        })
+    }
     renderExtend() {
         const { record, visibleSearch, visibleDialogue } = this.state
         return (
@@ -53,6 +52,20 @@ class List extends ListPage {
                         }
                     />
                 )}
+                {this.state.showYamlEdit && (
+                    <YamlEdit
+                        handleSetYamlEditVisible={this.handleSetYamlEditVisible}
+                        service={this.service}
+                        title={
+                            this.state.schemasName === "content"
+                                ? "内容"
+                                : "配置"
+                        }
+                        refreshList={this.refreshList.bind(this)}
+                        schemasName={this.state.schemasName}
+                        record={this.state.record}
+                    />
+                )}
             </Fragment>
         )
     }
@@ -75,6 +88,30 @@ class List extends ListPage {
                     }}
                 >
                     对话
+                </a>
+                <Divider type="vertical" />
+                <a
+                    onClick={() => {
+                        this.setState({
+                            showYamlEdit: true,
+                            record,
+                            schemasName: "content",
+                        })
+                    }}
+                >
+                    内容
+                </a>
+                <Divider type="vertical" />
+                <a
+                    onClick={() => {
+                        this.setState({
+                            showYamlEdit: true,
+                            record,
+                            schemasName: "config",
+                        })
+                    }}
+                >
+                    配置
                 </a>
             </Fragment>
         )

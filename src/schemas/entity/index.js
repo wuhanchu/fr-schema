@@ -3,12 +3,6 @@ import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import { verifyJson } from "@/outter/fr-schema-antd-utils/src/utils/component"
 
 const schema = {
-    id: {
-        title: "编号",
-        sorter: true,
-
-        infoHide: true,
-    },
     name: {
         title: "名称",
         searchPrefix: "like",
@@ -19,19 +13,6 @@ const schema = {
                 span: 4,
             },
         },
-        required: true,
-    },
-
-    type_key: {
-        title: "类型",
-        style: { width: "500px" },
-        itemProps: {
-            labelCol: {
-                span: 4,
-            },
-        },
-        type: schemaFieldType.Select,
-        sorter: true,
         required: true,
     },
     domain_key: {
@@ -45,6 +26,19 @@ const schema = {
             },
         },
     },
+    type_key: {
+        title: "类型",
+        style: { width: "500px" },
+        itemProps: {
+            labelCol: {
+                span: 4,
+            },
+        },
+        type: schemaFieldType.Select,
+        sorter: true,
+        required: true,
+    },
+
     create_time: {
         title: "创建时间",
         required: true,

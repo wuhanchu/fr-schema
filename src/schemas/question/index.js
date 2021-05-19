@@ -7,14 +7,6 @@ import { checkedAndUpload } from "@/utils/minio"
 const Minio = require("minio")
 
 const schema = {
-    id: {
-        title: "编号",
-        sorter: true,
-        addHide: true,
-        editHide: true,
-        readOnly: true,
-    },
-
     question_standard: {
         title: "标准问",
         required: true,

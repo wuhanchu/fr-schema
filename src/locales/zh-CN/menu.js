@@ -21,7 +21,9 @@ export default {
     "menu.system.aiservice": "AI服务",
     "menu.system.user": "用户管理",
     "menu.system.role": "角色管理",
+    "menu.system.client": "客户端管理",
     "menu.system.permission": "权限管理",
+    "menu.system.department": "部门管理",
     "menu.system.function": "功能管理",
     "menu.system.license": "证书",
 }

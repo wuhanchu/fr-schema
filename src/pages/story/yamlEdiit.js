@@ -19,10 +19,9 @@ class yamlEdiit extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            value: props.record.content && props.record.content.story_text,
+            value: props.record && props.record[props.schemasName],
         }
         this.handleChange = this.handleChange.bind(this)
-        console.log(props)
     }
 
     handleChange(value) {
@@ -43,7 +42,7 @@ class yamlEdiit extends Component {
         return (
             <Modal
                 visible={true}
-                title={"内容"}
+                title={this.props.title}
                 width={"70%"}
                 okText={"确定"}
                 cancelText={"取消"}
@@ -61,17 +60,16 @@ class yamlEdiit extends Component {
                         },
                     })
                 }}
-                onOk={() => {
+                onOk={async () => {
                     let isYaml = false
                     let errorMessage = ""
                     try {
                         isYaml = !!jsyaml.load(this.state.value)
                         let record = {
-                            content: this.props.record.content || {},
                             id: this.props.record.id,
                         }
-                        record.content.story_text = this.state.value
-                        this.props.service.patch(record)
+                        record[this.props.schemasName] = this.state.value
+                        await this.props.service.patch(record)
                         message.success("修改成功")
                         this.props.refreshList()
                         this.props.handleSetYamlEditVisible(false)

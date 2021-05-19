@@ -126,6 +126,12 @@ export default [
                         authority: ["system"],
                         routes: [
                             {
+                                authority: ["department_get"],
+                                path: "/system/department",
+                                name: "department",
+                                component: "./authority/department/List",
+                            },
+                            {
                                 path: "/system/user",
                                 name: "user",
                                 component: "./authority/user/List",
@@ -134,6 +140,13 @@ export default [
                                 path: "/system/role",
                                 name: "role",
                                 component: "./authority/role/List",
+                            },
+
+                            {
+                                // authority: ['user_get'],
+                                path: "/system/client",
+                                name: "client",
+                                component: "./authority/client/List",
                             },
                             {
                                 authority: ["license_get"],

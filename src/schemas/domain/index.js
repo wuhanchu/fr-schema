@@ -1,30 +1,17 @@
 import { createApi } from "@/outter/fr-schema/src/service"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
-import { verifyJson } from "@/outter/fr-schema-antd-utils/src/utils/component"
 
 const schema = {
     name: {
         title: "名称",
         searchPrefix: "like",
         sorter: true,
-        style: { width: "400px" },
-        itemProps: {
-            labelCol: {
-                span: 4,
-            },
-        },
         required: true,
     },
     key: {
         title: "编码",
         searchPrefix: "like",
         sorter: true,
-        style: { width: "400px" },
-        itemProps: {
-            labelCol: {
-                span: 4,
-            },
-        },
         required: true,
     },
     create_time: {
@@ -38,50 +25,13 @@ const schema = {
         },
         type: schemaFieldType.DatePicker,
     },
-    content: {
-        title: "内容",
-        listHide: true,
-        itemProps: {
-            labelCol: {
-                span: 4,
-            },
-        },
-        props: {
-            style: { width: "400px" },
-            height: "400px",
-        },
-        // // required: true,
-        type: schemaFieldType.AceEditor,
-        decoratorProps: { rules: verifyJson },
+    talk_service_id: {
+        title: "对话服务编号",
     },
     remark: {
         title: "备注",
-        style: { width: "400px", height: "84px" },
-        itemProps: {
-            labelCol: {
-                span: 4,
-            },
-        },
-        position: "right",
         type: schemaFieldType.TextArea,
         sorter: true,
-    },
-    config: {
-        title: "配置",
-        listHide: true,
-        itemProps: {
-            labelCol: {
-                span: 4,
-            },
-        },
-        position: "right",
-        props: {
-            style: { width: "400px" },
-            height: "400px",
-        },
-        // // required: true,
-        type: schemaFieldType.AceEditor,
-        decoratorProps: { rules: verifyJson },
     },
 }
 
