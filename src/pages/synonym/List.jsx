@@ -68,14 +68,6 @@ class List extends ListPage {
         return <>{this.renderContentModal()}</>
     }
 
-    renderOperateColumnExtend(record) {
-        return (
-            <>
-                <a>修改内容</a>
-            </>
-        )
-    }
-
     renderSearchBar() {
         const { standard_text, domain_key } = this.schema
         const filters = this.createFilters(
