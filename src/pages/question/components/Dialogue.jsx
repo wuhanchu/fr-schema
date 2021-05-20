@@ -288,10 +288,10 @@ class Dialogue extends React.Component {
             time: new Date(),
             avatar: "http://img.binlive.cn/6.png",
             type: "right",
-            clientStyle: inputValue.length > 22 && {
-                width: width - 75 + "px",
-                wordWrap: "break-word",
-            },
+            // clientStyle: inputValue.length > 22 && {
+            //     width: width - 75 + "px",
+            //     wordWrap: "break-word",
+            // },
         }
         mockDetail.push(msg)
         this.setState({ mockDetail: [...mockDetail], inputValue: "" }, (_) =>
