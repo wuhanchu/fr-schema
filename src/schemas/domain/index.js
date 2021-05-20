@@ -36,8 +36,40 @@ const schema = {
 }
 
 const service = createApi("domain", schema, null, "eq.")
-
+// 得到服务列表
 service.getServices = createApi("z_ai_service/service", schema, null, "eq.").get
+// 创建会话
+service.conversation = createApi(
+    "z_ai_service/chat/conversation",
+    schema,
+    null,
+    "eq."
+).post
+// 发送消息
+service.message = createApi(
+    "z_ai_service/chat/message",
+    schema,
+    null,
+    "eq."
+).post
+// 人员
+service.getTeamUser = async (args) => {
+    const data = await createApi("domain_user", schema, null).get({
+        ...args,
+        limit: 1000,
+    })
+    return data
+}
+service.setUser = createApi("domain/domain_user", schema, null, "eq.").put
+// 人员
+
+service.getUserAuthUser = async (args) => {
+    const data = await createApi("user_auth/user", schema, null, "eq.").get({
+        ...args,
+        limit: 1000,
+    })
+    return data
+}
 
 export default {
     schema,

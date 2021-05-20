@@ -5,9 +5,12 @@ import React, { Fragment } from "react"
 import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
 import SearchPageModal from "@/pages/question/components/SearchPageModal"
-import { Divider } from "antd"
+import { Divider, message, Modal } from "antd"
 import DialogueModal from "@/pages/question/components/DialogueModal"
 import YamlEdit from "@/pages/story/yamlEdiit"
+import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
+import frSchema from "@/outter/fr-schema/src"
+const { decorateItem, getPrimaryKey, schemaFieldType } = frSchema
 
 @connect(({ global }) => ({
     dict: global.dict,
@@ -30,6 +33,10 @@ class List extends ListPage {
             limit: 10000,
             ai_type: "eq.chat",
         })
+        const data = await this.service.getUserAuthUser()
+        this.setState({
+            userList: data,
+        })
     }
 
     handleSetYamlEditVisible = (visible) => {
@@ -37,6 +44,61 @@ class List extends ListPage {
             showYamlEdit: visible,
         })
     }
+
+    handleUpdate = async (data, schema, method = "patch") => {
+        // 更新
+        if (this.state.infoData.key === data.key) {
+            let response = await this.service[method](data, schema)
+            this.refreshList()
+            message.success("修改成功")
+            this.handleVisibleModal()
+            this.handleChangeCallback
+            return response
+        } else {
+            Modal.confirm({
+                title: "修改编码会导致大量数据不可用！",
+                okText: "确认提交",
+                onCancel: () => {
+                    this.setState({
+                        showConfirm: false,
+                        showConfirmLoading: false,
+                    })
+                },
+                cancelText: "取消",
+                onOk: async () => {
+                    let response = await this.service[method](data, schema)
+                    this.refreshList()
+                    message.success("修改成功")
+                    this.handleVisibleModal()
+                    this.handleChangeCallback
+                    return response
+                },
+            })
+        }
+    }
+
+    handleUpdates = async (data, schemas, method = "patch") => {
+        // 更新
+        let response
+        if (!this.props.offline) {
+            response = await this.service.setUser(
+                { ...data, domain_key: this.state.record.key },
+                schemas
+            )
+        }
+        this.refreshList()
+        message.success("修改成功")
+        this.handleVisibleModal()
+        if (this.handleChangeCallback) {
+            this.handleChangeCallback()
+        }
+        if (this.props.handleChangeCallback) {
+            this.props.handleChangeCallback()
+        }
+
+        return response
+    }
+
     renderExtend() {
         const { record, visibleSearch, visibleDialogue } = this.state
         return (
@@ -75,7 +137,77 @@ class List extends ListPage {
                         record={this.state.record}
                     />
                 )}
+                {this.renderAssignModal()}
             </Fragment>
+        )
+    }
+
+    renderAssignModal() {
+        const teamHaveUser = []
+        const totalTeamUser = []
+        if (this.state.teamUser) {
+            this.state.teamUser.map((item) => {
+                teamHaveUser.push(item.user_id)
+                return item
+            })
+        }
+        if (this.state.totalTeamUser) {
+            this.state.totalTeamUser.map((item) => {
+                totalTeamUser.push(item.user_id)
+                return item
+            })
+        }
+        const dataSource =
+            this.state.userList &&
+            this.state.userList.list.map((item) => ({
+                key: item.id,
+                ...item,
+                name: item.name,
+                disabled: totalTeamUser.indexOf(item.id) > -1,
+            }))
+        const { visibleAssign } = this.state
+        const schemas = {
+            users_id: {
+                title: "人员",
+                type: schemaFieldType.Transfer,
+                itemProps: {
+                    labelCol: {
+                        span: 3,
+                    },
+                },
+                props: {
+                    dataSource,
+                    style: { width: 600 },
+                    listStyle: {
+                        width: 400,
+                        height: 400,
+                    },
+                },
+            },
+        }
+        //  return
+        return (
+            visibleAssign && (
+                <InfoModal
+                    title="人员分配"
+                    onCancel={() => {
+                        this.setState({ visibleAssign: false })
+                    }}
+                    action="add"
+                    width="800px"
+                    handleAdd={(...props) => {
+                        this.handleUpdates(
+                            ...props.concat([this.schema, "put"]),
+                            null,
+                            "put"
+                        )
+                        this.setState({ visibleAssign: false })
+                    }}
+                    visible
+                    values={{ users_id: teamHaveUser }}
+                    schema={schemas}
+                />
+            )
         )
     }
 
@@ -121,6 +253,38 @@ class List extends ListPage {
                     }}
                 >
                     配置
+                </a>
+                <Divider type="vertical" />
+                <a
+                    onClick={async () => {
+                        const teamUser = await this.service.getTeamUser({
+                            domain_key: `eq.${record.key}`,
+                        })
+                        const totalTeamUser = await this.service.getTeamUser({
+                            domain_key: `neq.${record.key}`,
+                        })
+                        const teamHaveUser = []
+                        if (teamUser) {
+                            teamUser.list.map((item) => {
+                                teamHaveUser.push(item.id)
+                                return item
+                            })
+                        }
+                        console.log("teamUser")
+
+                        console.log(teamUser)
+                        this.setState({
+                            record,
+                            teamHaveUser,
+                            visibleAssign: true,
+                            oldTeamUser: teamHaveUser,
+                            teamUser: teamUser.list,
+                            // totalTeamUser: totalTeamUser.list,
+                            totalTeamUser: [],
+                        })
+                    }}
+                >
+                    人员分配
                 </a>
             </Fragment>
         )

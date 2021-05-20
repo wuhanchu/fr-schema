@@ -86,6 +86,7 @@ let config = defineConfig({
         },
         "/api": {
             target: process.env.SERVER_URL,
+            // target: "http://10.169.2.137:5001",
             changeOrigin: true,
             pathRewrite: { "^/api": "" },
         },
