@@ -10,6 +10,7 @@ import DialogueModal from "@/pages/question/components/DialogueModal"
 import YamlEdit from "@/pages/story/yamlEdiit"
 import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
 import frSchema from "@/outter/fr-schema/src"
+import { listToDict } from "@/outter/fr-schema/src/dict"
 const { decorateItem, getPrimaryKey, schemaFieldType } = frSchema
 
 @connect(({ global }) => ({
@@ -21,6 +22,7 @@ class List extends ListPage {
         super(props, {
             schema: schemas.domain.schema,
             service: schemas.domain.service,
+            operateWidth: "350px",
             infoProps: {
                 offline: true,
             },
@@ -28,15 +30,16 @@ class List extends ListPage {
     }
 
     async componentDidMount() {
-        super.componentDidMount()
         let aiService = await this.service.getServices({
             limit: 10000,
             ai_type: "eq.chat",
         })
+        this.schema.talk_service_id.dict = listToDict(aiService.list)
         const data = await this.service.getUserAuthUser()
         this.setState({
             userList: data,
         })
+        super.componentDidMount()
     }
 
     handleSetYamlEditVisible = (visible) => {
@@ -79,13 +82,10 @@ class List extends ListPage {
 
     handleUpdates = async (data, schemas, method = "patch") => {
         // 更新
-        let response
-        if (!this.props.offline) {
-            response = await this.service.setUser(
-                { ...data, domain_key: this.state.record.key },
-                schemas
-            )
-        }
+        let response = await this.service.setUser(
+            { ...data, domain_key: this.state.record.key },
+            schemas
+        )
         this.refreshList()
         message.success("修改成功")
         this.handleVisibleModal()

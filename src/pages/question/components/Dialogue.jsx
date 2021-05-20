@@ -174,7 +174,7 @@ class Dialogue extends React.Component {
                                         backgroundColor:
                                             index + 1 === mockDetail.length
                                                 ? "#1890ff"
-                                                : "#ffd8bf",
+                                                : "#bae7ff",
                                         color:
                                             index + 1 === mockDetail.length
                                                 ? "#fff"

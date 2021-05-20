@@ -14,6 +14,10 @@ const schema = {
         sorter: true,
         required: true,
     },
+    talk_service_id: {
+        title: "对话服务",
+        type: schemaFieldType.Select,
+    },
     create_time: {
         title: "创建时间",
         required: true,
@@ -25,9 +29,7 @@ const schema = {
         },
         type: schemaFieldType.DatePicker,
     },
-    talk_service_id: {
-        title: "对话服务编号",
-    },
+
     remark: {
         title: "备注",
         type: schemaFieldType.TextArea,
