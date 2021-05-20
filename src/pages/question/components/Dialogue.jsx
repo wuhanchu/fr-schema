@@ -90,7 +90,11 @@ class Dialogue extends React.Component {
                                 ...clientStyle,
                             }}
                         >
-                            {item.content}
+                            <div
+                                dangerouslySetInnerHTML={{
+                                    __html: item.content,
+                                }}
+                            />
                         </div>
                     </div>
                 </div>
