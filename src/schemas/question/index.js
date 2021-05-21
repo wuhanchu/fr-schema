@@ -65,7 +65,7 @@ const schema = {
                 height: "388px",
 
                 border: "1px solid #d9d9d9",
-                overflow: "hidden",
+                // overflow: "scroll",
             },
             wrapperWidth: "900px",
             wrapperStyle: {
