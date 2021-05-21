@@ -11,7 +11,10 @@ import YamlEdit from "@/pages/story/yamlEdiit"
 import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
 import frSchema from "@/outter/fr-schema/src"
 import { listToDict } from "@/outter/fr-schema/src/dict"
-const { decorateItem, getPrimaryKey, schemaFieldType } = frSchema
+
+import departmentService from "@/pages/authority/department/service"
+
+const { schemaFieldType } = frSchema
 
 @connect(({ global }) => ({
     dict: global.dict,
@@ -55,7 +58,6 @@ class List extends ListPage {
             this.refreshList()
             message.success("修改成功")
             this.handleVisibleModal()
-            this.handleChangeCallback
             return response
         } else {
             Modal.confirm({
@@ -73,7 +75,6 @@ class List extends ListPage {
                     this.refreshList()
                     message.success("修改成功")
                     this.handleVisibleModal()
-                    this.handleChangeCallback
                     return response
                 },
             })
@@ -137,9 +138,20 @@ class List extends ListPage {
                         record={this.state.record}
                     />
                 )}
-                {this.renderAssignModal()}
+                {this.state.visibleAssign && this.renderAssignModal()}
             </Fragment>
         )
+    }
+
+    getName = (data) => {
+        let name = ""
+        data.department_key &&
+            data.department_key[0] &&
+            this.state.departmentDict &&
+            data.department_key.map((item, index) => {
+                name = name + this.state.departmentDict[item].name + "-"
+            })
+        return name
     }
 
     renderAssignModal() {
@@ -162,7 +174,7 @@ class List extends ListPage {
             this.state.userList.list.map((item) => ({
                 key: item.id,
                 ...item,
-                name: item.name,
+                name: this.getName(item) + item.name,
                 disabled: totalTeamUser.indexOf(item.id) > -1,
             }))
         const { visibleAssign } = this.state
@@ -177,7 +189,7 @@ class List extends ListPage {
                 },
                 props: {
                     dataSource,
-                    style: { width: 600 },
+                    style: { width: 850 },
                     listStyle: {
                         width: 400,
                         height: 400,
@@ -194,7 +206,7 @@ class List extends ListPage {
                         this.setState({ visibleAssign: false })
                     }}
                     action="add"
-                    width="800px"
+                    width="1100px"
                     handleAdd={(...props) => {
                         this.handleUpdates(
                             ...props.concat([this.schema, "put"]),
@@ -260,9 +272,6 @@ class List extends ListPage {
                         const teamUser = await this.service.getTeamUser({
                             domain_key: `eq.${record.key}`,
                         })
-                        const totalTeamUser = await this.service.getTeamUser({
-                            domain_key: `neq.${record.key}`,
-                        })
                         const teamHaveUser = []
                         if (teamUser) {
                             teamUser.list.map((item) => {
@@ -270,17 +279,24 @@ class List extends ListPage {
                                 return item
                             })
                         }
-                        console.log("teamUser")
-
-                        console.log(teamUser)
+                        console.log(departmentService)
+                        const response = await departmentService.get({
+                            limit: 1000,
+                        })
+                        const data = listToDict(
+                            response.list,
+                            null,
+                            "key",
+                            "name"
+                        )
                         this.setState({
                             record,
                             teamHaveUser,
                             visibleAssign: true,
                             oldTeamUser: teamHaveUser,
                             teamUser: teamUser.list,
-                            // totalTeamUser: totalTeamUser.list,
                             totalTeamUser: [],
+                            departmentDict: data,
                         })
                     }}
                 >
