@@ -14,9 +14,6 @@ pipeline {
         SERVER_DEV = "192.168.100.152"
 
         SERVER_TEST = "192.168.1.34"
-        SERVER_URL_TEST = "http://172.17.0.1:40017"
-        AUTH_URL_TEST = "http://172.17.0.1:40016"
-        PORT_TEST  = "40010"
     }
 
     stages {
@@ -156,7 +153,7 @@ pipeline {
 
                     steps {
                         sshagent(credentials : ['dataknown_test']) {
-                             sh "ssh  -t  root@${SERVER_TEST} -o StrictHostKeyChecking=no  'docker pull server.aiknown.cn:31003/${GROUP}/${PROJECT}:${BRANCH_NAME} &&  docker rm -f  ${PROJECT}; docker run --restart=always -d -p ${PORT_TEST}:80 -e SERVER_URL=${SERVER_URL_TEST} -e AUTH_URL=${AUTH_URL_TEST} --name ${PROJECT} server.aiknown.cn:31003/${GROUP}/${PROJECT}:${BRANCH_NAME};'"
+                             sh "ssh  -t  root@${SERVER_TEST} -o StrictHostKeyChecking=no  'cd /root/project/maintenance_script && docker-compose -f ./compose/z_know_info.yml -f ./consumer/dataknown/z_know_info_test.yml -p dataknown  --env-file ./env/dataknown_test.env pull &&  docker-compose -f ./compose/z_know_info.yml -f ./consumer/dataknown/z_know_info_test.yml -p dataknown  --env-file ./env/dataknown_test.env up -d'"
                         }
                     }
                 }
