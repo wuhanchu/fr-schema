@@ -11,6 +11,7 @@ import YamlEdit from "@/pages/story/yamlEdiit"
 import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
 import frSchema from "@/outter/fr-schema/src"
 import { listToDict } from "@/outter/fr-schema/src/dict"
+import UserTransfer from "@/pages/domain/component/UserTransfer"
 
 import departmentService from "@/pages/authority/department/service"
 
@@ -200,24 +201,29 @@ class List extends ListPage {
         //  return
         return (
             visibleAssign && (
-                <InfoModal
-                    title="人员分配"
+                // <InfoModal
+                //     title="人员分配"
+                //     onCancel={() => {
+                //         this.setState({ visibleAssign: false })
+                //     }}
+                //     action="add"
+                //     width="1100px"
+                //     handleAdd={(...props) => {
+                //         this.handleUpdates(
+                //             ...props.concat([this.schema, "put"]),
+                //             null,
+                //             "put"
+                //         )
+                //         this.setState({ visibleAssign: false })
+                //     }}
+                //     visible
+                //     values={{ users_id: teamHaveUser }}
+                //     schema={schemas}
+                // />
+                <UserTransfer
                     onCancel={() => {
                         this.setState({ visibleAssign: false })
                     }}
-                    action="add"
-                    width="1100px"
-                    handleAdd={(...props) => {
-                        this.handleUpdates(
-                            ...props.concat([this.schema, "put"]),
-                            null,
-                            "put"
-                        )
-                        this.setState({ visibleAssign: false })
-                    }}
-                    visible
-                    values={{ users_id: teamHaveUser }}
-                    schema={schemas}
                 />
             )
         )

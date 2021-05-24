@@ -265,6 +265,43 @@ class BaseList extends DataList {
         )
     }
 
+    handleUpload = async (file) => {
+        this.setState({
+            loadingAnnex: true,
+        })
+        let minioConfig = (await schemas.project.service.getMinioToken()).data
+
+        var minioClient = new Minio.Client({
+            endPoint: minioConfig.endpoint,
+            port: parseInt(minioConfig.port),
+            useSSL: minioConfig.secure,
+            accessKey: minioConfig.AccessKeyId,
+            secretKey: minioConfig.SecretAccessKey,
+            sessionToken: minioConfig.SessionToken,
+        })
+
+        checkedAndUpload(
+            "zknowninfo",
+            file,
+            minioClient,
+            minioConfig,
+            (res) => {
+                // 输出url
+                message.success(`文件上传成功`)
+                // this.state.attachment.push(res)
+                let attachment = []
+                if (this.state.attachment)
+                    attachment = clone(this.state.attachment)
+                attachment.push(res)
+                this.setState({
+                    attachment,
+                    loadingAnnex: false,
+                })
+            }
+        )
+        return false
+    }
+
     renderExtend() {
         const props = {
             name: "file",
@@ -276,42 +313,9 @@ class BaseList extends DataList {
             itemRender: () => {
                 ;<></>
             },
-            beforeUpload: async (file) => {
-                this.setState({
-                    loadingAnnex: true,
-                })
-                let minioConfig = (
-                    await schemas.project.service.getMinioToken()
-                ).data
-
-                var minioClient = new Minio.Client({
-                    endPoint: minioConfig.endpoint,
-                    port: parseInt(minioConfig.port),
-                    useSSL: minioConfig.secure,
-                    accessKey: minioConfig.AccessKeyId,
-                    secretKey: minioConfig.SecretAccessKey,
-                    sessionToken: minioConfig.SessionToken,
-                })
-
-                checkedAndUpload(
-                    "zknowninfo",
-                    file,
-                    minioClient,
-                    minioConfig,
-                    (res) => {
-                        // 输出url
-                        message.success(`文件上传成功`)
-                        // this.state.attachment.push(res)
-                        let attachment = []
-                        if (this.state.attachment)
-                            attachment = clone(this.state.attachment)
-                        attachment.push(res)
-                        this.setState({
-                            attachment,
-                            loadingAnnex: false,
-                        })
-                    }
-                )
+            beforeUpload: (file) => {
+                this.handleUpload(file)
+                return false
             },
         }
 
