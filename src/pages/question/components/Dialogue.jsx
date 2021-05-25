@@ -4,6 +4,7 @@ import schemas from "@/schemas"
 import utils from "@/outter/fr-schema-antd-utils/src"
 import mySvg from "../../../outter/fr-schema-antd-utils/src/components/GlobalHeader/my.svg"
 import rebotSvg from "../../../assets/rebot.svg"
+import { LoadingOutlined } from "@ant-design/icons"
 
 const height = window.screen.height * 0.5
 const width = window.screen.width
@@ -29,22 +30,37 @@ class Dialogue extends React.Component {
     render() {
         let { mockDetail, iphoneHeight } = this.state
         return (
-            <Spin tip={"回答中.."} spinning={this.state.isSpin}>
-                <div style={{ ...styles.contentSt }}>
-                    <div
-                        style={{ ...styles.recordDetailView }}
-                        // className={style.}
-                        ref={this.chatRef}
-                    >
-                        {mockDetail.map((item, index) =>
-                            item.type === "right"
-                                ? this.renderOtherMessage(item, index)
-                                : this.renderSelfMessage(item, index)
+            <div style={{ ...styles.contentSt }}>
+                <div
+                    style={{ ...styles.recordDetailView }}
+                    // className={style.}
+                    ref={this.chatRef}
+                >
+                    {mockDetail.map((item, index) =>
+                        item.type === "right"
+                            ? this.renderOtherMessage(item, index)
+                            : this.renderSelfMessage(item, index)
+                    )}
+                    {this.state.isSpin &&
+                        this.renderSelfMessage(
+                            {
+                                content: (
+                                    <>
+                                        <LoadingOutlined />
+                                    </>
+                                ),
+                                messageType: "load",
+                                onlyRead: true,
+                                buttons: undefined,
+                                name: "智能客服",
+                                time: new Date(),
+                                type: "left",
+                            },
+                            100
                         )}
-                    </div>
-                    {this.renderInput()}
                 </div>
-            </Spin>
+                {this.renderInput()}
+            </div>
         )
     }
 
@@ -87,11 +103,15 @@ class Dialogue extends React.Component {
                                 ...clientStyle,
                             }}
                         >
-                            <div
-                                dangerouslySetInnerHTML={{
-                                    __html: item.content,
-                                }}
-                            />
+                            {item.messageType === "load" ? (
+                                item.content
+                            ) : (
+                                <div
+                                    dangerouslySetInnerHTML={{
+                                        __html: item.content,
+                                    }}
+                                />
+                            )}
                         </div>
                     </div>
                 </div>
