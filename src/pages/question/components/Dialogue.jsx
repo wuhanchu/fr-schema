@@ -103,7 +103,7 @@ class Dialogue extends React.Component {
                             // marginTop: "-10px",
                         }}
                     >
-                        {item.buttons.map((data) => {
+                        {item.buttons.map((data, indexs) => {
                             return (
                                 <a
                                     onClick={async () => {
@@ -112,8 +112,11 @@ class Dialogue extends React.Component {
                                             conversationId,
                                         } = this.state
                                         this.setState({ isSpin: true })
+                                        mockDetail[
+                                            mockDetail.length - 1
+                                        ].buttons[indexs].isClick = true
+
                                         if (index + 1 === mockDetail.length) {
-                                            console.log(this.state.mockDetail)
                                             if (data.payload[0] !== "/") {
                                                 let msg = {
                                                     content: data.payload,
@@ -177,7 +180,9 @@ class Dialogue extends React.Component {
                                         backgroundColor:
                                             index + 1 === mockDetail.length
                                                 ? "#1890ff"
-                                                : "#bae7ff",
+                                                : data.isClick === true
+                                                ? "#bae7ff"
+                                                : "#ccc",
                                         color:
                                             index + 1 === mockDetail.length
                                                 ? "#fff"
