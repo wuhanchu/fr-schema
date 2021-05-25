@@ -2,7 +2,7 @@ import React, { Fragment } from "react"
 import { AutoComplete, Avatar, Button, Card, Input, Spin } from "antd"
 import schemas from "@/schemas"
 import utils from "@/outter/fr-schema-antd-utils/src"
-import mySvg from "../../../assets/my.svg"
+import mySvg from "../../../outter/fr-schema-antd-utils/src/components/GlobalHeader/my.svg"
 import rebotSvg from "../../../assets/rebot.svg"
 
 const height = window.screen.height * 0.5
@@ -352,6 +352,9 @@ class Dialogue extends React.Component {
     // 创建会话 获取会话id
     async getChatRecord() {
         let { serviceId, mockDetail } = this.state
+        this.setState({
+            isSpin: true,
+        })
         let res = await schemas.domain.service.conversation({
             service_id: serviceId,
         })
@@ -365,6 +368,7 @@ class Dialogue extends React.Component {
         this.setState({
             conversationId: res.data.id,
             mockDetail: [...mockDetail],
+            isSpin: false,
         })
     }
     async componentDidMount() {

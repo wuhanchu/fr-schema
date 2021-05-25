@@ -64,7 +64,8 @@ export default [
             },
             {
                 path: "/",
-                component: "../layouts/BasicLayout",
+                component:
+                    "../outter/fr-schema-antd-utils/src/layouts/BasicLayout",
                 routes: [
                     {
                         path: "/",

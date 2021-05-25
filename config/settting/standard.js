@@ -29,7 +29,7 @@ export default {
     apiVersion: BASE_PATH + "/api/",
     DATE_FORMAT: "YYYY-MM-DD",
     DATE_TIME_FORMAT: "YYYY-MM-DD HH:mm:ss",
-
+    useDocumentation: false,
     // oauth config
     oauth: {
         clientId: "yAl9PO9sA4NKYhcrXfAOXxlD",

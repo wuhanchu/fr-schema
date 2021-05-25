@@ -11,6 +11,7 @@ import YamlEdit from "@/pages/story/yamlEdiit"
 import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
 import frSchema from "@/outter/fr-schema/src"
 import { listToDict } from "@/outter/fr-schema/src/dict"
+import clone from "clone"
 import UserTransfer from "@/pages/domain/component/UserTransfer"
 
 import departmentService from "@/pages/authority/department/service"
@@ -156,27 +157,12 @@ class List extends ListPage {
     }
 
     renderAssignModal() {
-        const teamHaveUser = []
-        const totalTeamUser = []
-        if (this.state.teamUser) {
-            this.state.teamUser.map((item) => {
-                teamHaveUser.push(item.user_id)
-                return item
-            })
-        }
-        if (this.state.totalTeamUser) {
-            this.state.totalTeamUser.map((item) => {
-                totalTeamUser.push(item.user_id)
-                return item
-            })
-        }
         const dataSource =
             this.state.userList &&
             this.state.userList.list.map((item) => ({
                 key: item.id,
                 ...item,
                 name: this.getName(item) + item.name,
-                disabled: totalTeamUser.indexOf(item.id) > -1,
             }))
         const { visibleAssign } = this.state
         const schemas = {
@@ -199,6 +185,7 @@ class List extends ListPage {
             },
         }
         //  return
+        console.log(this.state.teamHaveUser)
         return (
             visibleAssign && (
                 <InfoModal
@@ -217,7 +204,7 @@ class List extends ListPage {
                         this.setState({ visibleAssign: false })
                     }}
                     visible
-                    values={{ users_id: teamHaveUser }}
+                    values={{ users_id: this.state.teamHaveUser }}
                     schema={schemas}
                 />
                 // <UserTransfer
@@ -275,17 +262,24 @@ class List extends ListPage {
                 <Divider type="vertical" />
                 <a
                     onClick={async () => {
+                        this.setState({
+                            record,
+                            teamHaveUser: undefined,
+                            visibleAssign: true,
+                        })
                         const teamUser = await this.service.getTeamUser({
                             domain_key: `eq.${record.key}`,
                         })
                         const teamHaveUser = []
                         if (teamUser) {
                             teamUser.list.map((item) => {
-                                teamHaveUser.push(item.id)
+                                teamHaveUser.push(item.user_id)
                                 return item
                             })
                         }
-                        console.log(departmentService)
+                        this.setState({
+                            teamHaveUser: teamHaveUser,
+                        })
                         const response = await departmentService.get({
                             limit: 1000,
                         })
