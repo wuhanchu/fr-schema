@@ -4,6 +4,7 @@ import projectService from "./../project"
 import { verifyJson } from "@/outter/fr-schema-antd-utils/src/utils/component"
 import { message } from "antd"
 import { checkedAndUpload } from "@/utils/minio"
+
 const Minio = require("minio")
 
 const schema = {
@@ -45,6 +46,7 @@ const schema = {
     },
     global_key: {
         title: "全局变量",
+        extra: "作为对话机器人的匹配主键",
     },
     answer: {
         title: "答案",
