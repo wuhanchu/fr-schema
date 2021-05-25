@@ -2,7 +2,7 @@ import React, { Fragment } from "react"
 import { AutoComplete, Avatar, Button, Card, Input, Spin } from "antd"
 import schemas from "@/schemas"
 import utils from "@/outter/fr-schema-antd-utils/src"
-import mySvg from "../../../assets/userhead.svg"
+import mySvg from "../../../assets/my.svg"
 import rebotSvg from "../../../assets/rebot.svg"
 
 const height = window.screen.height * 0.5
@@ -67,15 +67,22 @@ class Dialogue extends React.Component {
         return (
             <>
                 <div style={styles.msgItemView} key={`self${index}`}>
-                    <div style={{ width: "30px", marginRight: "8px" }}>
-                        <Avatar src={rebotSvg} />
+                    <div
+                        style={{
+                            width: "30px",
+                            marginRight: "8px",
+                            position: "relative",
+                        }}
+                    >
+                        <Avatar
+                            style={{ position: "absolute", top: "10px" }}
+                            src={rebotSvg}
+                        />
                     </div>
                     <div style={{ position: "relative" }}>
                         <div
                             style={{
                                 fontSize: "12px",
-                                paddingLeft: "5px",
-                                paddingRight: "5px",
                                 position: "absolute",
                                 width: width * 0.4,
                             }}
@@ -86,7 +93,8 @@ class Dialogue extends React.Component {
                             style={{
                                 ...styles.msgView,
                                 marginRight: "15px",
-                                marginTop: "20px",
+                                marginTop: "25px",
+                                maxWidth: "526.5px",
                                 ...clientStyle,
                             }}
                         >
@@ -103,12 +111,12 @@ class Dialogue extends React.Component {
                         style={{
                             marginLeft: "60px",
                             marginRight: "60px",
-                            marginTop: "-10px",
+                            // marginTop: "-10px",
                         }}
                     >
                         {item.buttons.map((data) => {
                             return (
-                                <div
+                                <a
                                     onClick={async () => {
                                         let {
                                             serviceId,
@@ -189,7 +197,7 @@ class Dialogue extends React.Component {
                                     }}
                                 >
                                     {data.title}
-                                </div>
+                                </a>
                             )
                         })}
                     </div>
@@ -207,28 +215,38 @@ class Dialogue extends React.Component {
                 key={`other${index}`}
             >
                 <div style={styles.msgInfoView}>
-                    <div
-                        style={{
-                            fontSize: "12px",
-                            position: "absolute",
-                            right: 0,
-                        }}
-                    >
-                        {item.name}
-                    </div>
+                    {/*<div*/}
+                    {/*    style={{*/}
+                    {/*        fontSize: "12px",*/}
+                    {/*        position: "absolute",*/}
+                    {/*        right: 0,*/}
+                    {/*    }}*/}
+                    {/*>*/}
+                    {/*    {item.name}*/}
+                    {/*</div>*/}
                     <div
                         style={{
                             ...styles.msgView,
-                            marginTop: "20px",
+                            // marginTop: "25px",
                             float: "right",
+                            maxWidth: "61.8%",
                             ...clientStyle,
                         }}
                     >
                         {item.content}
                     </div>
                 </div>
-                <div style={{ width: "30px", marginRight: "15px" }}>
-                    <Avatar src={mySvg} />
+                <div
+                    style={{
+                        width: "30px",
+                        marginRight: "15px",
+                        position: "relative",
+                    }}
+                >
+                    <Avatar
+                        style={{ position: "absolute", top: "1px" }}
+                        src={mySvg}
+                    />
                 </div>
             </div>
         )
@@ -390,6 +408,7 @@ const styles = {
         width: "90%",
     },
     recordDetailView: {
+        backgroundColor: "#F0F2F5",
         height: height * 0.92 + "px",
         paddingTop: "24px",
         overflow: "auto",
