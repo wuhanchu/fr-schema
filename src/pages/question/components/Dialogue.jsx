@@ -211,15 +211,6 @@ class Dialogue extends React.Component {
                 key={`other${index}`}
             >
                 <div style={styles.msgInfoView}>
-                    {/*<div*/}
-                    {/*    style={{*/}
-                    {/*        fontSize: "12px",*/}
-                    {/*        position: "absolute",*/}
-                    {/*        right: 0,*/}
-                    {/*    }}*/}
-                    {/*>*/}
-                    {/*    {item.name}*/}
-                    {/*</div>*/}
                     <div
                         style={{
                             ...styles.msgView,
@@ -304,10 +295,6 @@ class Dialogue extends React.Component {
             time: new Date(),
             avatar: "http://img.binlive.cn/6.png",
             type: "right",
-            // clientStyle: inputValue.length > 22 && {
-            //     width: width - 75 + "px",
-            //     wordWrap: "break-word",
-            // },
         }
         mockDetail.push(msg)
         this.setState({ mockDetail: [...mockDetail], inputValue: "" }, (_) =>
@@ -357,6 +344,7 @@ class Dialogue extends React.Component {
         })
         let res = await schemas.domain.service.conversation({
             service_id: serviceId,
+            slot: { domain_key: this.props.record.key },
         })
         mockDetail.push({
             content: "您好，我是小K",
