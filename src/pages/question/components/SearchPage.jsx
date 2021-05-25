@@ -100,7 +100,6 @@ function SearchPage(props) {
         }
         const response = await schemas.question.service.search({
             search: value,
-            engine_type: "db",
             ...args,
         })
         setState({
