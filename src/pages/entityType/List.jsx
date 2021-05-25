@@ -55,10 +55,10 @@ class List extends ListPage {
         const { name, key, regex, domain_key } = this.schema
         const filters = this.createFilters(
             {
+                domain_key,
                 name,
                 key,
                 regex,
-                domain_key,
             },
             5
         )

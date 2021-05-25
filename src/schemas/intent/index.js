@@ -2,6 +2,17 @@ import { createApi } from "@/outter/fr-schema/src/service"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 
 const schema = {
+    domain_key: {
+        title: "域",
+        itemProps: {
+            labelCol: {
+                span: 4,
+            },
+        },
+        sorter: true,
+        style: { width: "500px" },
+        type: schemaFieldType.Select,
+    },
     name: {
         title: "名称",
         style: { width: "500px" },
@@ -14,17 +25,7 @@ const schema = {
         sorter: true,
         required: true,
     },
-    domain_key: {
-        title: "域",
-        itemProps: {
-            labelCol: {
-                span: 4,
-            },
-        },
-        sorter: true,
-        style: { width: "500px" },
-        type: schemaFieldType.Select,
-    },
+
     example: {
         title: "例子",
         sorter: true,

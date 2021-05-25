@@ -72,8 +72,8 @@ class List extends ListPage {
         const { standard_text, domain_key } = this.schema
         const filters = this.createFilters(
             {
-                standard_text,
                 domain_key,
+                standard_text,
             },
             5
         )

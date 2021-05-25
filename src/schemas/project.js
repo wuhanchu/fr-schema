@@ -4,6 +4,17 @@ import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import { verifyJson } from "@/outter/fr-schema-antd-utils/src/utils/component"
 
 const schema = {
+    domain_key: {
+        title: "域",
+        sorter: true,
+        type: schemaFieldType.Select,
+        style: { width: "500px" },
+        itemProps: {
+            labelCol: {
+                span: 4,
+            },
+        },
+    },
     name: {
         title: "名称",
         sorter: true,
@@ -16,17 +27,7 @@ const schema = {
         style: { width: "500px" },
         required: true,
     },
-    domain_key: {
-        title: "域",
-        sorter: true,
-        type: schemaFieldType.Select,
-        style: { width: "500px" },
-        itemProps: {
-            labelCol: {
-                span: 4,
-            },
-        },
-    },
+
     remark: {
         title: "备注",
         type: schemaFieldType.TextArea,

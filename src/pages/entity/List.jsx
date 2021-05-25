@@ -31,9 +31,9 @@ class List extends ListPage {
         const { name, type_key, domain_key } = this.schema
         const filters = this.createFilters(
             {
-                name,
-                type_key,
                 domain_key,
+                type_key,
+                name,
             },
             5
         )
