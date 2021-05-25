@@ -11,6 +11,7 @@ import YamlEdit from "@/pages/story/yamlEdiit"
 import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
 import frSchema from "@/outter/fr-schema/src"
 import { listToDict } from "@/outter/fr-schema/src/dict"
+// import {dataConvert} from "@/pages/authority/department/DataList"
 import clone from "clone"
 import UserTransfer from "@/pages/domain/component/UserTransfer"
 
@@ -41,9 +42,18 @@ class List extends ListPage {
         })
         this.schema.talk_service_id.dict = listToDict(aiService.list)
         const data = await this.service.getUserAuthUser()
+
+        const response = await departmentService.get({
+            limit: 1000,
+        })
+        // console.log(dataConvert(response))
+        // let nameDict = []
+        const departmentDict = listToDict(response.list, null, "key", "name")
         this.setState({
             userList: data,
+            departmentDict,
         })
+
         super.componentDidMount()
     }
 
@@ -151,7 +161,7 @@ class List extends ListPage {
             data.department_key[0] &&
             this.state.departmentDict &&
             data.department_key.map((item, index) => {
-                name = name + this.state.departmentDict[item].name + "-"
+                name = "-" + name + this.state.departmentDict[item].name + "-"
             })
         return name
     }
@@ -162,7 +172,7 @@ class List extends ListPage {
             this.state.userList.list.map((item) => ({
                 key: item.id,
                 ...item,
-                name: this.getName(item) + item.name,
+                name: item.name + this.getName(item),
             }))
         const { visibleAssign } = this.state
         const schemas = {
@@ -207,11 +217,6 @@ class List extends ListPage {
                     values={{ users_id: this.state.teamHaveUser }}
                     schema={schemas}
                 />
-                // <UserTransfer
-                //     onCancel={() => {
-                //         this.setState({ visibleAssign: false })
-                //     }}
-                // />
             )
         )
     }
@@ -261,7 +266,7 @@ class List extends ListPage {
                 </a>
                 <Divider type="vertical" />
                 <Popconfirm
-                    title="是否要同步es数据？"
+                    title="是否将域中问题导入Elasticsearch？"
                     onConfirm={async (e) => {
                         await this.service.sync({ domain_key: record.key })
                         message.success("数据同步中！")
@@ -273,11 +278,6 @@ class List extends ListPage {
                 <Divider type="vertical" />
                 <a
                     onClick={async () => {
-                        this.setState({
-                            record,
-                            teamHaveUser: undefined,
-                            visibleAssign: true,
-                        })
                         const teamUser = await this.service.getTeamUser({
                             domain_key: `eq.${record.key}`,
                         })
@@ -289,17 +289,10 @@ class List extends ListPage {
                             })
                         }
                         this.setState({
+                            record,
+                            visibleAssign: true,
                             teamHaveUser: teamHaveUser,
                         })
-                        const response = await departmentService.get({
-                            limit: 1000,
-                        })
-                        const data = listToDict(
-                            response.list,
-                            null,
-                            "key",
-                            "name"
-                        )
                         this.setState({
                             record,
                             teamHaveUser,
@@ -307,7 +300,6 @@ class List extends ListPage {
                             oldTeamUser: teamHaveUser,
                             teamUser: teamUser.list,
                             totalTeamUser: [],
-                            departmentDict: data,
                         })
                     }}
                 >
