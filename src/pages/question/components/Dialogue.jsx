@@ -12,26 +12,13 @@ const scoHeight = height * 0.7 + "px"
 const { url } = utils.utils
 
 class Dialogue extends React.Component {
-    state = {
-        dataSource: [],
-        sendValue: "",
-        isSpin: false,
-        data: [
-            {
-                actions: null,
-                content: "您有什么问题？",
-                id: 0,
-                role: "my",
-            },
-        ],
-    }
-
     constructor(props) {
         super(props)
         const { record, location } = props
         this.state = {
             mockDetail: [],
             inputValue: "",
+            isSpin: false,
             iphoneHeight: height * 0.82,
             conversationId: "",
             serviceId: record.talk_service_id,
@@ -42,20 +29,22 @@ class Dialogue extends React.Component {
     render() {
         let { mockDetail, iphoneHeight } = this.state
         return (
-            <div style={{ ...styles.contentSt }}>
-                <div
-                    style={{ ...styles.recordDetailView }}
-                    // className={style.}
-                    ref={this.chatRef}
-                >
-                    {mockDetail.map((item, index) =>
-                        item.type === "right"
-                            ? this.renderOtherMessage(item, index)
-                            : this.renderSelfMessage(item, index)
-                    )}
+            <Spin tip={"回答中.."} spinning={this.state.isSpin}>
+                <div style={{ ...styles.contentSt }}>
+                    <div
+                        style={{ ...styles.recordDetailView }}
+                        // className={style.}
+                        ref={this.chatRef}
+                    >
+                        {mockDetail.map((item, index) =>
+                            item.type === "right"
+                                ? this.renderOtherMessage(item, index)
+                                : this.renderSelfMessage(item, index)
+                        )}
+                    </div>
+                    {this.renderInput()}
                 </div>
-                {this.renderInput()}
-            </div>
+            </Spin>
         )
     }
 
@@ -122,6 +111,7 @@ class Dialogue extends React.Component {
                                             serviceId,
                                             conversationId,
                                         } = this.state
+                                        this.setState({ isSpin: true })
                                         if (index + 1 === mockDetail.length) {
                                             console.log(this.state.mockDetail)
                                             if (data.payload[0] !== "/") {
@@ -172,6 +162,7 @@ class Dialogue extends React.Component {
                                                         ...mockDetail,
                                                         ...list,
                                                     ],
+                                                    isSpin: false,
                                                 },
                                                 (_) => this.scrollToBottom()
                                             )
@@ -300,6 +291,8 @@ class Dialogue extends React.Component {
         ) {
             return
         }
+        this.setState({ isSpin: true })
+
         let msg = {
             content: inputValue,
             name: "我",
@@ -333,8 +326,9 @@ class Dialogue extends React.Component {
                 })
             )
         // 消息推进list 清空当前消息
-        this.setState({ mockDetail: [...mockDetail, ...list] }, (_) =>
-            this.scrollToBottom()
+        this.setState(
+            { mockDetail: [...mockDetail, ...list], isSpin: false },
+            (_) => this.scrollToBottom()
         )
     }
 
