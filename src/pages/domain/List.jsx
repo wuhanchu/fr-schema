@@ -266,7 +266,7 @@ class List extends ListPage {
                 </a>
                 <Divider type="vertical" />
                 <Popconfirm
-                    title="是否导将域中问题导入Elasticsearch？"
+                    title="是否将域中问题导入Elasticsearch？"
                     onConfirm={async (e) => {
                         await this.service.sync({ domain_key: record.key })
                         message.success("数据同步中！")
