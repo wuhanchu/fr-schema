@@ -201,30 +201,30 @@ class List extends ListPage {
         //  return
         return (
             visibleAssign && (
-                // <InfoModal
-                //     title="人员分配"
-                //     onCancel={() => {
-                //         this.setState({ visibleAssign: false })
-                //     }}
-                //     action="add"
-                //     width="1100px"
-                //     handleAdd={(...props) => {
-                //         this.handleUpdates(
-                //             ...props.concat([this.schema, "put"]),
-                //             null,
-                //             "put"
-                //         )
-                //         this.setState({ visibleAssign: false })
-                //     }}
-                //     visible
-                //     values={{ users_id: teamHaveUser }}
-                //     schema={schemas}
-                // />
-                <UserTransfer
+                <InfoModal
+                    title="人员分配"
                     onCancel={() => {
                         this.setState({ visibleAssign: false })
                     }}
+                    action="add"
+                    width="1100px"
+                    handleAdd={(...props) => {
+                        this.handleUpdates(
+                            ...props.concat([this.schema, "put"]),
+                            null,
+                            "put"
+                        )
+                        this.setState({ visibleAssign: false })
+                    }}
+                    visible
+                    values={{ users_id: teamHaveUser }}
+                    schema={schemas}
                 />
+                // <UserTransfer
+                //     onCancel={() => {
+                //         this.setState({ visibleAssign: false })
+                //     }}
+                // />
             )
         )
     }
