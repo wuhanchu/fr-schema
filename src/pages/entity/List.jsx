@@ -16,6 +16,9 @@ class List extends ListPage {
         super(props, {
             schema: schemas.entity.schema,
             service: schemas.entity.service,
+            infoProps: {
+                width: "900px",
+            },
         })
     }
 

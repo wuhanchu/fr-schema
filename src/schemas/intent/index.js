@@ -4,11 +4,6 @@ import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 const schema = {
     domain_key: {
         title: "域",
-        itemProps: {
-            labelCol: {
-                span: 4,
-            },
-        },
         sorter: true,
         style: { width: "500px" },
         type: schemaFieldType.Select,
@@ -17,11 +12,6 @@ const schema = {
         title: "名称",
         style: { width: "500px" },
         searchPrefix: "like",
-        itemProps: {
-            labelCol: {
-                span: 4,
-            },
-        },
         sorter: true,
         required: true,
     },
@@ -30,11 +20,6 @@ const schema = {
         title: "例子",
         sorter: true,
         style: { width: "500px" },
-        itemProps: {
-            labelCol: {
-                span: 4,
-            },
-        },
         required: true,
         type: schemaFieldType.Select,
         props: {

@@ -7,21 +7,21 @@ const schema = {
         title: "域",
         sorter: true,
         type: schemaFieldType.Select,
-        style: { width: "489px" },
-        itemProps: {
-            labelCol: {
-                span: 4,
-            },
-        },
+        style: { width: "500px" },
+        // itemProps: {
+        //     labelCol: {
+        //         span: 4,
+        //     },
+        // },
     },
     type_key: {
         title: "类型",
-        style: { width: "489px" },
-        itemProps: {
-            labelCol: {
-                span: 4,
-            },
-        },
+        style: { width: "500px" },
+        // itemProps: {
+        //     labelCol: {
+        //         span: 4,
+        //     },
+        // },
         type: schemaFieldType.Select,
         sorter: true,
         required: true,
@@ -31,12 +31,12 @@ const schema = {
         title: "名称",
         searchPrefix: "like",
         sorter: true,
-        style: { width: "489px" },
-        itemProps: {
-            labelCol: {
-                span: 4,
-            },
-        },
+        style: { width: "500px" },
+        // itemProps: {
+        //     labelCol: {
+        //         span: 4,
+        //     },
+        // },
         required: true,
     },
 
@@ -54,25 +54,16 @@ const schema = {
     remark: {
         title: "备注",
         style: { width: "500px" },
-        itemProps: {
-            labelCol: {
-                span: 4,
-            },
-        },
+
         sorter: true,
         type: schemaFieldType.TextArea,
     },
     attribute: {
         title: "属性",
         listHide: true,
-        itemProps: {
-            labelCol: {
-                span: 4,
-            },
-        },
         props: {
             style: { width: "500px" },
-            height: "400px",
+            height: "300px",
         },
         // // required: true,
         type: schemaFieldType.AceEditor,

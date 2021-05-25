@@ -5,7 +5,7 @@ import React, { Fragment } from "react"
 import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
 import SearchPageModal from "@/pages/question/components/SearchPageModal"
-import { Divider, message, Modal } from "antd"
+import { Divider, message, Modal, Popconfirm } from "antd"
 import DialogueModal from "@/pages/question/components/DialogueModal"
 import YamlEdit from "@/pages/story/yamlEdiit"
 import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
@@ -27,7 +27,7 @@ class List extends ListPage {
         super(props, {
             schema: schemas.domain.schema,
             service: schemas.domain.service,
-            operateWidth: "350px",
+            operateWidth: "390px",
             infoProps: {
                 offline: true,
             },
@@ -259,6 +259,17 @@ class List extends ListPage {
                 >
                     配置
                 </a>
+                <Divider type="vertical" />
+                <Popconfirm
+                    title="是否要同步es数据？"
+                    onConfirm={async (e) => {
+                        await this.service.sync({ domain_key: record.key })
+                        message.success("数据同步中！")
+                        e.stopPropagation()
+                    }}
+                >
+                    <a>同步</a>
+                </Popconfirm>
                 <Divider type="vertical" />
                 <a
                     onClick={async () => {

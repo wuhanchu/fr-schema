@@ -72,6 +72,7 @@ service.getUserAuthUser = async (args) => {
     })
     return data
 }
+service.sync = createApi("elasticsearch/sync", schema, null, "eq.").post
 
 export default {
     schema,
