@@ -131,12 +131,13 @@ class Dialogue extends React.Component {
                                             serviceId,
                                             conversationId,
                                         } = this.state
-                                        this.setState({ isSpin: true })
-                                        mockDetail[
-                                            mockDetail.length - 1
-                                        ].buttons[indexs].isClick = true
 
                                         if (index + 1 === mockDetail.length) {
+                                            this.setState({ isSpin: true })
+                                            mockDetail[
+                                                mockDetail.length - 1
+                                            ].buttons[indexs].isClick = true
+
                                             if (data.payload[0] !== "/") {
                                                 let msg = {
                                                     content: data.payload,
