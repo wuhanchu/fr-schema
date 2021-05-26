@@ -8,13 +8,9 @@ import SearchPageModal from "@/pages/question/components/SearchPageModal"
 import { Divider, message, Modal, Popconfirm } from "antd"
 import DialogueModal from "@/pages/question/components/DialogueModal"
 import YamlEdit from "@/pages/story/yamlEdiit"
-import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
 import frSchema from "@/outter/fr-schema/src"
 import { listToDict } from "@/outter/fr-schema/src/dict"
-import { dataConvert } from "@/pages/authority/department/DataList"
 import UserTransfer from "./component/UserTransfer"
-import departmentService from "@/pages/authority/department/service"
-import clone from "clone"
 
 const { schemaFieldType } = frSchema
 
@@ -152,27 +148,6 @@ class List extends ListPage {
     renderAssignModal() {
         const { visibleAssign } = this.state
         return (
-            // visibleAssign && (
-            //     <InfoModal
-            //         title="人员分配"
-            //         onCancel={() => {
-            //             this.setState({ visibleAssign: false })
-            //         }}
-            //         action="add"
-            //         width="1100px"
-            //         handleAdd={(...props) => {
-            //             this.handleUpdates(
-            //                 ...props.concat([this.schema, "put"]),
-            //                 null,
-            //                 "put"
-            //             )
-            //             this.setState({ visibleAssign: false })
-            //         }}
-            //         visible
-            //         values={{ users_id: this.state.teamHaveUser }}
-            //         schema={schemas}
-            //     />
-            // )
             visibleAssign && (
                 <UserTransfer
                     title="人员分配"

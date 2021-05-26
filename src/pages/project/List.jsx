@@ -19,9 +19,7 @@ class List extends ListPage {
             schema: schemas.project.schema,
             service: schemas.project.service,
             infoProps: {
-                // offline: true,
-                // colNum: 2,
-                width: "800px",
+                width: "900px",
             },
         })
         this.schema.domain_key.dict = this.props.dict.domain

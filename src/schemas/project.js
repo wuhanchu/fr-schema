@@ -9,21 +9,11 @@ const schema = {
         sorter: true,
         type: schemaFieldType.Select,
         style: { width: "500px" },
-        itemProps: {
-            labelCol: {
-                span: 4,
-            },
-        },
     },
     name: {
         title: "名称",
         sorter: true,
         searchPrefix: "like",
-        itemProps: {
-            labelCol: {
-                span: 4,
-            },
-        },
         style: { width: "500px" },
         required: true,
     },
@@ -32,11 +22,6 @@ const schema = {
         title: "备注",
         type: schemaFieldType.TextArea,
         style: { width: "500px" },
-        itemProps: {
-            labelCol: {
-                span: 4,
-            },
-        },
         props: {
             autoSize: { minRows: 2, maxRows: 6 },
         },
@@ -44,11 +29,6 @@ const schema = {
     config: {
         title: "配置",
         listHide: true,
-        itemProps: {
-            labelCol: {
-                span: 4,
-            },
-        },
         props: {
             style: { width: "500px" },
             height: "400px",
