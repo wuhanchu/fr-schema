@@ -8,6 +8,7 @@ const schema = {
         title: "域",
         sorter: true,
         type: schemaFieldType.Select,
+        required: true,
         style: { width: "500px" },
     },
     name: {

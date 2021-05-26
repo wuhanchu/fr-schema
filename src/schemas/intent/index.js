@@ -5,6 +5,7 @@ const schema = {
     domain_key: {
         title: "域",
         sorter: true,
+        required: true,
         style: { width: "500px" },
         type: schemaFieldType.Select,
     },
