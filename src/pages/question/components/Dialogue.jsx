@@ -367,7 +367,7 @@ class Dialogue extends React.Component {
             slot: { domain_key: this.props.record.key },
         })
         mockDetail.push({
-            content: "您好，我是小K",
+            content: "您好，请问有什么可以帮您？",
             name: "智能客服",
             time: new Date(),
             avatar: "http://img.binlive.cn/6.png",
