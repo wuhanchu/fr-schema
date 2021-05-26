@@ -52,13 +52,13 @@ function SearchPage(props) {
 
     // 判断是否外嵌模式
     let project_id = url.getUrlParams("project_id")
-    let domain_id = url.getUrlParams("domain_id")
+    let domain_key = url.getUrlParams("domain_key")
 
     let height = contentHeight
     if (props.record && props.record.id) {
         height = contentHeight - 200
         if (props.type === "domain_id") {
-            domain_id = props.record && props.record.id
+            domain_key = props.record && props.record.key
         } else {
             project_id = props.record && props.record.id
         }
@@ -94,7 +94,7 @@ function SearchPage(props) {
         })
         let args = {}
         if (props.type === "domain_id") {
-            args.domain_id = domain_id
+            args.domain_key = domain_key
         } else {
             args.project_id = project_id
         }
