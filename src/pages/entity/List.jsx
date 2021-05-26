@@ -25,7 +25,7 @@ class List extends ListPage {
     async componentDidMount() {
         const res = await schemas.entityType.service.get({ pageSize: 10000 })
         let typeList = utils.dict.listToDict(res.list, null, "key", "name")
-        this.schema.domain_key.dict = this.props.dict.domain
+        // this.schema.domain_key.dict = this.props.dict.domain
         this.schema.type_key.dict = typeList
         super.componentDidMount()
     }
