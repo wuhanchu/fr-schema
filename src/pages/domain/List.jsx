@@ -115,7 +115,7 @@ class List extends ListPage {
                         onCancel={() => {
                             this.setState({ visibleSearch: false })
                         }}
-                        title={record.name + "知识搜索"}
+                        title={"知识搜索" + "(" + record.name + ")"}
                         record={record}
                     />
                 )}
@@ -124,6 +124,7 @@ class List extends ListPage {
                         type={"domain_id"}
                         record={record}
                         visibleDialogue={visibleDialogue}
+                        title={"对话" + "(" + record.name + ")"}
                         handleHideDialogue={() =>
                             this.setState({ visibleDialogue: false })
                         }
