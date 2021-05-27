@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from "react"
-import { Card, Empty, Input, List, Spin, AutoComplete } from "antd"
+import { Card, Empty, Input, List, Spin, AutoComplete, message } from "antd"
 import schemas from "@/schemas"
 import { contentHeight } from "@/styles/global"
 import * as _ from "lodash"
@@ -101,16 +101,23 @@ function SearchPage(props) {
                 ? domain_key
                 : props.record && props.record.domain_key
         }
-        const response = await schemas.question.service.search({
-            search: value,
-            ...args,
-        })
-        setState({
-            ...state,
-            value,
-            data: response.list,
-            loading: false,
-        })
+        try {
+            const response = await schemas.question.service.search({
+                search: value,
+                ...args,
+            })
+            setState({
+                ...state,
+                value,
+                data: response.list,
+                loading: false,
+            })
+        } catch (error) {
+            message.error("搜索失败")
+            setState({
+                loading: false,
+            })
+        }
     }
 
     return (
