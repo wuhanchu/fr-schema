@@ -97,6 +97,9 @@ function SearchPage(props) {
             args.domain_key = domain_key
         } else {
             args.project_id = project_id
+            args.domain_key = domain_key
+                ? domain_key
+                : props.record && props.record.domain_key
         }
         const response = await schemas.question.service.search({
             search: value,
