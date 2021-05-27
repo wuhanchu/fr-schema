@@ -5,7 +5,7 @@
     "description": "An out-of-box UI solution for enterprise applications",
     "scripts": {
         "analyze": "cross-env ANALYZE=1 umi build",
-        "build": "cross-env BASE_PATH=/z_know_info umi build",
+        "build": "cross-env umi build",
         "build:dataknown": "cross-env BASE_PATH=/z_know_info umi build",
         "deploy": "cross-env ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION=site npm run site && npm run gh-pages",
         "fetch:blocks": "pro fetch-blocks",
