@@ -145,7 +145,7 @@ class List extends ListPage {
                 {this.state.showHotWord && (
                     <Modal
                         title={"热词统计"}
-                        width={"90%"}
+                        width={"70%"}
                         visible={this.state.showHotWord}
                         footer={null}
                         onCancel={() => {
