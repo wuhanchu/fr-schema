@@ -43,6 +43,7 @@ const schema = {
         title: "项目",
         type: schemaFieldType.Select,
         listHide: true,
+        span: 7,
     },
     total: {
         title: "次数",
