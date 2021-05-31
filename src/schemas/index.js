@@ -6,6 +6,7 @@ import synonym from "./synonym"
 import intent from "./intent"
 import entity from "./entity"
 import entityType from "./entityType"
+import hotWord from "./domain/hotWord"
 
 export default {
     project,
@@ -16,4 +17,5 @@ export default {
     intent,
     entity,
     entityType,
+    hotWord,
 }

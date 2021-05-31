@@ -8,7 +8,6 @@ import { dataConvert } from "@/pages/authority/department/DataList"
 import clone from "clone"
 import frSchema from "@/outter/fr-schema/src"
 import { listToDict } from "@/outter/fr-schema/src/dict"
-
 const { actions, getPrimaryKey, schemaFieldType } = frSchema
 
 const confirm = Modal.confirm
@@ -237,9 +236,6 @@ export class UserTransfer extends PureComponent {
      */
     renderForm() {
         const { values } = this.state
-        console.log(this.state)
-        console.log(this.props)
-        console.log(values)
         // 只传入InForm所需参数,避免console报错
         const {
             renderForm,

@@ -4,6 +4,11 @@ import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import { verifyJson } from "@/outter/fr-schema-antd-utils/src/utils/component"
 
 const schema = {
+    id: {
+        title: "编号",
+        addHide: true,
+        editHide: true,
+    },
     domain_key: {
         title: "域",
         sorter: true,

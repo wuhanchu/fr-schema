@@ -55,7 +55,7 @@ service.message = createApi(
     "eq."
 ).post
 // 人员
-service.getTeamUser = async (args) => {
+service.getDomainUser = async (args) => {
     const data = await createApi("domain_user", schema, null).get({
         ...args,
         limit: 1000,

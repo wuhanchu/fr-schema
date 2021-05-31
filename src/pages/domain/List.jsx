@@ -11,6 +11,7 @@ import YamlEdit from "@/pages/story/yamlEdiit"
 import frSchema from "@/outter/fr-schema/src"
 import { listToDict } from "@/outter/fr-schema/src/dict"
 import UserTransfer from "./component/UserTransfer"
+import HotWord from "./component/HotWord"
 
 const { schemaFieldType } = frSchema
 
@@ -24,7 +25,7 @@ class List extends ListPage {
         super(props, {
             schema: schemas.domain.schema,
             service: schemas.domain.service,
-            operateWidth: "390px",
+            operateWidth: "470px",
             infoProps: {
                 offline: true,
             },
@@ -141,6 +142,19 @@ class List extends ListPage {
                     />
                 )}
                 {this.state.visibleAssign && this.renderAssignModal()}
+                {this.state.showHotWord && (
+                    <Modal
+                        title={"热词统计"}
+                        width={"90%"}
+                        visible={this.state.showHotWord}
+                        footer={null}
+                        onCancel={() => {
+                            this.setState({ showHotWord: false })
+                        }}
+                    >
+                        <HotWord record={this.state.record}></HotWord>
+                    </Modal>
+                )}
             </Fragment>
         )
     }
@@ -231,12 +245,12 @@ class List extends ListPage {
                 <Divider type="vertical" />
                 <a
                     onClick={async () => {
-                        const teamUser = await this.service.getTeamUser({
+                        const domainUser = await this.service.getDomainUser({
                             domain_key: `eq.${record.key}`,
                         })
                         const teamHaveUser = []
-                        if (teamUser) {
-                            teamUser.list.map((item) => {
+                        if (domainUser) {
+                            domainUser.list.map((item) => {
                                 teamHaveUser.push(item.user_id)
                                 return item
                             })
@@ -250,13 +264,22 @@ class List extends ListPage {
                             record,
                             teamHaveUser,
                             visibleAssign: true,
-                            oldTeamUser: teamHaveUser,
-                            teamUser: teamUser.list,
-                            totalTeamUser: [],
+                            domainUser: domainUser.list,
                         })
                     }}
                 >
                     人员分配
+                </a>
+                <Divider type="vertical" />
+                <a
+                    onClick={async () => {
+                        this.setState({
+                            showHotWord: true,
+                            record,
+                        })
+                    }}
+                >
+                    热词统计
                 </a>
             </Fragment>
         )
