@@ -165,42 +165,18 @@ class BaseList extends DataList {
                                 this.setState(
                                     { exportLoading: true },
                                     async () => {
-                                        // let columns = this.getColumns(
-                                        //     false
-                                        // ).filter((item) => {
-                                        //     return item.isExpand !== true
-                                        // })
-
                                         let columns = this.getColumns(false)
                                         let data = this.state.data.list
-
-                                        console.log(columns)
                                         columns.push({
                                             title: "答案",
                                             dataIndex: "answer",
                                             key: "answer",
-                                        }),
-                                            columns.push({
-                                                title: "扩展问",
-                                                dataIndex:
-                                                    "question_extend_data",
-                                                key: "question_extend_data",
-                                            })
-                                        console.log(data)
-                                        // if (this.meta.importTemplateUrl) {
-                                        //     await exportDataByTemplate(
-                                        //         "导出数据",
-                                        //         data,
-                                        //         columns,
-                                        //         this.meta.importTemplateUrl
-                                        //     )
-                                        // } else {
-                                        //     exportData(
-                                        //         "导出数据",
-                                        //         data,
-                                        //         columns
-                                        //     )
-                                        // }
+                                        })
+                                        columns.push({
+                                            title: "扩展问",
+                                            dataIndex: "question_extend_data",
+                                            key: "question_extend_data",
+                                        })
                                         exportData("导出数据", data, columns)
                                         this.setState({ exportLoading: false })
                                     }
@@ -519,23 +495,54 @@ class BaseList extends DataList {
         this.onSearch(fieldsValue)
     }
     renderImportModal() {
-        console.log(this.schema)
+        let schema = {}
+        Object.keys(this.schema).forEach((key) => {
+            schema[key] = { ...this.schema[key], dict: undefined }
+        })
+
         return (
             <ImportModal
                 importTemplateUrl={this.meta.importTemplateUrl}
-                schema={schemas.question.schema}
+                schema={schema}
                 errorKey={"question_standard"}
                 title={"导入"}
                 sliceNum={1}
+                downloadFun={() => {
+                    console.log("下载")
+                    let columns = this.getColumns(false)
+                    columns.push({
+                        title: "答案",
+                        dataIndex: "answer",
+                        key: "answer",
+                    })
+                    columns.push({
+                        title: "扩展问",
+                        dataIndex: "question_extend_data",
+                        key: "question_extend_data",
+                    })
+                    let data = [{ id: "" }]
+                    exportData("导出模板", data, columns)
+                }}
                 onCancel={() => this.setState({ visibleImport: false })}
                 onChange={(data) => this.setState({ importData: data })}
                 onOk={async () => {
                     // to convert
 
-                    const data = this.state.importData.map((item) => {
+                    const data = this.state.importData.map((props) => {
                         console.log(item)
-                        console.log(schemas.question.schema)
-                        console.log(this.schema)
+
+                        let item = props
+                        Object.keys(props).forEach((key) => {
+                            if (schema[key].isExpand) {
+                                if (!item.info) {
+                                    item.info = {}
+                                }
+                                item.info[key] = props[key]
+                                item[key] = undefined
+                            } else {
+                                item[key] = props[key]
+                            }
+                        })
 
                         const { label, question_extend, ...others } = item
 
