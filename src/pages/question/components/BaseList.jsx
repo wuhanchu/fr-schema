@@ -22,6 +22,7 @@ import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import * as _ from "lodash"
 import clone from "clone"
 import { DeleteOutlined, UploadOutlined } from "@ant-design/icons"
+import { exportData } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
 import { checkedAndUpload } from "@/utils/minio"
 
 const confirm = Modal.confirm
@@ -164,37 +165,43 @@ class BaseList extends DataList {
                                 this.setState(
                                     { exportLoading: true },
                                     async () => {
-                                        let columns = this.getColumns(
-                                            false
-                                        ).filter((item) => {
-                                            return item.isExpand !== true
-                                        })
-                                        columns["5"] = {
-                                            title: "答案",
-                                            required: true,
-                                            key: "answer",
-                                        }
-                                        columns["6"] = {
-                                            title: "扩展问",
-                                            required: true,
-                                            key: "question_extend",
-                                        }
+                                        // let columns = this.getColumns(
+                                        //     false
+                                        // ).filter((item) => {
+                                        //     return item.isExpand !== true
+                                        // })
+
+                                        let columns = this.getColumns(false)
                                         let data = this.state.data.list
 
-                                        if (this.meta.importTemplateUrl) {
-                                            await exportDataByTemplate(
-                                                "导出数据",
-                                                data,
-                                                columns,
-                                                this.meta.importTemplateUrl
-                                            )
-                                        } else {
-                                            exportData(
-                                                "导出数据",
-                                                data,
-                                                columns
-                                            )
-                                        }
+                                        console.log(columns)
+                                        columns.push({
+                                            title: "答案",
+                                            dataIndex: "answer",
+                                            key: "answer",
+                                        }),
+                                            columns.push({
+                                                title: "扩展问",
+                                                dataIndex:
+                                                    "question_extend_data",
+                                                key: "question_extend_data",
+                                            })
+                                        console.log(data)
+                                        // if (this.meta.importTemplateUrl) {
+                                        //     await exportDataByTemplate(
+                                        //         "导出数据",
+                                        //         data,
+                                        //         columns,
+                                        //         this.meta.importTemplateUrl
+                                        //     )
+                                        // } else {
+                                        //     exportData(
+                                        //         "导出数据",
+                                        //         data,
+                                        //         columns
+                                        //     )
+                                        // }
+                                        exportData("导出数据", data, columns)
                                         this.setState({ exportLoading: false })
                                     }
                                 )
@@ -512,18 +519,24 @@ class BaseList extends DataList {
         this.onSearch(fieldsValue)
     }
     renderImportModal() {
+        console.log(this.schema)
         return (
             <ImportModal
                 importTemplateUrl={this.meta.importTemplateUrl}
                 schema={schemas.question.schema}
                 errorKey={"question_standard"}
                 title={"导入"}
-                sliceNum={4}
+                sliceNum={1}
                 onCancel={() => this.setState({ visibleImport: false })}
                 onChange={(data) => this.setState({ importData: data })}
                 onOk={async () => {
                     // to convert
+
                     const data = this.state.importData.map((item) => {
+                        console.log(item)
+                        console.log(schemas.question.schema)
+                        console.log(this.schema)
+
                         const { label, question_extend, ...others } = item
 
                         let question_extend_data =

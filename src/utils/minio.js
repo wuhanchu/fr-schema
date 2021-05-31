@@ -90,12 +90,16 @@ export function uploadFile(
                                         mininConfig.secure
                                             ? "https://" +
                                                   mininConfig.endpoint +
+                                                  ":" +
+                                                  mininConfig.port +
                                                   "/" +
                                                   bucketName +
                                                   "/" +
                                                   fileName
                                             : "http://" +
                                                   mininConfig.endpoint +
+                                                  ":" +
+                                                  mininConfig.port +
                                                   "/" +
                                                   bucketName +
                                                   "/" +

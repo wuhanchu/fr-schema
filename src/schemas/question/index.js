@@ -103,12 +103,16 @@ const schema = {
                                 url: minioConfig.secure
                                     ? "https://" +
                                       minioConfig.endpoint +
+                                      ":" +
+                                      minioConfig.port +
                                       "/" +
                                       bucketName +
                                       "/" +
                                       fileName
                                     : "http://" +
                                       minioConfig.endpoint +
+                                      ":" +
+                                      minioConfig.port +
                                       "/" +
                                       bucketName +
                                       "/" +
