@@ -208,10 +208,16 @@ class BaseList extends DataList {
                                         columns.map((item, index) => {
                                             hint[item.key] = item.remarks
                                         })
-                                        exportData(
+                                        // exportData(
+                                        //     "导出数据",
+                                        //     [...data],
+                                        //     columns
+                                        // )
+                                        await exportDataByTemplate(
                                             "导出数据",
-                                            [...data],
-                                            columns
+                                            data,
+                                            columns,
+                                            this.meta.importTemplateUrl
                                         )
                                         this.setState({ exportLoading: false })
                                     }
