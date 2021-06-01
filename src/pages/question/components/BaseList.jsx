@@ -524,10 +524,7 @@ class BaseList extends DataList {
         this.onSearch(fieldsValue)
     }
     renderImportModal() {
-        let schema = {}
-        Object.keys(this.schema).forEach((key) => {
-            schema[key] = { ...this.schema[key], dict: undefined }
-        })
+        let schema = clone(schemas.question.schema)
         schema.info = {
             title: "其他",
             dataIndex: "info",
