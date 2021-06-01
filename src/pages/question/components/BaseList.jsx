@@ -3,7 +3,6 @@ import "@ant-design/compatible/assets/index.css"
 import schemas from "@/schemas"
 import DataList from "@/outter/fr-schema-antd-utils/src/components/Page/DataList"
 import Authorized from "@/outter/fr-schema-antd-utils/src/components/Authorized/Authorized"
-import { exportDataByTemplate } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
 import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
 import {
     Divider,
@@ -22,7 +21,10 @@ import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import * as _ from "lodash"
 import clone from "clone"
 import { DeleteOutlined, UploadOutlined } from "@ant-design/icons"
-import { exportData } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
+import {
+    exportData,
+    exportDataByTemplate,
+} from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
 import { checkedAndUpload } from "@/utils/minio"
 
 const confirm = Modal.confirm
@@ -165,19 +167,52 @@ class BaseList extends DataList {
                                 this.setState(
                                     { exportLoading: true },
                                     async () => {
-                                        let columns = this.getColumns(false)
+                                        let columns = this.getColumns(
+                                            false
+                                        ).filter((item) => {
+                                            return !item.isExpand
+                                        })
                                         let data = this.state.data.list
+                                        let hint = {}
                                         columns.push({
                                             title: "答案",
                                             dataIndex: "answer",
+                                            remarks: `
+                                            必填*
+                                            规则：
+                                            长度为1-32767`,
                                             key: "answer",
                                         })
                                         columns.push({
                                             title: "扩展问",
-                                            dataIndex: "question_extend_data",
-                                            key: "question_extend_data",
+                                            dataIndex: "question_extend",
+                                            key: "question_extend",
+                                            remarks: `规则：
+                                            1.长度为1-512
+                                            2.至少包含数字，英文字母，中文其中一种
+                                            3.不能同时包含非法字符"<"，">"（如ab<cd>e）
+                                            4.不能和本文件中的其他标准问或扩展问重复
+                                            5.同一个问题最多支持200个扩展问，直接换行扩展`,
                                         })
-                                        exportData("导出数据", data, columns)
+                                        columns.push({
+                                            title: "其他",
+                                            dataIndex: "info",
+                                            key: "info",
+                                            remarks: `规则：
+                                            1.长度为1-512
+                                            2.至少包含数字，英文字母，中文其中一种
+                                            3.不能同时包含非法字符"<"，">"（如ab<cd>e）
+                                            4.不能和本文件中的其他标准问或扩展问重复
+                                            5.同一个问题最多支持200个扩展问，直接换行扩展`,
+                                        })
+                                        columns.map((item, index) => {
+                                            hint[item.key] = item.remarks
+                                        })
+                                        exportData(
+                                            "导出数据",
+                                            [...data],
+                                            columns
+                                        )
                                         this.setState({ exportLoading: false })
                                     }
                                 )
@@ -506,7 +541,7 @@ class BaseList extends DataList {
                 schema={schema}
                 errorKey={"question_standard"}
                 title={"导入"}
-                sliceNum={1}
+                sliceNum={2}
                 downloadFun={() => {
                     console.log("下载")
                     let columns = this.getColumns(false)
@@ -520,8 +555,12 @@ class BaseList extends DataList {
                         dataIndex: "question_extend_data",
                         key: "question_extend_data",
                     })
+                    let hint = {}
+                    columns.map((item, index) => {
+                        hint[item.key] = item.remarks
+                    })
                     let data = [{ id: "" }]
-                    exportData("导出模板", data, columns)
+                    exportData("导出模板", [hint, ...data], columns)
                 }}
                 onCancel={() => this.setState({ visibleImport: false })}
                 onChange={(data) => this.setState({ importData: data })}
