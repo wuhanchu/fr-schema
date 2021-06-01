@@ -174,45 +174,33 @@ class BaseList extends DataList {
                                         })
                                         let data = this.state.data.list
                                         let hint = {}
-                                        columns.push({
+                                        let id = {
+                                            title: "答案",
+                                            dataIndex: "id",
+                                            key: "id",
+                                        }
+                                        let answer = {
                                             title: "答案",
                                             dataIndex: "answer",
-                                            remarks: `
-                                            必填*
-                                            规则：
-                                            长度为1-32767`,
                                             key: "answer",
-                                        })
-                                        columns.push({
+                                        }
+                                        let question_extend = {
                                             title: "扩展问",
                                             dataIndex: "question_extend",
                                             key: "question_extend",
-                                            remarks: `规则：
-                                            1.长度为1-512
-                                            2.至少包含数字，英文字母，中文其中一种
-                                            3.不能同时包含非法字符"<"，">"（如ab<cd>e）
-                                            4.不能和本文件中的其他标准问或扩展问重复
-                                            5.同一个问题最多支持200个扩展问，直接换行扩展`,
-                                        })
-                                        columns.push({
+                                        }
+                                        let info = {
                                             title: "其他",
                                             dataIndex: "info",
                                             key: "info",
-                                            remarks: `规则：
-                                            1.长度为1-512
-                                            2.至少包含数字，英文字母，中文其中一种
-                                            3.不能同时包含非法字符"<"，">"（如ab<cd>e）
-                                            4.不能和本文件中的其他标准问或扩展问重复
-                                            5.同一个问题最多支持200个扩展问，直接换行扩展`,
-                                        })
-                                        columns.map((item, index) => {
-                                            hint[item.key] = item.remarks
-                                        })
-                                        // exportData(
-                                        //     "导出数据",
-                                        //     [...data],
-                                        //     columns
-                                        // )
+                                        }
+                                        columns = [
+                                            id,
+                                            ...columns,
+                                            answer,
+                                            question_extend,
+                                            info,
+                                        ]
                                         await exportDataByTemplate(
                                             "导出数据",
                                             data,
@@ -540,43 +528,27 @@ class BaseList extends DataList {
         Object.keys(this.schema).forEach((key) => {
             schema[key] = { ...this.schema[key], dict: undefined }
         })
-
+        schema.info = {
+            title: "其他",
+            dataIndex: "info",
+            key: "info",
+        }
         return (
             <ImportModal
                 importTemplateUrl={this.meta.importTemplateUrl}
                 schema={schema}
                 errorKey={"question_standard"}
                 title={"导入"}
-                sliceNum={2}
-                downloadFun={() => {
-                    console.log("下载")
-                    let columns = this.getColumns(false)
-                    columns.push({
-                        title: "答案",
-                        dataIndex: "answer",
-                        key: "answer",
-                    })
-                    columns.push({
-                        title: "扩展问",
-                        dataIndex: "question_extend_data",
-                        key: "question_extend_data",
-                    })
-                    let hint = {}
-                    columns.map((item, index) => {
-                        hint[item.key] = item.remarks
-                    })
-                    let data = [{ id: "" }]
-                    exportData("导出模板", [hint, ...data], columns)
-                }}
+                sliceNum={4}
                 onCancel={() => this.setState({ visibleImport: false })}
                 onChange={(data) => this.setState({ importData: data })}
                 onOk={async () => {
                     // to convert
 
                     const data = this.state.importData.map((props) => {
+                        let item = props
                         console.log(item)
 
-                        let item = props
                         Object.keys(props).forEach((key) => {
                             if (schema[key].isExpand) {
                                 if (!item.info) {
@@ -589,7 +561,7 @@ class BaseList extends DataList {
                             }
                         })
 
-                        const { label, question_extend, ...others } = item
+                        const { label, question_extend, info, ...others } = item
 
                         let question_extend_data =
                             question_extend[0] && question_extend[0].split("\n")
@@ -601,6 +573,7 @@ class BaseList extends DataList {
                             ...this.meta.addArgs,
                             label: label && label.split("|"),
                             question_extend: question_extend_data,
+                            info: info ? JSON.parse(info) : null,
                             ...others,
                         }
                     })
