@@ -3,6 +3,14 @@ import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import { verifyJson } from "@/outter/fr-schema-antd-utils/src/utils/component"
 
 const schema = {
+    domain_key: {
+        title: "域",
+        sorter: true,
+        addHide: true,
+        editHide: true,
+        required: true,
+        type: schemaFieldType.Select,
+    },
     type_key: {
         title: "类型",
         style: { width: "500px" },
