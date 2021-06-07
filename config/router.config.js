@@ -147,7 +147,7 @@ export default [
                                 // authority: ['user_get'],
                                 path: "/system/client",
                                 name: "client",
-                                component: "./authority/client/List",
+                                component: "./authority/clientList/List",
                             },
                             {
                                 authority: ["license_get"],
