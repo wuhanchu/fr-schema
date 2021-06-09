@@ -11,12 +11,6 @@ const schema = {
     question_standard: {
         title: "标准问",
         required: true,
-        remarks: `必填*
-规则：
-1.长度为1-512
-2.至少包含数字，英文字母，中文其中一种
-3.不能同时包含非法字符"<"，">"（如ab<cd>e）
-4.不能和本文件中的其他标准问或扩展问重复`,
         searchPrefix: "like",
         type: schemaFieldType.TextArea,
         props: {
@@ -28,12 +22,6 @@ const schema = {
     question_extend: {
         title: "扩展问",
         // type: schemaFieldType.Select,
-        remarks: `规则：
-1.长度为1-512
-2.至少包含数字，英文字母，中文其中一种
-3.不能同时包含非法字符"<"，">"（如ab<cd>e）
-4.不能和本文件中的其他标准问或扩展问重复
-5.同一个问题最多支持200个扩展问，直接换行扩展`,
         type: schemaFieldType.TextArea,
         props: {
             autoSize: { minRows: 2, maxRows: 6 },
@@ -46,41 +34,28 @@ const schema = {
     group: {
         title: "分组",
         searchPrefix: "like",
-        remarks: `可以根据功能模块或者使用场景来分组
-
-规则：
-1.长度为1-64
-2.不能同时包含非法字符"<"，">"（如ab<cd>e）`,
         // required: true,
+        render: (data, item) => {
+            console.log(data, item)
+            return item.group
+        },
         sorter: true,
     },
     label: {
         title: "标签",
         type: schemaFieldType.Select,
-        remarks: `
-配置当前问题的标签信息，这部分可自由填写，在管理界面可用来过滤。
-规则：
-1.长度为1-64
-2.多个标签使用 | 分隔`,
         props: {
             mode: "tags",
         },
     },
     global_key: {
         title: "全局变量",
-        remarks: `
-规则：
-长度为1-32767`,
         extra: "作为对话机器人的匹配主键",
     },
     answer: {
         title: "答案",
         required: true,
         listHide: true,
-        remarks: `
-必填*
-规则：
-长度为1-32767`,
         type: schemaFieldType.BraftEditor,
         // span: 24,
         position: "right",

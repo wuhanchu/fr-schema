@@ -69,12 +69,13 @@ class BaseList extends DataList {
     async componentDidMount() {
         const response = await this.service.get({
             ...this.meta.queryArgs,
-            select: "label",
+            select: "label,group",
             limit: 9999,
         })
 
         let labelDictList = {}
-        console.log(response)
+        let groupDictList = {}
+
         response.list.forEach((item) => {
             if (!_.isNil(item.label)) {
                 item.label.forEach((value) => {
@@ -85,12 +86,20 @@ class BaseList extends DataList {
                     }
                 })
             }
+            if (!_.isNil(item.group)) {
+                groupDictList[item.group] = {
+                    value: item.group,
+                    remark: item.group,
+                }
+            }
         })
         this.setState({
             attachment: [],
             loadingAnnex: false,
         })
         this.schema.label.dict = labelDictList
+        this.schema.group.dict = groupDictList
+
         await super.componentDidMount()
     }
 
@@ -99,7 +108,7 @@ class BaseList extends DataList {
         const { group, label, question_standard } = this.schema
         const filters = this.createFilters(
             {
-                group,
+                group: { ...group, type: schemaFieldType.Select },
                 label: {
                     ...label,
                 },
