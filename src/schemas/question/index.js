@@ -175,7 +175,7 @@ service.get = async function (args) {
                 ? item.question_extend.join("\n")
                 : null,
             ...item.info,
-            info: JSON.stringify(item.info),
+            info: item.info ? JSON.stringify(item.info) : "",
         }
     })
     return { ...res, list: list }
