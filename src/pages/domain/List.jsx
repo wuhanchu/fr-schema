@@ -144,7 +144,7 @@ class List extends ListPage {
                 {this.state.visibleAssign && this.renderAssignModal()}
                 {this.state.showHotWord && (
                     <Modal
-                        title={"热词统计"}
+                        title={"热门问题"}
                         width={"70%"}
                         visible={this.state.showHotWord}
                         footer={null}
@@ -279,7 +279,7 @@ class List extends ListPage {
                         })
                     }}
                 >
-                    热词统计
+                    热门问题
                 </a>
             </Fragment>
         )

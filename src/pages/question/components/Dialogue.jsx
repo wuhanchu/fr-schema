@@ -1,10 +1,19 @@
 import React, { Fragment } from "react"
-import { AutoComplete, Avatar, Button, Card, Input, Spin } from "antd"
+import {
+    AutoComplete,
+    Avatar,
+    Button,
+    Card,
+    Input,
+    Spin,
+    Popconfirm,
+    Checkbox,
+} from "antd"
 import schemas from "@/schemas"
 import utils from "@/outter/fr-schema-antd-utils/src"
 import mySvg from "../../../outter/fr-schema-antd-utils/src/components/GlobalHeader/my.svg"
 import rebotSvg from "../../../assets/rebot.svg"
-import { LoadingOutlined } from "@ant-design/icons"
+import { LoadingOutlined, SettingOutlined } from "@ant-design/icons"
 
 const height = window.screen.height * 0.5
 const width = window.screen.width
@@ -261,7 +270,23 @@ class Dialogue extends React.Component {
     }
 
     renderInput() {
-        let { inputValue } = this.state
+        let {
+            inputValue,
+            projectList,
+            defaultProject,
+            checkboxValue,
+            serviceId,
+            conversationId,
+        } = this.state
+        let options = []
+        projectList &&
+            projectList.map((item, index) => {
+                options.push({
+                    label: item.name,
+                    value: item.id,
+                    defaultChecked: true,
+                })
+            })
         return (
             <div
                 style={{
@@ -286,6 +311,58 @@ class Dialogue extends React.Component {
                         ref={this.inputRef}
                     />
                 </div>
+                <Popconfirm
+                    title={() => {
+                        return (
+                            <div>
+                                请选择问题库！
+                                <br />
+                                <div style={{ marginTop: "10px" }}>
+                                    <Checkbox.Group
+                                        defaultChecked
+                                        onChange={(data) => {
+                                            this.setState({
+                                                checkboxValue: data,
+                                            })
+                                            console.log(data)
+                                        }}
+                                        options={options}
+                                        value={checkboxValue}
+                                    />
+                                </div>
+                            </div>
+                        )
+                    }}
+                    onConfirm={async (data) => {
+                        this.setState({
+                            defaultProject: checkboxValue,
+                        })
+                        if (
+                            this.state.checkboxValue &&
+                            this.state.checkboxValue.length
+                        ) {
+                            await schemas.domain.service.message({
+                                service_id: serviceId,
+                                conversation_id: conversationId,
+                                text:
+                                    `/slot{"project\_id":"` +
+                                    checkboxValue.join(",") +
+                                    `"}`,
+                            })
+                        }
+                    }}
+                    onCancel={() => {
+                        this.setState({
+                            checkboxValue: defaultProject,
+                        })
+                    }}
+                    okText="确定"
+                >
+                    <Button style={styles.sendButton}>
+                        <SettingOutlined />
+                    </Button>
+                </Popconfirm>
+
                 <Button
                     // size=""
                     type="primary"
@@ -383,6 +460,20 @@ class Dialogue extends React.Component {
     async componentDidMount() {
         this.getChatRecord()
         this.scrollToBottom()
+        let project = await schemas.project.service.get({
+            limit: 10000,
+            domain_key: this.props.record.key,
+        })
+        let defaultProject = []
+        project.list.map((item, index) => {
+            defaultProject.push(item.id)
+        })
+        console.log(defaultProject)
+        this.setState({
+            projectList: project.list,
+            defaultProject,
+            checkboxValue: defaultProject,
+        })
     }
 }
 

@@ -6,6 +6,8 @@ import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
 import frSchema from "@/outter/fr-schema/src"
 import { listToDict } from "@/outter/fr-schema/src/dict"
+import Modal from "antd/lib/modal/Modal"
+import { Card } from "antd"
 
 const { utils } = frSchema
 @connect(({ global }) => ({
@@ -24,7 +26,7 @@ class List extends DataList {
             },
             showEdit: false,
             showDelete: false,
-            readOnly: true,
+            // readOnly: true,
             addHide: true,
             queryArgs: {
                 ...props.queryArgs,
@@ -41,6 +43,58 @@ class List extends DataList {
         })
         this.schema.project_id.dict = listToDict(project.list)
         super.componentDidMount()
+    }
+    renderOperateColumnExtend(record) {
+        return (
+            <>
+                <a
+                    onClick={() => {
+                        this.setState({
+                            record,
+                            showAnswer: true,
+                        })
+                    }}
+                >
+                    查看答案
+                </a>
+            </>
+        )
+    }
+
+    renderExtend() {
+        const { showAnswer, record } = this.state
+        return (
+            <>
+                {showAnswer && (
+                    <Modal
+                        title="答案"
+                        footer={false}
+                        // centered
+                        onCancel={() => {
+                            this.setState({
+                                showAnswer: false,
+                            })
+                        }}
+                        visible={true}
+                    >
+                        <Card bordered={false}>
+                            <div
+                                dangerouslySetInnerHTML={{
+                                    __html:
+                                        record.answer &&
+                                        record.answer
+                                            .replace(
+                                                /<b>/g,
+                                                "<b style='color:red;'>"
+                                            )
+                                            .replace(/\n/g, "<br/>"),
+                                }}
+                            />
+                        </Card>
+                    </Modal>
+                )}
+            </>
+        )
     }
 
     renderSearchBar() {

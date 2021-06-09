@@ -4,6 +4,10 @@ import { verifyJson } from "@/outter/fr-schema-antd-utils/src/utils/component"
 import moments from "moment"
 
 const schema = {
+    id: {
+        title: "编号",
+        sorter: true,
+    },
     question_standard: {
         title: "标准问",
         required: true,
