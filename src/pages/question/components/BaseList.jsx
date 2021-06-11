@@ -599,11 +599,18 @@ class BaseList extends DataList {
     }
     async handleUploadExcel(data, schema) {
         // 更新
-        console.log(data)
-        let response = await this.service.uploadExcel(
-            { ...data, file: data.file.file },
-            schema
-        )
+        let response
+        try {
+            response = await this.service.uploadExcel(
+                { ...data, file: data.file.file },
+                schema
+            )
+        } catch (error) {
+            message.error("数据出错，请检查数据！")
+            this.handleVisibleImportModal()
+            return
+        }
+
         this.refreshList()
         message.success("添加成功")
         this.handleVisibleImportModal()
