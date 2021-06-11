@@ -571,6 +571,7 @@ class BaseList extends DataList {
             },
             file: {
                 title: "文件",
+                required: true,
                 type: schemaFieldType.Upload,
             },
         }
