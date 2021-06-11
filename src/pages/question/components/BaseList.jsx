@@ -532,63 +532,84 @@ class BaseList extends DataList {
         }
         this.onSearch(fieldsValue)
     }
+
+    handleVisibleImportModal = (flag, record, action) => {
+        this.setState({
+            visibleImport: !!flag,
+            infoData: record,
+            action,
+        })
+    }
+
     renderImportModal() {
-        let schema = clone(schemas.question.schema)
-        schema.info = {
-            title: "其他",
-            dataIndex: "info",
-            key: "info",
+        if (this.props.renderInfoModal) {
+            return this.props.renderInfoModal()
         }
+        const { form } = this.props
+        const renderForm = this.props.renderForm || this.renderForm
+        const { resource, title, addArgs } = this.meta
+        const { visibleImport, infoData, action } = this.state
+        const updateMethods = {
+            handleVisibleModal: this.handleVisibleImportModal.bind(this),
+            handleUpdate: this.handleUpdate.bind(this),
+            handleAdd: this.handleUploadExcel.bind(this),
+        }
+
+        const schema = {
+            download: {
+                title: "下载",
+                renderInput: () => {
+                    return (
+                        <a
+                            href="/import/掌数_知料_知识库信息导入.xlsx"
+                            download
+                        >
+                            <Button>下载模板文件</Button>
+                        </a>
+                    )
+                },
+            },
+            file: {
+                title: "文件",
+                type: schemaFieldType.Upload,
+            },
+        }
+
         return (
-            <ImportModal
-                importTemplateUrl={this.meta.importTemplateUrl}
-                schema={schema}
-                errorKey={"question_standard"}
-                title={"导入"}
-                sliceNum={4}
-                onCancel={() => this.setState({ visibleImport: false })}
-                onChange={(data) => this.setState({ importData: data })}
-                onOk={async () => {
-                    // to convert
+            visibleImport && (
+                <InfoModal
+                    renderForm={renderForm}
+                    title={"导入"}
+                    action={action}
+                    resource={resource}
+                    {...updateMethods}
+                    visible={visibleImport}
+                    values={infoData}
+                    addArgs={addArgs}
+                    meta={this.meta}
+                    service={this.service}
+                    schema={schema}
+                    width={600}
 
-                    const data = this.state.importData.map((props) => {
-                        let item = props
-                        console.log(item)
-
-                        Object.keys(props).forEach((key) => {
-                            if (schema[key].isExpand) {
-                                if (!item.info) {
-                                    item.info = {}
-                                }
-                                item.info[key] = props[key]
-                                item[key] = undefined
-                            } else {
-                                item[key] = props[key]
-                            }
-                        })
-
-                        const { label, question_extend, info, ...others } = item
-
-                        let question_extend_data =
-                            question_extend[0] && question_extend[0].split("\n")
-                        if (typeof question_extend === "string") {
-                            question_extend_data = question_extend.split("\n")
-                        }
-
-                        return {
-                            ...this.meta.addArgs,
-                            label: label && label.split("|"),
-                            question_extend: question_extend_data,
-                            info: info ? JSON.parse(info) : null,
-                            ...others,
-                        }
-                    })
-                    await this.service.upInsert(data)
-                    this.setState({ visibleImport: false })
-                    this.refreshList()
-                }}
-            />
+                    // {...customProps}
+                />
+            )
         )
+    }
+    async handleUploadExcel(data, schema) {
+        // 更新
+        console.log(data)
+        let response = await this.service.uploadExcel(
+            { ...data, file: data.file.file },
+            schema
+        )
+        this.refreshList()
+        message.success("添加成功")
+        this.handleVisibleImportModal()
+        this.handleChangeCallback && this.handleChangeCallback()
+        this.props.handleChangeCallback && this.props.handleChangeCallback()
+
+        return response
     }
 }
 

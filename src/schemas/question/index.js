@@ -1,4 +1,4 @@
-import { createApi } from "@/outter/fr-schema/src/service"
+import { createApi, createBasicApi } from "@/outter/fr-schema/src/service"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import projectService from "./../project"
 import { verifyJson } from "@/outter/fr-schema-antd-utils/src/utils/component"
@@ -237,6 +237,8 @@ service.patch = async function (args, schema) {
 }
 // service.search = createApi("rpc/question_search", schema).getBasic
 service.search = createApi("search", schema).getBasic
+
+service.uploadExcel = createBasicApi("question/excel").post
 
 export default {
     schema,
