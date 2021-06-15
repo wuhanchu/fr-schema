@@ -606,7 +606,6 @@ class BaseList extends DataList {
                 schema
             )
         } catch (error) {
-            console.log(error.message)
             message.error(error.message)
             this.handleVisibleImportModal()
             return

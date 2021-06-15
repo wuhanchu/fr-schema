@@ -203,7 +203,7 @@ service.post = async function (args, schema) {
     if (args.question_extend) {
         question_extend = args.question_extend.split("\n")
     }
-    const res = await createApi("question", schema, null, "eq.").post({
+    const res = await createApi("questionl", schema, null, "eq.").post({
         ...args,
         question_extend: question_extend,
     })
