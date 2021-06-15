@@ -141,6 +141,12 @@ function SearchPage(props) {
                 <Input.Search
                     placeholder="输入想要搜索的问题"
                     enterButton
+                    onBlur={() => {
+                        setState({
+                            ...state,
+                            open: false,
+                        })
+                    }}
                     onSearch={handleSearch}
                     style={{ paddingBottom: 8 }}
                 />
