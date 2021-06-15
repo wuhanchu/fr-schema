@@ -130,7 +130,7 @@ class List extends ListPage {
                         // footer={null}
                         onOk={async () => {
                             if (!this.state.mark_project_id) {
-                                message.error("请输入标注狗项目ID")
+                                message.error("请输入标注狗项目编号")
                                 return
                             }
                             await this.service.export({
@@ -152,7 +152,7 @@ class List extends ListPage {
                         <Card bordered={false}>
                             <Row gutter={24}>
                                 <Col
-                                    lg={6}
+                                    lg={7}
                                     style={{
                                         lineHeight: "32px",
                                         textAlign: "right",
@@ -164,10 +164,10 @@ class List extends ListPage {
                                             textAlign: "right",
                                         }}
                                     >
-                                        标注狗项目id
+                                        标注狗项目编号
                                     </span>
                                 </Col>
-                                <Col lg={18}>
+                                <Col lg={17}>
                                     <Input
                                         onChange={(e) => {
                                             this.setState({
@@ -188,7 +188,7 @@ class List extends ListPage {
                         // footer={null}
                         onOk={async () => {
                             if (!this.state.mark_project_id) {
-                                message.error("请输入标注狗项目ID")
+                                message.error("请输入标注狗项目编号")
                                 return
                             }
                             await this.service.export({
@@ -210,7 +210,7 @@ class List extends ListPage {
                         <Card bordered={false}>
                             <Row gutter={24}>
                                 <Col
-                                    lg={6}
+                                    lg={7}
                                     style={{
                                         lineHeight: "32px",
                                         textAlign: "right",
@@ -222,10 +222,10 @@ class List extends ListPage {
                                             textAlign: "right",
                                         }}
                                     >
-                                        标注狗项目id
+                                        标注狗项目编号
                                     </span>
                                 </Col>
-                                <Col lg={18}>
+                                <Col lg={17}>
                                     <Input
                                         onChange={(e) => {
                                             this.setState({
