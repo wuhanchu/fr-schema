@@ -606,7 +606,8 @@ class BaseList extends DataList {
                 schema
             )
         } catch (error) {
-            message.error("数据出错，请检查数据！")
+            console.log(error.message)
+            message.error(error.message)
             this.handleVisibleImportModal()
             return
         }
