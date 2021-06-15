@@ -228,7 +228,7 @@ service.patch = async function (args, schema) {
     if (args.question_extend) {
         question_extend = args.question_extend.split("\n")
     }
-    const res = await createApi("question", schema, null, "eq.").patch({
+    const res = await createApi("queston", schema, null, "eq.").patch({
         ...args,
         question_extend: question_extend ? question_extend : undefined,
     })
@@ -238,7 +238,7 @@ service.patch = async function (args, schema) {
 // service.search = createApi("rpc/question_search", schema).getBasic
 service.search = createApi("search", schema).getBasic
 
-service.uploadExcel = createBasicApi("question/excel").post
+service.uploadExcel = createBasicApi("project/import").post
 
 export default {
     schema,
