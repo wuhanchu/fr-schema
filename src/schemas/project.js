@@ -5,6 +5,7 @@ import { verifyJson } from "@/outter/fr-schema-antd-utils/src/utils/component"
 
 const schema = {
     id: {
+        sorter: true,
         title: "编号",
         addHide: true,
         editHide: true,

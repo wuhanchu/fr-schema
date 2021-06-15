@@ -1,5 +1,17 @@
-import { Divider, Modal, Row, Col, Input, Card, message } from "antd"
+import {
+    Divider,
+    Modal,
+    Row,
+    Col,
+    Input,
+    Card,
+    message,
+    Dropdown,
+    Menu,
+} from "antd"
 import { connect } from "dva"
+import { DownOutlined } from "@ant-design/icons"
+
 import ListPage from "@/outter/fr-schema-antd-utils/src/components/Page/ListPage"
 import schemas from "@/schemas"
 import React, { Fragment } from "react"
@@ -15,7 +27,7 @@ import SearchPageModal from "@/pages/question/components/SearchPageModal"
 class List extends ListPage {
     constructor(props) {
         super(props, {
-            operateWidth: 350,
+            operateWidth: 260,
             schema: schemas.project.schema,
             service: schemas.project.service,
             infoProps: {
@@ -30,6 +42,33 @@ class List extends ListPage {
     }
 
     renderOperateColumnExtend(record) {
+        let menus = [
+            <Menu.Item key="export">
+                <a>导入</a>
+            </Menu.Item>,
+
+            <Menu.Item key="import">
+                <a>导出</a>
+            </Menu.Item>,
+        ]
+        const menu = (
+            <Menu
+                onClick={async (event) => {
+                    switch (event.key) {
+                        case "export":
+                            this.setState({ record, visibleExport: true })
+                            break
+                        case "import":
+                            this.setState({ record, visibleImport: true })
+                            break
+                        default:
+                            break
+                    }
+                }}
+            >
+                {menus}
+            </Menu>
+        )
         return (
             <Fragment>
                 <Divider type="vertical" />
@@ -52,30 +91,12 @@ class List extends ListPage {
                 >
                     搜索
                 </a>
-                {/*<Divider type="vertical" />*/}
-                {/*<a*/}
-                {/*    onClick={() => {*/}
-                {/*        this.setState({ record, visibleDialogue: true })*/}
-                {/*    }}*/}
-                {/*>*/}
-                {/*    对话*/}
-                {/*</a>*/}
                 <Divider type="vertical" />
-                <a
-                    onClick={() => {
-                        this.setState({ record, visibleExport: true })
-                    }}
-                >
-                    导出
-                </a>
-                <Divider type="vertical" />
-                <a
-                    onClick={() => {
-                        this.setState({ record, visibleImport: true })
-                    }}
-                >
-                    导入
-                </a>
+                <Dropdown overlay={menu}>
+                    <a href="#">
+                        更多 <DownOutlined />
+                    </a>
+                </Dropdown>
             </Fragment>
         )
     }
@@ -164,11 +185,12 @@ class List extends ListPage {
                                             textAlign: "right",
                                         }}
                                     >
-                                        标注狗项目编号
+                                        标注狗项目编号:
                                     </span>
                                 </Col>
                                 <Col lg={17}>
                                     <Input
+                                        placeholder="导出数据到标注狗"
                                         onChange={(e) => {
                                             this.setState({
                                                 mark_project_id: e.target.value,
@@ -222,11 +244,12 @@ class List extends ListPage {
                                             textAlign: "right",
                                         }}
                                     >
-                                        标注狗项目编号
+                                        标注狗项目编号:
                                     </span>
                                 </Col>
                                 <Col lg={17}>
                                     <Input
+                                        placeholder="从标注狗导入数据"
                                         onChange={(e) => {
                                             this.setState({
                                                 mark_project_id: e.target.value,
