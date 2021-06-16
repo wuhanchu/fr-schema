@@ -10,6 +10,7 @@ export default [
             {
                 path: "/user/login",
                 name: "login",
+                title: "登录",
                 component: "./authority/user/Login",
             },
             {
@@ -70,6 +71,7 @@ export default [
                     {
                         path: "/",
                         redirect: "/domain/list",
+                        title: "域列表",
                     },
 
                     {
@@ -81,22 +83,26 @@ export default [
                                 path: "/domain/list",
                                 name: "domainList",
                                 component: "./domain/List",
+                                title: "域列表",
                             },
 
                             {
                                 path: "/domain/synonym",
                                 name: "synonym",
                                 component: "./synonym/List",
+                                title: "近视词",
                             },
                             {
                                 path: "/domain/intent",
                                 name: "intent",
                                 component: "./intent/List",
+                                title: "意图",
                             },
                             {
                                 path: "/domain/story",
                                 name: "story",
                                 component: "./story/List",
+                                title: "故事",
                             },
                         ],
                     },
@@ -107,18 +113,23 @@ export default [
                             {
                                 path: "/entity/list",
                                 name: "entityList",
+                                title: "实体",
+
                                 component: "./entity/List",
                             },
                             {
                                 path: "/entity/entityType",
                                 name: "entityType",
                                 component: "./entityType/List",
+                                title: "实体类型",
                             },
                         ],
                     },
                     {
                         path: "/project",
                         name: "project",
+                        title: "问题库",
+
                         component: "./project/List",
                     },
                     {
@@ -130,16 +141,22 @@ export default [
                                 authority: ["department_get"],
                                 path: "/system/department",
                                 name: "department",
+                                title: "部门管理",
+
                                 component: "./authority/department/List",
                             },
                             {
                                 path: "/system/user",
                                 name: "user",
+                                title: "用户管理",
+
                                 component: "./authority/user/List",
                             },
                             {
                                 path: "/system/role",
                                 name: "role",
+                                title: "角色管理",
+
                                 component: "./authority/role/List",
                             },
 
@@ -147,12 +164,16 @@ export default [
                                 // authority: ['user_get'],
                                 path: "/system/client",
                                 name: "client",
+                                title: "客户端管理",
+
                                 component: "./authority/clientList/List",
                             },
                             {
                                 authority: ["license_get"],
                                 path: "/system/license",
                                 name: "license",
+                                title: "证书管理",
+
                                 component:
                                     "./authority/permission/license/License",
                             },
