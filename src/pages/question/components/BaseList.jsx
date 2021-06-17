@@ -183,10 +183,10 @@ class BaseList extends DataList {
                                         })
                                         let data = this.state.data.list
                                         let hint = {}
-                                        let id = {
-                                            title: "答案",
-                                            dataIndex: "id",
-                                            key: "id",
+                                        let external_id = {
+                                            title: "编号",
+                                            dataIndex: "external_id",
+                                            key: "external_id",
                                         }
                                         let answer = {
                                             title: "答案",
@@ -204,7 +204,7 @@ class BaseList extends DataList {
                                             key: "info",
                                         }
                                         columns = [
-                                            id,
+                                            external_id,
                                             ...columns,
                                             answer,
                                             question_extend,
