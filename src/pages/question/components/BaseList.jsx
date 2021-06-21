@@ -595,6 +595,7 @@ class BaseList extends DataList {
             file: {
                 title: "文件",
                 required: true,
+                extra: "图片导入仅支持wps编辑的.xlsx文件",
                 type: schemaFieldType.Upload,
             },
         }
