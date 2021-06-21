@@ -14,6 +14,7 @@ import {
     Row,
     Spin,
     Empty,
+    AutoComplete,
 } from "antd"
 import ImportModal from "@/outter/fr-schema-antd-utils/src/components/modal/ImportModal"
 import React from "react"
@@ -99,7 +100,29 @@ class BaseList extends DataList {
         })
         this.schema.label.dict = labelDictList
         this.schema.group.dict = groupDictList
-
+        let options = []
+        Object.keys(groupDictList).forEach(function (key) {
+            options.push(
+                <AutoComplete.Option
+                    key={groupDictList[key].value}
+                    value={groupDictList[key].value}
+                >
+                    {groupDictList[key].remark}
+                </AutoComplete.Option>
+            )
+        })
+        this.schema.group.renderInput = () => {
+            return (
+                <AutoComplete
+                    style={{ width: "100%", maxWidth: "300px" }}
+                    // onSelect={onSelect}
+                    // onSearch={onSearch}
+                    placeholder="请输入分组"
+                >
+                    {options}
+                </AutoComplete>
+            )
+        }
         await super.componentDidMount()
     }
 
@@ -561,7 +584,7 @@ class BaseList extends DataList {
                 renderInput: () => {
                     return (
                         <a
-                            href="/import/掌数_知料_知识库信息导入.xlsx"
+                            href="./import/掌数_知料_知识库信息导入.xlsx"
                             download
                         >
                             <Button>下载模板文件</Button>

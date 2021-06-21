@@ -2,7 +2,7 @@ import { createApi, createBasicApi } from "@/outter/fr-schema/src/service"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import projectService from "./../project"
 import { verifyJson } from "@/outter/fr-schema-antd-utils/src/utils/component"
-import { message } from "antd"
+import { message, AutoComplete } from "antd"
 import { checkedAndUpload } from "@/utils/minio"
 
 const Minio = require("minio")
@@ -36,7 +36,6 @@ const schema = {
         searchPrefix: "like",
         // required: true,
         render: (data, item) => {
-            console.log(data, item)
             return item.group
         },
         sorter: true,
