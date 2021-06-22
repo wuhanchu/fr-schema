@@ -79,3 +79,18 @@ ol {
         }
     }
 }
+
+// 兼容IE11
+@media screen and(-ms-high-contrast: active), (-ms-high-contrast: none) {
+    body .ant-design-pro > .ant-layout {
+        min-height: 100vh !important;
+    }
+}
+
+.ant-select-selection-item {
+    flex: 1 1;
+    /* overflow: hidden; */
+    /* white-space: nowrap; */
+    white-space: normal !important;
+    text-overflow: ellipsis;
+}

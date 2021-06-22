@@ -131,9 +131,15 @@ class BaseList extends DataList {
         const { group, label, question_standard } = this.schema
         const filters = this.createFilters(
             {
-                group: { ...group, type: schemaFieldType.Select },
+                group: {
+                    ...group,
+                    type: schemaFieldType.Select,
+                    renderInput: null,
+                },
                 label: {
                     ...label,
+                    type: schemaFieldType.Select,
+                    props: null,
                 },
                 question_standard: {
                     ...question_standard,
@@ -548,7 +554,7 @@ class BaseList extends DataList {
     }
 
     handleSearch = (fieldsValue) => {
-        if (fieldsValue["label"].length) {
+        if (fieldsValue["label"] && fieldsValue["label"].length) {
             fieldsValue.label = "ov.{" + fieldsValue["label"] + "}"
         } else {
             fieldsValue.label = undefined

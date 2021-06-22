@@ -13,6 +13,7 @@ export default {
     "menu.domain.domainList": "域信息",
     "menu.domain.story": "故事",
     "menu.entity": "实体",
+    "menu.entity.relation": "实体关系",
     "menu.entity.entityList": "实体信息",
     "menu.entity.entityType": "实体类型",
     "menu.domain.intent": "意图",
