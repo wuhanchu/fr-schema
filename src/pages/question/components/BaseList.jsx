@@ -14,6 +14,7 @@ import {
     Row,
     Spin,
     Empty,
+    AutoComplete,
 } from "antd"
 import ImportModal from "@/outter/fr-schema-antd-utils/src/components/modal/ImportModal"
 import React from "react"
@@ -99,7 +100,29 @@ class BaseList extends DataList {
         })
         this.schema.label.dict = labelDictList
         this.schema.group.dict = groupDictList
-
+        let options = []
+        Object.keys(groupDictList).forEach(function (key) {
+            options.push(
+                <AutoComplete.Option
+                    key={groupDictList[key].value}
+                    value={groupDictList[key].value}
+                >
+                    {groupDictList[key].remark}
+                </AutoComplete.Option>
+            )
+        })
+        this.schema.group.renderInput = () => {
+            return (
+                <AutoComplete
+                    style={{ width: "100%", maxWidth: "300px" }}
+                    // onSelect={onSelect}
+                    // onSearch={onSearch}
+                    placeholder="请输入分组"
+                >
+                    {options}
+                </AutoComplete>
+            )
+        }
         await super.componentDidMount()
     }
 
@@ -183,10 +206,10 @@ class BaseList extends DataList {
                                         })
                                         let data = this.state.data.list
                                         let hint = {}
-                                        let id = {
-                                            title: "答案",
-                                            dataIndex: "id",
-                                            key: "id",
+                                        let external_id = {
+                                            title: "编号",
+                                            dataIndex: "external_id",
+                                            key: "external_id",
                                         }
                                         let answer = {
                                             title: "答案",
@@ -204,7 +227,7 @@ class BaseList extends DataList {
                                             key: "info",
                                         }
                                         columns = [
-                                            id,
+                                            external_id,
                                             ...columns,
                                             answer,
                                             question_extend,
@@ -561,7 +584,7 @@ class BaseList extends DataList {
                 renderInput: () => {
                     return (
                         <a
-                            href="/import/掌数_知料_知识库信息导入.xlsx"
+                            href="./import/掌数_知料_知识库信息导入.xlsx"
                             download
                         >
                             <Button>下载模板文件</Button>
@@ -572,6 +595,7 @@ class BaseList extends DataList {
             file: {
                 title: "文件",
                 required: true,
+                extra: "图片导入仅支持wps编辑的.xlsx文件",
                 type: schemaFieldType.Upload,
             },
         }
@@ -606,7 +630,7 @@ class BaseList extends DataList {
                 schema
             )
         } catch (error) {
-            message.error("数据出错，请检查数据！")
+            message.error(error.message)
             this.handleVisibleImportModal()
             return
         }

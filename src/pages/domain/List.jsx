@@ -15,9 +15,10 @@ import HotWord from "./component/HotWord"
 
 const { schemaFieldType } = frSchema
 
-@connect(({ global }) => ({
+@connect(({ global, user }) => ({
     dict: global.dict,
     global: global,
+    user: user,
 }))
 @Form.create()
 class List extends ListPage {
@@ -83,6 +84,24 @@ class List extends ListPage {
         }
     }
 
+    async handleAdd(data, schema) {
+        let response = await this.service.post(data, schema)
+        response = await this.service.setUser(
+            {
+                users_id: [parseInt(this.props.user.currentUser.id)],
+                domain_key: data.key,
+            },
+            schema
+        )
+        message.success("添加成功")
+        this.refreshList()
+        this.handleVisibleModal()
+        this.handleChangeCallback && this.handleChangeCallback()
+        this.props.handleChangeCallback && this.props.handleChangeCallback()
+
+        return response
+    }
+
     handleUpdates = async (data, schemas, method = "patch") => {
         // 更新
         let response = await this.service.setUser(
@@ -90,7 +109,7 @@ class List extends ListPage {
             schemas
         )
         this.refreshList()
-        message.success("修改成功")
+        message.success("操作成功")
         this.handleVisibleModal()
         if (this.handleChangeCallback) {
             this.handleChangeCallback()

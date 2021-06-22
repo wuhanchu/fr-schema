@@ -46,9 +46,10 @@ function SearchPage(props) {
         data: null,
         allData: [],
         loading: false,
+        open: false,
     })
 
-    const { data, loading } = state
+    const { data, loading, open } = state
 
     // 判断是否外嵌模式
     let project_id = url.getUrlParams("project_id")
@@ -63,7 +64,6 @@ function SearchPage(props) {
             project_id = props.record && props.record.id
         }
     }
-    console.log(project_id)
     useEffect(() => {
         init(props, project_id, setState, state)
     }, [])
@@ -71,6 +71,7 @@ function SearchPage(props) {
     const handleChange = (value) => {
         setState({
             ...state,
+            open: true,
             value,
             dataSource:
                 value &&
@@ -84,13 +85,16 @@ function SearchPage(props) {
         if (_.isNil(value)) {
             setState({
                 data: [],
+                open: false,
                 loading: false,
             })
             return
         }
 
         setState({
+            ...state,
             loading: true,
+            open: false,
         })
         let args = {}
         if (props.type === "domain_id") {
@@ -110,6 +114,7 @@ function SearchPage(props) {
                 ...state,
                 value,
                 data: response.list,
+                open: false,
                 loading: false,
             })
         } catch (error) {
@@ -126,6 +131,8 @@ function SearchPage(props) {
                 dropdownMatchSelectWidth={252}
                 style={{ width: "100%" }}
                 onChange={handleChange}
+                backfill
+                open={open}
                 onSelect={handleSearch}
                 defaultOpen={false}
                 defaultValue={null}
@@ -134,6 +141,12 @@ function SearchPage(props) {
                 <Input.Search
                     placeholder="输入想要搜索的问题"
                     enterButton
+                    onBlur={() => {
+                        setState({
+                            ...state,
+                            open: false,
+                        })
+                    }}
                     onSearch={handleSearch}
                     style={{ paddingBottom: 8 }}
                 />
@@ -172,9 +185,6 @@ function SearchPage(props) {
                                                             (标签:
                                                             {item.label.map(
                                                                 (item) => {
-                                                                    console.log(
-                                                                        item
-                                                                    )
                                                                     return (
                                                                         "<" +
                                                                         item +
