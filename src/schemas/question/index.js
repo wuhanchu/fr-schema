@@ -51,6 +51,11 @@ const schema = {
         title: "全局变量",
         extra: "作为对话机器人的匹配主键",
     },
+    external_id: {
+        title: "外部编号",
+        addHide: true,
+        editHide: true,
+    },
     answer: {
         title: "答案",
         required: true,

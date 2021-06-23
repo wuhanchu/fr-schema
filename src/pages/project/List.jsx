@@ -44,11 +44,11 @@ class List extends ListPage {
     renderOperateColumnExtend(record) {
         let menus = [
             <Menu.Item key="export">
-                <a>导入</a>
+                <a>标注推送</a>
             </Menu.Item>,
 
             <Menu.Item key="import">
-                <a>导出</a>
+                <a>标注拉取</a>
             </Menu.Item>,
         ]
         const menu = (
@@ -147,7 +147,7 @@ class List extends ListPage {
                     <Modal
                         // width={"90%"}
                         visible={true}
-                        title={"导出"}
+                        title={"向标注狗推送"}
                         // footer={null}
                         onOk={async () => {
                             if (!this.state.mark_project_id) {
@@ -190,7 +190,7 @@ class List extends ListPage {
                                 </Col>
                                 <Col lg={17}>
                                     <Input
-                                        placeholder="导出数据到标注狗"
+                                        placeholder="请输入标注狗项目编号"
                                         onChange={(e) => {
                                             this.setState({
                                                 mark_project_id: e.target.value,
@@ -206,14 +206,14 @@ class List extends ListPage {
                     <Modal
                         // width={"90%"}
                         visible={true}
-                        title={"从标注狗导入"}
+                        title={"从标注狗拉取"}
                         // footer={null}
                         onOk={async () => {
                             if (!this.state.mark_project_id) {
                                 message.error("请输入标注狗项目编号")
                                 return
                             }
-                            await this.service.export({
+                            await this.service.import({
                                 project_id: this.state.record.id,
                                 mark_project_id: parseInt(
                                     this.state.mark_project_id
@@ -249,7 +249,7 @@ class List extends ListPage {
                                 </Col>
                                 <Col lg={17}>
                                     <Input
-                                        placeholder="从标注狗导入数据"
+                                        placeholder="请输入标注狗项目编号"
                                         onChange={(e) => {
                                             this.setState({
                                                 mark_project_id: e.target.value,

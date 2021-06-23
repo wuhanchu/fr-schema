@@ -27,6 +27,8 @@ import {
     exportDataByTemplate,
 } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
 import { checkedAndUpload } from "@/utils/minio"
+import frSchema from "@/outter/fr-schema/src"
+const { decorateList } = frSchema
 
 const confirm = Modal.confirm
 const Minio = require("minio")
@@ -208,9 +210,21 @@ class BaseList extends DataList {
                                         let columns = this.getColumns(
                                             false
                                         ).filter((item) => {
-                                            return !item.isExpand
+                                            return (
+                                                !item.isExpand &&
+                                                item.key !== "external_id"
+                                            )
                                         })
-                                        let data = this.state.data.list
+                                        // let data = this.state.data.list
+                                        // if (this.props.exportMore) {
+                                        let data = await this.requestList({
+                                            pageSize: 1000000,
+                                        })
+                                        data = decorateList(
+                                            data.list,
+                                            this.schema
+                                        )
+                                        // }
                                         let hint = {}
                                         let external_id = {
                                             title: "编号",
