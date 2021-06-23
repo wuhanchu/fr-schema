@@ -123,12 +123,12 @@ export default [
                                 component: "./entityType/List",
                                 title: "实体类型",
                             },
-                            // {
-                            //     path: "/entity/relation",
-                            //     name: "relation",
-                            //     component: "./relation/List",
-                            //     title: "实体关系",
-                            // },
+                            {
+                                path: "/entity/relation",
+                                name: "relation",
+                                component: "./relation/List",
+                                title: "实体关系",
+                            },
                         ],
                     },
 

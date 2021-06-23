@@ -17,6 +17,7 @@ class List extends ListPage {
             schema: schemas.relation.schema,
             service: schemas.relation.service,
             addHide: true,
+            readOnly: true,
             infoProps: {
                 width: "900px",
             },

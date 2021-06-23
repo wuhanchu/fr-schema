@@ -12,14 +12,14 @@ const schema = {
         type: schemaFieldType.Select,
     },
 
-    from_entity_id: {
+    from_entity_name: {
         title: "父实体",
         style: { width: "500px" },
         sorter: true,
         required: true,
     },
 
-    to_entity_id: {
+    to_entity_name: {
         title: "子实体",
         style: { width: "500px" },
         sorter: true,
@@ -59,12 +59,6 @@ const schema = {
 
 const service = createApi("relation", schema, null, "eq.")
 
-service.get = async (args) => {
-    return await createApi("relation", schema, null, "eq.").get({
-        ...args,
-        select: "*,entity(*)",
-    })
-}
 export default {
     schema,
     service,
