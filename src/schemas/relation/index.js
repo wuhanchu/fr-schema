@@ -13,21 +13,21 @@ const schema = {
     },
 
     from_entity_name: {
-        title: "父实体",
-        style: { width: "500px" },
-        sorter: true,
-        required: true,
-    },
-
-    to_entity_name: {
-        title: "子实体",
+        title: "左实体",
         style: { width: "500px" },
         sorter: true,
         required: true,
     },
 
     type: {
-        title: "类型",
+        title: "关系",
+        style: { width: "500px" },
+        sorter: true,
+        required: true,
+    },
+
+    to_entity_name: {
+        title: "右实体",
         style: { width: "500px" },
         sorter: true,
         required: true,
