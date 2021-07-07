@@ -16,21 +16,28 @@ class List extends ListPage {
         super(props, {
             schema: schemas.relation.schema,
             service: schemas.relation.service,
-            addHide: true,
-            readOnly: true,
+            // readOnly: true,
             infoProps: {
-                width: "900px",
+                // width: "900px",
+                offline: true,
             },
         })
     }
 
     async componentDidMount() {
-        const res = await schemas.entityType.service.get({ pageSize: 10000 })
-        let typeList = utils.dict.listToDict(res.list, null, "key", "name")
+        let res = await schemas.entity.service.get({ pageSize: 10000 })
+        let typeList = utils.dict.listToDict(res.list, null, "id", "name")
+        res = await schemas.relationType.service.get({ pageSize: 10000 })
+        let relationTypeList = utils.dict.listToDict(
+            res.list,
+            null,
+            "key",
+            "name"
+        )
         this.schema.domain_key.dict = this.props.dict.domain
-        // this.schema.from_entity_id.dict = typeList
-        // this.schema.to_entity_id.dict = typeList
-
+        this.schema.from_entity_id.dict = typeList
+        this.schema.to_entity_id.dict = typeList
+        this.schema.relation_key.dict = relationTypeList
         super.componentDidMount()
     }
 

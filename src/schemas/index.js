@@ -8,6 +8,7 @@ import entity from "./entity"
 import entityType from "./entityType"
 import hotWord from "./domain/hotWord"
 import relation from "./relation"
+import relationType from "./relationType"
 
 export default {
     project,
@@ -20,4 +21,5 @@ export default {
     entityType,
     hotWord,
     relation,
+    relationType,
 }

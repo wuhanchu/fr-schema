@@ -129,6 +129,12 @@ export default [
                                 component: "./relation/List",
                                 title: "实体关系",
                             },
+                            {
+                                path: "/entity/relationType",
+                                name: "relationType",
+                                component: "./relationType/List",
+                                title: "实体关系类型",
+                            },
                         ],
                     },
 

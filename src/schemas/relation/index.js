@@ -14,25 +14,39 @@ const schema = {
 
     from_entity_name: {
         title: "左实体",
-        style: { width: "500px" },
+        editHide: true,
+        addHide: true,
+        required: true,
+    },
+    from_entity_id: {
+        title: "左实体",
+        type: schemaFieldType.Select,
+        listHide: true,
         sorter: true,
         required: true,
     },
 
-    type: {
+    relation_key: {
         title: "关系",
-        style: { width: "500px" },
+        type: schemaFieldType.Select,
         sorter: true,
         required: true,
     },
 
     to_entity_name: {
         title: "右实体",
-        style: { width: "500px" },
-        sorter: true,
+        editHide: true,
+        addHide: true,
         required: true,
     },
 
+    to_entity_id: {
+        title: "右实体",
+        listHide: true,
+        type: schemaFieldType.Select,
+        sorter: true,
+        required: true,
+    },
     create_time: {
         title: "创建时间",
         required: true,
@@ -49,7 +63,6 @@ const schema = {
         title: "属性",
         listHide: true,
         props: {
-            style: { width: "500px" },
             height: "300px",
         },
         type: schemaFieldType.AceEditor,
