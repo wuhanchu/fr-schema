@@ -42,11 +42,18 @@ class List extends ListPage {
     }
 
     renderSearchBar() {
-        const { type, domain_key } = this.schema
+        const {
+            relation_key,
+            domain_key,
+            from_entity_id,
+            to_entity_id,
+        } = this.schema
         const filters = this.createFilters(
             {
                 domain_key,
-                type,
+                from_entity_id,
+                to_entity_id,
+                relation_key,
             },
             5
         )

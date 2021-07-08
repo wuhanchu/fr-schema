@@ -25,6 +25,11 @@ const schema = {
         sorter: true,
         required: true,
     },
+    from_entity_type_name: {
+        title: "左实体类型",
+        editHide: true,
+        addHide: true,
+    },
 
     relation_key: {
         title: "关系",
@@ -46,6 +51,11 @@ const schema = {
         type: schemaFieldType.Select,
         sorter: true,
         required: true,
+    },
+    to_entity_type_name: {
+        title: "右实体类型",
+        editHide: true,
+        addHide: true,
     },
     create_time: {
         title: "创建时间",
