@@ -23,7 +23,7 @@ const schema = {
     },
 
     config: {
-        title: "编码",
+        title: "配置",
         searchPrefix: "like",
         type: schemaFieldType.AceEditor,
         sorter: true,
