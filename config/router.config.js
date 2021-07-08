@@ -115,25 +115,13 @@ export default [
                                 name: "entityList",
                                 title: "实体",
 
-                                component: "./entity/List",
-                            },
-                            {
-                                path: "/entity/entityType",
-                                name: "entityType",
-                                component: "./entityType/List",
-                                title: "实体类型",
+                                component: "./entity/Main",
                             },
                             {
                                 path: "/entity/relation",
                                 name: "relation",
-                                component: "./relation/List",
+                                component: "./relation/Main",
                                 title: "实体关系",
-                            },
-                            {
-                                path: "/entity/relationType",
-                                name: "relationType",
-                                component: "./relationType/List",
-                                title: "实体关系类型",
                             },
                         ],
                     },

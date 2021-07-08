@@ -1,5 +1,5 @@
 import { connect } from "dva"
-import ListPage from "@/outter/fr-schema-antd-utils/src/components/Page/ListPage"
+import DataList from "@/outter/fr-schema-antd-utils/src/components/Page/DataList"
 import schemas from "@/schemas"
 import React from "react"
 import { Form } from "@ant-design/compatible"
@@ -10,7 +10,7 @@ import { message, Modal } from "antd"
     dict: global.dict,
 }))
 @Form.create()
-class List extends ListPage {
+class List extends DataList {
     constructor(props) {
         super(props, {
             schema: schemas.entityType.schema,
