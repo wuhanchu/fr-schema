@@ -12,6 +12,7 @@ import frSchema from "@/outter/fr-schema/src"
 import { listToDict } from "@/outter/fr-schema/src/dict"
 import UserTransfer from "./component/UserTransfer"
 import HotWord from "./component/HotWord"
+import IntentIdentify from  './component/IntentIdentify'
 
 const { schemaFieldType } = frSchema
 
@@ -26,7 +27,6 @@ class List extends ListPage {
         super(props, {
             schema: schemas.domain.schema,
             service: schemas.domain.service,
-            operateWidth: "470px",
             infoProps: {
                 offline: true,
             },
@@ -122,7 +122,7 @@ class List extends ListPage {
     }
 
     renderExtend() {
-        const { record, visibleSearch, visibleDialogue } = this.state
+        const { record, visibleSearch, visibleDialogue, visibleIntentIdentify } = this.state
         return (
             <Fragment>
                 {visibleSearch && (
@@ -161,6 +161,15 @@ class List extends ListPage {
                     />
                 )}
                 {this.state.visibleAssign && this.renderAssignModal()}
+                {visibleIntentIdentify && (
+                    <IntentIdentify
+                        onCancel={() => {
+                            this.setState({ visibleIntentIdentify: false });
+                        }}
+                        style={{ height: '900px' }}
+                        record={{...record, id: record.talk_service_id}}
+                    />
+                )}
                 {this.state.showHotWord && (
                     <Modal
                         title={"热门问题"}
@@ -299,6 +308,17 @@ class List extends ListPage {
                     }}
                 >
                     热门问题
+                </a>
+                <Divider type="vertical" />
+                <a
+                    onClick={async () => {
+                        this.setState({
+                            visibleIntentIdentify: true,
+                            record,
+                        })
+                    }}
+                >
+                    功能测试
                 </a>
             </Fragment>
         )

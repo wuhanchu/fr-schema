@@ -4,6 +4,8 @@ import schemas from "@/schemas"
 import React from "react"
 import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
+import { Divider, Card, Modal } from 'antd'
+// import WordModel from "@/outter/gg-editor/WordModel"
 
 @connect(({ global }) => ({
     dict: global.dict,
@@ -20,6 +22,47 @@ class List extends ListPage {
         })
         this.schema.domain_key.dict = this.props.dict.domain
     }
+
+    // renderOperateColumnExtend(record) {
+    //     return (
+    //         <>
+    //             <Divider type="vertical" />
+    //             <a
+    //                 onClick={() => {
+    //                     this.setState({ record, visibleFlow: true })
+    //                 }}
+    //             >
+    //                 测试流程
+    //             </a>
+    //         </>
+    //     )
+    // }
+
+    // renderExtend () {
+    //     const { visibleFlow, record } = this.state
+    //     return <>
+    //             {visibleFlow && <Modal
+    //                     title={null}
+    //                     visible={true}
+    //                     width={"90%"}
+    //                     style={{ top: 20 }}
+    //                     footer={null}
+    //                     onOk={() => {
+    //                         this.setState({ visibleFlow: false })
+    //                     }}
+    //                     onCancel={() => {
+    //                         this.setState({ visibleFlow: false })
+    //                     }}
+    //                     closable={false}
+    //                 >
+    //                  <WordModel
+    //                     visibleRelease={this.state.visibleFlow}
+    //                     record={record} 
+    //                     />  
+    //                 </Modal>}
+    //     </>
+    // }
+
     // 搜索
     renderSearchBar() {
         const { name, domain_key } = this.schema

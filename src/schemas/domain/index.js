@@ -54,6 +54,12 @@ service.message = createApi(
     null,
     "eq."
 ).post
+
+service.intentIdentify = async function (args) {
+    const data = await createApi('z_ai_service/nlu/intent_identify', schema, null).getBasic({ ...args });
+    return data;
+};
+
 // 人员
 service.getDomainUser = async (args) => {
     const data = await createApi("domain_user", schema, null).get({
