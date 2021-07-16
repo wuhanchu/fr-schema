@@ -6,12 +6,12 @@ const schema = {
         title: "域",
         sorter: true,
         required: true,
-        style: { width: "500px" },
+        // style: { width: "500px" },
         type: schemaFieldType.Select,
     },
     name: {
         title: "名称",
-        style: { width: "500px" },
+        // style: { width: "500px" },
         searchPrefix: "like",
         sorter: true,
         required: true,
@@ -19,15 +19,22 @@ const schema = {
 
     example: {
         title: "例子",
-        sorter: true,
-        style: { width: "500px" },
+        // sorter: true,
+        // style: { width: "500px" },
         required: true,
-        type: schemaFieldType.Select,
+        // type: schemaFieldType.Select,
+        // props: {
+        //     mode: "tags",
+        //     dropdownRender: false,
+        //     dropdownStyle: { zIndex: -999 },
+        // },
+        type: schemaFieldType.TextArea,
         props: {
-            mode: "tags",
-            dropdownRender: false,
-            dropdownStyle: { zIndex: -999 },
+            autoSize: { minRows: 2, maxRows: 10 },
         },
+        // listHide: true,
+        exportConcat: true,
+        extra: "每行表示一个例子",
     },
 
     create_time: {
@@ -44,6 +51,51 @@ const schema = {
 }
 
 const service = createApi("intent", schema, null, "eq.")
+
+service.get = async function (args) {
+    const res = await createApi("intent", schema, null, "eq.").get(args)
+    let list = res.list.map((item) => {
+        return {
+            ...item,
+            example: item.example ? item.example.join("|") : null,
+        }
+    })
+    return { ...res, list: list }
+}
+
+service.getDetail = async function (args) {
+    const res = await createApi("intent", schema, null, "eq.").getDetail(args)
+    return {
+        ...res,
+        example: res.example ? res.example.join("\n") : null,
+    }
+}
+
+service.post = async function (args, schema) {
+    let example = null
+    if (args.example) {
+        example = args.example.split("\n")
+    }
+    const res = await createApi("intent", schema, null, "eq.").post({
+        ...args,
+        example: example,
+    })
+
+    return res
+}
+
+service.patch = async function (args, schema) {
+    let example = null
+    if (args.example) {
+        example = args.example.split("\n")
+    }
+    const res = await createApi("intent", schema, null, "eq.").patch({
+        ...args,
+        example: example,
+    })
+
+    return res
+}
 
 export default {
     schema,

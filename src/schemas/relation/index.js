@@ -34,6 +34,7 @@ const schema = {
         title: "关系",
         type: schemaFieldType.Select,
         sorter: true,
+        editable: true,
         required: true,
     },
     to_entity_type_name: {

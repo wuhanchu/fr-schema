@@ -4,8 +4,11 @@ import schemas from "@/schemas"
 import React from "react"
 import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
-import { Divider, Card, Modal } from 'antd'
-// import WordModel from "@/outter/gg-editor/WordModel"
+import { Divider, Card, Modal, Button } from "antd"
+import frSchema from "@/outter/fr-schema/src"
+import { exportData } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
+
+const { decorateList } = frSchema
 
 @connect(({ global }) => ({
     dict: global.dict,
@@ -16,52 +19,124 @@ class List extends ListPage {
         super(props, {
             schema: schemas.intent.schema,
             service: schemas.intent.service,
-            infoProps: {
-                width: "900px",
-            },
         })
         this.schema.domain_key.dict = this.props.dict.domain
     }
 
-    // renderOperateColumnExtend(record) {
-    //     return (
-    //         <>
-    //             <Divider type="vertical" />
-    //             <a
-    //                 onClick={() => {
-    //                     this.setState({ record, visibleFlow: true })
-    //                 }}
-    //             >
-    //                 测试流程
-    //             </a>
-    //         </>
-    //     )
-    // }
+    /**
+     * 操作栏按钮
+     */
+    renderOperationButtons() {
+        if (this.props.renderOperationButtons) {
+            return this.props.renderOperationButtons()
+        }
 
-    // renderExtend () {
-    //     const { visibleFlow, record } = this.state
-    //     return <>
-    //             {visibleFlow && <Modal
-    //                     title={null}
-    //                     visible={true}
-    //                     width={"90%"}
-    //                     style={{ top: 20 }}
-    //                     footer={null}
-    //                     onOk={() => {
-    //                         this.setState({ visibleFlow: false })
-    //                     }}
-    //                     onCancel={() => {
-    //                         this.setState({ visibleFlow: false })
-    //                     }}
-    //                     closable={false}
-    //                 >
-    //                  <WordModel
-    //                     visibleRelease={this.state.visibleFlow}
-    //                     record={record} 
-    //                     />  
-    //                 </Modal>}
-    //     </>
-    // }
+        return (
+            <>
+                {!this.props.readOnly && !this.meta.addHide && (
+                    <Button
+                        type="primary"
+                        onClick={() =>
+                            this.handleVisibleModal(true, null, "add")
+                        }
+                    >
+                        新增
+                    </Button>
+                )}
+                {/* <Button
+                    onClick={() => {
+                        this.setState({ visibleImport: true })
+                    }}
+                >
+                    导入
+                </Button> */}
+
+                <Button
+                    loading={this.state.exportLoading}
+                    onClick={async () => {
+                        this.setState({ exportLoading: true }, async () => {
+                            let columns = this.getColumns(false).filter(
+                                (item) => {
+                                    return (
+                                        !item.isExpand &&
+                                        item.key !== "external_id"
+                                    )
+                                }
+                            )
+
+                            let data = await this.requestList({
+                                pageSize: 1000000,
+                            })
+                            data = decorateList(data.list, this.schema)
+                            columns = [...columns]
+                            await exportData("导出数据", data, columns)
+                            this.setState({ exportLoading: false })
+                        })
+                    }}
+                >
+                    导出
+                </Button>
+            </>
+        )
+    }
+
+    renderImportModal() {
+        if (this.props.renderInfoModal) {
+            return this.props.renderInfoModal()
+        }
+        const { form } = this.props
+        const renderForm = this.props.renderForm || this.renderForm
+        const { resource, title, addArgs } = this.meta
+        const { visibleImport, infoData, action } = this.state
+        const updateMethods = {
+            handleVisibleModal: this.handleVisibleImportModal.bind(this),
+            handleUpdate: this.handleUpdate.bind(this),
+            handleAdd: this.handleUploadExcel.bind(this),
+        }
+
+        const schema = {
+            download: {
+                title: "下载",
+                renderInput: () => {
+                    return (
+                        <a
+                            href="./import/掌数_知料_知识库信息导入.xlsx"
+                            download
+                        >
+                            <Button>下载模板文件</Button>
+                        </a>
+                    )
+                },
+            },
+            file: {
+                title: "文件",
+                required: true,
+                extra: "图片导入仅支持wps编辑的.xlsx文件",
+                type: schemaFieldType.Upload,
+            },
+        }
+
+        return (
+            visibleImport && (
+                <InfoModal
+                    renderForm={renderForm}
+                    title={"导入"}
+                    action={action}
+                    resource={resource}
+                    {...updateMethods}
+                    visible={visibleImport}
+                    values={infoData}
+                    addArgs={addArgs}
+                    meta={this.meta}
+                    service={this.service}
+                    schema={schema}
+                    width={600}
+
+                    // {...customProps}
+                />
+            )
+        )
+    }
 
     // 搜索
     renderSearchBar() {
