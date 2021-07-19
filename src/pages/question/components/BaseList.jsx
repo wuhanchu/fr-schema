@@ -219,6 +219,7 @@ class BaseList extends DataList {
                                         // if (this.props.exportMore) {
                                         let data = await this.requestList({
                                             pageSize: 1000000,
+                                            offset: 0,
                                         })
                                         data = decorateList(
                                             data.list,

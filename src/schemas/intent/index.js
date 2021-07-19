@@ -1,4 +1,4 @@
-import { createApi } from "@/outter/fr-schema/src/service"
+import { createApi, createBasicApi } from "@/outter/fr-schema/src/service"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 
 const schema = {
@@ -96,6 +96,8 @@ service.patch = async function (args, schema) {
 
     return res
 }
+
+service.uploadExcel = createBasicApi("intent/import").post
 
 export default {
     schema,
