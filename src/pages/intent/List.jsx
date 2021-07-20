@@ -9,7 +9,7 @@ import frSchema from "@/outter/fr-schema/src"
 import { exportData } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
-import WordModel from "@/outter/fr-schema-antd-utils/src/components/GGeditor/WordModel/index"
+// import WordModel from "@/outter/fr-schema-antd-utils/src/components/GGeditor/WordModel/index"
 
 const { decorateList } = frSchema
 
@@ -26,20 +26,20 @@ class List extends ListPage {
         this.schema.domain_key.dict = this.props.dict.domain
     }
 
-    renderOperateColumnExtend(record) {
-        return (
-            <>
-                <Divider type="vertical" />
-                <a
-                    onClick={() => {
-                        this.setState({ record, visibleFlow: true })
-                    }}
-                >
-                    测试流程
-                </a>
-            </>
-        )
-    }
+    // renderOperateColumnExtend(record) {
+    //     return (
+    //         <>
+    //             <Divider type="vertical" />
+    //             <a
+    //                 onClick={() => {
+    //                     this.setState({ record, visibleFlow: true })
+    //                 }}
+    //             >
+    //                 测试流程
+    //             </a>
+    //         </>
+    //     )
+    // }
 
     /**
      * 操作栏按钮
@@ -239,7 +239,7 @@ class List extends ListPage {
         const { visibleFlow, record } = this.state
         return (
             <>
-                {visibleFlow && (
+                {/* {visibleFlow && (
                     <Modal
                         title={"流程配置"}
                         visible={true}
@@ -260,7 +260,7 @@ class List extends ListPage {
                             schemas={schemas.flow}
                         />
                     </Modal>
-                )}
+                )} */}
                 {this.renderExportModal()}
             </>
         )
