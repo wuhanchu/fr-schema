@@ -3,14 +3,14 @@ import answer from "./answer"
 import intention from "./intention"
 import node from "./node"
 
-let service = createApi("talk_robot")
+let service = createApi("intent")
 
-service.get = ()=>{
-    return {list: []}
+service.get = () => {
+    return { list: [] }
 }
-service.getDetail = ()=>{
-    return {list: []}
-}
+// service.getDetail = ()=>{
+//     return {list: []}
+// }
 /**
  * form current robot clone one new
  * @param id robot id
@@ -25,13 +25,13 @@ service.clone = ({ id, ...others }) => {
  * release current robot
  * @param id robot id
  */
-service.release = id => {
+service.release = (id) => {
     return createApi(`talk_robot/${id}/status`).put({ status: 2 })
 }
-service.withdraw = id => {
+service.withdraw = (id) => {
     return createApi(`talk_robot/${id}/status`).put({ status: 1 })
 }
-service.sync = data => {
+service.sync = (data) => {
     const { id, ...others } = data
     return createApi(`update_all/${id}`).put(others)
 }
@@ -40,5 +40,5 @@ export default {
     service,
     answer,
     intention,
-    node
+    node,
 }

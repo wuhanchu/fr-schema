@@ -9,6 +9,7 @@ import frSchema from "@/outter/fr-schema/src"
 import { exportData } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
+import WordModel from "@/outter/fr-schema-antd-utils/src/components/GGeditor/WordModel/index"
 
 const { decorateList } = frSchema
 
@@ -23,6 +24,21 @@ class List extends ListPage {
             service: schemas.intent.service,
         })
         this.schema.domain_key.dict = this.props.dict.domain
+    }
+
+    renderOperateColumnExtend(record) {
+        return (
+            <>
+                <Divider type="vertical" />
+                <a
+                    onClick={() => {
+                        this.setState({ record, visibleFlow: true })
+                    }}
+                >
+                    测试流程
+                </a>
+            </>
+        )
     }
 
     /**
@@ -220,7 +236,34 @@ class List extends ListPage {
     }
 
     renderExtend() {
-        return <>{this.renderExportModal()}</>
+        const { visibleFlow, record } = this.state
+        return (
+            <>
+                {visibleFlow && (
+                    <Modal
+                        title={"流程配置"}
+                        visible={true}
+                        width={"90%"}
+                        style={{ top: 20 }}
+                        footer={null}
+                        onOk={() => {
+                            this.setState({ visibleFlow: false })
+                        }}
+                        onCancel={() => {
+                            this.setState({ visibleFlow: false })
+                        }}
+                        closable={false}
+                    >
+                        <WordModel
+                            visibleRelease={this.state.visibleFlow}
+                            record={record}
+                            schemas={schemas.flow}
+                        />
+                    </Modal>
+                )}
+                {this.renderExportModal()}
+            </>
+        )
     }
     // 搜索
     renderSearchBar() {
