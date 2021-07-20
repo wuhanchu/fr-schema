@@ -55,28 +55,6 @@ class List extends ListPage {
 
                 <Button
                     loading={this.state.exportLoading}
-                    // onClick={async () => {
-                    //     this.setState({ exportLoading: true }, async () => {
-                    //         let columns = this.getColumns(false).filter(
-                    //             (item) => {
-                    //                 return (
-                    //                     !item.isExpand &&
-                    //                     item.key !== "external_id"
-                    //                 )
-                    //             }
-                    //         )
-
-                    //         let data = await this.requestList({
-                    //             pageSize: 1000000,
-                    //         })
-                    //         data = decorateList(data.list, this.schema)
-                    //         console.log(columns)
-                    //         columns[1].title = "意图"
-                    //         columns = [columns[1], columns[2]]
-                    //         await exportData("导出数据", data, columns)
-                    //         this.setState({ exportLoading: false })
-                    //     })
-                    // }}
                     onClick={() => {
                         this.setState({ visibleExport: true })
                     }}
@@ -143,27 +121,6 @@ class List extends ListPage {
             this.setState({ exportLoading: false })
         })
         this.handleVisibleExportModal()
-
-        // 更新
-        // let response
-        // try {
-        //     response = await this.service.uploadExcel(
-        //         { ...data, file: data.file.file },
-        //         schema
-        //     )
-        // } catch (error) {
-        //     message.error(error.message)
-        //     this.handleVisibleExportModal()
-        //     return
-        // }
-
-        // // this.refreshList()
-        // // message.success("添加成功")
-        // this.handleVisibleExportModal()
-        // this.handleChangeCallback && this.handleChangeCallback()
-        // this.props.handleChangeCallback && this.props.handleChangeCallback()
-
-        // return response
     }
 
     renderExportModal() {
@@ -205,8 +162,6 @@ class List extends ListPage {
                     service={this.service}
                     schema={schema}
                     width={600}
-
-                    // {...customProps}
                 />
             )
         )
