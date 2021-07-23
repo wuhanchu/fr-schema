@@ -1,12 +1,12 @@
+[submodule "src/outter/fr-schema-antd-utils"]
+ 	path = src/outter/fr-schema-antd-utils
+ 	url = https://gitee.com/whcsdtc/fr-schema-antd-utils.git
 [submodule "src/outter/fr-schema"]
-	path = src/outter/fr-schema
-	url = https://github.com/wuhanchu/fr-schema.git
+ 	path = src/outter/fr-schema
+ 	url = https://gitee.com/whcsdtc/fr-schema.git
+[submodule "src/pages/authority"]
+ 	path = src/pages/authority
+ 	url = https://gitee.com/whcsdtc/fr-schema-authority.git
 [submodule "src/components/Extra"]
 	path = src/components/Extra
-	url = https://github.com/wuhanchu/antd-components.git
-[submodule "src/outter/fr-schema-antd-utils"]
-	path = src/outter/fr-schema-antd-utils
-	url = https://github.com/wuhanchu/fr-schema-antd-utils.git
-[submodule "src/pages/authority"]
-	path = src/pages/authority
-	url = https://wuhanchu@github.com/wuhanchu/fr-schema-authority.git
+ 	url = https://gitee.com/whcsdtc/antd-components.git
