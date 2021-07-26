@@ -6,12 +6,10 @@ const schema = {
         title: "域",
         sorter: true,
         required: true,
-        // style: { width: "500px" },
         type: schemaFieldType.Select,
     },
     name: {
         title: "名称",
-        // style: { width: "500px" },
         searchPrefix: "like",
         sorter: true,
         required: true,
@@ -19,15 +17,7 @@ const schema = {
 
     example: {
         title: "例子",
-        // sorter: true,
-        // style: { width: "500px" },
         required: true,
-        // type: schemaFieldType.Select,
-        // props: {
-        //     mode: "tags",
-        //     dropdownRender: false,
-        //     dropdownStyle: { zIndex: -999 },
-        // },
         type: schemaFieldType.TextArea,
         props: {
             autoSize: { minRows: 2, maxRows: 10 },
@@ -36,13 +26,26 @@ const schema = {
         exportConcat: true,
         extra: "每行表示一个例子",
     },
-
+    regex: {
+        title: "正则表达式",
+    },
+    standard_discourse: {
+        title: "标注话术",
+        type: schemaFieldType.TextArea,
+        props: {
+            autoSize: { minRows: 2, maxRows: 10 },
+        },
+        // listHide: true,
+        exportConcat: true,
+        extra: "每行表示一个话术",
+    },
     create_time: {
         title: "创建时间",
-        required: true,
+        // required: true,
         sorter: true,
         addHide: true,
         editHide: true,
+        listHide: true,
         props: {
             showTime: true,
         },

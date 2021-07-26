@@ -9,6 +9,7 @@ import frSchema from "@/outter/fr-schema/src"
 import { exportData } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
+import ImportModal from "@/outter/fr-schema-antd-utils/src/components/modal/ImportModal"
 // import WordModel from "@/outter/fr-schema-antd-utils/src/components/GGeditor/WordModel/index"
 
 const { decorateList } = frSchema
@@ -19,9 +20,14 @@ const { decorateList } = frSchema
 @Form.create()
 class List extends ListPage {
     constructor(props) {
+        const importTemplateUrl = (BASE_PATH + "/import/意图.xlsx").replace(
+            "//",
+            "/"
+        )
         super(props, {
             schema: schemas.intent.schema,
             service: schemas.intent.service,
+            importTemplateUrl,
         })
         this.schema.domain_key.dict = this.props.dict.domain
     }
@@ -131,8 +137,8 @@ class List extends ListPage {
             })
             data = decorateList(data.list, this.schema)
             console.log(columns)
-            columns[1].title = "意图"
-            columns = [columns[1], columns[2]]
+            // columns[1].title = "name"
+            // columns = [columns[1], columns[2]]
             await exportData("导出数据", data, columns)
             this.setState({ exportLoading: false })
         })
@@ -184,57 +190,41 @@ class List extends ListPage {
     }
 
     renderImportModal() {
-        if (this.props.renderInfoModal) {
-            return this.props.renderInfoModal()
-        }
-        const { form } = this.props
-        const renderForm = this.props.renderForm || this.renderForm
-        const { resource, title, addArgs } = this.meta
-        const { visibleImport, infoData, action } = this.state
-        const updateMethods = {
-            handleVisibleModal: this.handleVisibleImportModal.bind(this),
-            handleUpdate: this.handleUpdate.bind(this),
-            handleAdd: this.handleUploadExcel.bind(this),
-        }
-
-        const schema = {
-            domain_key: {
-                title: "域",
-                required: true,
-                extra: "意图对应的域",
-                type: schemaFieldType.Select,
-                dict: this.props.dict.domain,
-            },
-            file: {
-                title: "文件",
-                required: true,
-                extra: "必须包含意图列和例子列",
-                type: schemaFieldType.Upload,
-            },
-        }
-
         return (
-            visibleImport && (
-                <InfoModal
-                    renderForm={renderForm}
-                    title={"导入"}
-                    action={action}
-                    resource={resource}
-                    {...updateMethods}
-                    visible={visibleImport}
-                    values={infoData}
-                    addArgs={addArgs}
-                    meta={this.meta}
-                    service={this.service}
-                    schema={schema}
-                    width={600}
+            <ImportModal
+                importTemplateUrl={this.meta.importTemplateUrl}
+                schema={schemas.intent.schema}
+                errorKey={"question_standard"}
+                title={"导入"}
+                sliceNum={1}
+                onCancel={() => this.setState({ visibleImport: false })}
+                onChange={(data) => this.setState({ importData: data })}
+                onOk={async () => {
+                    // to convert
+                    console.log(this.state.importData)
+                    // const data = this.state.importData.map((item) => {
+                    //     const { label, question_extend, ...others } = item
 
-                    // {...customProps}
-                />
-            )
+                    //     let question_extend_data =
+                    //         question_extend[0] && question_extend[0].split("\n")
+                    //     if (typeof question_extend === "string") {
+                    //         question_extend_data = question_extend.split("\n")
+                    //     }
+
+                    //     return {
+                    //         ...this.meta.addArgs,
+                    //         label: label && label.split("|"),
+                    //         question_extend: question_extend_data,
+                    //         ...others,
+                    //     }
+                    // })
+                    // await this.service.upInsert(data)
+                    // this.setState({ visibleImport: false })
+                    // this.refreshList()
+                }}
+            />
         )
     }
-
     renderExtend() {
         const { visibleFlow, record } = this.state
         return (
