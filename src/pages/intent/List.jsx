@@ -134,6 +134,11 @@ class List extends ListPage {
 
             let columns = [
                 {
+                    title: "编号",
+                    dataIndex: "id",
+                    key: "id",
+                },
+                {
                     title: "域",
                     dataIndex: "domain_key",
                     key: "domain_key",
@@ -166,9 +171,6 @@ class List extends ListPage {
                 ...args,
             })
             data = decorateList(data.list, this.schema)
-            console.log(columns)
-            // columns[1].title = "name"
-            // columns = [columns[1], columns[2]]
             await exportData("导出数据", data, columns)
             this.setState({ exportLoading: false })
         })
@@ -224,6 +226,9 @@ class List extends ListPage {
             <ImportModal
                 importTemplateUrl={this.meta.importTemplateUrl}
                 schema={{
+                    id: {
+                        title: "编号",
+                    },
                     domain_key: {
                         title: "域",
                         type: schemaFieldType.Select,
@@ -248,26 +253,38 @@ class List extends ListPage {
                 onChange={(data) => this.setState({ importData: data })}
                 onOk={async () => {
                     // to convert
-                    console.log(this.state.importData)
-                    // const data = this.state.importData.map((item) => {
-                    //     const { label, question_extend, ...others } = item
+                    const data = this.state.importData.map((item) => {
+                        const {
+                            regex,
+                            example,
+                            standard_discourse,
+                            ...others
+                        } = item
 
-                    //     let question_extend_data =
-                    //         question_extend[0] && question_extend[0].split("\n")
-                    //     if (typeof question_extend === "string") {
-                    //         question_extend_data = question_extend.split("\n")
-                    //     }
+                        let regex_data = regex && regex.split("\n")
+                        let example_data = example && example.split("\n")
+                        let standard_discourse_data =
+                            standard_discourse && standard_discourse.split("\n")
+                        return {
+                            ...this.meta.addArgs,
+                            ...others,
+                            regex: regex_data ? regex_data : [],
+                            example: example_data ? example_data : [],
+                            standard_discourse: standard_discourse_data
+                                ? standard_discourse_data
+                                : [],
+                            id: parseInt(others.id)
+                                ? parseInt(others.id)
+                                : undefined,
+                        }
+                    })
+                    console.log(data)
 
-                    //     return {
-                    //         ...this.meta.addArgs,
-                    //         label: label && label.split("|"),
-                    //         question_extend: question_extend_data,
-                    //         ...others,
-                    //     }
-                    // })
-                    // await this.service.upInsert(data)
-                    // this.setState({ visibleImport: false })
-                    // this.refreshList()
+                    // let postData = data.filters
+
+                    await this.service.upInsert(data)
+                    this.setState({ visibleImport: false })
+                    this.refreshList()
                 }}
             />
         )
