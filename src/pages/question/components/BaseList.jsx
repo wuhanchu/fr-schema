@@ -70,6 +70,31 @@ class BaseList extends DataList {
     }
 
     async componentDidMount() {
+        await super.componentDidMount()
+    }
+
+    /**
+     * 查询当前数据
+     * @returns {Promise<*>}
+     */
+    async requestList(tempArgs = {}) {
+        const { queryArgs } = this.meta
+
+        let searchParams = this.getSearchParam()
+
+        const params = {
+            ...(queryArgs || {}),
+            ...searchParams,
+            ...(this.state.pagination || {}),
+            ...tempArgs,
+        }
+
+        let data = await this.service.get(params)
+        await this.getDict()
+        data = this.dataConvert(data)
+        return data
+    }
+    async getDict() {
         const response = await this.service.get({
             ...this.meta.queryArgs,
             select: "label,group",
@@ -125,7 +150,6 @@ class BaseList extends DataList {
                 </AutoComplete>
             )
         }
-        await super.componentDidMount()
     }
 
     // 搜索
