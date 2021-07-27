@@ -22,6 +22,8 @@ const schema = {
         type: schemaFieldType.Select,
         props: {
             mode: "tags",
+            dropdownRender: false,
+            dropdownStyle: { zIndex: -999 },
         },
     },
 }

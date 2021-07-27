@@ -10,6 +10,7 @@ import { exportData } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
 import ImportModal from "@/outter/fr-schema-antd-utils/src/components/modal/ImportModal"
+
 // import WordModel from "@/outter/fr-schema-antd-utils/src/components/GGeditor/WordModel/index"
 
 const { decorateList } = frSchema
@@ -126,10 +127,39 @@ class List extends ListPage {
 
     async handleExport(args, schema) {
         this.setState({ exportLoading: true }, async () => {
-            let columns = this.getColumns(false).filter((item) => {
-                return !item.isExpand && item.key !== "external_id"
-            })
+            // let columns = this.getColumns(false).filter((item) => {
+            //     console.log(item)
+            //     return !item.isExpand && item.key !== "external_id"
+            // })
 
+            let columns = [
+                {
+                    title: "域",
+                    dataIndex: "domain_key",
+                    key: "domain_key",
+                },
+                {
+                    title: "名称",
+                    dataIndex: "name",
+                    key: "name",
+                },
+                {
+                    title: "例子",
+                    dataIndex: "example",
+                    key: "example",
+                },
+                {
+                    title: "正则表达式",
+                    dataIndex: "regex",
+                    key: "regex",
+                },
+                {
+                    title: "标注话术",
+                    dataIndex: "standard_discourse",
+                    key: "standard_discourse",
+                },
+            ]
+            console.log(columns)
             let data = await this.requestList({
                 pageSize: 1000000,
                 offset: 0,
@@ -193,7 +223,24 @@ class List extends ListPage {
         return (
             <ImportModal
                 importTemplateUrl={this.meta.importTemplateUrl}
-                schema={schemas.intent.schema}
+                schema={{
+                    domain_key: {
+                        title: "域",
+                        type: schemaFieldType.Select,
+                    },
+                    name: {
+                        title: "名称",
+                    },
+                    example: {
+                        title: "例子",
+                    },
+                    regex: {
+                        title: "正则表达式",
+                    },
+                    standard_discourse: {
+                        title: "标注话术",
+                    },
+                }}
                 errorKey={"question_standard"}
                 title={"导入"}
                 sliceNum={1}
