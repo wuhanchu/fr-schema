@@ -148,13 +148,13 @@ export function getDictValue(value, dict) {
  */
 export function reverseDictValue(remark, dict) {
     if (remark instanceof Array) {
-        return remark.map((item) => reverseDictValueSingle(item))
+        return remark.map((item) => reverseDictValueSingle(item, dict))
     } else {
-        return reverseDictValueSingle(remark)
+        return reverseDictValueSingle(remark, dict)
     }
 }
 
-export function reverseDictValueSingle(remark) {
+export function reverseDictValueSingle(remark, dict) {
     let result = null
     Object.keys(dict).some((key) => {
         if (remark !== undefined && remark !== null) {
