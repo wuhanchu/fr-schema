@@ -26,6 +26,9 @@ const schema = {
         exportConcat: true,
         extra: "每行表示一个例子",
     },
+    key: {
+        title: "编码",
+    },
     regex: {
         title: "正则表达式",
         type: schemaFieldType.Select,

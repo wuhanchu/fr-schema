@@ -145,6 +145,11 @@ class List extends ListPage {
                     key: "name",
                 },
                 {
+                    title: "编码",
+                    dataIndex: "key",
+                    key: "key",
+                },
+                {
                     title: "例子",
                     dataIndex: "example",
                     key: "example",
@@ -232,6 +237,9 @@ class List extends ListPage {
                     },
                     name: {
                         title: "名称",
+                    },
+                    key: {
+                        title: "编码",
                     },
                     example: {
                         title: "例子",
