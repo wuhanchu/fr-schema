@@ -33,20 +33,20 @@ class List extends ListPage {
         this.schema.domain_key.dict = this.props.dict.domain
     }
 
-    renderOperateColumnExtend(record) {
-        return (
-            <>
-                <Divider type="vertical" />
-                <a
-                    onClick={() => {
-                        this.setState({ record, visibleFlow: true })
-                    }}
-                >
-                    测试流程
-                </a>
-            </>
-        )
-    }
+    // renderOperateColumnExtend(record) {
+    //     return (
+    //         <>
+    //             <Divider type="vertical" />
+    //             <a
+    //                 onClick={() => {
+    //                     this.setState({ record, visibleFlow: true })
+    //                 }}
+    //             >
+    //                 测试流程
+    //             </a>
+    //         </>
+    //     )
+    // }
 
     /**
      * 操作栏按钮
@@ -127,10 +127,10 @@ class List extends ListPage {
 
     async handleExport(args, schema) {
         this.setState({ exportLoading: true }, async () => {
-            // let columns = this.getColumns(false).filter((item) => {
-            //     console.log(item)
-            //     return !item.isExpand && item.key !== "external_id"
-            // })
+            let column = this.getColumns(false).filter((item) => {
+                return !item.isExpand && item.key !== "external_id"
+            })
+            console.log(column)
 
             let columns = [
                 {
@@ -138,11 +138,7 @@ class List extends ListPage {
                     dataIndex: "id",
                     key: "id",
                 },
-                {
-                    title: "域",
-                    dataIndex: "domain_key",
-                    key: "domain_key",
-                },
+                column[0],
                 {
                     title: "名称",
                     dataIndex: "name",
@@ -232,6 +228,7 @@ class List extends ListPage {
                     domain_key: {
                         title: "域",
                         type: schemaFieldType.Select,
+                        dict: this.props.dict.domain,
                     },
                     name: {
                         title: "名称",
