@@ -7,9 +7,11 @@ import intent from "./intent"
 import entity from "./entity"
 import entityType from "./entityType"
 import hotWord from "./domain/hotWord"
+import searchHistory from "./domain/searchHistory"
+
 import relation from "./relation"
 import relationType from "./relationType"
-import flow from './flow'
+import flow from "./flow"
 
 export default {
     project,
@@ -23,5 +25,6 @@ export default {
     hotWord,
     relation,
     relationType,
-    flow
+    flow,
+    searchHistory,
 }

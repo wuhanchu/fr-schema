@@ -12,7 +12,9 @@ import frSchema from "@/outter/fr-schema/src"
 import { listToDict } from "@/outter/fr-schema/src/dict"
 import UserTransfer from "./component/UserTransfer"
 import HotWord from "./component/HotWord"
-import IntentIdentify from  './component/IntentIdentify'
+import SearchHistory from "./component/SearchHistory"
+
+import IntentIdentify from "./component/IntentIdentify"
 
 const { schemaFieldType } = frSchema
 
@@ -122,7 +124,13 @@ class List extends ListPage {
     }
 
     renderExtend() {
-        const { record, visibleSearch, visibleDialogue, visibleIntentIdentify } = this.state
+        const {
+            record,
+            visibleSearch,
+            visibleDialogue,
+            visibleIntentIdentify,
+            visibleSearchHistory,
+        } = this.state
         return (
             <Fragment>
                 {visibleSearch && (
@@ -164,10 +172,10 @@ class List extends ListPage {
                 {visibleIntentIdentify && (
                     <IntentIdentify
                         onCancel={() => {
-                            this.setState({ visibleIntentIdentify: false });
+                            this.setState({ visibleIntentIdentify: false })
                         }}
-                        style={{ height: '900px' }}
-                        record={{...record, id: record.talk_service_id}}
+                        style={{ height: "900px" }}
+                        record={{ ...record, id: record.talk_service_id }}
                     />
                 )}
                 {this.state.showHotWord && (
@@ -181,6 +189,21 @@ class List extends ListPage {
                         }}
                     >
                         <HotWord record={this.state.record}></HotWord>
+                    </Modal>
+                )}
+                {visibleSearchHistory && (
+                    <Modal
+                        title={"搜索历史"}
+                        width={"70%"}
+                        visible={this.state.visibleSearchHistory}
+                        footer={null}
+                        onCancel={() => {
+                            this.setState({ visibleSearchHistory: false })
+                        }}
+                    >
+                        <SearchHistory
+                            record={this.state.record}
+                        ></SearchHistory>
                     </Modal>
                 )}
             </Fragment>
@@ -319,6 +342,17 @@ class List extends ListPage {
                     }}
                 >
                     功能测试
+                </a>
+                <Divider type="vertical" />
+                <a
+                    onClick={async () => {
+                        this.setState({
+                            visibleSearchHistory: true,
+                            record,
+                        })
+                    }}
+                >
+                    搜索历史
                 </a>
             </Fragment>
         )

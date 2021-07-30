@@ -33,20 +33,20 @@ class List extends ListPage {
         this.schema.domain_key.dict = this.props.dict.domain
     }
 
-    renderOperateColumnExtend(record) {
-        return (
-            <>
-                <Divider type="vertical" />
-                <a
-                    onClick={() => {
-                        this.setState({ record, visibleFlow: true })
-                    }}
-                >
-                    测试流程
-                </a>
-            </>
-        )
-    }
+    // renderOperateColumnExtend(record) {
+    //     return (
+    //         <>
+    //             <Divider type="vertical" />
+    //             <a
+    //                 onClick={() => {
+    //                     this.setState({ record, visibleFlow: true })
+    //                 }}
+    //             >
+    //                 测试流程
+    //             </a>
+    //         </>
+    //     )
+    // }
 
     /**
      * 操作栏按钮
