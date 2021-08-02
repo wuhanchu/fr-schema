@@ -109,6 +109,7 @@ class Dialogue extends React.Component {
                                 marginRight: "15px",
                                 marginTop: "25px",
                                 maxWidth: "526.5px",
+                                img: { width: "100px" },
                                 ...clientStyle,
                             }}
                         >

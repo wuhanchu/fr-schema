@@ -70,7 +70,7 @@ let config = defineConfig({
             pathRewrite: { "^/api/user_auth": "" },
         },
         "/api/z_ai_service": {
-            target: "http://server.aiknown.cn:36032",
+            target: process.env.AI_SERVICE_URL,
             changeOrigin: true,
             pathRewrite: { "^/api/z_ai_service": "" },
         },
