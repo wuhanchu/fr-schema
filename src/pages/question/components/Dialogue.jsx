@@ -142,65 +142,82 @@ class Dialogue extends React.Component {
                                             conversationId,
                                         } = this.state
 
-                                        if (index + 1 === mockDetail.length) {
-                                            this.setState({ isSpin: true })
-                                            mockDetail[
-                                                mockDetail.length - 1
-                                            ].buttons[indexs].isClick = true
+                                        // if (index + 1 === mockDetail.length) {
+                                        this.setState({ isSpin: true })
+                                        console.log(indexs)
+                                        console.log(index)
+                                        console.log(mockDetail)
+                                        // mockDetail[
+                                        //     index
+                                        // ].buttons[indexs].isClick = true
 
-                                            if (data.payload[0] !== "/") {
-                                                let msg = {
-                                                    content: data.payload,
-                                                    name: "我",
-                                                    time: new Date(),
-                                                    avatar:
-                                                        "http://img.binlive.cn/6.png",
-                                                    type: "right",
+                                        mockDetail[index].buttons = mockDetail[
+                                            index
+                                        ].buttons.map((item, ind) => {
+                                            if (ind === indexs) {
+                                                return {
+                                                    ...item,
+                                                    isClick: true,
                                                 }
-                                                mockDetail.push(msg)
-                                                this.setState(
-                                                    {
-                                                        mockDetail: [
-                                                            ...mockDetail,
-                                                        ],
-                                                    },
-                                                    (_) => this.scrollToBottom()
-                                                )
+                                            } else {
+                                                return {
+                                                    ...item,
+                                                    isClick: false,
+                                                }
                                             }
+                                        })
 
-                                            let res = await schemas.domain.service.message(
-                                                {
-                                                    service_id: serviceId,
-                                                    conversation_id: conversationId,
-                                                    text: data.payload,
-                                                }
-                                            )
-                                            let list = []
-                                            res.data &&
-                                                res.data.map((data) =>
-                                                    list.push({
-                                                        content: data.text,
-                                                        onlyRead: true,
-                                                        buttons: data.buttons,
-                                                        name: "智能客服",
-                                                        time: new Date(),
-                                                        avatar:
-                                                            "http://img.binlive.cn/6.png",
-                                                        type: "left",
-                                                    })
-                                                )
-                                            // 消息推进list 清空当前消息
+                                        if (data.payload[0] !== "/") {
+                                            let msg = {
+                                                content: data.payload,
+                                                name: "我",
+                                                time: new Date(),
+                                                avatar:
+                                                    "http://img.binlive.cn/6.png",
+                                                type: "right",
+                                            }
+                                            mockDetail.push(msg)
                                             this.setState(
                                                 {
-                                                    mockDetail: [
-                                                        ...mockDetail,
-                                                        ...list,
-                                                    ],
-                                                    isSpin: false,
+                                                    mockDetail: [...mockDetail],
                                                 },
                                                 (_) => this.scrollToBottom()
                                             )
                                         }
+
+                                        let res = await schemas.domain.service.message(
+                                            {
+                                                service_id: serviceId,
+                                                conversation_id: conversationId,
+                                                text: data.payload,
+                                            }
+                                        )
+                                        let list = []
+                                        res.data &&
+                                            res.data.map((data) =>
+                                                list.push({
+                                                    content: data.text,
+                                                    onlyRead: true,
+                                                    buttons: data.buttons,
+                                                    name: "智能客服",
+                                                    time: new Date(),
+                                                    avatar:
+                                                        "http://img.binlive.cn/6.png",
+                                                    type: "left",
+                                                })
+                                            )
+                                        // 消息推进list 清空当前消息
+                                        this.setState(
+                                            {
+                                                mockDetail: [
+                                                    ...mockDetail,
+                                                    ...list,
+                                                ],
+                                                isSpin: false,
+                                            },
+                                            (_) => this.scrollToBottom()
+                                        )
+                                        // }
                                     }}
                                     style={{
                                         ...styles.msgView,
