@@ -32,6 +32,7 @@ class List extends DataList {
                 ...props.queryArgs,
                 domain_key: props.record.key,
                 limit: 10,
+                // match_question_txt: 'not.is.null'
             },
         })
     }
@@ -94,10 +95,12 @@ class List extends DataList {
     }
 
     renderSearchBar() {
-        const { search } = this.schema
+        const { search, user_confirm } = this.schema
+
         const filters = this.createFilters(
             {
                 search,
+                user_confirm,
             },
             5
         )
