@@ -11,6 +11,7 @@ const schema = {
     },
     search: {
         title: "搜索内容",
+        searchPrefix: "like",
     },
 
     match_question_txt: {
