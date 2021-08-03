@@ -160,7 +160,7 @@ class List extends ListPage {
                     key: "regex",
                 },
                 {
-                    title: "标注话术",
+                    title: "标准话术",
                     dataIndex: "standard_discourse",
                     key: "standard_discourse",
                 },
@@ -248,7 +248,7 @@ class List extends ListPage {
                         title: "正则表达式",
                     },
                     standard_discourse: {
-                        title: "标注话术",
+                        title: "标准话术",
                     },
                 }}
                 errorKey={"question_standard"}

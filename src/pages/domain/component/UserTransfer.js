@@ -265,7 +265,7 @@ export class UserTransfer extends PureComponent {
     /**
      * 弹出框关闭前调用
      */
-    beforeFormClose = () => {
+    beforeFormClose = (otherProps) => {
         const { values } = this.state
         const { action } = this.props
         const fieldsValue = this.formRef.current.getFieldsValue()
@@ -307,11 +307,12 @@ export class UserTransfer extends PureComponent {
      * 关闭弹出框
      */
     closeModel = () => {
-        const { handleVisibleModal } = this.props
+        const { handleVisibleModal, onCancel } = this.props
         this.setState({
             visible: false,
         })
         handleVisibleModal && handleVisibleModal()
+        onCancel && onCancel()
     }
 
     render() {
@@ -341,9 +342,12 @@ export class UserTransfer extends PureComponent {
                 }}
                 {...otherProps}
                 onCancel={() => {
-                    if (this.beforeFormClose() === false) {
+                    if (this.beforeFormClose(otherProps) === false) {
+                        // otherProps.onCancel && otherProps.onCancel()
+
                         return false
                     }
+
                     otherProps.onCancel && otherProps.onCancel()
                 }}
             >
