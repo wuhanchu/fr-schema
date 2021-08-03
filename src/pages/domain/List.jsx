@@ -332,7 +332,7 @@ class List extends ListPage {
                 >
                     热门问题
                 </a>
-                <Divider type="vertical" />
+                {/* <Divider type="vertical" />
                 <a
                     onClick={async () => {
                         this.setState({
@@ -342,7 +342,7 @@ class List extends ListPage {
                     }}
                 >
                     功能测试
-                </a>
+                </a> */}
                 <Divider type="vertical" />
                 <a
                     onClick={async () => {

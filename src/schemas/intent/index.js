@@ -8,6 +8,10 @@ const schema = {
         required: true,
         type: schemaFieldType.Select,
     },
+    key: {
+        required: true,
+        title: "编码",
+    },
     name: {
         title: "名称",
         searchPrefix: "like",
@@ -17,18 +21,15 @@ const schema = {
 
     example: {
         title: "例子",
-        required: true,
         type: schemaFieldType.TextArea,
         props: {
-            autoSize: { minRows: 2, maxRows: 10 },
+            autoSize: { minRows: 2, maxRows: 6 },
         },
         listHide: true,
         exportConcat: true,
         extra: "每行表示一个例子",
     },
-    key: {
-        title: "编码",
-    },
+
     regex: {
         title: "正则表达式",
         type: schemaFieldType.Select,
@@ -40,11 +41,11 @@ const schema = {
         },
     },
     standard_discourse: {
-        title: "标注话术",
+        title: "标准话术",
         type: schemaFieldType.TextArea,
         listHide: true,
         props: {
-            autoSize: { minRows: 2, maxRows: 10 },
+            autoSize: { minRows: 2, maxRows: 6 },
         },
         // listHide: true,
         exportConcat: true,
