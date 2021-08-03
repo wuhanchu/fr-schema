@@ -144,9 +144,6 @@ class Dialogue extends React.Component {
 
                                         // if (index + 1 === mockDetail.length) {
                                         this.setState({ isSpin: true })
-                                        console.log(indexs)
-                                        console.log(index)
-                                        console.log(mockDetail)
                                         // mockDetail[
                                         //     index
                                         // ].buttons[indexs].isClick = true
@@ -329,57 +326,59 @@ class Dialogue extends React.Component {
                         ref={this.inputRef}
                     />
                 </div>
-                <Popconfirm
-                    title={() => {
-                        return (
-                            <div>
-                                请选择问题库！
-                                <br />
-                                <div style={{ marginTop: "10px" }}>
-                                    <Checkbox.Group
-                                        defaultChecked
-                                        onChange={(data) => {
-                                            this.setState({
-                                                checkboxValue: data,
-                                            })
-                                            console.log(data)
-                                        }}
-                                        options={options}
-                                        value={checkboxValue}
-                                    />
+                {options.length !== 0 && (
+                    <Popconfirm
+                        title={() => {
+                            return (
+                                <div>
+                                    请选择问题库！
+                                    <br />
+                                    <div style={{ marginTop: "10px" }}>
+                                        <Checkbox.Group
+                                            defaultChecked
+                                            onChange={(data) => {
+                                                this.setState({
+                                                    checkboxValue: data,
+                                                })
+                                                console.log(data)
+                                            }}
+                                            options={options}
+                                            value={checkboxValue}
+                                        />
+                                    </div>
                                 </div>
-                            </div>
-                        )
-                    }}
-                    onConfirm={async (data) => {
-                        this.setState({
-                            defaultProject: checkboxValue,
-                        })
-                        if (
-                            this.state.checkboxValue &&
-                            this.state.checkboxValue.length
-                        ) {
-                            await schemas.domain.service.message({
-                                service_id: serviceId,
-                                conversation_id: conversationId,
-                                text:
-                                    `/slot{"project\_id":"` +
-                                    checkboxValue.join(",") +
-                                    `"}`,
+                            )
+                        }}
+                        onConfirm={async (data) => {
+                            this.setState({
+                                defaultProject: checkboxValue,
                             })
-                        }
-                    }}
-                    onCancel={() => {
-                        this.setState({
-                            checkboxValue: defaultProject,
-                        })
-                    }}
-                    okText="确定"
-                >
-                    <Button style={styles.sendButton}>
-                        <SettingOutlined />
-                    </Button>
-                </Popconfirm>
+                            if (
+                                this.state.checkboxValue &&
+                                this.state.checkboxValue.length
+                            ) {
+                                await schemas.domain.service.message({
+                                    service_id: serviceId,
+                                    conversation_id: conversationId,
+                                    text:
+                                        `/slot{"project\_id":"` +
+                                        checkboxValue.join(",") +
+                                        `"}`,
+                                })
+                            }
+                        }}
+                        onCancel={() => {
+                            this.setState({
+                                checkboxValue: defaultProject,
+                            })
+                        }}
+                        okText="确定"
+                    >
+                        <Button style={styles.sendButton}>
+                            <SettingOutlined />
+                        </Button>
+                    </Popconfirm>
+                )}
 
                 <Button
                     // size=""
