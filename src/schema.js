@@ -321,26 +321,31 @@ export async function convertFormImport(
             })
 
             //  校验
-            await new validator(descriptor).validate(
-                result,
-                (errors, fields) => {
-                    if (errors) {
-                        console.error("item", item)
-                        console.error("errors", errors)
-                        console.error("fields", fields)
-
-                        let errorStr = ""
-                        errors.forEach((error) => {
-                            errorStr += `字段[${
-                                schema[error.field].title
-                            }]错误[${error.message}];`
-                        })
-
-                        throwMessage = `数据[${result[errorKey]}]出现问题: ${errorStr}。`
-                        reject(throwMessage)
+            try {
+                await new validator(descriptor).validate(
+                    result,
+                    (errors, fields) => {
+                        if (errors) {
+                            console.error("item", item)
+                            console.error("errors", errors)
+                            console.error("fields", fields)
+    
+                            let errorStr = ""
+                            errors.forEach((error) => {
+                                errorStr += `字段[${
+                                    schema[error.field].title
+                                }]错误[${error.message}];`
+                            })
+    
+                            throwMessage = `数据出现问题: ${errorStr}。`
+                            reject(throwMessage)
+                        }
                     }
-                }
-            )
+                )
+            } catch (error) {
+                
+            }
+            
 
             const convertResult = toRemote(result, schema, actions.add)
             resolve(convertResult)
