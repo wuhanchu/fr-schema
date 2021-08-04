@@ -19,6 +19,32 @@ class List extends DataList {
         this.schema.domain_key.dict = this.props.dict.domain
     }
 
+    async handleAdd(data, schema) {
+        // 更新
+        let response
+        if (!this.props.offline) {
+            try {
+                response = await this.service.post(data, schema)
+                message.success("添加成功")
+            } catch (error) {
+                message.error(error.message)
+            }
+        } else {
+            // 修改当前数据
+            this.state.data.list.push(decorateItem(data, this.schema))
+            this.setState({
+                data: this.state.data,
+            })
+        }
+
+        this.refreshList()
+        this.handleVisibleModal()
+        this.handleChangeCallback && this.handleChangeCallback()
+        this.props.handleChangeCallback && this.props.handleChangeCallback()
+
+        return response
+    }
+
     handleUpdate = async (data, schema, method = "patch") => {
         // 更新
         if (this.state.infoData.key === data.key) {

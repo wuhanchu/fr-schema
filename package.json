@@ -64,6 +64,7 @@
         "@types/minio": "^7.0.7",
         "antd": "4.6.5",
         "axios": "0.20.0",
+        "async-validator": "v3.5.2",
         "braft-editor": "^2.3.9",
         "classnames": "^2.2.6",
         "client-oauth2": "4.3.3",

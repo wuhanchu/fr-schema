@@ -141,7 +141,9 @@ class Dialogue extends React.Component {
                                             serviceId,
                                             conversationId,
                                         } = this.state
-
+                                        if (this.state.isSpin === true) {
+                                            return
+                                        }
                                         // if (index + 1 === mockDetail.length) {
                                         this.setState({ isSpin: true })
                                         // mockDetail[
@@ -383,6 +385,7 @@ class Dialogue extends React.Component {
                 <Button
                     // size=""
                     type="primary"
+                    disabled={this.state.isSpin}
                     style={styles.sendButton}
                     onClick={(_) => this.onSendMessage()}
                 >
@@ -396,6 +399,9 @@ class Dialogue extends React.Component {
     async onSendMessage() {
         let { inputValue, mockDetail, serviceId, conversationId } = this.state
         // 无内容或者只存在空格 不发送
+        if (this.state.isSpin === true) {
+            return
+        }
         if (
             !inputValue.replace(/[\r\n]/g, "") ||
             !inputValue.replace(/[ ]/g, "")
@@ -403,40 +409,44 @@ class Dialogue extends React.Component {
             return
         }
         this.setState({ isSpin: true })
-
-        let msg = {
-            content: inputValue,
-            name: "我",
-            time: new Date(),
-            avatar: "http://img.binlive.cn/6.png",
-            type: "right",
-        }
-        mockDetail.push(msg)
-        this.setState({ mockDetail: [...mockDetail], inputValue: "" }, (_) =>
-            this.scrollToBottom()
-        )
-        let res = await schemas.domain.service.message({
-            service_id: serviceId,
-            conversation_id: conversationId,
-            text: inputValue,
-        })
-        let list = []
-        res.data &&
-            res.data.map((item) =>
-                list.push({
-                    content: item.text,
-                    buttons: item.buttons,
-                    name: "智能客服",
-                    time: new Date(),
-                    avatar: "http://img.binlive.cn/6.png",
-                    type: "left",
-                })
+        try {
+            let msg = {
+                content: inputValue,
+                name: "我",
+                time: new Date(),
+                avatar: "http://img.binlive.cn/6.png",
+                type: "right",
+            }
+            mockDetail.push(msg)
+            this.setState(
+                { mockDetail: [...mockDetail], inputValue: "" },
+                (_) => this.scrollToBottom()
             )
-        // 消息推进list 清空当前消息
-        this.setState(
-            { mockDetail: [...mockDetail, ...list], isSpin: false },
-            (_) => this.scrollToBottom()
-        )
+            let res = await schemas.domain.service.message({
+                service_id: serviceId,
+                conversation_id: conversationId,
+                text: inputValue,
+            })
+            let list = []
+            res.data &&
+                res.data.map((item) =>
+                    list.push({
+                        content: item.text,
+                        buttons: item.buttons,
+                        name: "智能客服",
+                        time: new Date(),
+                        avatar: "http://img.binlive.cn/6.png",
+                        type: "left",
+                    })
+                )
+            // 消息推进list 清空当前消息
+            this.setState(
+                { mockDetail: [...mockDetail, ...list], isSpin: false },
+                (_) => this.scrollToBottom()
+            )
+        } catch (error) {
+            this.setState({ isSpin: false })
+        }
     }
 
     // 聊天窗口默认显示 最后聊天记录

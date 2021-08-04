@@ -10,11 +10,13 @@ const schema = {
     },
     key: {
         required: true,
+
         title: "编码",
     },
     name: {
         title: "名称",
         searchPrefix: "like",
+
         sorter: true,
         required: true,
     },

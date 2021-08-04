@@ -279,7 +279,7 @@ class BaseList extends DataList {
                                             info,
                                         ]
                                         await exportDataByTemplate(
-                                            "导出数据",
+                                            this.props.record.name,
                                             data,
                                             columns,
                                             this.meta.importTemplateUrl
@@ -368,26 +368,30 @@ class BaseList extends DataList {
             secretKey: minioConfig.SecretAccessKey,
             sessionToken: minioConfig.SessionToken,
         })
+        try {
+            checkedAndUpload(
+                "zknowninfo",
+                file,
+                minioClient,
+                minioConfig,
+                (res) => {
+                    // 输出url
+                    message.success(`文件上传成功`)
+                    // this.state.attachment.push(res)
+                    let attachment = []
+                    if (this.state.attachment)
+                        attachment = clone(this.state.attachment)
+                    attachment.push(res)
+                    this.setState({
+                        attachment,
+                        loadingAnnex: false,
+                    })
+                }
+            )
+        } catch (error) {
+            message.error("上传失败")
+        }
 
-        checkedAndUpload(
-            "zknowninfo",
-            file,
-            minioClient,
-            minioConfig,
-            (res) => {
-                // 输出url
-                message.success(`文件上传成功`)
-                // this.state.attachment.push(res)
-                let attachment = []
-                if (this.state.attachment)
-                    attachment = clone(this.state.attachment)
-                attachment.push(res)
-                this.setState({
-                    attachment,
-                    loadingAnnex: false,
-                })
-            }
-        )
         return false
     }
 
@@ -474,7 +478,7 @@ class BaseList extends DataList {
                                     this.setState({ showAnnex: false })
                                 },
                                 onCancel: () => {
-                                    return
+                                    this.setState({ showAnnex: false })
                                 },
                             })
                         }}

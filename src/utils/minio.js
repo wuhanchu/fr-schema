@@ -68,51 +68,59 @@ export function uploadFile(
             // 将buffer写入
             bufferStream.end(Buffer.from(ex.target.result))
             // 上传
-            minioClient.putObject(
-                bucketName,
-                fileName,
-                bufferStream,
-                fileSize,
-                metadata,
-                (err) => {
-                    if (err == null) {
-                        // 获取可下载的url
-                        minioClient.presignedGetObject(
-                            bucketName,
-                            fileName,
-                            24 * 60 * 60,
-                            (err1, presignedUrl) => {
-                                if (err1) return
-                                // 将数据返回
-                                callback({
-                                    // url: presignedUrl,
-                                    url: encodeURI(
-                                        mininConfig.secure
-                                            ? "https://" +
-                                                  mininConfig.endpoint +
-                                                  ":" +
-                                                  mininConfig.port +
-                                                  "/" +
-                                                  bucketName +
-                                                  "/" +
-                                                  fileName
-                                            : "http://" +
-                                                  mininConfig.endpoint +
-                                                  ":" +
-                                                  mininConfig.port +
-                                                  "/" +
-                                                  bucketName +
-                                                  "/" +
-                                                  fileName
-                                    ),
-                                    bucketName,
-                                    fileName: file.name,
-                                })
-                            }
-                        )
+            try {
+                minioClient.putObject(
+                    bucketName,
+                    fileName,
+                    bufferStream,
+                    fileSize,
+                    metadata,
+                    (err) => {
+                        console.log("成功")
+                        if (err == null) {
+                            // 获取可下载的url
+                            minioClient.presignedGetObject(
+                                bucketName,
+                                fileName,
+                                24 * 60 * 60,
+                                (err1, presignedUrl) => {
+                                    if (err1) {
+                                        console.log("错误")
+                                        return
+                                    }
+                                    // 将数据返回
+                                    callback({
+                                        // url: presignedUrl,
+                                        url: encodeURI(
+                                            mininConfig.secure
+                                                ? "https://" +
+                                                      mininConfig.endpoint +
+                                                      ":" +
+                                                      mininConfig.port +
+                                                      "/" +
+                                                      bucketName +
+                                                      "/" +
+                                                      fileName
+                                                : "http://" +
+                                                      mininConfig.endpoint +
+                                                      ":" +
+                                                      mininConfig.port +
+                                                      "/" +
+                                                      bucketName +
+                                                      "/" +
+                                                      fileName
+                                        ),
+                                        bucketName,
+                                        fileName: file.name,
+                                    })
+                                }
+                            )
+                        }
                     }
-                }
-            )
+                )
+            } catch (error) {
+                console.log("失败")
+            }
         }
     }
 }

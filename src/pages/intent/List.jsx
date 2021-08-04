@@ -33,20 +33,20 @@ class List extends ListPage {
         this.schema.domain_key.dict = this.props.dict.domain
     }
 
-    // renderOperateColumnExtend(record) {
-    //     return (
-    //         <>
-    //             <Divider type="vertical" />
-    //             <a
-    //                 onClick={() => {
-    //                     this.setState({ record, visibleFlow: true })
-    //                 }}
-    //             >
-    //                 测试流程
-    //             </a>
-    //         </>
-    //     )
-    // }
+    renderOperateColumnExtend(record) {
+        return (
+            <>
+                <Divider type="vertical" />
+                <a
+                    onClick={() => {
+                        this.setState({ record, visibleFlow: true })
+                    }}
+                >
+                    测试流程
+                </a>
+            </>
+        )
+    }
 
     /**
      * 操作栏按钮
@@ -172,7 +172,7 @@ class List extends ListPage {
                 ...args,
             })
             data = decorateList(data.list, this.schema)
-            await exportData("导出数据", data, columns)
+            await exportData("意图", data, columns)
             this.setState({ exportLoading: false })
         })
         this.handleVisibleExportModal()
@@ -232,14 +232,20 @@ class List extends ListPage {
                     },
                     domain_key: {
                         title: "域",
+                        required: true,
+                        rules: (rule, value) => value,
                         type: schemaFieldType.Select,
                         dict: this.props.dict.domain,
                     },
                     name: {
                         title: "名称",
+                        rules: (rule, value) => value,
+                        required: true,
                     },
                     key: {
                         title: "编码",
+                        rules: (rule, value) => value,
+                        required: true,
                     },
                     example: {
                         title: "例子",
