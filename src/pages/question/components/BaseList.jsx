@@ -306,6 +306,7 @@ class BaseList extends DataList {
                         this.setState({
                             showAnnex: true,
                             record: record,
+                            isUpload: false,
                             attachment: clone(record.attachment),
                         })
                     }}
@@ -385,6 +386,7 @@ class BaseList extends DataList {
                     this.setState({
                         attachment,
                         loadingAnnex: false,
+                        isUpload: true,
                     })
                 }
             )
@@ -429,7 +431,10 @@ class BaseList extends DataList {
                                     okText: "关闭",
                                     cancelText: "取消",
                                     onOk: () => {
-                                        this.setState({ showAnnex: false })
+                                        this.setState({
+                                            showAnnex: false,
+                                            loadingAnnex: false,
+                                        })
                                     },
                                     onCancel: () => {
                                         return
@@ -442,6 +447,13 @@ class BaseList extends DataList {
                         <Button
                             type="primary"
                             onClick={async () => {
+                                if (!this.state.isUpload) {
+                                    this.setState({
+                                        showAnnex: false,
+                                        loadingAnnex: false,
+                                    })
+                                    return
+                                }
                                 await this.service.patch(
                                     {
                                         id: this.state.record.id,
