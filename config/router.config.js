@@ -73,7 +73,11 @@ export default [
                         redirect: "/domain/list",
                         title: "域列表",
                     },
-
+                    {
+                        path: "/flow",
+                        title: "流程图",
+                        component: "./flow/Chart",
+                    },
                     {
                         path: "/domain",
                         name: "domain",

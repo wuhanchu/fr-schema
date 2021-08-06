@@ -402,6 +402,23 @@
   dependencies:
     "@antv/gl-matrix" "^2.7.1"
 
+"@antv/x6-react-shape@^1.4.5":
+  version "1.4.5"
+  resolved "https://registry.nlark.com/@antv/x6-react-shape/download/@antv/x6-react-shape-1.4.5.tgz#3a5f50d5e88397d7c4d68521cfc3d201d0b1b2a8"
+  integrity sha1-Ol9Q1eiDl9fE1oUhz8PSAdCxsqg=
+
+"@antv/x6@^1.25.1":
+  version "1.25.1"
+  resolved "https://registry.nlark.com/@antv/x6/download/@antv/x6-1.25.1.tgz?cache=0&sync_timestamp=1627956055768&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40antv%2Fx6%2Fdownload%2F%40antv%2Fx6-1.25.1.tgz#df2cf567558b9a58d152fc1f8cbf5c771baff40d"
+  integrity sha1-3yz1Z1WLmljRUvwfjL9cdxuv9A0=
+  dependencies:
+    csstype "^3.0.3"
+    jquery "^3.5.1"
+    jquery-mousewheel "^3.1.13"
+    lodash-es "^4.17.15"
+    mousetrap "^1.6.5"
+    utility-types "^3.10.0"
+
 "@babel/code-frame@7.0.0":
   version "7.0.0"
   resolved "https://registry.npm.taobao.org/@babel/code-frame/download/@babel/code-frame-7.0.0.tgz?cache=0&sync_timestamp=1578953126105&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40babel%2Fcode-frame%2Fdownload%2F%40babel%2Fcode-frame-7.0.0.tgz#06e2ab19bdb535385559aabb5ba59729482800f8"
@@ -7535,6 +7552,11 @@ csstype@^3.0.2:
   resolved "https://registry.npm.taobao.org/csstype/download/csstype-3.0.4.tgz?cache=0&sync_timestamp=1603439946794&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fcsstype%2Fdownload%2Fcsstype-3.0.4.tgz#b156d7be03b84ff425c9a0a4b1e5f4da9c5ca888"
   integrity sha1-sVbXvgO4T/QlyaCkseX02pxcqIg=
 
+csstype@^3.0.3:
+  version "3.0.8"
+  resolved "https://registry.nlark.com/csstype/download/csstype-3.0.8.tgz?cache=0&sync_timestamp=1618818466657&other_urls=https%3A%2F%2Fregistry.nlark.com%2Fcsstype%2Fdownload%2Fcsstype-3.0.8.tgz#d2266a792729fb227cd216fb572f43728e1ad340"
+  integrity sha1-0iZqeScp+yJ80hb7Vy9Dco4a00A=
+
 currently-unhandled@^0.4.1:
   version "0.4.1"
   resolved "https://registry.npm.taobao.org/currently-unhandled/download/currently-unhandled-0.4.1.tgz#988df33feab191ef799a61369dd76c17adf957ea"
@@ -12268,6 +12290,16 @@ joi2types@~1.0.7:
     "@types/json-schema" "^7.0.4"
     json-schema-to-typescript "^8.2.0"
 
+jquery-mousewheel@^3.1.13:
+  version "3.1.13"
+  resolved "https://registry.npm.taobao.org/jquery-mousewheel/download/jquery-mousewheel-3.1.13.tgz#06f0335f16e353a695e7206bf50503cb523a6ee5"
+  integrity sha1-BvAzXxbjU6aV5yBr9QUDy1I6buU=
+
+jquery@^3.5.1:
+  version "3.6.0"
+  resolved "https://registry.npm.taobao.org/jquery/download/jquery-3.6.0.tgz#c72a09f15c1bdce142f49dbf1170bdf8adac2470"
+  integrity sha1-xyoJ8Vwb3OFC9J2/EXC9+K2sJHA=
+
 "js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
   version "4.0.0"
   resolved "https://registry.npm.taobao.org/js-tokens/download/js-tokens-4.0.0.tgz?cache=0&sync_timestamp=1586796260005&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fjs-tokens%2Fdownload%2Fjs-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
@@ -12826,6 +12858,11 @@ locate-path@^5.0.0:
   integrity sha1-Gvujlq/WdqbUJQTQpno6frn2KqA=
   dependencies:
     p-locate "^4.1.0"
+
+lodash-es@^4.17.15:
+  version "4.17.21"
+  resolved "https://registry.nlark.com/lodash-es/download/lodash-es-4.17.21.tgz#43e626c46e6591b7750beb2b50117390c609e3ee"
+  integrity sha1-Q+YmxG5lkbd1C+srUBFzkMYJ4+4=
 
 lodash._reinterpolate@^3.0.0:
   version "3.0.0"
@@ -13737,6 +13774,11 @@ moo@^0.5.0:
   version "0.5.1"
   resolved "https://registry.npm.taobao.org/moo/download/moo-0.5.1.tgz#7aae7f384b9b09f620b6abf6f74ebbcd1b65dbc4"
   integrity sha1-eq5/OEubCfYgtqv29067zRtl28Q=
+
+mousetrap@^1.6.5:
+  version "1.6.5"
+  resolved "https://registry.npm.taobao.org/mousetrap/download/mousetrap-1.6.5.tgz#8a766d8c272b08393d5f56074e0b5ec183485bf9"
+  integrity sha1-inZtjCcrCDk9X1YHTgtewYNIW/k=
 
 move-concurrently@^1.0.1:
   version "1.0.1"
@@ -20439,6 +20481,11 @@ util@^0.11.0:
   integrity sha1-MjZzNyDsZLsn9uJvQhqqLhtYjWE=
   dependencies:
     inherits "2.0.3"
+
+utility-types@^3.10.0:
+  version "3.10.0"
+  resolved "https://registry.npm.taobao.org/utility-types/download/utility-types-3.10.0.tgz#ea4148f9a741015f05ed74fd615e1d20e6bed82b"
+  integrity sha1-6kFI+adBAV8F7XT9YV4dIOa+2Cs=
 
 utils-merge@1.0.1:
   version "1.0.1"
