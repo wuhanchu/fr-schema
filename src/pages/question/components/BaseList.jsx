@@ -388,6 +388,13 @@ class BaseList extends DataList {
                         loadingAnnex: false,
                         isUpload: true,
                     })
+                },
+                () => {
+                    message.error(`文件上传失败`)
+                    this.setState({
+                        loadingAnnex: false,
+                        isUpload: true,
+                    })
                 }
             )
         } catch (error) {
@@ -417,12 +424,12 @@ class BaseList extends DataList {
         const footer = (
             <>
                 <Row style={{ height: "32px", overflow: "hidden" }} gutter={24}>
-                    <Col xl={16}>
+                    <Col lg={16}>
                         <Upload {...props}>
                             <Button icon={<UploadOutlined />}>上传附件</Button>
                         </Upload>
                     </Col>
-                    <Col xl={8}>
+                    <Col lg={8}>
                         <Button
                             onClick={() => {
                                 confirm({

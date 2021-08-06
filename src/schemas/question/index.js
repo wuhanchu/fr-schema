@@ -132,6 +132,9 @@ const schema = {
                                     //   poster: 'http://xxx/xx.png', // 指定视频播放器的封面
                                 },
                             })
+                        },
+                        () => {
+                            message.error(`文件上传失败`)
                         }
                     )
                 },

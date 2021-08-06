@@ -15,7 +15,7 @@ const schema = {
         required: true,
     },
 
-    exntend_text: {
+    extend_text: {
         title: "扩展文本",
         sorter: true,
         required: true,

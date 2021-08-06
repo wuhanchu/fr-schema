@@ -132,13 +132,15 @@ export function checkedAndUpload(
     info,
     minioClient,
     mininConfig,
-    callback
+    callback,
+    callError
 ) {
     minioClient.bucketExists(bucketName, (err) => {
         if (err) {
             minioClient.makeBucket(bucketName, "us-east-1", (err1) => {
                 if (err1) {
-                    console.error(`文件上传失败`)
+                    console.error(`文件上传失败123`)
+                    callError()
                     return
                 }
                 uploadFile(bucketName, info, minioClient, mininConfig, callback)
