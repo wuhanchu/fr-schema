@@ -10,7 +10,7 @@ import { exportData } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
 import ImportModal from "@/outter/fr-schema-antd-utils/src/components/modal/ImportModal"
-
+import ChartModal from "@/pages/flow"
 import WordModel from "@/outter/fr-schema-antd-utils/src/components/GGeditor/WordModel/index"
 
 const { decorateList } = frSchema
@@ -309,7 +309,7 @@ class List extends ListPage {
                         title={"流程配置"}
                         visible={true}
                         width={"90%"}
-                        style={{ top: 20 }}
+                        style={{ top: 20, bottom: 20 }}
                         footer={null}
                         onOk={() => {
                             this.setState({ visibleFlow: false })
@@ -319,7 +319,7 @@ class List extends ListPage {
                         }}
                         closable={false}
                     >
-                        <WordModel
+                        <ChartModal
                             visibleRelease={false}
                             record={record}
                             schemas={schemas.flow}

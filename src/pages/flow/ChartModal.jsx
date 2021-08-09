@@ -228,7 +228,7 @@ class Chart extends React.Component {
         this.setState({ value: "" })
         const graph = new Graph({
             grid: true,
-            width: 800,
+            // width: 800,
             height: 600,
             container: document.getElementById("container"),
             autoResize: true,
@@ -431,12 +431,6 @@ class Chart extends React.Component {
         return (
             <Card style={{ height: "100%" }}>
                 <div style={{ display: "flex" }}>
-                    <div style={{ flex: 1 }}>
-                        <div
-                            id="container"
-                            style={{ width: "100%", height: "100%" }}
-                        />
-                    </div>
                     <div style={{ flex: "0 0 300px" }}>
                         {this.state && this.state.type && (
                             <InfoForm
@@ -481,6 +475,12 @@ class Chart extends React.Component {
                                 }}
                             />
                         )}
+                    </div>
+                    <div style={{ flex: 1 }}>
+                        <div
+                            id="container"
+                            style={{ width: "100%", height: "100%" }}
+                        />
                     </div>
                 </div>
             </Card>

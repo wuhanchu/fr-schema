@@ -76,7 +76,7 @@ export default [
                     {
                         path: "/flow",
                         title: "流程图",
-                        component: "./flow/Chart",
+                        component: "./flow/index",
                     },
                     {
                         path: "/domain",

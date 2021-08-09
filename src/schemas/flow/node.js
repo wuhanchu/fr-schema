@@ -135,8 +135,8 @@ export default {
                     value: 3,
                     remark: " 结束语",
                 },
-                start: {
-                    value: 0,
+                begin: {
+                    value: "begin",
                     remark: " 开始话术",
                 },
             },
