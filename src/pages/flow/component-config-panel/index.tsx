@@ -5,6 +5,8 @@ import { useObservableState } from "@/common/hooks/useObservableState"
 import { useExperimentGraph } from "@/pages/flow/rx-models/experiment-graph"
 import { ExperimentForm } from "./form/experiment-config"
 import { NodeFormDemo } from "./form/node-config"
+import { GlobalForm } from "./form/global"
+
 import css from "./index.less"
 
 interface Props {
@@ -18,7 +20,6 @@ export const ComponentConfigPanel: React.FC<Props> = (props) => {
     const [activeNodeInstance] = useObservableState(
         () => expGraph.activeNodeInstance$
     )
-
     const nodeId = activeNodeInstance && activeNodeInstance.id
 
     return (
@@ -40,16 +41,30 @@ export const ComponentConfigPanel: React.FC<Props> = (props) => {
                                     experimentId={experimentId}
                                 />
                             )}
-                            {!nodeId && (
+                            {!nodeId && expGraph.activateNode && (
                                 <ExperimentForm
-                                    name="实验设置"
+                                    name="意图设置"
+                                    edge={expGraph.activateNode}
+                                    nodeId={
+                                        expGraph.activateNode &&
+                                        expGraph.activateNode[0] &&
+                                        expGraph.activateNode[0].id
+                                    }
                                     experimentId={experimentId}
                                 />
                             )}
                         </div>
                     </Tabs.TabPane>
-                    <Tabs.TabPane tab="全局参数" key="params" disabled={true}>
-                        <div className={css.form} />
+                    <Tabs.TabPane tab="行为/提交" key="params">
+                        <div className={css.form}>
+                            {
+                                <GlobalForm
+                                    name="节点参数"
+                                    nodeId={nodeId}
+                                    experimentId={experimentId}
+                                />
+                            }
+                        </div>
                     </Tabs.TabPane>
                 </Tabs>
             </div>

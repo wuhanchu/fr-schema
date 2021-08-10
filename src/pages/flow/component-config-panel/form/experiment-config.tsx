@@ -6,51 +6,64 @@ import { useExperimentGraph } from "@/pages/flow/rx-models/experiment-graph"
 export interface Props {
     name: string
     experimentId: string
+    nodeId: string
+    edge: object
 }
 
-export const ExperimentForm: React.FC<Props> = ({ experimentId, name }) => {
+export const ExperimentForm: React.FC<Props> = ({
+    experimentId,
+    name,
+    edges,
+    nodeId,
+}) => {
     const [form] = Form.useForm()
 
     const expGraph = useExperimentGraph(experimentId)
     const [activeExperiment] = useObservableState(expGraph.experiment$)
-
-    const onValuesChange = ({ experimentName }: { experimentName: string }) => {
-        console.log(activeExperiment)
-        expGraph.experiment$.next({ ...activeExperiment, name: experimentName })
+    let initialValues = {}
+    if (nodeId && expGraph.getEdgeById(nodeId)) {
+        initialValues = expGraph.getEdgeById(nodeId).store.data.data
+    }
+    const onValuesChange = (value) => {
+        console.log(value)
+        console.log(expGraph.getEdges())
+        console.log(expGraph.getEdgeById(nodeId))
+        expGraph.getEdgeById(nodeId).setLabels({
+            attrs: {
+                text: {
+                    text: value.name,
+                },
+            },
+        })
+        if (nodeId) {
+            expGraph.renameNode(nodeId, value)
+        }
     }
 
     React.useEffect(() => {
-        form.setFieldsValue({
-            experimentName: activeExperiment ? activeExperiment.name : "",
-        })
-    }, [activeExperiment])
-
+        console.log("改变")
+        form.setFieldsValue(initialValues)
+    }, [activeExperiment, nodeId])
+    // console
+    console.log("name", initialValues)
     return (
         <Form
             form={form}
             layout="vertical"
-            initialValues={{
-                experimentName: activeExperiment ? activeExperiment.name : "",
-            }}
+            initialValues={initialValues}
             onValuesChange={onValuesChange}
             requiredMark={false}
         >
-            <Form.Item name="experimentName" label="节点名称">
-                <Input placeholder="请输入节点名称" />
+            <Form.Item name="name" label="意图名称">
+                <Input placeholder="请输入意图名称" />
             </Form.Item>
-            <Form.Item name="data" label={"节点类型"}>
+            <Form.Item name="condition" label={"意图"}>
                 <Input placeholder="请输入节点类型" />
             </Form.Item>
             <Form.Item label="操作">
                 <Input placeholder="请选择操作" />
             </Form.Item>
-            <Form.Item label="RadioDemo">
-                <Radio.Group>
-                    <Radio.Button value="optional">Optional</Radio.Button>
-                    <Radio.Button value={true}>Required</Radio.Button>
-                    <Radio.Button value={false}>Hidden</Radio.Button>
-                </Radio.Group>
-            </Form.Item>
+            {/* 提交定义：<FolderAddTwoTone /> */}
         </Form>
     )
 }

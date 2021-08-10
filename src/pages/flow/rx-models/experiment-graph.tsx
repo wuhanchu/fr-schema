@@ -264,6 +264,27 @@ class ExperimentGraph extends GraphCore<BaseNode, BaseEdge> {
             this.loading$.next(false)
             console.error("加载实验错误", e)
         }
+        const myGraph = useExperimentGraph(1)
+        setTimeout(() => {
+            let edges = myGraph.getEdges()
+            edges.length &&
+                edges.map((item, index) => {
+                    item.setLabels({
+                        attrs: {
+                            text: {
+                                text: item.store.data.name,
+                            },
+                        },
+                    })
+                })
+
+            const oldGraph = this.experimentGraph$.getValue()
+            myGraph.formData = {}
+            myGraph.formData.condtion = oldGraph.condtion
+            myGraph.formData.action = oldGraph.action
+
+            console.log(oldGraph)
+        }, 100)
     }
 
     // 切换实验
@@ -274,6 +295,7 @@ class ExperimentGraph extends GraphCore<BaseNode, BaseEdge> {
 
     // 获取实验
     async loadExperiment(experimentId: string) {
+        console.log("获取实验")
         try {
             const res = {
                 projectName: "sre_mpi_algo_dev",
@@ -301,6 +323,7 @@ class ExperimentGraph extends GraphCore<BaseNode, BaseEdge> {
         links: NExperimentGraph.Link[] = []
     ) {
         const oldGraph = this.experimentGraph$.getValue()
+
         const newGraph = produce(oldGraph, (nextGraph: any) => {
             if (nodes.length) {
                 nextGraph.nodes.push(...nodes)
@@ -463,12 +486,29 @@ class ExperimentGraph extends GraphCore<BaseNode, BaseEdge> {
     }
 
     onSelectNodes(nodes: BaseNode[]) {
+        console.log("select")
+        console.log(nodes)
+
+        this.activateNode = nodes
         const selectedNodes: X6DemoNode[] = nodes.filter(
             (cell) => cell.isNode() && !cell.isGroup()
         ) as X6DemoNode[]
         const selectedGroups: X6DemoGroupNode[] = nodes.filter(
             (cell) => cell.isNode() && cell.isGroup()
         )
+
+        console.log("selectedNodes, selectedGroups")
+
+        console.log(selectedNodes, selectedGroups, nodes)
+        if (nodes.length === 1 && selectedNodes.length === 0) {
+            const cell = nodes[0]
+            const nodeData = cell.getData()
+            this.activateNode = nodes
+            this.activeNodeInstance$.next(nodeData as any)
+        } else {
+            console.log("不是")
+            this.activateNode = undefined
+        }
         if (selectedNodes.length === 1) {
             // 当只选中了一个节点时，激活当前选中项
             const cell = selectedNodes[0]
@@ -753,12 +793,12 @@ class ExperimentGraph extends GraphCore<BaseNode, BaseEdge> {
     }
 
     // 重命名节点
-    renameNode = async (nodeInstanceId: string, newName: string) => {
+    renameNode = async (nodeInstanceId, newProps) => {
         const renameRes = await { success: true }
         if (renameRes.success) {
             const cell = this.getCellById(nodeInstanceId)
             const data: object = cell!.getData()
-            const newData = { ...data, name: newName }
+            const newData = { ...data, ...newProps }
             cell!.setData(newData)
             this.updateExperimentGraph([newData as any])
         }

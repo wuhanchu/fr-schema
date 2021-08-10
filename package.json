@@ -41,13 +41,11 @@
         }
     },
     "lint-staged": {
-        "**/*.less": "stylelint --syntax less",
         "**/*.{js,jsx,tsx,ts,less,md,json}": [
             "prettier --write",
             "git add"
-        ],
-        "**/*.{js,jsx}": "npm run lint-staged:js",
-        "**/*.{js,ts,tsx}": "npm run lint-staged:js"
+        ]
+
     },
     "browserslist": [
         "> 1%",
