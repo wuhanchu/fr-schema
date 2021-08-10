@@ -25,9 +25,6 @@ export const ExperimentForm: React.FC<Props> = ({
         initialValues = expGraph.getEdgeById(nodeId).store.data.data
     }
     const onValuesChange = (value) => {
-        console.log(value)
-        console.log(expGraph.getEdges())
-        console.log(expGraph.getEdgeById(nodeId))
         expGraph.getEdgeById(nodeId).setLabels({
             attrs: {
                 text: {
@@ -41,7 +38,6 @@ export const ExperimentForm: React.FC<Props> = ({
     }
 
     React.useEffect(() => {
-        console.log("改变")
         form.setFieldsValue(initialValues)
     }, [activeExperiment, nodeId])
     // console
