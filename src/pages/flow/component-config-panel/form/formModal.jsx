@@ -1,5 +1,5 @@
 import React from "react"
-import { Input, Tag, Form, Button, Space, Row, Col } from "antd"
+import { Input, Tag, Form, Button, Space, Row, Col, Select } from "antd"
 import { useExperimentGraph } from "@/pages/flow/rx-models/experiment-graph"
 import "antd/lib/style/index.css"
 import { FolderAddTwoTone } from "@ant-design/icons"
@@ -132,7 +132,20 @@ export const FormModal = ({
                     name="type"
                     rules={[{ required: true, message: "请输入类型！" }]}
                 >
-                    <Input placeholder={"请输入类型"} />
+                    <Select placeholder="请输入类型" style={{ width: "100%" }}>
+                        <Select.Option value={"phone_play_audio"}>
+                            对接电话播放音频
+                        </Select.Option>
+                        <Select.Option value={"phone_play_tts_audio"}>
+                            对接电话播放语音合成音频
+                        </Select.Option>
+                        <Select.Option value={"search"}>
+                            搜索知识库
+                        </Select.Option>
+                        <Select.Option value={"transfer_manual"}>
+                            转人工
+                        </Select.Option>
+                    </Select>
                 </Form.Item>
 
                 {/* <Form.Item

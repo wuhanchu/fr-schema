@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { Form, Input, Radio, Tag } from "antd"
+import { Form, Input, Radio, Tag, Select, InputNumber } from "antd"
 import { useObservableState } from "@/common/hooks/useObservableState"
 import { useExperimentGraph } from "@/pages/flow/rx-models/experiment-graph"
 import "antd/lib/style/index.css"
@@ -72,10 +72,19 @@ export const NodeFormDemo: React.FC<Props> = ({
                 <Input placeholder="请输入节点类型" />
             </Form.Item>
             <Form.Item name={"allow_action_repeat"} label={"是否允许重复"}>
-                <Input placeholder="请输入是否允许重复" />
+                <Select
+                    placeholder="请输入是否允许重复"
+                    style={{ width: "100%" }}
+                >
+                    <Select.Option value={true}>是</Select.Option>
+                    <Select.Option value={false}>否</Select.Option>
+                </Select>
             </Form.Item>
             <Form.Item name={"allow_repeat_time"} label={"允许重复次数"}>
-                <Input placeholder="请输入允许重复次数" />
+                <InputNumber
+                    style={{ width: "100%" }}
+                    placeholder="请输入允许重复次数"
+                />
             </Form.Item>
             {/* <Form.Item name={"opeation"} label="操作">
                 <Input placeholder="请选择操作" />

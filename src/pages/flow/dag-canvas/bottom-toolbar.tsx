@@ -77,7 +77,7 @@ export const BottomToolbar: React.FC<Props> = (props) => {
                 </li>
 
                 {/* 运行/停止 */}
-                <Popover
+                {/* <Popover
                     content={runningConfig.tip}
                     overlayClassName={styles.popover}
                 >
@@ -90,7 +90,7 @@ export const BottomToolbar: React.FC<Props> = (props) => {
                         <RunningIcon />
                         <span>{runningConfig.content}</span>
                     </li>
-                </Popover>
+                </Popover> */}
             </ul>
         </div>
     )
