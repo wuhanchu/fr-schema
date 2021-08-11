@@ -14,7 +14,7 @@ export const FormModal = ({
     setActions,
     setCondtions,
     condtions,
-    action,
+    actions,
 }) => {
     const [form] = Form.useForm()
 
