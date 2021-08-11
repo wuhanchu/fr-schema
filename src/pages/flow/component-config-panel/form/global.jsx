@@ -13,9 +13,9 @@ export const GlobalForm = ({ name, nodeId, experimentId }) => {
     const [actionType, setActionType] = useState("add")
 
     const expGraph = useExperimentGraph(experimentId)
-    let { action, condtion } = expGraph.formData
+    let { action, condition } = expGraph.formData
     const [actions, setActions] = useState(action)
-    const [condtions, setCondtions] = useState(condtion)
+    const [condtions, setConditions] = useState(condition)
     const [defaultValue, setDefaultValue] = useState({})
 
     return (
@@ -53,14 +53,14 @@ export const GlobalForm = ({ name, nodeId, experimentId }) => {
                 </Tag>
             </Form.Item>
             <Form.Item label={"提交定义"}>
-                {condtion.map((item, index) => {
+                {condition.map((item, index) => {
                     return <Tag>{item.name}</Tag>
                 })}
                 <Tag
                     onClick={() => {
                         setActionType("add")
                         setVisible(true)
-                        setType("condtion")
+                        setType("condition")
                         console.log(visible)
                     }}
                     color="#2db7f5"
@@ -78,7 +78,7 @@ export const GlobalForm = ({ name, nodeId, experimentId }) => {
                     condtions={condtions}
                     handleVisible={setVisible}
                     setActions={setActions}
-                    setCondtions={setCondtions}
+                    setConditions={setConditions}
                 />
             )}
         </Form>

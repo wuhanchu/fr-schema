@@ -55,7 +55,7 @@ export const ComponentConfigPanel: React.FC<Props> = (props) => {
                             )}
                         </div>
                     </Tabs.TabPane>
-                    <Tabs.TabPane tab="行为/提交" key="params">
+                    {/* <Tabs.TabPane tab="行为/提交" key="params">
                         <div className={css.form}>
                             {
                                 <GlobalForm
@@ -65,7 +65,7 @@ export const ComponentConfigPanel: React.FC<Props> = (props) => {
                                 />
                             }
                         </div>
-                    </Tabs.TabPane>
+                    </Tabs.TabPane> */}
                 </Tabs>
             </div>
             <div className={css.footer} />

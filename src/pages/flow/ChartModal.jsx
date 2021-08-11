@@ -200,7 +200,7 @@ class Chart extends React.Component {
                     condition: ["condition_1"],
                 },
             ],
-            condtion: [
+            condition: [
                 {
                     key: "condition_1",
                     name: "条件1",

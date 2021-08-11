@@ -280,7 +280,7 @@ class ExperimentGraph extends GraphCore<BaseNode, BaseEdge> {
 
             const oldGraph = this.experimentGraph$.getValue()
             myGraph.formData = {}
-            myGraph.formData.condtion = oldGraph.condtion
+            myGraph.formData.condition = oldGraph.condition
             myGraph.formData.action = oldGraph.action
 
             console.log(oldGraph)
@@ -619,7 +619,8 @@ class ExperimentGraph extends GraphCore<BaseNode, BaseEdge> {
                     const { nodeInstanceId, posX, posY } = position
                     const matchNode = nextGraph.nodes.find(
                         (item: any) =>
-                            item.id.toString() === nodeInstanceId.toString()
+                            item.id.toString() === nodeInstanceId &&
+                            nodeInstanceId.toString()
                     )
                     if (matchNode) {
                         matchNode.positionX = posX

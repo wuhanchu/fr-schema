@@ -24,7 +24,7 @@ export const ExperimentForm: React.FC<Props> = ({
     const [actionType, setActionType] = useState("add")
 
     const expGraph = useExperimentGraph(experimentId)
-    let { action, condtion } = expGraph.formData
+    let { action, condition } = expGraph.formData
 
     const [actions, setActions] = useState(action)
     const [tagIndex, setTagIndex] = useState(0)
@@ -32,6 +32,8 @@ export const ExperimentForm: React.FC<Props> = ({
     const [defaultValue, setDefaultValue] = useState({})
 
     const [activeExperiment] = useObservableState(expGraph.experiment$)
+
+    console.log(expGraph)
     let initialValues = {}
     let myCondtion = []
     if (nodeId && expGraph.getEdgeById(nodeId)) {
@@ -40,7 +42,7 @@ export const ExperimentForm: React.FC<Props> = ({
         initialValues.condition &&
             initialValues.condition.map((item, index) => {
                 console.log(item)
-                let filterCondtion = condtion.filter((list) => {
+                let filterCondtion = condition.filter((list) => {
                     return list.key === item
                 })
                 if (filterCondtion && filterCondtion[0]) {
@@ -49,7 +51,7 @@ export const ExperimentForm: React.FC<Props> = ({
             })
     }
     console.log("myCondtion", initialValues)
-    const [condtions, setCondtions] = useState(myCondtion)
+    const [conditions, setConditions] = useState(myCondtion)
 
     const onValuesChange = (value) => {
         expGraph.getEdgeById(nodeId).setLabels({
@@ -66,10 +68,26 @@ export const ExperimentForm: React.FC<Props> = ({
 
     React.useEffect(() => {
         form.setFieldsValue(initialValues)
+        console.log(conditions)
+        console.log(nodeId)
+        let myCondtion = []
+        if (nodeId && expGraph.getEdgeById(nodeId)) {
+            initialValues = expGraph.getEdgeById(nodeId).store.data.data
+            console.log("这是", initialValues)
+            initialValues.condition &&
+                initialValues.condition.map((item, index) => {
+                    console.log(item)
+                    let filterCondtion = condition.filter((list) => {
+                        return list.key === item
+                    })
+                    if (filterCondtion && filterCondtion[0]) {
+                        myCondtion.push(filterCondtion[0])
+                    }
+                })
+        }
+        setConditions(myCondtion)
     }, [activeExperiment, nodeId])
     // console
-    console.log(expGraph.getEdgeById(nodeId))
-    console.log("name", expGraph.getEdgeById(nodeId).id + "-" + tagIndex)
     return (
         <Form
             form={form}
@@ -85,7 +103,7 @@ export const ExperimentForm: React.FC<Props> = ({
                 <Input placeholder="请输入意图" />
             </Form.Item> */}
             <Form.Item label={"选择意图"}>
-                {condtion.map((item, index) => {
+                {conditions.map((item, index) => {
                     return (
                         <Tag
                             closable
@@ -96,16 +114,18 @@ export const ExperimentForm: React.FC<Props> = ({
                                     initialValues.condition
                                 )
                                 // console.log(initialValues.condition)
+                                expGraph.renameNode(nodeId, { condition: null })
                                 conditionList.delete(item.key)
+                                console.log([...conditionList])
                                 expGraph.renameNode(nodeId, {
                                     condition: [...conditionList],
                                 })
-                                console.log(conditionList)
+                                console.log("expGraph11", expGraph)
                                 console.log(initialValues)
                             }}
                             onClick={() => {
                                 setActionType("edit")
-                                setType("condtion")
+                                setType("condition")
                                 setTagIndex(index)
                                 setDefaultValue(item)
                                 setVisible(true)
@@ -118,10 +138,10 @@ export const ExperimentForm: React.FC<Props> = ({
                 <Tag
                     onClick={() => {
                         setActionType("add")
-                        setTagIndex(condtion.length)
+                        setTagIndex(conditions.length)
                         setVisible(true)
                         setDefaultValue({})
-                        setType("condtion")
+                        setType("condition")
                     }}
                     color="#2db7f5"
                 >
@@ -141,12 +161,12 @@ export const ExperimentForm: React.FC<Props> = ({
                     visible={visible}
                     actions={actions}
                     conditionList={initialValues.condition}
-                    condtions={condtions}
+                    conditions={conditions}
                     nodeId={nodeId}
                     handleVisible={setVisible}
                     defaultValue={defaultValue}
                     setActions={setActions}
-                    setCondtions={setCondtions}
+                    setConditions={setConditions}
                 />
             )}
         </Form>

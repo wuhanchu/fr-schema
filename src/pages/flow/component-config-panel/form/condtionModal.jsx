@@ -18,8 +18,8 @@ export const FormModal = ({
     actionType,
     type,
     setActions,
-    setCondtions,
-    condtions,
+    setConditions,
+    conditions,
     actions,
     keyIndex,
     conditionList,
@@ -29,7 +29,7 @@ export const FormModal = ({
     const [form] = Form.useForm()
 
     const expGraph = useExperimentGraph(experimentId)
-    let { action, condtion } = expGraph.formData
+    let { action, condition } = expGraph.formData
     let initialValues = clone(defaultValue)
     let slot = []
     if (defaultValue.slot) {
@@ -41,40 +41,62 @@ export const FormModal = ({
 
     initialValues.slot = slot
     console.log("conditionList", conditionList)
-
+    if (!conditionList) {
+        conditionList = []
+    }
     const onFinish = (values) => {
         console.log(values)
         let slot = {}
         let myActions = clone(actions)
-        let myCondtions = clone(condtions)
+        let myConditions = clone(conditions)
 
         values.slot &&
             values.slot.map((item) => {
                 slot[item.first] = item.last
             })
 
-        if (type === "condtion") {
+        if (type === "condition") {
             if (actionType === "add") {
-                myCondtions.push({
+                let conditionKey = keyIndex + Random(0, 100000)
+                myConditions.push({
                     ...values,
-                    key: keyIndex + Random(0, 100000),
+                    key: conditionKey,
                     slot,
                 })
-                conditionList.push(keyIndex)
+                conditionList.push(conditionKey)
                 if (nodeId) {
-                    expGraph.renameNode(nodeId, { condtion: conditionList })
+                    expGraph.renameNode(nodeId, { condition: conditionList })
                 }
-                expGraph.formData.condtion = myCondtions
-                setCondtions(myCondtions)
+                let expGraphConition = [...expGraph.formData.condition]
+                expGraphConition.push({
+                    ...values,
+                    key: conditionKey,
+                    slot,
+                })
+                expGraph.formData.condition = expGraphConition
+
+                setConditions(myConditions)
                 console.log(expGraph)
             } else {
                 // actions.f
-                // let data = expGraph.formData.condtion.filter((item)=>{return item.key === defaultValue.key})
-                if (expGraph.formData.condtion) {
-                    expGraph.formData.condtion = expGraph.formData.condtion.map(
+                // let data = expGraph.formData.condition.filter((item)=>{return item.key === defaultValue.key})
+                if (expGraph.formData.condition) {
+                    myConditions = myConditions.map((item) => {
+                        if (item.key === defaultValue.key) {
+                            return { ...values, slot, key: defaultValue.key }
+                        }
+                        return item
+                    })
+                    setConditions(myConditions)
+                    expGraph.formData.condition = expGraph.formData.condition.map(
                         (item) => {
+                            console.log(item)
                             if (item.key === defaultValue.key) {
-                                return { ...values, slot }
+                                return {
+                                    ...values,
+                                    slot,
+                                    key: defaultValue.key,
+                                }
                             }
                             return item
                         }

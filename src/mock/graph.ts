@@ -118,6 +118,7 @@ const initData = {
             nodeDefId: 111111,
             category: "source",
             status: 3,
+            action: ["action_1", "action_2"],
             groupId: 0,
         },
         {
@@ -159,10 +160,19 @@ const initData = {
             condition: ["condition_1"],
         },
     ],
-    condtion: [
+    condition: [
         {
             key: "condition_1",
             name: "条件1",
+            intent: "123123",
+            node_report_time: 2,
+            slot: {
+                user: "wuhanchu",
+            },
+        },
+        {
+            key: "condition_2",
+            name: "条件2",
             intent: "123123",
             node_report_time: 2,
             slot: {
@@ -174,6 +184,15 @@ const initData = {
         {
             key: "action_1",
             name: "语音播放",
+            type: "play_phone_audio",
+            param: {
+                file_path: "file_path",
+                allow_break: true,
+            },
+        },
+        {
+            key: "action_2",
+            name: "挂机",
             type: "play_phone_audio",
             param: {
                 file_path: "file_path",

@@ -1,8 +1,9 @@
-import React from "react"
-import { Form, Input } from "antd"
+import React, { useState } from "react"
+import { Form, Input, Radio, Tag } from "antd"
 import { useObservableState } from "@/common/hooks/useObservableState"
 import { useExperimentGraph } from "@/pages/flow/rx-models/experiment-graph"
 import "antd/lib/style/index.css"
+import { FormModal } from "./formModal"
 
 export interface Props {
     name: string
@@ -19,20 +20,43 @@ export const NodeFormDemo: React.FC<Props> = ({
 
     const expGraph = useExperimentGraph(experimentId)
     const [node] = useObservableState(() => expGraph.activeNodeInstance$)
-    const initialValues =
+    const [visible, setVisible] = useState(false)
+
+    const [type, setType] = useState("action")
+    const [actionType, setActionType] = useState("add")
+
+    let { action, condition } = expGraph.formData
+
+    const [tagIndex, setTagIndex] = useState(0)
+
+    const [defaultValue, setDefaultValue] = useState({})
+    let initialValues =
         expGraph.getNodeById(nodeId) &&
         expGraph.getNodeById(nodeId).store.data.data
+
+    let myAction = []
+    if (nodeId && expGraph.getNodeById(nodeId)) {
+        initialValues = expGraph.getNodeById(nodeId).store.data.data
+        initialValues.action &&
+            initialValues.action.map((item, index) => {
+                let filterAction = action.filter((list) => {
+                    return list.key === item
+                })
+                if (filterAction && filterAction[0]) {
+                    myAction.push(filterAction[0])
+                }
+            })
+    }
+    const [actions, setActions] = useState(myAction)
+
     const onValuesChange = async (activeExperiment) => {
         const { name } = activeExperiment
-        console.log(activeExperiment)
-        console.log(expGraph.getNodes())
         // expGraph.experiment$.next({ ...activeExperiment, name: name })
         if (node.name !== name) {
             // expGraph.prop('zIndex', 10)
             await expGraph.renameNode(nodeId, activeExperiment)
         }
     }
-    console.log(node)
     return (
         <Form
             form={form}
@@ -53,9 +77,66 @@ export const NodeFormDemo: React.FC<Props> = ({
             <Form.Item name={"allow_repeat_time"} label={"允许重复次数"}>
                 <Input placeholder="请输入允许重复次数" />
             </Form.Item>
-            <Form.Item name={"opeation"} label="操作">
+            {/* <Form.Item name={"opeation"} label="操作">
                 <Input placeholder="请选择操作" />
+            </Form.Item> */}
+            <Form.Item label={"选择操作"}>
+                {actions.map((item, index) => {
+                    return (
+                        <Tag
+                            closable
+                            onClose={(data) => {
+                                let actionList = new Set(initialValues.action)
+                                expGraph.renameNode(nodeId, { action: null })
+                                actionList.delete(item.key)
+                                expGraph.renameNode(nodeId, {
+                                    action: [...actionList],
+                                })
+                            }}
+                            onClick={() => {
+                                setActionType("edit")
+                                setType("action")
+                                setTagIndex(index)
+                                setDefaultValue(item)
+                                setVisible(true)
+                            }}
+                        >
+                            {item.name}
+                        </Tag>
+                    )
+                })}
+                <Tag
+                    onClick={() => {
+                        setActionType("add")
+                        setTagIndex(actions.length)
+                        setVisible(true)
+                        setDefaultValue({})
+                        setType("action")
+                    }}
+                    color="#2db7f5"
+                >
+                    +
+                </Tag>
             </Form.Item>
+            {/* <Form.Item label="操作">
+                <Input placeholder="请选择操作" />
+            </Form.Item> */}
+            {/* 提交定义：<FolderAddTwoTone /> */}
+            {visible && (
+                <FormModal
+                    actionType={actionType}
+                    type={type}
+                    keyIndex={nodeId + "-" + tagIndex}
+                    experimentId={experimentId}
+                    visible={visible}
+                    actions={actions}
+                    actionList={initialValues.action}
+                    nodeId={nodeId}
+                    handleVisible={setVisible}
+                    defaultValue={defaultValue}
+                    setActions={setActions}
+                />
+            )}
         </Form>
     )
 }
