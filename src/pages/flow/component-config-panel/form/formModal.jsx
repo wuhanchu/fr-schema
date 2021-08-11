@@ -4,6 +4,7 @@ import { useExperimentGraph } from "@/pages/flow/rx-models/experiment-graph"
 import "antd/lib/style/index.css"
 import { FolderAddTwoTone } from "@ant-design/icons"
 import Modal from "antd/lib/modal/Modal"
+import clone from "clone"
 
 export const FormModal = ({
     experimentId,
@@ -15,15 +16,37 @@ export const FormModal = ({
     setCondtions,
     condtions,
     actions,
+    defaultValue,
 }) => {
     const [form] = Form.useForm()
 
     const expGraph = useExperimentGraph(experimentId)
     let { action, condtion } = expGraph.formData
     const onFinish = (values) => {
-        // if(type==='action'){
-        //     setActions({})
-        // }
+        let myActions = clone(actions)
+        let myCondtions = clone(condtions)
+
+        if (type === "action") {
+            console.log("action, condtion", myActions, condtion)
+            if (actionType === "add") {
+                myActions.push({ ...values, id: "qwe-123-adfe" })
+                expGraph.formData.action = myActions
+                setActions(myActions)
+                console.log(expGraph)
+            } else {
+                // actions.f
+            }
+        }
+        if (type === "condtion") {
+            if (actionType === "add") {
+                myCondtions.push({ ...values, id: "qwe-123-adfe" })
+                expGraph.formData.condtion = myCondtions
+                setCondtions(myCondtions)
+                console.log(expGraph)
+            } else {
+                // actions.f
+            }
+        }
         handleVisible(false)
         console.log("Success:", values)
     }
@@ -33,7 +56,7 @@ export const FormModal = ({
     }
     return (
         <Modal
-            title={"行为/提交定义"}
+            title={type == "condtion" ? "意图" : "行为"}
             visible={visible}
             footer={false}
             onCancel={() => handleVisible(false)}
@@ -51,16 +74,16 @@ export const FormModal = ({
                     name="name"
                     rules={[{ required: true, message: "请输入用户名！" }]}
                 >
-                    <Input />
+                    <Input placeholder={"请输入用户名"} />
                 </Form.Item>
 
-                <Form.Item
-                    label="意图"
-                    name="intent"
-                    rules={[{ required: true, message: "请输入意图！" }]}
-                >
-                    <Input />
-                </Form.Item>
+                {/*<Form.Item*/}
+                {/*    label="意图"*/}
+                {/*    name="intent"*/}
+                {/*    rules={[{ required: true, message: "请输入意图！" }]}*/}
+                {/*>*/}
+                {/*    <Input placeholder={"请输入意图"}/>*/}
+                {/*</Form.Item>*/}
                 <Form.Item
                     label="节点重复次数"
                     name="node_report_time"
@@ -68,7 +91,7 @@ export const FormModal = ({
                         { required: true, message: "请输入节点重复次数！" },
                     ]}
                 >
-                    <Input />
+                    <Input placeholder={"请输入节点重复次数"} />
                 </Form.Item>
                 <Form.Item wrapperCol={{ offset: 8, span: 12 }}>
                     <Button

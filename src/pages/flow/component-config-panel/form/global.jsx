@@ -16,6 +16,7 @@ export const GlobalForm = ({ name, nodeId, experimentId }) => {
     let { action, condtion } = expGraph.formData
     const [actions, setActions] = useState(action)
     const [condtions, setCondtions] = useState(condtion)
+    const [defaultValue, setDefaultValue] = useState({})
 
     return (
         <Form
@@ -26,14 +27,25 @@ export const GlobalForm = ({ name, nodeId, experimentId }) => {
         >
             <Form.Item label="行为定义">
                 {action.map((item, index) => {
-                    return <Tag>{item.name}</Tag>
+                    return (
+                        <Tag
+                            onClick={() => {
+                                setActionType("edit")
+                                setDefaultValue(item)
+                                setType("action")
+                                setVisible(true)
+                            }}
+                        >
+                            {item.name}
+                        </Tag>
+                    )
                 })}
                 <Tag
                     onClick={() => {
                         setActionType("add")
-                        setVisible(true)
+                        setDefaultValue({})
                         setType("action")
-                        console.log(visible)
+                        setVisible(true)
                     }}
                     color="#2db7f5"
                 >
@@ -44,6 +56,17 @@ export const GlobalForm = ({ name, nodeId, experimentId }) => {
                 {condtion.map((item, index) => {
                     return <Tag>{item.name}</Tag>
                 })}
+                <Tag
+                    onClick={() => {
+                        setActionType("add")
+                        setVisible(true)
+                        setType("condtion")
+                        console.log(visible)
+                    }}
+                    color="#2db7f5"
+                >
+                    +
+                </Tag>
             </Form.Item>
             {visible && (
                 <FormModal
