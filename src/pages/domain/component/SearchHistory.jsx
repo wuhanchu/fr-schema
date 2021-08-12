@@ -45,12 +45,16 @@ class List extends DataList {
             console.log("radio checked", e.target.value)
             // setValue(e.target.value);
             this.setState({ listLoading: true })
-            this.handleUpdate({ user_confirm: e.target.value, id: record.id })
+            this.handleUpdate({
+                user_confirm: true,
+                ...record,
+                match: e.target.value,
+            })
         }
 
         return (
             <>
-                <Radio.Group onChange={onChange} value={record.user_confirm}>
+                <Radio.Group onChange={onChange} value={record.match}>
                     <Radio value={true}>对</Radio>
                     <Radio value={false}>错</Radio>
                 </Radio.Group>
@@ -95,12 +99,12 @@ class List extends DataList {
     }
 
     renderSearchBar() {
-        const { search, user_confirm } = this.schema
+        const { search, match } = this.schema
 
         const filters = this.createFilters(
             {
                 search,
-                user_confirm,
+                match,
             },
             5
         )
