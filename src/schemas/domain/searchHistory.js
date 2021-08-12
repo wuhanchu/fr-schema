@@ -14,13 +14,13 @@ const schema = {
         searchPrefix: "like",
     },
 
-    match_question_txt: {
+    show_question_txt: {
         title: "匹配文本",
         required: true,
         searchPrefix: "like",
         sorter: true,
     },
-    user_confirm: {
+    match: {
         title: "是否匹配",
         listHide: true,
         type: schemaFieldType.Select,
@@ -38,6 +38,64 @@ const schema = {
 }
 
 const service = createApi("search_history", schema, null)
+
+service.get = async (args) => {
+    let data = await createApi("search_history", schema, null, "eq.").get(args)
+    let { list } = data
+    list = list.map((item, index) => {
+        if (item.match_question_id) {
+            return {
+                ...item,
+                show_question_txt: item.match_question_txt,
+                match: true,
+            }
+        } else {
+            return {
+                ...item,
+                show_question_txt:
+                    item.return_question &&
+                    item.return_question[0] &&
+                    item.return_question[0].answer,
+                match: false,
+            }
+        }
+    })
+    return { ...data, list }
+}
+
+service.patch = async (args) => {
+    console.log(args)
+    if (!args.match_question_id && args.match) {
+        args.match_project_id =
+            args.return_question &&
+            args.return_question[0] &&
+            args.return_question[0].project_id
+                ? args.return_question[0].project_id
+                : null
+        args.match_question_id =
+            args.return_question && args.return_question[0]
+                ? args.return_question[0].id
+                : null
+        args.match_question_txt =
+            args.return_question && args.return_question[0]
+                ? args.return_question[0].answer
+                : null
+    }
+    if (!args.match) {
+        args.match_question_id = null
+        args.match_question_txt = null
+        args.match_project_id = null
+    }
+
+    args.match = undefined
+    args.match_remark = undefined
+    args.show_question_txt = undefined
+    args.user_confirm = true
+    let data = await createApi("search_history", schema, null, "eq.").patch(
+        args
+    )
+    return data
+}
 
 export default {
     schema,
