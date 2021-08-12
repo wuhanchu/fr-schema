@@ -102,7 +102,7 @@ export const ExperimentForm: React.FC<Props> = ({
             {/* <Form.Item name="condition" label={"选择意图"}>
                 <Input placeholder="请输入意图" />
             </Form.Item> */}
-            <Form.Item label={"选择意图"}>
+            <Form.Item label={"选择条件"}>
                 {conditions.map((item, index) => {
                     return (
                         <Tag

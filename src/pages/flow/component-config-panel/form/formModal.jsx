@@ -106,7 +106,7 @@ export const FormModal = ({
     }
     return (
         <Modal
-            title={"意图"}
+            title={"行为"}
             visible={visible}
             footer={false}
             onCancel={() => handleVisible(false)}

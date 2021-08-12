@@ -68,9 +68,9 @@ export const NodeFormDemo: React.FC<Props> = ({
             <Form.Item label="节点名称" name="name">
                 <Input placeholder="请输入节点名称" />
             </Form.Item>
-            <Form.Item name={"type"} label={"节点类型"}>
+            {/* <Form.Item name={"type"} label={"节点类型"}>
                 <Input placeholder="请输入节点类型" />
-            </Form.Item>
+            </Form.Item> */}
             <Form.Item name={"allow_action_repeat"} label={"是否允许重复"}>
                 <Select
                     placeholder="请输入是否允许重复"

@@ -113,7 +113,7 @@ export const FormModal = ({
     }
     return (
         <Modal
-            title={"意图"}
+            title={"条件"}
             visible={visible}
             footer={false}
             onCancel={() => handleVisible(false)}
@@ -137,16 +137,16 @@ export const FormModal = ({
                 <Form.Item
                     label="意图"
                     name="intent"
-                    rules={[{ required: true, message: "请输入意图！" }]}
+                    // rules={[{ required: true, message: "请输入意图！" }]}
                 >
                     <Input placeholder={"请输入意图"} />
                 </Form.Item>
                 <Form.Item
                     label="节点重复次数"
                     name="node_report_time"
-                    rules={[
-                        { required: true, message: "请输入节点重复次数！" },
-                    ]}
+                    // rules={[
+                    //     { required: true, message: "请输入节点重复次数！" },
+                    // ]}
                 >
                     <Input placeholder={"请输入节点重复次数"} />
                 </Form.Item>
