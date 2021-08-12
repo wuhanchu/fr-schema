@@ -102,7 +102,7 @@ const initData = {
     nodes: [
         {
             id: "1603716783816",
-            name: "节点1",
+            name: "开始节点",
             inPorts: [
                 {
                     tableName: "germany_credit_data",

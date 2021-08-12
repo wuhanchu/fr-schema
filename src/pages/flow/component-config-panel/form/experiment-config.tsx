@@ -55,6 +55,10 @@ export const ExperimentForm: React.FC<Props> = ({
             attrs: {
                 text: {
                     text: value.name,
+                    fill: "#ffd591",
+                },
+                body: {
+                    fill: "#F7F7FA",
                 },
             },
         })

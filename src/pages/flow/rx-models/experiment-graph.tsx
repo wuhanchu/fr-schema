@@ -278,6 +278,9 @@ class ExperimentGraph extends GraphCore<BaseNode, BaseEdge> {
                             text: {
                                 text: item.store.data.name,
                             },
+                            body: {
+                                fill: "#F7F7FA",
+                            },
                         },
                     })
                 })
