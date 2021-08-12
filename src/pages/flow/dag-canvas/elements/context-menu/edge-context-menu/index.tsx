@@ -1,7 +1,7 @@
 import React, { useCallback, useRef } from "react"
 import { DeleteOutlined } from "@ant-design/icons"
 import { useClickAway } from "ahooks"
-import { Menu } from "@antv/x6-react-components"
+import { Menu } from "antd"
 import { useExperimentGraph } from "@/pages/flow/rx-models/experiment-graph"
 import { graphPointToOffsetPoint } from "@/pages/flow/common//utils/graph"
 import styles from "./index.less"
@@ -36,12 +36,19 @@ export const EdgeContextMenu: React.FC<Props> = (props) => {
             className={styles.edgeContextMenu}
             style={{ top, left }}
         >
-            <Menu hasIcon={true}>
+            <Menu>
                 <Menu.Item
                     onClick={onDeleteEdge}
                     icon={<DeleteOutlined />}
-                    text="删除"
-                />
+                    style={{
+                        height: "32px",
+                        margin: "0",
+                        lineHeight: "32px",
+                        fontSize: "14px",
+                    }}
+                >
+                    删除
+                </Menu.Item>
             </Menu>
         </div>
     )

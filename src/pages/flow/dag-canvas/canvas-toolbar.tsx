@@ -1,11 +1,14 @@
 import React, { useCallback, useState } from "react"
 import { Toolbar } from "@antv/x6-react-components"
+import { Button, Tooltip } from "antd"
 import {
     GatewayOutlined,
     GroupOutlined,
     PlaySquareOutlined,
     RollbackOutlined,
+    ToTopOutlined,
     UngroupOutlined,
+    AppstoreAddOutlined,
 } from "@ant-design/icons"
 import { useObservableState } from "@/common/hooks/useObservableState"
 import { RxInput } from "@/components/rx-component/rx-input"
@@ -13,10 +16,10 @@ import { showModal } from "@/components/modal"
 import { addNodeGroup } from "@/mock/graph"
 import { BehaviorSubject } from "rxjs"
 import { useExperimentGraph } from "@/pages/flow/rx-models/experiment-graph"
-import { formatGroupInfoToNodeMeta } from "@/pages/flow/rx-models/graph-util"
+import { formatNodeInfoToNodeMeta } from "@/pages/flow/rx-models/graph-util"
 import styles from "./canvas-toolbar.less"
+import { queryGraph, addNode, copyNode } from "@/mock/graph"
 
-const { Item, Group } = Toolbar
 interface Props {
     experimentId: string
 }
@@ -49,81 +52,6 @@ export const CanvasToolbar: React.FC<Props> = (props) => {
                     expGraph.toggleSelectionEnabled()
                     setSelectionEnabled((enabled) => !enabled)
                     break
-                case Operations.RUN_SELECTED:
-                    expGraph.runGraph()
-                    break
-                case Operations.NEW_GROUP: {
-                    const value$ = new BehaviorSubject("")
-                    const modal = showModal({
-                        title: "新建分组",
-                        width: 450,
-                        okText: "确定",
-                        cancelText: "取消",
-                        children: (
-                            <div
-                                style={{
-                                    fontSize: 12,
-                                    display: "flex",
-                                    alignItems: "center",
-                                }}
-                            >
-                                <div style={{ width: 50, marginBottom: 8 }}>
-                                    组名：
-                                </div>
-                                <RxInput
-                                    value={value$}
-                                    onChange={(e) => {
-                                        value$.next(e.target.value)
-                                    }}
-                                />
-                            </div>
-                        ),
-                        onOk: () => {
-                            modal.update({ okButtonProps: { loading: true } })
-                            addNodeGroup(value$.getValue())
-                                .then((res: any) => {
-                                    modal.close()
-                                    selectedNodes!.forEach((node) => {
-                                        const nodeData = node.getData<any>()
-                                        node.setData({
-                                            ...nodeData,
-                                            groupId: res.data.group.id,
-                                        })
-                                    })
-                                    const nodeMetas: any[] = selectedNodes!.map(
-                                        (node) => node.getData<any>()
-                                    )
-                                    expGraph.addNode(
-                                        formatGroupInfoToNodeMeta(
-                                            res.data.group,
-                                            nodeMetas
-                                        )
-                                    )
-                                    expGraph.unSelectNode()
-                                })
-                                .finally(() => {
-                                    modal.update({
-                                        okButtonProps: { loading: false },
-                                    })
-                                })
-                        },
-                    })
-                    break
-                }
-                case Operations.UNGROUP: {
-                    const descendantNodes = selectedGroup!.getDescendants()
-                    const childNodes = descendantNodes.filter((node) =>
-                        node.isNode()
-                    )
-                    childNodes.forEach((node) => {
-                        const nodeData = node.getData<any>()
-                        node.setData({ ...nodeData, groupId: 0 })
-                    })
-                    selectedGroup!.setChildren([])
-                    expGraph.deleteNodes(selectedGroup!)
-                    expGraph.unSelectNode()
-                    break
-                }
                 default:
             }
         },
@@ -136,55 +64,46 @@ export const CanvasToolbar: React.FC<Props> = (props) => {
         ]
     )
 
-    const newGroupEnabled =
-        !!selectedNodes &&
-        !!selectedNodes.length &&
-        selectedNodes.length > 1 &&
-        selectedNodes.every((node) => {
-            return node.isNode() && !node.getData<any>().groupId
-        })
-
-    const unGroupEnabled = !selectedNodes?.length && !!selectedGroup
-
     return (
         <div className={styles.canvasToolbar}>
-            <Toolbar hoverEffect={true} onClick={onClickItem}>
+            {/* <Toolbar hoverEffect={true} onClick={onClickItem}>
                 <Group>
                     <Item
                         name={Operations.UNDO_DELETE}
-                        tooltip="撤销删除"
+                        tooltip="撤销"
                         icon={<RollbackOutlined />}
                     />
-                    <Item
-                        name={Operations.GROUP_SELECT}
-                        active={selectionEnabled}
-                        tooltip="框选节点"
-                        icon={<GatewayOutlined />}
-                    />
                 </Group>
-                <Group>
-                    <Item
-                        name={Operations.NEW_GROUP}
-                        disabled={!newGroupEnabled}
-                        tooltip="新建群组"
-                        icon={<GroupOutlined />}
-                    />
-                    <Item
-                        name={Operations.UNGROUP}
-                        disabled={!unGroupEnabled}
-                        tooltip="拆分群组"
-                        icon={<UngroupOutlined />}
-                    />
-                </Group>
-                <Group>
-                    <Item
-                        name={Operations.RUN_SELECTED}
-                        disabled={!activeNodeInstance}
-                        tooltip="执行选择节点"
-                        icon={<PlaySquareOutlined />}
-                    />
-                </Group>
-            </Toolbar>
+            </Toolbar> */}
+            <Tooltip title="新增节点">
+                <Button
+                    style={{ marginLeft: "5px" }}
+                    onClick={() => {
+                        const expGraph = useExperimentGraph(experimentId)
+                        console.log(expGraph)
+
+                        const res = addNode({ name: "新增", x: -100, y: -100 })
+                        const newNode = formatNodeInfoToNodeMeta(res as any)
+                        expGraph.addNode(newNode)
+                        expGraph.clearContextMenuInfo()
+                    }}
+                >
+                    <AppstoreAddOutlined />
+                </Button>
+            </Tooltip>
+            <Tooltip title="新增意图">
+                <Button style={{ marginLeft: "5px" }}>
+                    <ToTopOutlined />
+                </Button>
+            </Tooltip>
+            <Tooltip title="撤销">
+                <Button
+                    style={{ marginLeft: "5px" }}
+                    onClick={() => expGraph.undoDeleteNode()}
+                >
+                    <RollbackOutlined />
+                </Button>
+            </Tooltip>
         </div>
     )
 }

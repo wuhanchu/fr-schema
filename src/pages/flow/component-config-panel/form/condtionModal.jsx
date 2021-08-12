@@ -1,14 +1,26 @@
-import React from "react"
-import { Input, Tag, Form, Button, Space, Row, Col } from "antd"
+import React, { useState } from "react"
+import { Input, Tag, Form, Button, Space, Row, Col, Select } from "antd"
 import { useExperimentGraph } from "@/pages/flow/rx-models/experiment-graph"
 import "antd/lib/style/index.css"
 import { FolderAddTwoTone } from "@ant-design/icons"
 import Modal from "antd/lib/modal/Modal"
 import clone from "clone"
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons"
+import schema from "@/schemas/intent"
 
 function Random(min, max) {
     return Math.round(Math.random() * (max - min)) + min
+}
+
+async function handleSearch(value, setSelectData) {
+    if (value) {
+        let data = await schema.service.get({ name: "like.*" + value + "*" })
+        console.log(data)
+        setSelectData(data.list)
+        //   fetch(value, data => this.setState({ data }));
+    } else {
+        //   this.setState({ data: [] });
+    }
 }
 
 export const FormModal = ({
@@ -27,6 +39,7 @@ export const FormModal = ({
     defaultValue,
 }) => {
     const [form] = Form.useForm()
+    const [selectData, setSelectData] = useState([])
 
     const expGraph = useExperimentGraph(experimentId)
     let { action, condition } = expGraph.formData
@@ -76,8 +89,6 @@ export const FormModal = ({
                 setConditions(myConditions)
                 console.log(expGraph)
             } else {
-                // actions.f
-                // let data = expGraph.formData.condition.filter((item)=>{return item.key === defaultValue.key})
                 if (expGraph.formData.condition) {
                     myConditions = myConditions.map((item) => {
                         if (item.key === defaultValue.key) {
@@ -109,6 +120,10 @@ export const FormModal = ({
     const onFinishFailed = (errorInfo) => {
         console.log("Failed:", errorInfo)
     }
+
+    const options = selectData.map((d) => (
+        <Option key={d.name}>{d.name}</Option>
+    ))
     return (
         <Modal
             title={"条件配置"}
@@ -137,7 +152,18 @@ export const FormModal = ({
                     name="intent"
                     // rules={[{ required: true, message: "请输入意图！" }]}
                 >
-                    <Input placeholder={"请输入意图"} />
+                    {/* <Input placeholder={"请输入意图"} /> */}
+                    <Select
+                        showSearch
+                        placeholder={"请输入意图"}
+                        defaultActiveFirstOption={false}
+                        showArrow={false}
+                        filterOption={false}
+                        onSearch={(value) => handleSearch(value, setSelectData)}
+                        notFoundContent={null}
+                    >
+                        {options}
+                    </Select>
                 </Form.Item>
                 {/* <Form.Item
                     label="插槽"

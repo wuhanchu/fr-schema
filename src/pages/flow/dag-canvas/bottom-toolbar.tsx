@@ -71,10 +71,10 @@ export const BottomToolbar: React.FC<Props> = (props) => {
         <div className={styles.bottomToolbar}>
             <ul className={styles.itemList}>
                 {/* 部署 */}
-                <li className={styles.item}>
+                {/* <li className={styles.item}>
                     <CloudUploadOutlined />
                     <span>部署</span>
-                </li>
+                </li> */}
 
                 {/* 运行/停止 */}
                 {/* <Popover

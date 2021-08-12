@@ -48,12 +48,14 @@ export const NodeFormDemo: React.FC<Props> = ({
             })
     }
     const [actions, setActions] = useState(myAction)
+    const [allowActionRepeat, setAllowActionRepeat] = useState(
+        initialValues.allow_action_repeat
+    )
 
     const onValuesChange = async (activeExperiment) => {
         const { name } = activeExperiment
-        // expGraph.experiment$.next({ ...activeExperiment, name: name })
+        setAllowActionRepeat(activeExperiment.allow_action_repeat)
         if (node.name !== name) {
-            // expGraph.prop('zIndex', 10)
             await expGraph.renameNode(nodeId, activeExperiment)
         }
     }
@@ -80,12 +82,14 @@ export const NodeFormDemo: React.FC<Props> = ({
                     <Select.Option value={false}>否</Select.Option>
                 </Select>
             </Form.Item>
-            <Form.Item name={"allow_repeat_time"} label={"允许重复次数"}>
-                <InputNumber
-                    style={{ width: "100%" }}
-                    placeholder="请输入允许重复次数"
-                />
-            </Form.Item>
+            {allowActionRepeat && (
+                <Form.Item name={"allow_repeat_time"} label={"允许重复次数"}>
+                    <InputNumber
+                        style={{ width: "100%" }}
+                        placeholder="请输入允许重复次数"
+                    />
+                </Form.Item>
+            )}
             {/* <Form.Item name={"opeation"} label="操作">
                 <Input placeholder="请选择操作" />
             </Form.Item> */}

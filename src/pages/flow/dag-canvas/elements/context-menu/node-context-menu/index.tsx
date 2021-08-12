@@ -7,7 +7,9 @@ import {
 } from "@ant-design/icons"
 import { useClickAway } from "ahooks"
 import { useObservableState } from "@/common/hooks/useObservableState"
-import { Menu } from "@antv/x6-react-components"
+// import { Menu } from "@antv/x6-react-components"
+import { Menu } from "antd"
+
 import { useExperimentGraph } from "@/pages/flow/rx-models/experiment-graph"
 import { graphPointToOffsetPoint } from "@/pages/flow/common//utils/graph"
 import styles from "./index.less"
@@ -56,25 +58,28 @@ export const NodeContextMenu: React.FC<Props> = (props) => {
             <Menu hasIcon={true}>
                 <Menu.Item
                     onClick={onNodeCopy}
+                    style={{
+                        height: "32px",
+                        margin: "0",
+                        lineHeight: "32px",
+                        fontSize: "14px",
+                    }}
                     icon={<CopyOutlined />}
-                    text="复制"
-                />
+                >
+                    复制
+                </Menu.Item>
                 <Menu.Item
                     onClick={onNodeDel}
+                    style={{
+                        height: "32px",
+                        margin: "0",
+                        lineHeight: "32px",
+                        fontSize: "14px",
+                    }}
                     icon={<DeleteOutlined />}
-                    text="删除"
-                />
-                {/* <Menu.Item
-                    disabled={true}
-                    icon={<EditOutlined />}
-                    text="重命名"
-                />
-                <Menu.Divider />
-                <Menu.Item
-                    onClick={onGraphRun}
-                    icon={<PlaySquareOutlined />}
-                    text="执行"
-                /> */}
+                >
+                    删除
+                </Menu.Item>
             </Menu>
         </div>
     )

@@ -6,10 +6,12 @@ interface NodeParams {
     y: number
 }
 
-export const copyNode = ({ name, x, y }: NodeParams) => {
+export const copyNode = (props) => {
+    const { name, x, y } = props
+    console.log("复制")
+    console.log(props)
     const id = `${Date.now()}`
     return {
-        id,
         name,
         inPorts: [
             {
@@ -27,8 +29,7 @@ export const copyNode = ({ name, x, y }: NodeParams) => {
                 id: id + 300000,
             },
         ],
-        positionX: x + 200 + random(20, false),
-        positionY: y + random(10, false),
+
         codeName: "source_11111",
         allow_repeat_time: 1,
         catId: 1,
@@ -36,6 +37,11 @@ export const copyNode = ({ name, x, y }: NodeParams) => {
         category: "source",
         status: 3,
         groupId: 0,
+
+        ...props,
+        id,
+        positionX: x + 200 + random(20, false),
+        positionY: y + random(10, false),
     }
 }
 export const addNode = ({ name, x, y }: NodeParams) => {
@@ -46,7 +52,7 @@ export const addNode = ({ name, x, y }: NodeParams) => {
         inPorts: [
             {
                 tableName: "germany_credit_data",
-                sequence: 1,
+                sequence: 2,
                 description: "输入",
                 id: id + "_in",
             },
@@ -117,6 +123,7 @@ const initData = {
             positionY: -300,
             codeName: "source_11111",
             catId: 1,
+            types: "begin",
             nodeDefId: 111111,
             category: "source",
             allow_repeat_time: 1,

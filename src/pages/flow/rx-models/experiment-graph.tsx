@@ -126,7 +126,7 @@ class ExperimentGraph extends GraphCore<BaseNode, BaseEdge> {
             },
             connecting: {
                 snap: { radius: 10 },
-                allowBlank: false,
+                allowBlank: true,
                 highlight: true,
                 connector: "pai",
                 sourceAnchor: "bottom",
@@ -150,12 +150,14 @@ class ExperimentGraph extends GraphCore<BaseNode, BaseEdge> {
                     })
                 },
                 validateEdge: (args) => {
+                    // return true
                     const { edge } = args
                     return !!(edge?.target as any)?.port
                 },
                 // 是否触发交互事件
                 validateMagnet({ magnet }) {
                     return magnet.getAttribute("port-group") !== "in"
+                    // return true
                 },
                 // 显示可用的链接桩
                 validateConnection({
@@ -164,23 +166,25 @@ class ExperimentGraph extends GraphCore<BaseNode, BaseEdge> {
                     sourceMagnet,
                     targetMagnet,
                 }) {
+                    // return true
                     // 不允许连接到自己
                     if (sourceView === targetView) {
                         return false
                     }
-
-                    // 只能从输出链接桩创建连接
+                    // 只能连接到输入链接桩
                     if (
-                        !sourceMagnet ||
-                        sourceMagnet.getAttribute("port-group") === "in"
+                        !targetMagnet ||
+                        targetMagnet.getAttribute("port-group") !== "in" ||
+                        targetView.cell.store.data.data.types === "begin"
                     ) {
                         return false
                     }
 
-                    // 只能连接到输入链接桩
+                    return true
+                    // 只能从输出链接桩创建连接
                     if (
-                        !targetMagnet ||
-                        targetMagnet.getAttribute("port-group") !== "in"
+                        !sourceMagnet ||
+                        sourceMagnet.getAttribute("port-group") === "in"
                     ) {
                         return false
                     }
