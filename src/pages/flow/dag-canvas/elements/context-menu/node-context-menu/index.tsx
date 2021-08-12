@@ -64,7 +64,7 @@ export const NodeContextMenu: React.FC<Props> = (props) => {
                     icon={<DeleteOutlined />}
                     text="删除"
                 />
-                <Menu.Item
+                {/* <Menu.Item
                     disabled={true}
                     icon={<EditOutlined />}
                     text="重命名"
@@ -74,7 +74,7 @@ export const NodeContextMenu: React.FC<Props> = (props) => {
                     onClick={onGraphRun}
                     icon={<PlaySquareOutlined />}
                     text="执行"
-                />
+                /> */}
             </Menu>
         </div>
     )

@@ -89,7 +89,7 @@ export const NodeFormDemo: React.FC<Props> = ({
             {/* <Form.Item name={"opeation"} label="操作">
                 <Input placeholder="请选择操作" />
             </Form.Item> */}
-            <Form.Item label={"选择操作"}>
+            <Form.Item label={"⾏为定义"}>
                 {actions.map((item, index) => {
                     return (
                         <Tag

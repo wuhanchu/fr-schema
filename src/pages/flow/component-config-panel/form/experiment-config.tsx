@@ -33,12 +33,10 @@ export const ExperimentForm: React.FC<Props> = ({
 
     const [activeExperiment] = useObservableState(expGraph.experiment$)
 
-    console.log(expGraph)
     let initialValues = {}
     let myCondtion = []
     if (nodeId && expGraph.getEdgeById(nodeId)) {
         initialValues = expGraph.getEdgeById(nodeId).store.data.data
-        console.log(initialValues)
         initialValues.condition &&
             initialValues.condition.map((item, index) => {
                 console.log(item)
@@ -50,7 +48,6 @@ export const ExperimentForm: React.FC<Props> = ({
                 }
             })
     }
-    console.log("myCondtion", initialValues)
     const [conditions, setConditions] = useState(myCondtion)
 
     const onValuesChange = (value) => {
@@ -68,15 +65,11 @@ export const ExperimentForm: React.FC<Props> = ({
 
     React.useEffect(() => {
         form.setFieldsValue(initialValues)
-        console.log(conditions)
-        console.log(nodeId)
         let myCondtion = []
         if (nodeId && expGraph.getEdgeById(nodeId)) {
             initialValues = expGraph.getEdgeById(nodeId).store.data.data
-            console.log("这是", initialValues)
             initialValues.condition &&
                 initialValues.condition.map((item, index) => {
-                    console.log(item)
                     let filterCondtion = condition.filter((list) => {
                         return list.key === item
                     })
@@ -102,26 +95,20 @@ export const ExperimentForm: React.FC<Props> = ({
             {/* <Form.Item name="condition" label={"选择意图"}>
                 <Input placeholder="请输入意图" />
             </Form.Item> */}
-            <Form.Item label={"选择条件"}>
+            <Form.Item label={"条件定义"}>
                 {conditions.map((item, index) => {
                     return (
                         <Tag
                             closable
                             onClose={(data) => {
-                                console.log(data)
-                                console.log(item)
                                 let conditionList = new Set(
                                     initialValues.condition
                                 )
-                                // console.log(initialValues.condition)
                                 expGraph.renameNode(nodeId, { condition: null })
                                 conditionList.delete(item.key)
-                                console.log([...conditionList])
                                 expGraph.renameNode(nodeId, {
                                     condition: [...conditionList],
                                 })
-                                console.log("expGraph11", expGraph)
-                                console.log(initialValues)
                             }}
                             onClick={() => {
                                 setActionType("edit")

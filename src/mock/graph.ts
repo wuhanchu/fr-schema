@@ -30,6 +30,7 @@ export const copyNode = ({ name, x, y }: NodeParams) => {
         positionX: x + 200 + random(20, false),
         positionY: y + random(10, false),
         codeName: "source_11111",
+        allow_repeat_time: 1,
         catId: 1,
         nodeDefId: 111111,
         category: "source",
@@ -62,6 +63,7 @@ export const addNode = ({ name, x, y }: NodeParams) => {
         positionY: y,
         codeName: "source_11111",
         catId: 1,
+        allow_repeat_time: 1,
         nodeDefId: 111111,
         category: "source",
         status: 3,
@@ -117,6 +119,7 @@ const initData = {
             catId: 1,
             nodeDefId: 111111,
             category: "source",
+            allow_repeat_time: 1,
             status: 3,
             action: ["action_1", "action_2"],
             groupId: 0,
@@ -146,6 +149,7 @@ const initData = {
             catId: 1,
             nodeDefId: 111111,
             category: "source",
+            allow_repeat_time: 1,
             status: 3,
             groupId: 0,
         },
@@ -184,7 +188,7 @@ const initData = {
         {
             key: "action_1",
             name: "语音播放",
-            type: "play_phone_audio",
+            type: "phone_play_audio",
             param: {
                 file_path: "file_path",
                 allow_break: true,
@@ -193,7 +197,7 @@ const initData = {
         {
             key: "action_2",
             name: "挂机",
-            type: "play_phone_audio",
+            type: "phone_play_audio",
             param: {
                 file_path: "file_path",
                 allow_break: true,

@@ -72,14 +72,7 @@ export const FormModal = ({
                 expGraph.formData.action = expGraphAction
                 setActions(myActions)
             } else {
-                // actions.f
-                // let data = expGraph.formData.action.filter((item)=>{return item.key === defaultValue.key})
                 if (expGraph.formData.action) {
-                    console.log(
-                        "expGraph.formData.action",
-                        expGraph.formData.action
-                    )
-
                     let arr = expGraph.formData.action.map((item) => {
                         if (item.key === defaultValue.key) {
                             return { ...values, param, key: defaultValue.key }
@@ -93,7 +86,6 @@ export const FormModal = ({
                         return item
                     })
                     setActions(myActions)
-                    console.log(arr)
                     expGraph.formData.action = arr
                 }
             }
@@ -106,7 +98,7 @@ export const FormModal = ({
     }
     return (
         <Modal
-            title={"行为"}
+            title={"行为配置"}
             visible={visible}
             footer={false}
             onCancel={() => handleVisible(false)}
@@ -147,16 +139,6 @@ export const FormModal = ({
                         </Select.Option>
                     </Select>
                 </Form.Item>
-
-                {/* <Form.Item
-                    label="插槽"
-                    name="param"
-                    rules={[
-                        { required: true, message: "请输入插槽！" },
-                    ]}
-                >
-                    <Input placeholder={"请输入节点重复次数"}/>
-                </Form.Item> */}
                 <Form.List name="param">
                     {(fields, { add, remove }) => (
                         <>

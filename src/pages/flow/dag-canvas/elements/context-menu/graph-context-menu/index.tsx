@@ -32,13 +32,13 @@ export const GraphContextMenu: React.FC<Props> = (props) => {
             className={styles.graphContextMenu}
             style={{ top, left }}
         >
-            <Menu hasIcon={true}>
+            {/* <Menu hasIcon={true}>
                 <Menu.Item
                     disabled={true}
                     icon={<ReloadOutlined />}
                     text="刷新"
                 />
-            </Menu>
+            </Menu> */}
         </div>
     )
 }
