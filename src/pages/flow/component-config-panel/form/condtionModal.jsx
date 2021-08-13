@@ -12,6 +12,20 @@ function Random(min, max) {
     return Math.round(Math.random() * (max - min)) + min
 }
 
+function debounce(fn, delay) {
+    var timer // 维护一个 timer
+    return function () {
+        var _this = this // 取debounce执行作用域的this
+        var args = arguments
+        if (timer) {
+            clearTimeout(timer)
+        }
+        timer = setTimeout(function () {
+            fn.apply(_this, args) // 用apply指向调用debounce的对象，相当于_this.fn(args);
+        }, delay)
+    }
+}
+
 async function handleSearch(value, setSelectData) {
     if (value) {
         let data = await schema.service.get({ name: "like.*" + value + "*" })
@@ -124,6 +138,8 @@ export const FormModal = ({
     const options = selectData.map((d) => (
         <Option key={d.name}>{d.name}</Option>
     ))
+
+    var testDebounceFn = debounce(handleSearch, 1000) // 防抖函数
     return (
         <Modal
             title={"条件配置"}
@@ -159,7 +175,9 @@ export const FormModal = ({
                         defaultActiveFirstOption={false}
                         showArrow={false}
                         filterOption={false}
-                        onSearch={(value) => handleSearch(value, setSelectData)}
+                        onSearch={(value) =>
+                            testDebounceFn(value, setSelectData)
+                        }
                         notFoundContent={null}
                     >
                         {options}
