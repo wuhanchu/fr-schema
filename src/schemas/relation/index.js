@@ -16,6 +16,13 @@ const schema = {
         editHide: true,
         addHide: true,
     },
+    from_entity_type_id: {
+        title: "左实体类型",
+        type: schemaFieldType.Select,
+        listHide: true,
+        editHide: true,
+        addHide: true,
+    },
     from_entity_name: {
         title: "左实体",
         editHide: true,
@@ -39,6 +46,13 @@ const schema = {
     },
     to_entity_type_name: {
         title: "右实体类型",
+        editHide: true,
+        addHide: true,
+    },
+    to_entity_type_id: {
+        type: schemaFieldType.Select,
+        title: "右实体类型",
+        listHide: true,
         editHide: true,
         addHide: true,
     },

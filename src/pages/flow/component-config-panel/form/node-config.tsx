@@ -24,7 +24,7 @@ export const NodeFormDemo: React.FC<Props> = ({
 
     const [type, setType] = useState("action")
     const [actionType, setActionType] = useState("add")
-
+    console.log(expGraph.getEdges(), expGraph.getNodes(), expGraph)
     let { action, condition } = expGraph.formData
 
     const [tagIndex, setTagIndex] = useState(0)

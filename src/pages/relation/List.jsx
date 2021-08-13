@@ -28,6 +28,21 @@ class List extends DataList {
         let res = await schemas.entity.service.get({ pageSize: 10000 })
         let typeList = utils.dict.listToDict(res.list, null, "id", "name")
         res = await schemas.relationType.service.get({ pageSize: 10000 })
+        let entityType = await schemas.entityType.service.get({
+            pageSize: 10000,
+        })
+        this.schema.from_entity_type_id.dict = utils.dict.listToDict(
+            entityType.list,
+            null,
+            "id",
+            "name"
+        )
+        this.schema.to_entity_type_id.dict = utils.dict.listToDict(
+            entityType.list,
+            null,
+            "id",
+            "name"
+        )
         let relationTypeList = utils.dict.listToDict(
             res.list,
             null,
@@ -47,16 +62,16 @@ class List extends DataList {
             domain_key,
             from_entity_id,
             to_entity_id,
-            from_entity_type_name,
-            to_entity_type_name,
+            from_entity_type_id,
+            to_entity_type_id,
         } = this.schema
         const filters = this.createFilters(
             {
                 domain_key,
                 from_entity_id,
-                from_entity_type_name,
+                from_entity_type_id,
                 to_entity_id,
-                to_entity_type_name,
+                to_entity_type_id,
                 relation_key,
             },
             5

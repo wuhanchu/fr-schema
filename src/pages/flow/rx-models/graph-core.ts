@@ -579,6 +579,10 @@ export class GraphCore<
         this.nodeMetas = this.nodeMetas.filter(
             (nodeMeta) => !target.includes(nodeMeta.id)
         )
+        const view = this.graph?.findViewByCell(target[0])
+        // view?.unmount()
+        console.log(view)
+        console.log("target", target[0])
         this.graph?.removeCells(target)
     }
 

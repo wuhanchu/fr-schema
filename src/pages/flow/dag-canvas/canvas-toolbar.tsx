@@ -1,24 +1,16 @@
 import React, { useCallback, useState } from "react"
-import { Toolbar } from "@antv/x6-react-components"
 import { Button, Tooltip } from "antd"
 import {
-    GatewayOutlined,
-    GroupOutlined,
-    PlaySquareOutlined,
     RollbackOutlined,
     ToTopOutlined,
-    UngroupOutlined,
     AppstoreAddOutlined,
 } from "@ant-design/icons"
 import { useObservableState } from "@/common/hooks/useObservableState"
-import { RxInput } from "@/components/rx-component/rx-input"
-import { showModal } from "@/components/modal"
-import { addNodeGroup } from "@/mock/graph"
-import { BehaviorSubject } from "rxjs"
 import { useExperimentGraph } from "@/pages/flow/rx-models/experiment-graph"
 import { formatNodeInfoToNodeMeta } from "@/pages/flow/rx-models/graph-util"
 import styles from "./canvas-toolbar.less"
-import { queryGraph, addNode, copyNode } from "@/mock/graph"
+import { addNode } from "@/mock/graph"
+import { X6DemoGroupEdge } from "../common/graph-common/shape/edge"
 
 interface Props {
     experimentId: string
@@ -92,7 +84,39 @@ export const CanvasToolbar: React.FC<Props> = (props) => {
                 </Button>
             </Tooltip>
             <Tooltip title="新增意图">
-                <Button style={{ marginLeft: "5px" }}>
+                <Button
+                    style={{ marginLeft: "5px" }}
+                    onClick={() => {
+                        const expGraph = useExperimentGraph(experimentId)
+                        console.log(expGraph)
+                        const id = `${Date.now()}${Date.now()}`
+                        expGraph.addEdge({
+                            id: id,
+                            name: "新增意图",
+                            sourceAnchor: "bottom",
+                            source: {
+                                x: -500,
+                                y: -400,
+                            },
+                            target: {
+                                x: -500,
+                                y: -300,
+                            },
+                            zIndex: 1,
+                        })
+                        expGraph.renameNode(id, { name: "新增意图" })
+                        expGraph.getEdgeById(id).setLabels({
+                            attrs: {
+                                text: {
+                                    text: "新增意图",
+                                },
+                                body: {
+                                    fill: "#F7F7FA",
+                                },
+                            },
+                        })
+                    }}
+                >
                     <ToTopOutlined />
                 </Button>
             </Tooltip>

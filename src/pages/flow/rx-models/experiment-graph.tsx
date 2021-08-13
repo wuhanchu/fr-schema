@@ -150,6 +150,8 @@ class ExperimentGraph extends GraphCore<BaseNode, BaseEdge> {
                     })
                 },
                 validateEdge: (args) => {
+                    return true
+
                     // return true
                     const { edge } = args
                     return !!(edge?.target as any)?.port
@@ -166,9 +168,18 @@ class ExperimentGraph extends GraphCore<BaseNode, BaseEdge> {
                     sourceMagnet,
                     targetMagnet,
                 }) {
+                    // return true
+                    console.log(
+                        sourceView,
+                        targetView,
+                        sourceMagnet,
+                        targetMagnet
+                    )
                     console.log("validateConnection")
                     // return true
                     // 不允许连接到自己
+
+                    if (!(sourceMagnet && targetMagnet)) return true
                     if (sourceView === targetView) {
                         return false
                     }
@@ -180,23 +191,6 @@ class ExperimentGraph extends GraphCore<BaseNode, BaseEdge> {
                     ) {
                         return false
                     }
-
-                    console.log(
-                        "sourceView,targetView,sourceMagnet,targetMagnet,",
-                        sourceView,
-                        targetView,
-                        sourceMagnet,
-                        targetMagnet
-                    )
-
-                    // 只能连接到输入链接桩
-                    // if (
-                    //     // !sourceMagnet ||
-                    //     // sourceMagnet.getAttribute("port-group") !== "out" ||
-                    //     // sourceView.cell.store.data.data.types === "begin"
-                    // ) {
-                    //     return false
-                    // }
 
                     // 只能从输出链接桩创建连接
                     if (
@@ -495,6 +489,10 @@ class ExperimentGraph extends GraphCore<BaseNode, BaseEdge> {
 
     renderEdge(edgeMeta: EdgeMeta): BaseEdge | undefined {
         const { type } = edgeMeta
+
+        console.log("新增线")
+        console.log(edgeMeta)
+
         if (type === "group") {
             return this.graph!.addEdge(
                 new X6DemoGroupEdge(edgeMeta)
@@ -591,33 +589,6 @@ class ExperimentGraph extends GraphCore<BaseNode, BaseEdge> {
             }
         }
 
-        if (isOld) {
-            // 处理边虚线样式更新的问题。
-            const node = args.currentCell as BaseNode
-            const portId = edge.getTargetPortId()
-            console.log(portId, node)
-            if (node && portId) {
-                // 触发 port 重新渲染
-                node.setPortProp(portId, "connected", true)
-                // 更新连线样式
-                edge.attr({
-                    line: {
-                        strokeDasharray: "",
-                        targetMarker: "",
-                        stroke: "#808080",
-                    },
-                })
-                const data = {
-                    source: source.cell,
-                    target: target.cell,
-                    outputPortId: source.port,
-                    inputPortId: target.port,
-                }
-                edge.setData(data)
-                this.updateExperimentGraph([], [data])
-            }
-        }
-
         return { success: true }
     }
 
@@ -674,6 +645,7 @@ class ExperimentGraph extends GraphCore<BaseNode, BaseEdge> {
                     const { nodeInstanceId, posX, posY } = position
                     const matchNode = nextGraph.nodes.find(
                         (item: any) =>
+                            item.id &&
                             item.id.toString() === nodeInstanceId &&
                             nodeInstanceId.toString()
                     )
