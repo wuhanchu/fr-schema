@@ -78,6 +78,11 @@ export class GraphCore<
     // 产生连线的订阅
     private connectNodeSub?: Subscription
 
+    // 连线移动的订阅
+    // private moveEdgeSub?: Subscription
+    private mouseenterEdgeSub?: Subscription
+    private mouseleaveEdgeSub?: Subscription
+
     // 连线已删除的订阅
     private connectionRemovedSub?: Subscription
 
@@ -245,6 +250,32 @@ export class GraphCore<
                 }
             ).subscribe((args) => {
                 this.onConnectNode(args)
+            })
+
+            // 处理鼠标悬停连线事件
+            this.mouseenterEdgeSub = fromEventPattern((handler) => {
+                graph.on("edge:mouseenter", handler)
+            }).subscribe((args) => {
+                const { edge } = args
+                edge.addTools([
+                    "source-arrowhead",
+                    "target-arrowhead",
+                    {
+                        name: "button-remove",
+                        args: {
+                            distance: -20,
+                        },
+                    },
+                ])
+                // this.onConnectNode({...args, isOld: true})
+            })
+
+            // 处理鼠标移出连线事件
+            this.mouseleaveEdgeSub = fromEventPattern((handler) => {
+                graph.on("edge:mouseleave", handler)
+            }).subscribe((args) => {
+                const { edge } = args
+                edge.removeTools()
             })
 
             // 处理连线删除事件
@@ -665,6 +696,8 @@ export class GraphCore<
         this.nodeContextMenuSub?.unsubscribe()
         this.selectNodeSub?.unsubscribe()
         this.connectNodeSub?.unsubscribe()
+        this.mouseenterEdgeSub?.unsubscribe()
+        this.mouseleaveEdgeSub?.unsubscribe()
         this.connectionRemovedSub?.unsubscribe()
         this.moveNodesSub?.unsubscribe()
         this.deleteNodeOrEdgeSub?.unsubscribe()

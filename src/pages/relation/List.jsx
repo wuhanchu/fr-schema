@@ -47,12 +47,16 @@ class List extends DataList {
             domain_key,
             from_entity_id,
             to_entity_id,
+            from_entity_type_name,
+            to_entity_type_name,
         } = this.schema
         const filters = this.createFilters(
             {
                 domain_key,
                 from_entity_id,
+                from_entity_type_name,
                 to_entity_id,
+                to_entity_type_name,
                 relation_key,
             },
             5

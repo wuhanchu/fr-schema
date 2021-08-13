@@ -371,6 +371,8 @@ class Chart extends React.Component {
         })
 
         graph.on("edge:removed", ({ edge, options }) => {
+            console.log("edge:removed")
+
             if (!options.ui) {
                 return
             }
@@ -382,6 +384,7 @@ class Chart extends React.Component {
         })
 
         graph.on("edge:mouseenter", ({ edge }) => {
+            console.log("edge:mouseenter")
             edge.addTools([
                 "source-arrowhead",
                 "target-arrowhead",
@@ -395,6 +398,8 @@ class Chart extends React.Component {
         })
 
         graph.on("edge:mouseleave", ({ edge }) => {
+            console.log("edge:mouseleave")
+
             edge.removeTools()
         })
 

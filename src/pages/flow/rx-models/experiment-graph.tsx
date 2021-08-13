@@ -166,6 +166,7 @@ class ExperimentGraph extends GraphCore<BaseNode, BaseEdge> {
                     sourceMagnet,
                     targetMagnet,
                 }) {
+                    console.log("validateConnection")
                     // return true
                     // 不允许连接到自己
                     if (sourceView === targetView) {
@@ -180,7 +181,23 @@ class ExperimentGraph extends GraphCore<BaseNode, BaseEdge> {
                         return false
                     }
 
-                    return true
+                    console.log(
+                        "sourceView,targetView,sourceMagnet,targetMagnet,",
+                        sourceView,
+                        targetView,
+                        sourceMagnet,
+                        targetMagnet
+                    )
+
+                    // 只能连接到输入链接桩
+                    // if (
+                    //     // !sourceMagnet ||
+                    //     // sourceMagnet.getAttribute("port-group") !== "out" ||
+                    //     // sourceView.cell.store.data.data.types === "begin"
+                    // ) {
+                    //     return false
+                    // }
+
                     // 只能从输出链接桩创建连接
                     if (
                         !sourceMagnet ||
@@ -188,6 +205,7 @@ class ExperimentGraph extends GraphCore<BaseNode, BaseEdge> {
                     ) {
                         return false
                     }
+                    return true
 
                     // 判断目标链接桩是否可连接
                     const portId = targetMagnet.getAttribute("port")!
@@ -504,9 +522,6 @@ class ExperimentGraph extends GraphCore<BaseNode, BaseEdge> {
             (cell) => cell.isNode() && cell.isGroup()
         )
 
-        console.log("selectedNodes, selectedGroups")
-
-        console.log(selectedNodes, selectedGroups, nodes)
         if (nodes.length === 1 && selectedNodes.length === 0) {
             const cell = nodes[0]
             const nodeData = cell.getData()
@@ -542,12 +557,45 @@ class ExperimentGraph extends GraphCore<BaseNode, BaseEdge> {
     }
 
     async onConnectNode(args: any) {
-        const { edge = {}, isNew } = args
+        const { edge = {}, isNew, isOld } = args
         const { source, target } = edge as any
+
+        console.log("边的状态", edge, isNew)
+        console.log(source, target)
+
         if (isNew) {
+            // 处理边虚线样式更新的问题。
+            console.log("新的连接")
+            const node = args.currentCell as BaseNode
+            const portId = edge.getTargetPortId()
+            console.log(portId, node)
+            if (node && portId) {
+                // 触发 port 重新渲染
+                node.setPortProp(portId, "connected", true)
+                // 更新连线样式
+                edge.attr({
+                    line: {
+                        strokeDasharray: "",
+                        targetMarker: "",
+                        stroke: "#808080",
+                    },
+                })
+                const data = {
+                    source: source.cell,
+                    target: target.cell,
+                    outputPortId: source.port,
+                    inputPortId: target.port,
+                }
+                edge.setData(data)
+                this.updateExperimentGraph([], [data])
+            }
+        }
+
+        if (isOld) {
             // 处理边虚线样式更新的问题。
             const node = args.currentCell as BaseNode
             const portId = edge.getTargetPortId()
+            console.log(portId, node)
             if (node && portId) {
                 // 触发 port 重新渲染
                 node.setPortProp(portId, "connected", true)
