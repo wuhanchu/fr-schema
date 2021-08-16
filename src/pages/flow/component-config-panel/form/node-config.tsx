@@ -46,7 +46,6 @@ export const NodeFormDemo: React.FC<Props> = ({
         initialValues.action &&
             initialValues.action.map((item, index) => {
                 let filterAction = action.filter((list) => {
-                    console.log("输出", list.key, item)
                     return list.key === item
                 })
                 if (filterAction && filterAction[0]) {
@@ -60,21 +59,33 @@ export const NodeFormDemo: React.FC<Props> = ({
         initialValues.allow_action_repeat
     )
 
-    const onValuesChange = async (activeExperiment, args) => {
+    const onValuesChange = async (activeExperiment, args, data) => {
         const { name } = activeExperiment
-        console.log(args)
+        console.log(args, data)
+        console.log(activeExperiment)
+        console.log("结果")
+        console.log({ ...args, ...activeExperiment })
         if (activeExperiment.allow_action_repeat !== undefined)
             setAllowActionRepeat(activeExperiment.allow_action_repeat)
-        if (node.name !== name) {
-            await expGraph.renameNode(nodeId, activeExperiment)
-        }
+        if (activeExperiment.allow_action_repeat === true)
+            await expGraph.renameNode(nodeId, {
+                allow_repeat_time: initialValues.allow_repeat_time,
+            })
+        // if (node.name !== name) {
+        await expGraph.renameNode(nodeId, {
+            ...args,
+            ...activeExperiment,
+            allow_repeat_time: activeExperiment.allow_repeat_time,
+        })
+        // }
     }
 
-    console.log(actions)
+    console.log("那是", actions)
 
     useEffect(() => {
         // Update the document title using the browser API
         var el = document.getElementById("items")
+        console.log("is是", actions)
         console.log("el是", el)
         console.log(el?.style)
 
@@ -83,8 +94,9 @@ export const NodeFormDemo: React.FC<Props> = ({
             new Sortable(el, {
                 onChange: function (/**Event*/ evt) {
                     evt.newIndex // most likely why this event is used is to get the dragging element's current index
-
-                    let sortableData = clone(initialValues.action)
+                    let sortableData = clone(
+                        expGraph.getNodeById(nodeId).store.data.data.action
+                    )
                     let temp = sortableData[evt.oldIndex]
                     sortableData[evt.oldIndex] = sortableData[evt.newIndex]
                     sortableData[evt.newIndex] = temp
@@ -92,24 +104,21 @@ export const NodeFormDemo: React.FC<Props> = ({
                     expGraph.renameNode(nodeId, {
                         action: [...sortableData],
                     })
-                    console.log(expGraph.getNodeById(nodeId))
                 },
             })
         el = document.getElementById("items")
         console.log("el是", el)
         console.log(el?.style)
     }, [])
-
-    const [state, setState] = useState<ItemType[]>([
-        { id: 1, name: "shrek" },
-        { id: 2, name: "fiona" },
-    ])
     return (
         <Form
             preserve={false}
             form={form}
             layout="vertical"
-            initialValues={initialValues}
+            initialValues={{
+                ...initialValues,
+                allow_repeat_time: initialValues.allow_repeat_time,
+            }}
             onValuesChange={onValuesChange}
             requiredMark={false}
         >
@@ -132,6 +141,7 @@ export const NodeFormDemo: React.FC<Props> = ({
                 <Form.Item name={"allow_repeat_time"} label={"允许重复次数"}>
                     <InputNumber
                         style={{ width: "100%" }}
+                        defaultValue={initialValues.allow_repeat_time}
                         placeholder="请输入允许重复次数"
                     />
                 </Form.Item>
@@ -179,6 +189,7 @@ export const NodeFormDemo: React.FC<Props> = ({
                     })}
                     <Tag
                         onClick={() => {
+                            console.log(actions)
                             setActionType("add")
                             setTagIndex(actions.length)
                             setVisible(true)

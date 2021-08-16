@@ -181,7 +181,11 @@ export const FormModal = ({
                         placeholder={"请选择意图"}
                         defaultActiveFirstOption={false}
                         // showArrow={false}
-                        filterOption={false}
+                        filterOption={(input, option) =>
+                            option.children
+                                .toLowerCase()
+                                .indexOf(input.toLowerCase()) >= 0
+                        }
                         // onSearch={(value) =>
                         //     testDebounceFn(value, setSelectData)
                         // }
