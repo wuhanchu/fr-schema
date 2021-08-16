@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { Input, Tag, Form, Button, Space, Row, Col, Select } from "antd"
 import { useExperimentGraph } from "@/pages/flow/rx-models/experiment-graph"
 import "antd/lib/style/index.css"
@@ -27,7 +27,7 @@ function debounce(fn, delay) {
 }
 
 async function handleSearch(value, setSelectData) {
-    if (value) {
+    if (value !== undefined) {
         let data = await schema.service.get({ name: "like.*" + value + "*" })
         console.log(data)
         setSelectData(data.list)
@@ -54,7 +54,14 @@ export const FormModal = ({
 }) => {
     const [form] = Form.useForm()
     const [selectData, setSelectData] = useState([])
-
+    // useEffect(()=>{
+    //     // handleSearch("", setSelectData)
+    // })
+    useEffect(() => {
+        // Update the document title using the browser API
+        console.log("设置数据")
+        handleSearch("", setSelectData)
+    }, [])
     const expGraph = useExperimentGraph(experimentId)
     let { action, condition } = expGraph.formData
     let initialValues = clone(defaultValue)
@@ -139,7 +146,7 @@ export const FormModal = ({
         <Option key={d.name}>{d.name}</Option>
     ))
 
-    var testDebounceFn = debounce(handleSearch, 1000) // 防抖函数
+    // var testDebounceFn = debounce(handleSearch, 1000) // 防抖函数
     return (
         <Modal
             title={"条件配置"}
@@ -171,13 +178,13 @@ export const FormModal = ({
                     {/* <Input placeholder={"请输入意图"} /> */}
                     <Select
                         showSearch
-                        placeholder={"请输入意图"}
+                        placeholder={"请选择意图"}
                         defaultActiveFirstOption={false}
-                        showArrow={false}
+                        // showArrow={false}
                         filterOption={false}
-                        onSearch={(value) =>
-                            testDebounceFn(value, setSelectData)
-                        }
+                        // onSearch={(value) =>
+                        //     testDebounceFn(value, setSelectData)
+                        // }
                         notFoundContent={null}
                     >
                         {options}

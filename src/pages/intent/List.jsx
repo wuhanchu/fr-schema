@@ -39,6 +39,7 @@ class List extends ListPage {
                 <Divider type="vertical" />
                 <a
                     onClick={() => {
+                        window.__isReactDndBackendSetUp = undefined
                         this.setState({ record, visibleFlow: true })
                     }}
                 >
@@ -304,29 +305,30 @@ class List extends ListPage {
         const { visibleFlow, record } = this.state
         return (
             <>
-                {visibleFlow && (
-                    <Modal
-                        title={"流程配置"}
-                        visible={true}
-                        width={"90%"}
-                        style={{ top: 20, bottom: 20 }}
-                        footer={null}
-                        onOk={() => {
-                            this.setState({ visibleFlow: false })
-                        }}
-                        onCancel={() => {
-                            this.setState({ visibleFlow: false })
-                        }}
-                        closable={false}
-                    >
-                        <ChartModal
-                            visibleRelease={false}
-                            record={record}
-                            schemas={schemas.flow}
-                        />
-                    </Modal>
-                )}
-                {this.renderExportModal()}
+                (
+                <Modal
+                    title={"流程配置"}
+                    visible={visibleFlow}
+                    width={"90%"}
+                    style={{ top: 20, bottom: 20 }}
+                    footer={null}
+                    destroyOnClose={true}
+                    onOk={() => {
+                        console.log(window.__isReactDndBackendSetUp)
+                        this.setState({ visibleFlow: false })
+                    }}
+                    onCancel={() => {
+                        this.setState({ visibleFlow: false })
+                    }}
+                    closable={false}
+                >
+                    <ChartModal
+                        visibleRelease={false}
+                        record={record}
+                        schemas={schemas.flow}
+                    />
+                </Modal>
+                ){this.renderExportModal()}
             </>
         )
     }

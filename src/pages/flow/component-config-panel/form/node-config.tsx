@@ -1,9 +1,13 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { Form, Input, Radio, Tag, Select, InputNumber } from "antd"
 import { useObservableState } from "@/common/hooks/useObservableState"
 import { useExperimentGraph } from "@/pages/flow/rx-models/experiment-graph"
 import "antd/lib/style/index.css"
 import { FormModal } from "./formModal"
+// Cherrypick extra plugins
+import clone from "clone"
+import Sortable from "sortablejs/modular/sortable.complete.esm.js"
+// import { ReactSortable } from "react-sortablejs";
 
 export interface Props {
     name: string
@@ -35,11 +39,14 @@ export const NodeFormDemo: React.FC<Props> = ({
         expGraph.getNodeById(nodeId).store.data.data
 
     let myAction = []
+    console.log(expGraph.getNodeById(nodeId).store.data.data)
+    console.log(action)
     if (nodeId && expGraph.getNodeById(nodeId)) {
         initialValues = expGraph.getNodeById(nodeId).store.data.data
         initialValues.action &&
             initialValues.action.map((item, index) => {
                 let filterAction = action.filter((list) => {
+                    console.log("输出", list.key, item)
                     return list.key === item
                 })
                 if (filterAction && filterAction[0]) {
@@ -47,20 +54,59 @@ export const NodeFormDemo: React.FC<Props> = ({
                 }
             })
     }
+    console.log(myAction)
     const [actions, setActions] = useState(myAction)
     const [allowActionRepeat, setAllowActionRepeat] = useState(
         initialValues.allow_action_repeat
     )
 
-    const onValuesChange = async (activeExperiment) => {
+    const onValuesChange = async (activeExperiment, args) => {
         const { name } = activeExperiment
-        setAllowActionRepeat(activeExperiment.allow_action_repeat)
+        console.log(args)
+        if (activeExperiment.allow_action_repeat !== undefined)
+            setAllowActionRepeat(activeExperiment.allow_action_repeat)
         if (node.name !== name) {
             await expGraph.renameNode(nodeId, activeExperiment)
         }
     }
+
+    console.log(actions)
+
+    useEffect(() => {
+        // Update the document title using the browser API
+        var el = document.getElementById("items")
+        console.log("el是", el)
+        console.log(el?.style)
+
+        var sortable =
+            el &&
+            new Sortable(el, {
+                onChange: function (/**Event*/ evt) {
+                    evt.newIndex // most likely why this event is used is to get the dragging element's current index
+
+                    let sortableData = clone(initialValues.action)
+                    let temp = sortableData[evt.oldIndex]
+                    sortableData[evt.oldIndex] = sortableData[evt.newIndex]
+                    sortableData[evt.newIndex] = temp
+                    expGraph.renameNode(nodeId, { action: null })
+                    expGraph.renameNode(nodeId, {
+                        action: [...sortableData],
+                    })
+                    console.log(expGraph.getNodeById(nodeId))
+                },
+            })
+        el = document.getElementById("items")
+        console.log("el是", el)
+        console.log(el?.style)
+    }, [])
+
+    const [state, setState] = useState<ItemType[]>([
+        { id: 1, name: "shrek" },
+        { id: 2, name: "fiona" },
+    ])
     return (
         <Form
+            preserve={false}
             form={form}
             layout="vertical"
             initialValues={initialValues}
@@ -94,43 +140,69 @@ export const NodeFormDemo: React.FC<Props> = ({
                 <Input placeholder="请选择操作" />
             </Form.Item> */}
             <Form.Item label={"⾏为定义"}>
-                {actions.map((item, index) => {
-                    return (
-                        <Tag
-                            closable
-                            onClose={(data) => {
-                                let actionList = new Set(initialValues.action)
-                                expGraph.renameNode(nodeId, { action: null })
-                                actionList.delete(item.key)
-                                expGraph.renameNode(nodeId, {
-                                    action: [...actionList],
-                                })
-                            }}
-                            onClick={() => {
-                                setActionType("edit")
-                                setType("action")
-                                setTagIndex(index)
-                                setDefaultValue(item)
-                                setVisible(true)
-                            }}
-                        >
-                            {item.name}
-                        </Tag>
-                    )
-                })}
-                <Tag
-                    onClick={() => {
-                        setActionType("add")
-                        setTagIndex(actions.length)
-                        setVisible(true)
-                        setDefaultValue({})
-                        setType("action")
-                    }}
-                    color="#2db7f5"
-                >
-                    +
-                </Tag>
+                <ul style={{ margin: "0", padding: "0" }} id="items">
+                    {actions.map((item, index) => {
+                        return (
+                            <li
+                                style={{ display: "inline-block" }}
+                                key={item.key}
+                            >
+                                <Tag
+                                    closable
+                                    onClose={(data) => {
+                                        let actionList = new Set(
+                                            initialValues.action
+                                        )
+                                        expGraph.renameNode(nodeId, {
+                                            action: null,
+                                        })
+                                        actionList.delete(item.key)
+                                        expGraph.renameNode(nodeId, {
+                                            action: [...actionList],
+                                        })
+                                        console.log(
+                                            expGraph.getNodeById(nodeId)
+                                        )
+                                    }}
+                                    onClick={() => {
+                                        setActionType("edit")
+                                        setType("action")
+                                        setTagIndex(index)
+                                        setDefaultValue(item)
+                                        setVisible(true)
+                                    }}
+                                >
+                                    {item.name}
+                                </Tag>
+                            </li>
+                        )
+                    })}
+                    <Tag
+                        onClick={() => {
+                            setActionType("add")
+                            setTagIndex(actions.length)
+                            setVisible(true)
+                            setDefaultValue({})
+                            setType("action")
+                        }}
+                        color="#2db7f5"
+                    >
+                        +
+                    </Tag>
+                </ul>
             </Form.Item>
+            {/* <Form.Item label={"测试"}> */}
+            {/* <ul >
+                <li>item 1</li>
+                <li>item 2</li>
+                <li>item 3</li>
+            </ul> */}
+            {/* <ReactSortable list={state} setList={setState}>
+                    {state.map((item) => (
+                        <div key={item.id}>{item.name}</div>
+                    ))}
+                </ReactSortable> */}
+            {/* </Form.Item> */}
             {/* <Form.Item label="操作">
                 <Input placeholder="请选择操作" />
             </Form.Item> */}

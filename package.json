@@ -45,7 +45,6 @@
             "prettier --write",
             "git add"
         ]
-
     },
     "browserslist": [
         "> 1%",
@@ -94,16 +93,19 @@
         "qs": "^6.9.0",
         "react": "^16.13.16",
         "react-ace": "^9.3.0",
+        "react-beautiful-dnd": "^13.1.0",
         "react-codemirror": "^1.0.0",
         "react-codemirror2": "^7.2.1",
         "react-dom": "^16.8.6",
         "react-helmet-async": "^1.0.7",
         "react-json-view": "^1.19.1",
+        "react-sortablejs": "^6.0.0",
         "react-sound": "^1.2.0",
         "react-to-print": "2.10.3",
         "redux": "^4.0.1",
         "seamless-immutable": "^7.1.4",
         "smart-arraytotree": "^1.1.0",
+        "sortablejs": "^1.14.0",
         "styled-components": "5.1.1",
         "umi": "3.2.24",
         "umi-request": "^1.0.8",
@@ -126,6 +128,7 @@
         "@types/react": "^16.9.17",
         "@types/react-dom": "^16.8.4",
         "@types/react-helmet": "^5.0.13",
+        "@types/sortablejs": "^1.10.7",
         "@umijs/fabric": "2.0.5",
         "@umijs/plugin-blocks": "^2.0.5",
         "@umijs/plugin-qiankun": "^2.14.3",

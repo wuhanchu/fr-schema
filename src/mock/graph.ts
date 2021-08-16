@@ -104,12 +104,12 @@ const initData = {
             id: "1603716783816",
             name: "开始节点",
             inPorts: [
-                {
-                    tableName: "germany_credit_data",
-                    sequence: 1,
-                    description: "输入",
-                    id: "1603716783816_in",
-                },
+                // {
+                //     tableName: "germany_credit_data",
+                //     sequence: 1,
+                //     description: "输入",
+                //     id: "1603716783816_in",
+                // },
             ],
             outPorts: [
                 {
