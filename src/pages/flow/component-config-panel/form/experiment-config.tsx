@@ -55,6 +55,8 @@ export const ExperimentForm: React.FC<Props> = ({
             attrs: {
                 text: {
                     text: value.name,
+                    fontSize: 12,
+                    fill: "#000000A6",
                 },
                 body: {
                     fill: "#F7F7FA",

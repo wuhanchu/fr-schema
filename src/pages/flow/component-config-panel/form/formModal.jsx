@@ -114,9 +114,9 @@ export const FormModal = ({
                 <Form.Item
                     label="名称"
                     name="name"
-                    rules={[{ required: true, message: "请输入用户名！" }]}
+                    rules={[{ required: true, message: "请输入名称！" }]}
                 >
-                    <Input placeholder={"请输入用户名"} />
+                    <Input placeholder={"请输入名称"} />
                 </Form.Item>
 
                 <Form.Item

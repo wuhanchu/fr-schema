@@ -109,6 +109,8 @@ export const CanvasToolbar: React.FC<Props> = (props) => {
                             attrs: {
                                 text: {
                                     text: "新增意图",
+                                    fontSize: 12,
+                                    fill: "#000000A6",
                                 },
                                 body: {
                                     fill: "#F7F7FA",

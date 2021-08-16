@@ -289,6 +289,8 @@ class ExperimentGraph extends GraphCore<BaseNode, BaseEdge> {
                         attrs: {
                             text: {
                                 text: item.store.data.name,
+                                fontSize: 12,
+                                fill: "#000000A6",
                             },
                             body: {
                                 fill: "#F7F7FA",
@@ -362,7 +364,7 @@ class ExperimentGraph extends GraphCore<BaseNode, BaseEdge> {
         const newGraph = produce(oldGraph, (nextGraph: any) => {
             if (nodes.length) {
                 nextGraph.nodes = oldGraph.nodes.filter(
-                    (node) => !nodes.includes(node.id.toString())
+                    (node) => node.id && !nodes.includes(node.id.toString())
                 )
                 nextGraph.links = oldGraph.links.filter(
                     (link) =>

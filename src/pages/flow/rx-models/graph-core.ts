@@ -348,17 +348,21 @@ export class GraphCore<
                     graph.unbindKey(["delete", "backspace"])
                 }
             ).subscribe(() => {
-                const selectedCells = graph.getSelectedCells()
-                const selectedNodes = selectedCells.filter((cell) =>
-                    cell.isNode()
-                ) as N[]
-                const selectedEdges = selectedCells.filter((cell) =>
-                    cell.isEdge()
-                ) as E[]
-                this.onDeleteNodeOrEdge({
-                    nodes: selectedNodes,
-                    edges: selectedEdges,
-                })
+                try {
+                    const selectedCells = graph.getSelectedCells()
+                    const selectedNodes = selectedCells.filter((cell) =>
+                        cell.isNode()
+                    ) as N[]
+                    const selectedEdges = selectedCells.filter((cell) =>
+                        cell.isEdge()
+                    ) as E[]
+                    console.log("没错")
+
+                    this.onDeleteNodeOrEdge({
+                        nodes: selectedNodes,
+                        edges: selectedEdges,
+                    })
+                } catch (error) {}
             })
 
             // 处理节点复制事件
