@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"
-import { Form, Input, Radio, Tag, Select, InputNumber } from "antd"
+import { Form, Input, Radio, Tag, Select, InputNumber, Popconfirm } from "antd"
 import { useObservableState } from "@/common/hooks/useObservableState"
 import { useExperimentGraph } from "@/pages/flow/rx-models/experiment-graph"
 import "antd/lib/style/index.css"
@@ -8,6 +8,7 @@ import { FormModal } from "./formModal"
 import clone from "clone"
 import Sortable from "sortablejs/modular/sortable.complete.esm.js"
 // import { ReactSortable } from "react-sortablejs";
+import { CloseOutlined } from "@ant-design/icons"
 
 export interface Props {
     name: string
@@ -55,16 +56,14 @@ export const NodeFormDemo: React.FC<Props> = ({
     }
     console.log(myAction)
     const [actions, setActions] = useState(myAction)
+    // setActions([...myAction])
+
     const [allowActionRepeat, setAllowActionRepeat] = useState(
         initialValues.allow_action_repeat
     )
 
     const onValuesChange = async (activeExperiment, args, data) => {
         const { name } = activeExperiment
-        console.log(args, data)
-        console.log(activeExperiment)
-        console.log("结果")
-        console.log({ ...args, ...activeExperiment })
         if (activeExperiment.allow_action_repeat !== undefined)
             setAllowActionRepeat(activeExperiment.allow_action_repeat)
         if (activeExperiment.allow_action_repeat === true)
@@ -80,15 +79,9 @@ export const NodeFormDemo: React.FC<Props> = ({
         // }
     }
 
-    console.log("那是", actions)
-
     useEffect(() => {
         // Update the document title using the browser API
         var el = document.getElementById("items")
-        console.log("is是", actions)
-        console.log("el是", el)
-        console.log(el?.style)
-
         var sortable =
             el &&
             new Sortable(el, {
@@ -107,9 +100,8 @@ export const NodeFormDemo: React.FC<Props> = ({
                 },
             })
         el = document.getElementById("items")
-        console.log("el是", el)
-        console.log(el?.style)
     }, [])
+    console.log(actions)
     return (
         <Form
             preserve={false}
@@ -122,13 +114,17 @@ export const NodeFormDemo: React.FC<Props> = ({
             onValuesChange={onValuesChange}
             requiredMark={false}
         >
-            <Form.Item label="节点名称" name="name">
-                <Input placeholder="请输入节点名称" />
+            <Form.Item
+                label="名称"
+                name="name"
+                rules={[{ required: true, message: "请输入名称！" }]}
+            >
+                <Input placeholder="请输入名称" />
             </Form.Item>
             {/* <Form.Item name={"type"} label={"节点类型"}>
                 <Input placeholder="请输入节点类型" />
             </Form.Item> */}
-            <Form.Item name={"allow_action_repeat"} label={"是否允许重复"}>
+            {/* <Form.Item name={"allow_action_repeat"} label={"是否允许重复"}>
                 <Select
                     placeholder="请输入是否允许重复"
                     style={{ width: "100%" }}
@@ -136,20 +132,24 @@ export const NodeFormDemo: React.FC<Props> = ({
                     <Select.Option value={true}>是</Select.Option>
                     <Select.Option value={false}>否</Select.Option>
                 </Select>
+            </Form.Item> */}
+            {/* {allowActionRepeat && ( */}
+            <Form.Item
+                name={"allow_repeat_time"}
+                label={"允许重复次数"}
+                rules={[{ required: true, message: "请输入允许重复次数！" }]}
+            >
+                <InputNumber
+                    style={{ width: "100%" }}
+                    defaultValue={initialValues.allow_repeat_time}
+                    placeholder="请输入允许重复次数"
+                />
             </Form.Item>
-            {allowActionRepeat && (
-                <Form.Item name={"allow_repeat_time"} label={"允许重复次数"}>
-                    <InputNumber
-                        style={{ width: "100%" }}
-                        defaultValue={initialValues.allow_repeat_time}
-                        placeholder="请输入允许重复次数"
-                    />
-                </Form.Item>
-            )}
+            {/* )} */}
             {/* <Form.Item name={"opeation"} label="操作">
                 <Input placeholder="请选择操作" />
             </Form.Item> */}
-            <Form.Item label={"⾏为定义"}>
+            <Form.Item label={"行为定义"}>
                 <ul style={{ margin: "0", padding: "0" }} id="items">
                     {actions.map((item, index) => {
                         return (
@@ -158,31 +158,76 @@ export const NodeFormDemo: React.FC<Props> = ({
                                 key={item.key}
                             >
                                 <Tag
-                                    closable
-                                    onClose={(data) => {
-                                        let actionList = new Set(
-                                            initialValues.action
-                                        )
-                                        expGraph.renameNode(nodeId, {
-                                            action: null,
-                                        })
-                                        actionList.delete(item.key)
-                                        expGraph.renameNode(nodeId, {
-                                            action: [...actionList],
-                                        })
-                                        console.log(
-                                            expGraph.getNodeById(nodeId)
-                                        )
-                                    }}
-                                    onClick={() => {
-                                        setActionType("edit")
-                                        setType("action")
-                                        setTagIndex(index)
-                                        setDefaultValue(item)
-                                        setVisible(true)
-                                    }}
+                                // closable
                                 >
-                                    {item.name}
+                                    <span
+                                        onClick={() => {
+                                            setActionType("edit")
+                                            setType("action")
+                                            setTagIndex(index)
+                                            setDefaultValue(item)
+                                            setVisible(true)
+                                        }}
+                                    >
+                                        {item.name}
+                                    </span>
+                                    <Popconfirm
+                                        title="是否删除此行为?"
+                                        onConfirm={() => {
+                                            myAction = []
+
+                                            let actionList = new Set(
+                                                actions.map((item) => {
+                                                    return item.key
+                                                })
+                                            )
+
+                                            console.log(actionList)
+                                            expGraph.renameNode(nodeId, {
+                                                action: null,
+                                            })
+                                            actionList.delete(item.key)
+                                            expGraph.renameNode(nodeId, {
+                                                action: [...actionList],
+                                            })
+                                            console.log(
+                                                expGraph.getNodeById(nodeId)
+                                            )
+
+                                            actionList &&
+                                                actionList.map(
+                                                    (item, index) => {
+                                                        let filterAction = action.filter(
+                                                            (list) => {
+                                                                return (
+                                                                    list.key ===
+                                                                    item
+                                                                )
+                                                            }
+                                                        )
+                                                        if (
+                                                            filterAction &&
+                                                            filterAction[0]
+                                                        ) {
+                                                            myAction.push(
+                                                                filterAction[0]
+                                                            )
+                                                        }
+                                                    }
+                                                )
+
+                                            setActions(myAction)
+                                            setAllowActionRepeat(
+                                                !allowActionRepeat
+                                            )
+                                        }}
+                                        // onCancel={cancel}
+                                        okText="是"
+                                        cancelText="否"
+                                    >
+                                        <CloseOutlined />
+                                    </Popconfirm>
+                                    ,
                                 </Tag>
                             </li>
                         )

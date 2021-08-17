@@ -168,15 +168,6 @@ class ExperimentGraph extends GraphCore<BaseNode, BaseEdge> {
                     sourceMagnet,
                     targetMagnet,
                 }) {
-                    // return true
-                    console.log(
-                        sourceView,
-                        targetView,
-                        sourceMagnet,
-                        targetMagnet
-                    )
-                    console.log("validateConnection")
-                    // return true
                     // 不允许连接到自己
 
                     if (!(sourceMagnet && targetMagnet)) return true
@@ -297,6 +288,22 @@ class ExperimentGraph extends GraphCore<BaseNode, BaseEdge> {
                             },
                         },
                     })
+                    item.addTools([
+                        {
+                            name: "target-arrowhead",
+                            args: {
+                                tagName: "path",
+                                attrs: {
+                                    r: 4,
+                                    d: "M -5 -4 5 0 -5 4 Z",
+                                    fill: "#F7F7FA",
+                                    stroke: "#000000A6",
+                                    "stroke-width": 1,
+                                    cursor: "move",
+                                },
+                            },
+                        },
+                    ])
                 })
 
             const oldGraph = this.experimentGraph$.getValue()
@@ -557,39 +564,38 @@ class ExperimentGraph extends GraphCore<BaseNode, BaseEdge> {
     }
 
     async onConnectNode(args: any) {
-        const { edge = {}, isNew, isOld } = args
+        const { edge = {}, isNew } = args
         const { source, target } = edge as any
 
-        console.log("边的状态", edge, isNew)
+        console.log(args)
         console.log(source, target)
 
-        if (isNew) {
-            // 处理边虚线样式更新的问题。
-            console.log("新的连接")
-            const node = args.currentCell as BaseNode
-            const portId = edge.getTargetPortId()
-            console.log(portId, node)
-            if (node && portId) {
-                // 触发 port 重新渲染
-                node.setPortProp(portId, "connected", true)
-                // 更新连线样式
-                edge.attr({
-                    line: {
-                        strokeDasharray: "",
-                        targetMarker: "",
-                        stroke: "#808080",
-                    },
-                })
-                const data = {
-                    source: source.cell,
-                    target: target.cell,
-                    outputPortId: source.port,
-                    inputPortId: target.port,
-                }
-                edge.setData(data)
-                this.updateExperimentGraph([], [data])
+        // if (isNew) {
+        // 处理边虚线样式更新的问题。
+        const node = args.currentCell as BaseNode
+        const portId = edge.getTargetPortId()
+        console.log(portId, node)
+        if (node && portId) {
+            // 触发 port 重新渲染
+            node.setPortProp(portId, "connected", true)
+            // 更新连线样式
+            edge.attr({
+                line: {
+                    strokeDasharray: "",
+                    targetMarker: "",
+                    stroke: "#808080",
+                },
+            })
+            const data = {
+                source: source.cell,
+                target: target.cell,
+                outputPortId: source.port,
+                inputPortId: target.port,
             }
+            edge.setData(data)
+            this.updateExperimentGraph([], [data])
         }
+        // }
 
         return { success: true }
     }

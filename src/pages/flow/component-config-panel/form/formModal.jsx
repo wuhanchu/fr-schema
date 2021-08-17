@@ -96,6 +96,41 @@ export const FormModal = ({
     const onFinishFailed = (errorInfo) => {
         console.log("Failed:", errorInfo)
     }
+
+    const dict = {
+        phone_play_audio: {
+            value: "phone_play_audio",
+            remark: "对接电话播放音频",
+        },
+        phone_play_tts_audio: {
+            value: "phone_play_tts_audio",
+            remark: "对接电话播放语音合成音频",
+        },
+        search: {
+            value: "search",
+            remark: "搜索知识库",
+        },
+        transfer_manual: {
+            value: "transfer_manual",
+            remark: "转人工",
+        },
+    }
+    let formRef = React.createRef()
+
+    let options = []
+    Object.keys(dict).forEach((key) => {
+        options.push(
+            <Select.Option value={key}>{dict[key].remark}</Select.Option>
+        )
+    })
+    const onValuesChange = (value) => {
+        console.log("修改", form, formRef)
+        if (value.type) {
+            console.log("修改名称")
+            formRef.current.setFieldsValue({ name: dict[value.type].remark })
+        }
+        console.log(formRef.current.getFieldsValue())
+    }
     return (
         <Modal
             title={"行为配置"}
@@ -105,40 +140,34 @@ export const FormModal = ({
         >
             <Form
                 name="basic"
+                ref={formRef}
                 labelCol={{ span: 8 }}
                 wrapperCol={{ span: 12 }}
+                onValuesChange={onValuesChange}
                 initialValues={initialValues}
                 onFinish={onFinish}
                 onFinishFailed={onFinishFailed}
             >
-                <Form.Item
-                    label="名称"
-                    name="name"
-                    rules={[{ required: true, message: "请输入名称！" }]}
-                >
-                    <Input placeholder={"请输入名称"} />
-                </Form.Item>
-
                 <Form.Item
                     label="类型"
                     name="type"
                     rules={[{ required: true, message: "请输入类型！" }]}
                 >
                     <Select placeholder="请输入类型" style={{ width: "100%" }}>
-                        <Select.Option value={"phone_play_audio"}>
-                            对接电话播放音频
-                        </Select.Option>
-                        <Select.Option value={"phone_play_tts_audio"}>
-                            对接电话播放语音合成音频
-                        </Select.Option>
-                        <Select.Option value={"search"}>
-                            搜索知识库
-                        </Select.Option>
-                        <Select.Option value={"transfer_manual"}>
-                            转人工
-                        </Select.Option>
+                        {options}
                     </Select>
                 </Form.Item>
+                <Form.Item
+                    label="名称"
+                    name="name"
+                    rules={[{ required: true, message: "请输入名称！" }]}
+                >
+                    <Input
+                        placeholder={"请输入名称"}
+                        defaultValue={initialValues.name}
+                    />
+                </Form.Item>
+
                 <Form.List name="param">
                     {(fields, { add, remove }) => (
                         <>

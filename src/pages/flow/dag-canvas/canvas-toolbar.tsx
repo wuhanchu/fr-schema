@@ -74,7 +74,11 @@ export const CanvasToolbar: React.FC<Props> = (props) => {
                         const expGraph = useExperimentGraph(experimentId)
                         console.log(expGraph)
 
-                        const res = addNode({ name: "新增", x: -100, y: -100 })
+                        const res = addNode({
+                            name: "未命名",
+                            x: -100,
+                            y: -100,
+                        })
                         const newNode = formatNodeInfoToNodeMeta(res as any)
                         expGraph.addNode(newNode)
                         expGraph.clearContextMenuInfo()

@@ -5,6 +5,8 @@ import { useObservableState } from "@/common/hooks/useObservableState"
 import { useExperimentGraph } from "@/pages/flow/rx-models/experiment-graph"
 import { ExperimentForm } from "./form/experiment-config"
 import { NodeFormDemo } from "./form/node-config"
+import { FlowFormDemo } from "./form/flow-config"
+
 import { GlobalForm } from "./form/global"
 
 import css from "./index.less"
@@ -52,6 +54,9 @@ export const ComponentConfigPanel: React.FC<Props> = (props) => {
                                     }
                                     experimentId={experimentId}
                                 />
+                            )}
+                            {!nodeId && !expGraph.activateNode && (
+                                <FlowFormDemo name="流程设置" />
                             )}
                         </div>
                     </Tabs.TabPane>

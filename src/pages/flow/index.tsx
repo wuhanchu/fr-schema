@@ -22,7 +22,7 @@ const DagDemo: React.FC<Props> = (props) => {
 
     return (
         <div className={styles.layout}>
-            <GuideHeader experimentId={experimentId} />
+            {/* <GuideHeader experimentId={experimentId} /> */}
             <Content className={styles.content}>
                 <div className={classNames(styles.experiment)}>
                     <DndProvider backend={HTML5Backend}>

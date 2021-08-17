@@ -8,8 +8,6 @@ interface NodeParams {
 
 export const copyNode = (props) => {
     const { name, x, y } = props
-    console.log("复制")
-    console.log(props)
     const id = `${Date.now()}`
     return {
         name,
@@ -44,8 +42,10 @@ export const copyNode = (props) => {
         positionY: y + random(10, false),
     }
 }
-export const addNode = ({ name, x, y }: NodeParams) => {
-    const id = `${Date.now()}`
+export const addNode = ({ name, x, y, id }: NodeParams) => {
+    if (!id) {
+        id = `${Date.now()}`
+    }
     return {
         id,
         name,

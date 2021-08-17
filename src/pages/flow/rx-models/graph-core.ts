@@ -4,6 +4,9 @@ import { Collection } from "@antv/x6/es/model/collection"
 import { BehaviorSubject, fromEventPattern, Subscription, merge } from "rxjs"
 import { debounceTime, map, tap, scan } from "rxjs/operators"
 import "./graph-core.less"
+import { addNode } from "@/mock/graph"
+import { useExperimentGraph } from "@/pages/flow/rx-models/experiment-graph"
+import { formatNodeInfoToNodeMeta } from "@/pages/flow/rx-models/graph-util"
 
 type X6GraphOptions = ConstructorParameters<typeof Graph>[0]
 
@@ -250,6 +253,23 @@ export class GraphCore<
                 }
             ).subscribe((args) => {
                 this.onConnectNode(args)
+                console.log("连线")
+                console.log(args)
+                const expGraph = useExperimentGraph("1")
+
+                expGraph.getEdgeById(args.edge.id).setLabels({
+                    attrs: {
+                        text: {
+                            text: "未命名",
+                            fontSize: 12,
+                            fill: "#000000A6",
+                        },
+                        body: {
+                            fill: "#F7F7FA",
+                        },
+                    },
+                })
+                expGraph.renameNode(args.edge.id, { name: "未命名" })
             })
 
             // 处理鼠标悬停连线事件
@@ -258,7 +278,19 @@ export class GraphCore<
             }).subscribe((args) => {
                 const { edge } = args
                 edge.addTools([
-                    "source-arrowhead",
+                    {
+                        name: "source-arrowhead",
+                        args: {
+                            tagName: "circle",
+                            attrs: {
+                                r: 4,
+                                fill: "#F7F7FA",
+                                stroke: "#000000A6",
+                                "stroke-width": 1,
+                                cursor: "move",
+                            },
+                        },
+                    },
                     "target-arrowhead",
                     {
                         name: "button-remove",
@@ -276,6 +308,22 @@ export class GraphCore<
             }).subscribe((args) => {
                 const { edge } = args
                 edge.removeTools()
+                edge.addTools([
+                    {
+                        name: "target-arrowhead",
+                        args: {
+                            tagName: "path",
+                            attrs: {
+                                r: 4,
+                                d: "M -5 -4 5 0 -5 4 Z",
+                                fill: "#F7F7FA",
+                                stroke: "#000000A6",
+                                "stroke-width": 1,
+                                cursor: "move",
+                            },
+                        },
+                    },
+                ])
             })
 
             // 处理连线删除事件
@@ -356,7 +404,6 @@ export class GraphCore<
                     const selectedEdges = selectedCells.filter((cell) =>
                         cell.isEdge()
                     ) as E[]
-                    console.log("没错")
 
                     this.onDeleteNodeOrEdge({
                         nodes: selectedNodes,
@@ -408,6 +455,45 @@ export class GraphCore<
                     default:
                 }
             })
+            graph.on("edge:mouseup", (args) => {
+                if (!args.view.targetView && !args.edge.store.data.data) {
+                    const id = `${Date.now()}`
+                    const expGraph = useExperimentGraph(1)
+                    const res = addNode({
+                        name: "未命名",
+                        x: args.x,
+                        y: args.y,
+                    })
+                    const newNode = formatNodeInfoToNodeMeta(res as any)
+                    console.log(newNode)
+                    expGraph.addNode({ ...newNode, id })
+                    expGraph.clearContextMenuInfo()
+                    args.edge.getTargetPortId = () => {
+                        return id + "_in"
+                    }
+                    args.edge.source = args.edge.store.data.source
+                    args.edge.target = { cell: id, port: id + "_in" }
+                    this.onConnectNode({
+                        edge: args.edge,
+                        currentCell: expGraph.getNodeById(id),
+                    })
+                    if (!args.edge.store.data.data.name) {
+                        expGraph.getEdgeById(args.edge.id).setLabels({
+                            attrs: {
+                                text: {
+                                    text: "未命名",
+                                    fontSize: 12,
+                                    fill: "#000000A6",
+                                },
+                                body: {
+                                    fill: "#F7F7FA",
+                                },
+                            },
+                        })
+                        expGraph.renameNode(args.edge.id, { name: "未命名" })
+                    }
+                }
+            })
         } else {
             this.throwRenderError()
         }
@@ -418,6 +504,7 @@ export class GraphCore<
     }
 
     renderEdge(edgeMeta: any): E | undefined {
+        console.log("addEdge")
         return this.graph!.addEdge(edgeMeta) as E
     }
 
@@ -515,6 +602,7 @@ export class GraphCore<
 
     addEdge = (edgeMeta: any) => {
         this.edgeMetas?.push(edgeMeta)
+        console.log("addEdge")
         return this.renderEdge(edgeMeta)
     }
 

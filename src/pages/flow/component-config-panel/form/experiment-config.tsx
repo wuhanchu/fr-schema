@@ -1,9 +1,11 @@
 import React, { useState } from "react"
-import { Form, Input, Radio, Tag } from "antd"
+import { Form, Input, Radio, Tag, Popconfirm } from "antd"
 import { useObservableState } from "@/common/hooks/useObservableState"
 import { useExperimentGraph } from "@/pages/flow/rx-models/experiment-graph"
 import "antd/lib/style/index.css"
 import { FormModal } from "./condtionModal"
+import { CloseOutlined } from "@ant-design/icons"
+
 export interface Props {
     name: string
     experimentId: string
@@ -34,21 +36,21 @@ export const ExperimentForm: React.FC<Props> = ({
     const [activeExperiment] = useObservableState(expGraph.experiment$)
 
     let initialValues = {}
-    let myCondtion = []
+    let myCondition = []
     if (nodeId && expGraph.getEdgeById(nodeId)) {
         initialValues = expGraph.getEdgeById(nodeId).store.data.data
         initialValues.condition &&
             initialValues.condition.map((item, index) => {
                 console.log(item)
-                let filterCondtion = condition.filter((list) => {
+                let filterCondition = condition.filter((list) => {
                     return list.key === item
                 })
-                if (filterCondtion && filterCondtion[0]) {
-                    myCondtion.push(filterCondtion[0])
+                if (filterCondition && filterCondition[0]) {
+                    myCondition.push(filterCondition[0])
                 }
             })
     }
-    const [conditions, setConditions] = useState(myCondtion)
+    const [conditions, setConditions] = useState(myCondition)
 
     const onValuesChange = (value) => {
         expGraph.getEdgeById(nodeId).setLabels({
@@ -70,20 +72,20 @@ export const ExperimentForm: React.FC<Props> = ({
 
     React.useEffect(() => {
         form.setFieldsValue(initialValues)
-        let myCondtion = []
+        let myCondition = []
         if (nodeId && expGraph.getEdgeById(nodeId)) {
             initialValues = expGraph.getEdgeById(nodeId).store.data.data
             initialValues.condition &&
                 initialValues.condition.map((item, index) => {
-                    let filterCondtion = condition.filter((list) => {
+                    let filterCondition = condition.filter((list) => {
                         return list.key === item
                     })
-                    if (filterCondtion && filterCondtion[0]) {
-                        myCondtion.push(filterCondtion[0])
+                    if (filterCondition && filterCondition[0]) {
+                        myCondition.push(filterCondition[0])
                     }
                 })
         }
-        setConditions(myCondtion)
+        setConditions(myCondition)
     }, [activeExperiment, nodeId])
     // console
     return (
@@ -94,17 +96,21 @@ export const ExperimentForm: React.FC<Props> = ({
             onValuesChange={onValuesChange}
             requiredMark={false}
         >
-            <Form.Item name="name" label="连线名称">
-                <Input placeholder="请输入连线名称" />
+            <Form.Item
+                name="name"
+                label="名称"
+                rules={[{ required: true, message: "请输入名称！" }]}
+            >
+                <Input placeholder="请输入名称" />
             </Form.Item>
             {/* <Form.Item name="condition" label={"选择意图"}>
                 <Input placeholder="请输入意图" />
             </Form.Item> */}
-            <Form.Item label={"条件定义"}>
+            <Form.Item label={"条件定义"} extra="条件之间为或的关系">
                 {conditions.map((item, index) => {
                     return (
                         <Tag
-                            closable
+                            // closable
                             onClose={(data) => {
                                 let conditionList = new Set(
                                     initialValues.condition
@@ -115,15 +121,61 @@ export const ExperimentForm: React.FC<Props> = ({
                                     condition: [...conditionList],
                                 })
                             }}
-                            onClick={() => {
-                                setActionType("edit")
-                                setType("condition")
-                                setTagIndex(index)
-                                setDefaultValue(item)
-                                setVisible(true)
-                            }}
                         >
-                            {item.name}
+                            <span
+                                onClick={() => {
+                                    setActionType("edit")
+                                    setType("condition")
+                                    setTagIndex(index)
+                                    setDefaultValue(item)
+                                    setVisible(true)
+                                }}
+                            >
+                                {item.name}
+                            </span>
+                            <Popconfirm
+                                title="是否删除此条件?"
+                                onConfirm={() => {
+                                    myCondition = []
+                                    let conditionList = new Set(
+                                        conditions.map((item) => {
+                                            return item.key
+                                        })
+                                    )
+                                    expGraph.renameNode(nodeId, {
+                                        condition: null,
+                                    })
+                                    conditionList.delete(item.key)
+                                    expGraph.renameNode(nodeId, {
+                                        condition: [...conditionList],
+                                    })
+
+                                    conditionList &&
+                                        conditionList.map((item, index) => {
+                                            let filterCondition = condition.filter(
+                                                (list) => {
+                                                    return list.key === item
+                                                }
+                                            )
+                                            if (
+                                                filterCondition &&
+                                                filterCondition[0]
+                                            ) {
+                                                myCondition.push(
+                                                    filterCondition[0]
+                                                )
+                                            }
+                                        })
+
+                                    setConditions(myCondition)
+                                }}
+                                // onCancel={cancel}
+                                okText="是"
+                                cancelText="否"
+                            >
+                                <CloseOutlined />
+                            </Popconfirm>
+                            ,
                         </Tag>
                     )
                 })}
