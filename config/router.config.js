@@ -44,6 +44,11 @@ export default [
                 name: "dialogue",
                 component: "./question/components/Dialogue",
             },
+            {
+                path: "/outter/kingFlow",
+                title: "流程图",
+                component: "./kingFlow/KingFlow",
+            },
         ],
     },
 
@@ -77,6 +82,11 @@ export default [
                         path: "/flow",
                         title: "流程图",
                         component: "./flow/index",
+                    },
+                    {
+                        path: "/kingFlow",
+                        title: "流程图",
+                        component: "./kingFlow/KingFlow",
                     },
                     {
                         path: "/domain",
