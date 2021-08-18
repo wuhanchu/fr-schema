@@ -226,7 +226,6 @@ export const NodeFormDemo: React.FC<Props> = ({
                                     >
                                         <CloseOutlined />
                                     </Popconfirm>
-                                    ,
                                 </Tag>
                             </li>
                         )

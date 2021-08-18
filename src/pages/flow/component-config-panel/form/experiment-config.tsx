@@ -175,7 +175,6 @@ export const ExperimentForm: React.FC<Props> = ({
                             >
                                 <CloseOutlined />
                             </Popconfirm>
-                            ,
                         </Tag>
                     )
                 })}
