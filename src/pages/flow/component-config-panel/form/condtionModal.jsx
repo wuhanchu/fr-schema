@@ -54,11 +54,7 @@ export const FormModal = ({
 }) => {
     const [form] = Form.useForm()
     const [selectData, setSelectData] = useState([])
-    // useEffect(()=>{
-    //     // handleSearch("", setSelectData)
-    // })
     useEffect(() => {
-        // Update the document title using the browser API
         console.log("设置数据")
         handleSearch("", setSelectData)
     }, [])

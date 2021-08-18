@@ -7,6 +7,7 @@ import "./graph-core.less"
 import { addNode } from "@/mock/graph"
 import { useExperimentGraph } from "@/pages/flow/rx-models/experiment-graph"
 import { formatNodeInfoToNodeMeta } from "@/pages/flow/rx-models/graph-util"
+import node from "@/schemas/flow/node"
 
 type X6GraphOptions = ConstructorParameters<typeof Graph>[0]
 
@@ -456,7 +457,7 @@ export class GraphCore<
                 }
             })
             graph.on("edge:mouseup", (args) => {
-                if (!args.view.targetView && !args.edge.store.data.data) {
+                if (!args.view.targetView && !args.edge.getData()) {
                     const id = `${Date.now()}`
                     const expGraph = useExperimentGraph(1)
                     const res = addNode({
@@ -477,7 +478,7 @@ export class GraphCore<
                         edge: args.edge,
                         currentCell: expGraph.getNodeById(id),
                     })
-                    if (!args.edge.store.data.data.name) {
+                    if (!args.edge.getData().name) {
                         expGraph.getEdgeById(args.edge.id).setLabels({
                             attrs: {
                                 text: {
@@ -493,6 +494,54 @@ export class GraphCore<
                         expGraph.renameNode(args.edge.id, { name: "未命名" })
                     }
                 }
+            })
+
+            graph.on("cell:changed", (args) => {
+                console.log("cell:changed")
+                console.log(args)
+                const expGraph = useExperimentGraph(1)
+                let data = {
+                    node: [],
+                    connection: [],
+                    condition: [],
+                    action: [],
+                }
+                console.log(expGraph)
+                expGraph.getNodes().map((item, index) => {
+                    let nodeData = item.getData()
+                    let itemData = {
+                        name: nodeData.name,
+                        key: nodeData.id,
+                        action: nodeData.action,
+                        allow_repeat_time: nodeData.allow_repeat_time,
+                        type: nodeData.types,
+                        position: {
+                            x: nodeData.positionX,
+                            y: nodeData.positionY,
+                        },
+                    }
+                    data.node.push(itemData)
+                })
+                expGraph.getEdges().map((item, index) => {
+                    let nodeData: Object = item.getData()
+                    let itemData = {
+                        begin: nodeData.source,
+                        key: item.id,
+                        end: nodeData.target,
+                        name: nodeData.name,
+                        condition: nodeData.condition,
+                    }
+                    data.connection.push(itemData)
+                })
+                if (expGraph.formData) {
+                    expGraph.formData.condition.map((item, index) => {
+                        data.condition.push(item)
+                    })
+                    expGraph.formData.action.map((item, index) => {
+                        data.action.push(item)
+                    })
+                }
+                console.log(data)
             })
         } else {
             this.throwRenderError()

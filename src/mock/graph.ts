@@ -27,15 +27,7 @@ export const copyNode = (props) => {
                 id: id + 300000,
             },
         ],
-
-        codeName: "source_11111",
-        allow_repeat_time: 1,
-        catId: 1,
-        nodeDefId: 111111,
-        category: "source",
-        status: 3,
-        groupId: 0,
-
+        allow_repeat_time: 2,
         ...props,
         id,
         positionX: x + 200 + random(20, false),
@@ -67,13 +59,7 @@ export const addNode = ({ name, x, y, id }: NodeParams) => {
         ],
         positionX: x,
         positionY: y,
-        codeName: "source_11111",
-        catId: 1,
-        allow_repeat_time: 1,
-        nodeDefId: 111111,
-        category: "source",
-        status: 3,
-        groupId: 0,
+        allow_repeat_time: 2,
     }
 }
 
@@ -81,7 +67,7 @@ export const queryGraph = (id: string) => {
     return {
         lang: "zh_CN",
         success: true,
-        data: initData,
+        data: formatData(),
         Lang: "zh_CN",
     }
 }
@@ -121,15 +107,9 @@ const initData = {
             ],
             positionX: -369,
             positionY: -300,
-            codeName: "source_11111",
-            catId: 1,
             types: "begin",
-            nodeDefId: 111111,
-            category: "source",
-            allow_repeat_time: 1,
-            status: 3,
+            allow_repeat_time: 2,
             action: ["action_1", "action_2"],
-            groupId: 0,
         },
         {
             id: "1603716786205",
@@ -152,13 +132,7 @@ const initData = {
             ],
             positionX: -369,
             positionY: -161,
-            codeName: "source_11111",
-            catId: 1,
-            nodeDefId: 111111,
-            category: "source",
-            allow_repeat_time: 1,
-            status: 3,
-            groupId: 0,
+            allow_repeat_time: 2,
         },
     ],
     links: [
@@ -211,4 +185,149 @@ const initData = {
             },
         },
     ],
+}
+
+let data = {
+    node: [
+        {
+            name: "开始节点1",
+            key: "1603716783816",
+            action: ["action_1", "action_2"],
+            allow_repeat_time: 2,
+            type: "begin",
+            position: {
+                x: -369,
+                y: -300,
+            },
+        },
+        {
+            name: "节点2",
+            key: "1603716786205",
+            allow_repeat_time: 2,
+            position: {
+                x: -369,
+                y: -161,
+            },
+        },
+    ],
+    connection: [
+        {
+            begin: "1603716783816",
+            key: "dfdcc5c5-66c1-4a5e-90dd-40eb6b5d1ae7",
+            end: "1603716786205",
+            name: "测试数据",
+            condition: ["condition_1"],
+        },
+    ],
+    condition: [
+        {
+            key: "condition_1",
+            name: "条件1",
+            intent: "123123",
+            node_report_time: 2,
+            slot: {
+                user: "wuhanchu",
+            },
+        },
+        {
+            key: "condition_2",
+            name: "条件2",
+            intent: "123123",
+            node_report_time: 2,
+            slot: {
+                user: "wuhanchu",
+            },
+        },
+    ],
+    action: [
+        {
+            key: "action_1",
+            name: "语音播放",
+            type: "phone_play_audio",
+            param: {
+                file_path: "file_path",
+                allow_break: true,
+            },
+        },
+        {
+            key: "action_2",
+            name: "挂机",
+            type: "phone_play_audio",
+            param: {
+                file_path: "file_path",
+                allow_break: true,
+            },
+        },
+    ],
+}
+
+function formatData() {
+    let initData = {
+        nodes: [],
+        links: [],
+        condition: [],
+        action: [],
+    }
+    data.node.map((item) => {
+        if (item.type === "begin") {
+            initData.nodes.push({
+                id: item.key,
+                name: item.name,
+                inPorts: [],
+                outPorts: [
+                    {
+                        tableName: "germany_credit_data",
+                        sequence: 1,
+                        description: "输出",
+                        id: item.key + "_out",
+                    },
+                ],
+                positionX: item.position.x,
+                positionY: item.position.y,
+                allow_repeat_time: 2,
+                action: item.action,
+            })
+        } else {
+            initData.nodes.push({
+                id: item.key,
+                name: item.name,
+                inPorts: [
+                    {
+                        tableName: "germany_credit_data",
+                        sequence: 1,
+                        description: "输入",
+                        id: item.key + "_in",
+                    },
+                ],
+                outPorts: [
+                    {
+                        tableName: "germany_credit_data",
+                        sequence: 1,
+                        description: "输出",
+                        id: item.key + "_out",
+                    },
+                ],
+                positionX: item.position.x,
+                positionY: item.position.y,
+                allow_repeat_time: 2,
+                action: item.action,
+            })
+        }
+    })
+    data.connection.map((item) => {
+        initData.links.push({
+            source: item.begin,
+            target: item.end,
+            name: item.name,
+            id: item.key,
+            outputPortId: item.begin + "_out",
+            inputPortId: item.end + "_in",
+            condition: item.condition,
+        })
+    })
+    initData.condition = data.condition
+    initData.action = data.action
+
+    console.log("initData", initData)
+    return initData
 }

@@ -178,7 +178,7 @@ class ExperimentGraph extends GraphCore<BaseNode, BaseEdge> {
                     if (
                         !targetMagnet ||
                         targetMagnet.getAttribute("port-group") !== "in" ||
-                        targetView.cell.store.data.data.types === "begin"
+                        targetView.cell.getData().types === "begin"
                     ) {
                         return false
                     }
@@ -826,6 +826,11 @@ class ExperimentGraph extends GraphCore<BaseNode, BaseEdge> {
     // 撤销删除节点
     undoDeleteNode = async () => {
         this.undo()
+    }
+
+    // 反撤销删除节点
+    redoNode = async () => {
+        this.redo()
     }
 
     // 重命名节点

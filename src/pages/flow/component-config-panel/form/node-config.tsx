@@ -36,14 +36,13 @@ export const NodeFormDemo: React.FC<Props> = ({
 
     const [defaultValue, setDefaultValue] = useState({})
     let initialValues =
-        expGraph.getNodeById(nodeId) &&
-        expGraph.getNodeById(nodeId).store.data.data
+        expGraph.getNodeById(nodeId) && expGraph.getNodeById(nodeId)?.getData()
 
     let myAction = []
-    console.log(expGraph.getNodeById(nodeId).store.data.data)
+    console.log(expGraph.getNodeById(nodeId)?.getData())
     console.log(action)
     if (nodeId && expGraph.getNodeById(nodeId)) {
-        initialValues = expGraph.getNodeById(nodeId).store.data.data
+        initialValues = expGraph.getNodeById(nodeId)?.getData()
         initialValues.action &&
             initialValues.action.map((item, index) => {
                 let filterAction = action.filter((list) => {
@@ -88,7 +87,7 @@ export const NodeFormDemo: React.FC<Props> = ({
                 onChange: function (/**Event*/ evt) {
                     evt.newIndex // most likely why this event is used is to get the dragging element's current index
                     let sortableData = clone(
-                        expGraph.getNodeById(nodeId).store.data.data.action
+                        expGraph.getNodeById(nodeId)?.getData()
                     )
                     let temp = sortableData[evt.oldIndex]
                     sortableData[evt.oldIndex] = sortableData[evt.newIndex]

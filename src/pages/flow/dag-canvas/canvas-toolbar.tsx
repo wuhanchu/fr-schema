@@ -4,6 +4,7 @@ import {
     RollbackOutlined,
     ToTopOutlined,
     AppstoreAddOutlined,
+    RedoOutlined,
 } from "@ant-design/icons"
 import { useObservableState } from "@/common/hooks/useObservableState"
 import { useExperimentGraph } from "@/pages/flow/rx-models/experiment-graph"
@@ -132,6 +133,14 @@ export const CanvasToolbar: React.FC<Props> = (props) => {
                     onClick={() => expGraph.undoDeleteNode()}
                 >
                     <RollbackOutlined />
+                </Button>
+            </Tooltip>
+            <Tooltip title="反撤销">
+                <Button
+                    style={{ marginLeft: "5px" }}
+                    onClick={() => expGraph.redoNode()}
+                >
+                    <RedoOutlined />
                 </Button>
             </Tooltip>
         </div>

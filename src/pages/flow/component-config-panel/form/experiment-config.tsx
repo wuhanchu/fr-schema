@@ -38,7 +38,7 @@ export const ExperimentForm: React.FC<Props> = ({
     let initialValues = {}
     let myCondition = []
     if (nodeId && expGraph.getEdgeById(nodeId)) {
-        initialValues = expGraph.getEdgeById(nodeId).store.data.data
+        initialValues = expGraph.getEdgeById(nodeId)?.getData()
         initialValues.condition &&
             initialValues.condition.map((item, index) => {
                 console.log(item)
@@ -74,7 +74,7 @@ export const ExperimentForm: React.FC<Props> = ({
         form.setFieldsValue(initialValues)
         let myCondition = []
         if (nodeId && expGraph.getEdgeById(nodeId)) {
-            initialValues = expGraph.getEdgeById(nodeId).store.data.data
+            initialValues = expGraph.getEdgeById(nodeId)?.getData()
             initialValues.condition &&
                 initialValues.condition.map((item, index) => {
                     let filterCondition = condition.filter((list) => {
