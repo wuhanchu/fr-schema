@@ -20,6 +20,8 @@ import clone from "clone"
 let FormItem = Form.Item
 
 class RightDrawer extends React.PureComponent {
+    formEdge = React.createRef()
+    formNode = React.createRef()
     constructor(props) {
         super(props)
         this.state = {
@@ -129,11 +131,11 @@ class RightDrawer extends React.PureComponent {
                                 rules={[
                                     {
                                         required: true,
-                                        message: "请输入允许重复次数！",
+                                        message: "请输入允许域！",
                                     },
                                 ]}
                             >
-                                <Input placeholder="请输入名称" />
+                                <Input placeholder="请输入域" />
                             </FormItem>
                             <FormItem
                                 name={"name"}
@@ -141,7 +143,7 @@ class RightDrawer extends React.PureComponent {
                                 rules={[
                                     {
                                         required: true,
-                                        message: "请输入允许重复次数！",
+                                        message: "请输入允许名称！",
                                     },
                                 ]}
                             >
@@ -233,7 +235,7 @@ class RightDrawer extends React.PureComponent {
         let _this = this
         if (chooseType == "node") {
             var el = document.getElementById("items")
-            console.log("可托")
+            this.formNode.current.validateFields()
             var sortable =
                 el &&
                 new Sortable(el, {
@@ -258,6 +260,48 @@ class RightDrawer extends React.PureComponent {
                 })
             el = document.getElementById("items")
         }
+
+        if (chooseType == "edge") {
+            this.formEdge.current.validateFields()
+        }
+    }
+
+    countName(arr, num) {
+        var countArr = arr.filter(function isBigEnough(value) {
+            console.log(value, num)
+            console.log(value == num)
+            return value == num
+        })
+        return countArr.length
+    }
+
+    handleCFmName(rules, value, callback, type) {
+        if (!value) {
+            callback()
+        } else {
+            if (type === "node") {
+                let data = this.props.graph.getNodes().map((item) => {
+                    return item.getData().name
+                })
+                console.log("名称")
+                console.log(value)
+                console.log(data)
+                console.log(this.countName(data, value))
+                if (this.countName(data, value) > 1) {
+                    callback(new Error("名称重复"))
+                }
+            } else {
+                let data = this.props.graph.getEdges().map((item) => {
+                    return item.getData().name
+                })
+                console.log("名称")
+                console.log(value)
+                console.log(data)
+                if (this.countName(data, value) > 1) {
+                    callback(new Error("名称重复"))
+                }
+            }
+        }
     }
 
     renderNode() {
@@ -277,6 +321,7 @@ class RightDrawer extends React.PureComponent {
                     <div className="drawer_title">节点设置</div>
                     <div className="drawer_wrap">
                         <Form
+                            ref={this.formNode}
                             labelAlign="left"
                             colon={false}
                             initialValues={cell.getData()}
@@ -297,7 +342,17 @@ class RightDrawer extends React.PureComponent {
                                 rules={[
                                     {
                                         required: true,
-                                        message: "请输入允许重复次数！",
+                                        // message: "请输入名称！",
+                                    },
+                                    {
+                                        validator: (rules, value, callback) => {
+                                            this.handleCFmName(
+                                                rules,
+                                                value,
+                                                callback,
+                                                "node"
+                                            )
+                                        },
                                     },
                                 ]}
                             >
@@ -465,6 +520,7 @@ class RightDrawer extends React.PureComponent {
                     <div className="drawer_title">连线设置</div>
                     <div className="drawer_wrap">
                         <Form
+                            ref={this.formEdge}
                             labelAlign="left"
                             colon={false}
                             initialValues={cell.getData()}
@@ -492,7 +548,18 @@ class RightDrawer extends React.PureComponent {
                                 rules={[
                                     {
                                         required: true,
-                                        message: "请输入允许重复次数！",
+                                        // message: "请输入允许重复次数！",
+                                    },
+                                    ,
+                                    {
+                                        validator: (rules, value, callback) => {
+                                            this.handleCFmName(
+                                                rules,
+                                                value,
+                                                callback,
+                                                "edge"
+                                            )
+                                        },
                                     },
                                 ]}
                             >
