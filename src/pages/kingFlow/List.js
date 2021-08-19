@@ -17,6 +17,7 @@ const { decorateList } = frSchema
 
 @connect(({ global }) => ({
     dict: global.dict,
+    data: global.data,
 }))
 @Form.create()
 class List extends ListPage {
@@ -31,6 +32,7 @@ class List extends ListPage {
             importTemplateUrl,
         })
         this.schema.domain_key.dict = this.props.dict.domain
+        console.log(props)
     }
 
     renderOperateColumnExtend(record) {
@@ -53,7 +55,6 @@ class List extends ListPage {
         const { visibleFlow, record } = this.state
         return (
             <>
-                (
                 <Modal
                     title={"流程配置"}
                     visible={visibleFlow}
@@ -77,11 +78,11 @@ class List extends ListPage {
                             this.setState({ visibleFlow: args })
                             this.refreshList()
                         }}
+                        dict={this.props.data}
                         schemas={schemas.flow}
                         service={this.service}
                     />
                 </Modal>
-                )
             </>
         )
     }

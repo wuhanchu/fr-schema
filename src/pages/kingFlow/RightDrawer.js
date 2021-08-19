@@ -9,6 +9,7 @@ import {
     InputNumber,
     Popconfirm,
     Tag,
+    Select,
 } from "antd"
 import "./RightDrawer.less"
 import { RiseOutlined, DeleteOutlined, CloseOutlined } from "@ant-design/icons"
@@ -43,6 +44,7 @@ class RightDrawer extends React.PureComponent {
             showCondition: [],
             isShow: true,
         }
+        console.log("props.dict.domain_key", props.dict)
     }
 
     render() {
@@ -108,7 +110,7 @@ class RightDrawer extends React.PureComponent {
                     onConfirm={async () => {
                         let data = this.props.graphChange()
                         await this.props.service.patch({
-                            config: data,
+                            ...data,
                             id: this.props.record.id,
                         })
                         localStorage.removeItem("flow" + this.props.record.id)
@@ -130,7 +132,7 @@ class RightDrawer extends React.PureComponent {
     renderGrid() {
         let { gridTypeList, showGrid, gridType } = this.state
 
-        let { chooseType, record } = this.props
+        let { chooseType, record, graph } = this.props
         const formItemLayout = {
             labelCol: { span: 6 },
             wrapperCol: { span: 14 },
@@ -145,6 +147,9 @@ class RightDrawer extends React.PureComponent {
                             colon={false}
                             // {...formItemLayout}
                             initialValues={{ ...record }}
+                            onValuesChange={(args) => {
+                                graph.flowSetting = args
+                            }}
                             layout="vertical"
                         >
                             <FormItem
@@ -157,7 +162,31 @@ class RightDrawer extends React.PureComponent {
                                     },
                                 ]}
                             >
-                                <Input placeholder="请输入域" />
+                                {/* <Input placeholder="请输入域" /> */}
+                                <Select
+                                    showSearch
+                                    placeholder={"请选择域!"}
+                                    defaultActiveFirstOption={false}
+                                    // showArrow={false}
+                                    filterOption={(input, option) =>
+                                        option.children
+                                            .toLowerCase()
+                                            .indexOf(input.toLowerCase()) >= 0
+                                    }
+                                    // onSearch={(value) =>
+                                    //     testDebounceFn(value, setSelectData)
+                                    // }
+                                    notFoundContent={null}
+                                >
+                                    {this.props.dict.domain &&
+                                        this.props.dict.domain.map((item) => {
+                                            return (
+                                                <Select.Option value={item.key}>
+                                                    {item.name}
+                                                </Select.Option>
+                                            )
+                                        })}
+                                </Select>
                             </FormItem>
                             <FormItem
                                 name={"key"}

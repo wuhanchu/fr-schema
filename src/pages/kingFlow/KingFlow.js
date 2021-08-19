@@ -51,8 +51,13 @@ class KingFlow extends React.PureComponent {
     }
 
     componentDidMount() {
+        console.log("data是", this.props.dict)
         this.initData()
         this.getIntent()
+        this.graph.flowSetting = {
+            key: this.props.record.key,
+            domain_key: this.props.record.domain_key,
+        }
     }
 
     render() {
@@ -65,6 +70,7 @@ class KingFlow extends React.PureComponent {
                         service={this.props.service}
                         record={this.props.record}
                         intenList={intenList}
+                        dict={this.props.dict}
                         graphChange={() => {
                             return this.graphChange()
                         }}
@@ -248,7 +254,10 @@ class KingFlow extends React.PureComponent {
             id: args.key,
             width: 100,
             height: 60,
-            position: { x: args.position.x, y: args.position.y },
+            position: {
+                x: args.position ? args.position.x : 300,
+                y: args.position ? args.position.y : 300,
+            },
             data: {
                 key: args.key,
                 name: args.name,
@@ -284,6 +293,14 @@ class KingFlow extends React.PureComponent {
             source: { cell: args.begin, port: "port2" },
             target: { cell: args.end, port: "port1" },
         })
+
+        console.log("连线", {
+            id: args.key,
+            data: { ...args },
+            source: { cell: args.begin, port: "port2" },
+            target: { cell: args.end, port: "port1" },
+        })
+
         this.graph.addEdge(edge)
     }
 
@@ -451,7 +468,7 @@ class KingFlow extends React.PureComponent {
             "flow" + this.props.record.id,
             JSON.stringify(data)
         )
-        return data
+        return { config: data, ...expGraph.flowSetting }
     }
 
     async onConnectNode(args) {
