@@ -8,11 +8,14 @@ import {
     Switch,
     InputNumber,
     Popconfirm,
+    Tag,
 } from "antd"
 import "./RightDrawer.less"
 import { RiseOutlined, DeleteOutlined, CloseOutlined } from "@ant-design/icons"
 import { ActionModal } from "./actionModal"
 import { ConditionModal } from "./conditionModal"
+import Sortable from "sortablejs/modular/sortable.complete.esm.js"
+import clone from "clone"
 
 let FormItem = Form.Item
 
@@ -117,7 +120,8 @@ class RightDrawer extends React.PureComponent {
                         <Form
                             labelAlign="left"
                             colon={false}
-                            {...formItemLayout}
+                            // {...formItemLayout}
+                            layout="vertical"
                         >
                             <FormItem
                                 name={"domain_key"}
@@ -225,16 +229,45 @@ class RightDrawer extends React.PureComponent {
     componentDidMount() {
         this.handleChangeShowAction()
         this.handleChangeShowCondition()
+        let { chooseType, cell } = this.props
+        let _this = this
+        if (chooseType == "node") {
+            var el = document.getElementById("items")
+            console.log("可托")
+            var sortable =
+                el &&
+                new Sortable(el, {
+                    onChange: function (/**Event*/ evt) {
+                        evt.newIndex // most likely why this event is used is to get the dragging element's current index
+                        let sortableData = clone(cell.getData().action)
+                        console.log(
+                            "测试",
+                            evt.newIndex,
+                            evt.oldIndex,
+                            ...sortableData
+                        )
+                        let temp = sortableData[evt.oldIndex]
+                        sortableData[evt.oldIndex] = sortableData[evt.newIndex]
+                        sortableData[evt.newIndex] = temp
+                        console.log(...sortableData)
+                        cell.setData({
+                            action: [...sortableData],
+                        })
+                        // _this.props.graphChange()
+                    },
+                })
+            el = document.getElementById("items")
+        }
     }
 
     renderNode() {
         let { chooseType, cell, graph } = this.props
         let _this = this
         let { isShow, showAction, showCondition } = this.state
-        const formItemLayout = {
-            labelCol: { span: 8 },
-            wrapperCol: { span: 14 },
-        }
+        // const formItemLayout = {
+        //     labelCol: { span: 8 },
+        //     wrapperCol: { span: 14 },
+        // }
         console.log("xuanran")
         console.log(showCondition)
 
@@ -247,7 +280,10 @@ class RightDrawer extends React.PureComponent {
                             labelAlign="left"
                             colon={false}
                             initialValues={cell.getData()}
-                            {...formItemLayout}
+                            // {...formItemLayout}
+                            preserve={false}
+                            // form={form}
+                            layout="vertical"
                             onValuesChange={(args) => {
                                 cell.setData(args)
                                 cell.setAttrs({
@@ -298,7 +334,7 @@ class RightDrawer extends React.PureComponent {
                                                     }}
                                                     key={item.key}
                                                 >
-                                                    <Button
+                                                    <Tag
                                                     // closable
                                                     >
                                                         <span
@@ -384,11 +420,11 @@ class RightDrawer extends React.PureComponent {
                                                         >
                                                             <CloseOutlined />
                                                         </Popconfirm>
-                                                    </Button>
+                                                    </Tag>
                                                 </li>
                                             )
                                         })}
-                                    <Button
+                                    <Tag
                                         style={{ marginBottom: "5px" }}
                                         onClick={() => {
                                             this.setState({
@@ -400,7 +436,7 @@ class RightDrawer extends React.PureComponent {
                                         color="#2db7f5"
                                     >
                                         +
-                                    </Button>
+                                    </Tag>
                                 </ul>
                             </FormItem>
                             {/* <FormItem label="功能">
@@ -432,7 +468,8 @@ class RightDrawer extends React.PureComponent {
                             labelAlign="left"
                             colon={false}
                             initialValues={cell.getData()}
-                            {...formItemLayout}
+                            // {...formItemLayout}
+                            layout="vertical"
                             onValuesChange={(args) => {
                                 cell.setData(args)
                                 cell.setLabels({
@@ -467,7 +504,7 @@ class RightDrawer extends React.PureComponent {
                             >
                                 <ul
                                     style={{ margin: "0", padding: "0" }}
-                                    id="items"
+                                    // id="items"
                                 >
                                     {showCondition.map((item, index) => {
                                         return (
@@ -479,7 +516,7 @@ class RightDrawer extends React.PureComponent {
                                                 }}
                                                 key={item.key}
                                             >
-                                                <Button
+                                                <Tag
                                                 // closable
                                                 >
                                                     <span
@@ -557,11 +594,11 @@ class RightDrawer extends React.PureComponent {
                                                     >
                                                         <CloseOutlined />
                                                     </Popconfirm>
-                                                </Button>
+                                                </Tag>
                                             </li>
                                         )
                                     })}
-                                    <Button
+                                    <Tag
                                         style={{ marginBottom: "5px" }}
                                         onClick={() => {
                                             this.setState({
@@ -573,7 +610,7 @@ class RightDrawer extends React.PureComponent {
                                         color="#2db7f5"
                                     >
                                         +
-                                    </Button>
+                                    </Tag>
                                 </ul>
                             </FormItem>
                             {/* <FormItem label="功能">

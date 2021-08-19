@@ -185,7 +185,18 @@ class KingFlow extends React.PureComponent {
         console.log("数据")
         if (!data) {
             data = {
-                node: [],
+                node: [
+                    {
+                        name: "开始节点1",
+                        key: `${Date.now()}`,
+                        allow_repeat_time: 2,
+                        type: "begin",
+                        position: {
+                            x: 369,
+                            y: 161,
+                        },
+                    },
+                ],
                 condition: [],
                 action: [],
                 connection: [],
@@ -195,7 +206,7 @@ class KingFlow extends React.PureComponent {
                 data.node = [
                     {
                         name: "开始节点1",
-                        key: "1603716783816",
+                        key: `${Date.now()}`,
                         allow_repeat_time: 2,
                         type: "begin",
                         position: {
