@@ -524,6 +524,9 @@ export class GraphCore<
                 })
                 expGraph.getEdges().map((item, index) => {
                     let nodeData: Object = item.getData()
+                    if (!nodeData) {
+                        nodeData = {}
+                    }
                     let itemData = {
                         begin: nodeData.source,
                         key: item.id,

@@ -10,6 +10,7 @@ import schema from "@/schemas/intent"
 import { ports } from "./methods"
 
 import RightDrawer from "@/pages/kingFlow/RightDrawer"
+import { ConsoleSqlOutlined } from "@ant-design/icons"
 
 const data = {}
 
@@ -51,46 +52,6 @@ class KingFlow extends React.PureComponent {
 
     componentDidMount() {
         this.initData()
-        this.graph.action = [
-            {
-                key: "action_1",
-                name: "语音播放",
-                type: "phone_play_audio",
-                param: {
-                    file_path: "file_path",
-                    allow_break: true,
-                },
-            },
-            {
-                key: "action_2",
-                name: "挂机",
-                type: "phone_play_audio",
-                param: {
-                    file_path: "file_path",
-                    allow_break: true,
-                },
-            },
-        ]
-        this.graph.condition = [
-            {
-                key: "condition_1",
-                name: "条件1",
-                intent: "123123",
-                node_report_time: 2,
-                slot: {
-                    user: "wuhanchu",
-                },
-            },
-            {
-                key: "condition_2",
-                name: "条件2",
-                intent: "123123",
-                node_report_time: 2,
-                slot: {
-                    user: "wuhanchu",
-                },
-            },
-        ]
         this.getIntent()
     }
 
@@ -102,6 +63,9 @@ class KingFlow extends React.PureComponent {
                 {chooseType && (
                     <RightDrawer
                         intenList={intenList}
+                        graphChange={() => {
+                            this.graphChange()
+                        }}
                         cell={cell}
                         onDeleteNode={this.deleteNode}
                         selectCell={this.selectCell}
@@ -117,25 +81,26 @@ class KingFlow extends React.PureComponent {
                     <div className="btn-group">
                         <div
                             className="btn"
-                            title="圆形节点"
-                            onMouseDown={(e) => this.startDrag("Circle", e)}
-                        >
-                            <i className="iconfont icon-circle" />
-                        </div>
-                        <div
-                            className="btn"
-                            title="正方形节点"
+                            title="普通节点"
                             onMouseDown={(e) => this.startDrag("Rect", e)}
                         >
                             <i className="iconfont icon-square" />
                         </div>
                         <div
                             className="btn"
+                            title="全局节点"
+                            onMouseDown={(e) => this.startDrag("Circle", e)}
+                        >
+                            <i className="iconfont icon-circle" />
+                        </div>
+
+                        {/* <div
+                            className="btn"
                             title="条件节点"
                             onMouseDown={(e) => this.startDrag("polygon", e)}
                         >
                             <i className="iconfont icon-square rotate-square" />
-                        </div>
+                        </div> */}
                     </div>
                     <div className="btn-group">
                         <Tooltip title="直线箭头" placement="bottom">
@@ -213,6 +178,89 @@ class KingFlow extends React.PureComponent {
         )
     }
 
+    getData() {
+        let data = localStorage.getItem("flow" + this.props.record.id)
+        data = JSON.parse(data)
+        console.log(data)
+        console.log("数据")
+        if (!data) {
+            data = {
+                node: [],
+                condition: [],
+                action: [],
+                connection: [],
+            }
+        } else {
+            if (!data.node.length) {
+                data.node = [
+                    {
+                        name: "开始节点1",
+                        key: "1603716783816",
+                        allow_repeat_time: 2,
+                        type: "begin",
+                        position: {
+                            x: 369,
+                            y: 161,
+                        },
+                    },
+                ]
+            }
+        }
+        data.node.map((item) => {
+            this.addNodes(item)
+        })
+        data.connection.map((item) => {
+            this.addEdges(item)
+        })
+
+        this.graph.action = data.action
+        this.graph.condition = data.condition
+    }
+
+    addNodes(args) {
+        this.graph.addNode({
+            id: args.key,
+            width: 100,
+            height: 60,
+            position: { x: args.position.x, y: args.position.y },
+            data: {
+                key: args.key,
+                name: args.name,
+                allow_repeat_time: args.allow_repeat_time,
+                action: args.action,
+                types: args.type,
+            },
+            attrs: {
+                label: {
+                    text: args.name,
+                    fill: "#000000",
+                    fontSize: 14,
+                    textWrap: {
+                        width: -10,
+                        height: -10,
+                        ellipsis: true,
+                    },
+                },
+                body: {
+                    stroke: "#000000",
+                    strokeWidth: 1,
+                    fill: "#ffffff",
+                },
+            },
+            ports: ports,
+        })
+    }
+
+    addEdges(args) {
+        let edge = this.createEdgeFunc({
+            id: args.key,
+            data: { ...args },
+            source: { cell: args.begin, port: "port2" },
+            target: { cell: args.end, port: "port1" },
+        })
+        this.graph.addEdge(edge)
+    }
+
     initData() {
         this.initGraph()
         insertCss(`
@@ -248,6 +296,8 @@ class KingFlow extends React.PureComponent {
                 chooseType: "",
             })
             console.log(cell)
+            console.log("全局")
+            console.log(this.graph)
             this.setState({
                 chooseType: cell.isNode() ? "node" : "edge",
                 cell: cell,
@@ -284,13 +334,13 @@ class KingFlow extends React.PureComponent {
                 const id = `${Date.now()}`
                 const expGraph = this.graph
                 this.graph.addNode({
+                    id,
                     width: 100,
                     height: 60,
                     position: { x: args.x, y: args.y },
                     data: {
                         name: "未命名",
                         allow_repeat_time: 2,
-                        action: ["action_2"],
                     },
                     attrs: {
                         label: {
@@ -311,37 +361,95 @@ class KingFlow extends React.PureComponent {
                     },
                     ports: ports,
                 })
-                console.log(this.graph.getNodes())
-                // const newNode = formatNodeInfoToNodeMeta(res)
-                // console.log(newNode)
-                // expGraph.addNode({ ...newNode, id })
-                // expGraph.clearContextMenuInfo()
-                // args.edge.getTargetPortId = () => {
-                //     return id + "_in"
-                // }
-                // args.edge.source = args.edge.store.data.source
-                // args.edge.target = { cell: id, port: id + "_in" }
-                // this.onConnectNode({
-                //     edge: args.edge,
-                //     currentCell: expGraph.getNodeById(id),
-                // })
-                // if (!args.edge.getData().name) {
-                //     expGraph.getEdgeById(args.edge.id).setLabels({
-                //         attrs: {
-                //             text: {
-                //                 text: "未命名",
-                //                 fontSize: 12,
-                //                 fill: "#000000A6",
-                //             },
-                //             body: {
-                //                 fill: "#F7F7FA",
-                //             },
-                //         },
-                //     })
-                //     expGraph.renameNode(args.edge.id, { name: "未命名" })
-                // }
+                args.edge.getTargetPortId = () => {
+                    return "port1"
+                }
+                args.edge.source = args.edge.store.data.source
+                args.edge.target = { cell: id, port: "port1" }
+                this.onConnectNode({
+                    edge: args.edge,
+                    currentCell: this.graph.getCellById(id),
+                })
             }
         })
+
+        this.graph.on("cell:changed", (args) => {
+            this.graphChange(args)
+        })
+
+        this.getData()
+        console.log(this.graph)
+    }
+
+    graphChange(args) {
+        const expGraph = this.graph
+        let data = {
+            node: [],
+            connection: [],
+            condition: [],
+            action: [],
+        }
+        console.log(expGraph)
+        console.log(expGraph.getNodes())
+        expGraph.getNodes().map((item, index) => {
+            let nodeData = item.getData()
+            let itemData = {
+                name: nodeData.name,
+                key: item.id,
+                action: nodeData.action,
+                allow_repeat_time: nodeData.allow_repeat_time,
+                type: nodeData.types,
+                position: {
+                    x: item.store.data.position.x,
+                    y: item.store.data.position.y,
+                },
+            }
+            data.node.push(itemData)
+        })
+        console.log(expGraph.getEdges())
+        expGraph.getEdges().map((item, index) => {
+            let nodeData = item.getData()
+            if (!nodeData) {
+                nodeData = {}
+            }
+            let itemData = {
+                begin: item.store.data.source.cell,
+                key: item.id,
+                end: item.store.data.target.cell,
+                name: nodeData.name,
+                condition: nodeData.condition,
+            }
+            data.connection.push(itemData)
+        })
+        data.action = expGraph.action
+        data.condition = expGraph.condition
+        console.log("数据")
+        console.log(expGraph.condition)
+
+        console.log(data)
+        localStorage.setItem(
+            "flow" + this.props.record.id,
+            JSON.stringify(data)
+        )
+        console.log("flow" + this.props.record.id, JSON.stringify(data))
+    }
+
+    async onConnectNode(args) {
+        const { edge = {}, isNew } = args
+        const { source, target } = edge
+        const node = args.currentCell
+        const portId = edge.getTargetPortId()
+        if (node && portId) {
+            node.setPortProp(portId, "connected", true)
+            const data = {
+                source: source.cell,
+                target: target.cell,
+                outputPortId: source.port,
+                inputPortId: target.port,
+            }
+            edge.setData(data)
+        }
+        return { success: true }
     }
 
     initGraph() {
@@ -349,6 +457,11 @@ class KingFlow extends React.PureComponent {
         this.graph = new Graph({
             container: document.getElementById("containerChart"),
             history: true,
+            panning: true,
+            transforming: {
+                clearAll: true,
+                clearOnBlankMouseDown: true,
+            },
             width: 1700,
             height: "100%",
             grid: grid,
@@ -366,9 +479,9 @@ class KingFlow extends React.PureComponent {
                 // 节点连接
                 anchor: "center",
                 connectionPoint: "anchor",
-                allowBlank: false,
+                allowBlank: true,
                 snap: true,
-                createEdge: (_) => this.createEdgeFunc(),
+                createEdge: (args, other) => this.createEdgeFunc(),
             },
             highlighting: {
                 magnetAvailable: {
@@ -386,7 +499,9 @@ class KingFlow extends React.PureComponent {
     }
 
     // 更改 连线方式
-    createEdgeFunc() {
+    createEdgeFunc(args) {
+        console.log("新增线")
+        console.log(args)
         let { connectEdgeType } = this.state
         return new Shape.Edge({
             attrs: {
@@ -407,7 +522,9 @@ class KingFlow extends React.PureComponent {
                 {
                     attrs: {
                         text: {
-                            text: "未命名",
+                            text:
+                                (args && args.data && args.data.name) ||
+                                "未命名",
                             fontSize: 14,
                             fill: "#000000A6",
                         },
@@ -419,13 +536,13 @@ class KingFlow extends React.PureComponent {
             ],
             data: {
                 name: "未命名",
-                condition: ["condition_1"],
             },
             connector: connectEdgeType.connector,
             router: {
                 name: connectEdgeType.router.name || "",
             },
             zIndex: 0,
+            ...args,
         })
     }
 
@@ -463,16 +580,19 @@ class KingFlow extends React.PureComponent {
         this.graph.removeCells(cell)
         chooseType = "grid"
         this.setState({ chooseType })
+        this.graphChange()
     }
 
     // 撤销
     undoOperate() {
         this.graph.history.undo()
+        this.graphChange()
     }
 
     // 重做
     redoOperate() {
         this.graph.history.redo()
+        this.graphChange()
     }
 
     onChangeGridBack(type) {

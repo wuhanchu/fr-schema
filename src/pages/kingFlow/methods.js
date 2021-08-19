@@ -9,7 +9,6 @@ export const startDragToGraph = (graph, type, e) => {
                   data: {
                       name: "未命名",
                       allow_repeat_time: 2,
-                      action: ["action_2"],
                   },
                   attrs: {
                       label: {
@@ -38,7 +37,7 @@ export const startDragToGraph = (graph, type, e) => {
                   data: {
                       name: "未命名",
                       allow_repeat_time: 2,
-                      action: ["action_1", "action_2"],
+                      type: "globle",
                   },
                   attrs: {
                       label: {
@@ -68,7 +67,6 @@ export const startDragToGraph = (graph, type, e) => {
                   data: {
                       name: "未命名",
                       allow_repeat_time: 2,
-                      action: ["action_1", "action_2"],
                   },
                   attrs: {
                       label: {

@@ -15,18 +15,17 @@ export const ConditionModal = ({
     visible,
     handleVisible,
     conditionType,
-    type,
     conditions,
     defaultValue,
     graph,
     cell,
     intenList,
     handleChangeShowCondition,
+    graphChange,
 }) => {
     const [form] = Form.useForm()
 
     const expGraph = graph
-    console.log(graph)
     let condition = []
     if (graph) {
         condition = expGraph.condition
@@ -49,13 +48,11 @@ export const ConditionModal = ({
         let slot = {}
         let myConditions = clone(conditions)
 
-        console.log(myConditions)
         values.slot &&
             values.slot.map((item) => {
                 slot[item.first] = item.last
             })
         if (conditionType === "add") {
-            console.log("conditionList", conditionList)
             let conditionKey = cell.id + `${Date.now()}`
             myConditions.push({
                 ...values,
@@ -63,7 +60,6 @@ export const ConditionModal = ({
                 slot,
             })
             conditionList.push(conditionKey)
-            console.log(conditionList)
             cell.setData({ condition: conditionList })
             let expGraphCondition = [...graph.condition]
             expGraphCondition.push({
@@ -71,9 +67,10 @@ export const ConditionModal = ({
                 key: conditionKey,
                 slot,
             })
+            graph.condition = null
             graph.condition = expGraphCondition
+            graphChange()
         } else {
-            console.log("修改12")
             if (expGraph.condition) {
                 let arr = expGraph.condition.map((item) => {
                     if (item.key === defaultValue.key) {
@@ -88,6 +85,7 @@ export const ConditionModal = ({
                     return item
                 })
                 expGraph.condition = arr
+                graphChange()
             }
         }
 

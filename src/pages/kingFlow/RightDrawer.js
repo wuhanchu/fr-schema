@@ -59,6 +59,9 @@ class RightDrawer extends React.PureComponent {
                 {visible && (
                     <ActionModal
                         actionType={formType}
+                        graphChange={() => {
+                            this.props.graphChange()
+                        }}
                         handleChangeShowAction={() => {
                             this.handleChangeShowAction()
                         }}
@@ -76,6 +79,9 @@ class RightDrawer extends React.PureComponent {
                 {conditionVisible && (
                     <ConditionModal
                         conditionType={formType}
+                        graphChange={() => {
+                            this.props.graphChange()
+                        }}
                         intenList={intenList}
                         handleChangeShowCondition={() => {
                             this.handleChangeShowCondition()

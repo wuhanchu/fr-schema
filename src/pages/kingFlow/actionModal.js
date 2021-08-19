@@ -15,12 +15,12 @@ export const ActionModal = ({
     visible,
     handleVisible,
     actionType,
-    type,
     actions,
     defaultValue,
     graph,
     cell,
     handleChangeShowAction,
+    graphChange,
 }) => {
     const [form] = Form.useForm()
 
@@ -51,43 +51,40 @@ export const ActionModal = ({
             values.param.map((item) => {
                 param[item.first] = item.last
             })
-        if (type === "action") {
-            if (actionType === "add") {
-                console.log("actionList", actionList)
-                let actionKey = cell.id + `${Date.now()}`
-                myActions.push({
-                    ...values,
-                    key: actionKey,
-                    param,
+        if (actionType === "add") {
+            let actionKey = cell.id + `${Date.now()}`
+            myActions.push({
+                ...values,
+                key: actionKey,
+                param,
+            })
+            actionList.push(actionKey)
+            cell.setData({ action: actionList })
+            let expGraphAction = [...graph.action]
+            expGraphAction.push({
+                ...values,
+                key: actionKey,
+                param,
+            })
+            graph.action = expGraphAction
+            graphChange()
+        } else {
+            if (expGraph.action) {
+                let arr = expGraph.action.map((item) => {
+                    if (item.key === defaultValue.key) {
+                        return { ...values, param, key: defaultValue.key }
+                    }
+                    return item
                 })
-                actionList.push(actionKey)
-                console.log(actionList)
-                cell.setData({ action: actionList })
-                let expGraphAction = [...graph.action]
-                expGraphAction.push({
-                    ...values,
-                    key: actionKey,
-                    param,
+                myActions = myActions.map((item) => {
+                    if (item.key === defaultValue.key) {
+                        return { ...values, param, key: defaultValue.key }
+                    }
+                    return item
                 })
-                graph.action = expGraphAction
-            } else {
-                console.log("修改12")
-                if (expGraph.action) {
-                    let arr = expGraph.action.map((item) => {
-                        if (item.key === defaultValue.key) {
-                            return { ...values, param, key: defaultValue.key }
-                        }
-                        return item
-                    })
-                    myActions = myActions.map((item) => {
-                        if (item.key === defaultValue.key) {
-                            return { ...values, param, key: defaultValue.key }
-                        }
-                        return item
-                    })
-                    // setActions(myActions)
-                    expGraph.action = arr
-                }
+                // setActions(myActions)
+                expGraph.action = arr
+                graphChange()
             }
         }
         handleVisible(false)
