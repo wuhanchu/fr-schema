@@ -102,6 +102,27 @@ class RightDrawer extends React.PureComponent {
                         }}
                     />
                 )}
+
+                <Popconfirm
+                    title="是否删除此行为?"
+                    onConfirm={async () => {
+                        let data = this.props.graphChange()
+                        await this.props.service.patch({
+                            config: data,
+                            id: this.props.record.id,
+                        })
+                        localStorage.removeItem("flow" + this.props.record.id)
+                        this.props.handleSetVisibleFlow(false)
+                    }}
+                    okText="是"
+                    cancelText="否"
+                >
+                    <Button
+                        style={{ position: "absolute", right: 0, bottom: 0 }}
+                    >
+                        提交
+                    </Button>
+                </Popconfirm>
             </div>
         )
     }
@@ -109,7 +130,7 @@ class RightDrawer extends React.PureComponent {
     renderGrid() {
         let { gridTypeList, showGrid, gridType } = this.state
 
-        let { chooseType } = this.props
+        let { chooseType, record } = this.props
         const formItemLayout = {
             labelCol: { span: 6 },
             wrapperCol: { span: 14 },
@@ -123,6 +144,7 @@ class RightDrawer extends React.PureComponent {
                             labelAlign="left"
                             colon={false}
                             // {...formItemLayout}
+                            initialValues={{ ...record }}
                             layout="vertical"
                         >
                             <FormItem
@@ -131,23 +153,23 @@ class RightDrawer extends React.PureComponent {
                                 rules={[
                                     {
                                         required: true,
-                                        message: "请输入允许域！",
+                                        message: "请输入域！",
                                     },
                                 ]}
                             >
                                 <Input placeholder="请输入域" />
                             </FormItem>
                             <FormItem
-                                name={"name"}
-                                label="名称"
+                                name={"key"}
+                                label="编码"
                                 rules={[
                                     {
                                         required: true,
-                                        message: "请输入允许名称！",
+                                        message: "请输入编码！",
                                     },
                                 ]}
                             >
-                                <Input placeholder="请输入名称" />
+                                <Input placeholder="请输入编码" />
                             </FormItem>
                             {/* {showGrid && (
                                 <div>
@@ -200,18 +222,11 @@ class RightDrawer extends React.PureComponent {
 
     handleChangeShowCondition() {
         let { chooseType, cell } = this.props
-        console.log("condition---------------")
-        console.log(this.props)
         if (cell) {
             const condition = this.props.graph && this.props.graph.condition
-            console.log("===========")
-            console.log(condition)
             let showCondition = []
             if (chooseType === "edge") {
                 let initialValues = cell && cell.getData()
-                console.log("initialValues是")
-
-                console.log(initialValues)
                 initialValues.condition &&
                     initialValues.condition.map((item, index) => {
                         let filterAction = condition.filter((list) => {
@@ -222,8 +237,6 @@ class RightDrawer extends React.PureComponent {
                         }
                     })
             }
-            console.log("+++++++++++++")
-            console.log(showCondition)
             this.setState({ showCondition })
         }
     }
@@ -283,10 +296,6 @@ class RightDrawer extends React.PureComponent {
                 let data = this.props.graph.getNodes().map((item) => {
                     return item.getData().name
                 })
-                console.log("名称")
-                console.log(value)
-                console.log(data)
-                console.log(this.countName(data, value))
                 if (this.countName(data, value) > 1) {
                     callback(new Error("名称重复"))
                 }
@@ -294,9 +303,6 @@ class RightDrawer extends React.PureComponent {
                 let data = this.props.graph.getEdges().map((item) => {
                     return item.getData().name
                 })
-                console.log("名称")
-                console.log(value)
-                console.log(data)
                 if (this.countName(data, value) > 1) {
                     callback(new Error("名称重复"))
                 }
@@ -312,8 +318,6 @@ class RightDrawer extends React.PureComponent {
         //     labelCol: { span: 8 },
         //     wrapperCol: { span: 14 },
         // }
-        console.log("xuanran")
-        console.log(showCondition)
 
         return (
             chooseType === "node" && (

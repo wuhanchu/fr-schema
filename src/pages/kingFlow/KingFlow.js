@@ -62,9 +62,14 @@ class KingFlow extends React.PureComponent {
                 <div id="containerChart" />
                 {chooseType && (
                     <RightDrawer
+                        service={this.props.service}
+                        record={this.props.record}
                         intenList={intenList}
                         graphChange={() => {
-                            this.graphChange()
+                            return this.graphChange()
+                        }}
+                        handleSetVisibleFlow={(args) => {
+                            this.props.handleSetVisibleFlow(args)
                         }}
                         cell={cell}
                         onDeleteNode={this.deleteNode}
@@ -178,28 +183,38 @@ class KingFlow extends React.PureComponent {
         )
     }
 
-    getData() {
+    async getData() {
         let data = localStorage.getItem("flow" + this.props.record.id)
         data = JSON.parse(data)
-        console.log(data)
-        console.log("数据")
+        console.log("本地数据")
         if (!data) {
-            data = {
-                node: [
-                    {
-                        name: "开始节点1",
-                        key: `${Date.now()}`,
-                        allow_repeat_time: 2,
-                        type: "begin",
-                        position: {
-                            x: 369,
-                            y: 161,
+            let res = await this.props.service.getDetail({
+                id: this.props.record.id,
+            })
+            console.log(res)
+            if (res.config && res.config.node) {
+                data = res.config
+
+                console.log("用的远端数据")
+                console.log(data)
+            } else {
+                data = {
+                    node: [
+                        {
+                            name: "开始节点1",
+                            key: `${Date.now()}`,
+                            allow_repeat_time: 2,
+                            type: "begin",
+                            position: {
+                                x: 369,
+                                y: 161,
+                            },
                         },
-                    },
-                ],
-                condition: [],
-                action: [],
-                connection: [],
+                    ],
+                    condition: [],
+                    action: [],
+                    connection: [],
+                }
             }
         } else {
             if (!data.node.length) {
@@ -400,8 +415,6 @@ class KingFlow extends React.PureComponent {
             condition: [],
             action: [],
         }
-        console.log(expGraph)
-        console.log(expGraph.getNodes())
         expGraph.getNodes().map((item, index) => {
             let nodeData = item.getData()
             let itemData = {
@@ -417,7 +430,6 @@ class KingFlow extends React.PureComponent {
             }
             data.node.push(itemData)
         })
-        console.log(expGraph.getEdges())
         expGraph.getEdges().map((item, index) => {
             let nodeData = item.getData()
             if (!nodeData) {
@@ -434,15 +446,12 @@ class KingFlow extends React.PureComponent {
         })
         data.action = expGraph.action
         data.condition = expGraph.condition
-        console.log("数据")
-        console.log(expGraph.condition)
 
-        console.log(data)
         localStorage.setItem(
             "flow" + this.props.record.id,
             JSON.stringify(data)
         )
-        console.log("flow" + this.props.record.id, JSON.stringify(data))
+        return data
     }
 
     async onConnectNode(args) {

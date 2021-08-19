@@ -78,11 +78,7 @@ export default [
                         redirect: "/domain/list",
                         title: "域列表",
                     },
-                    {
-                        path: "/flow",
-                        title: "流程图",
-                        component: "./flow/index",
-                    },
+
                     {
                         path: "/kingFlow",
                         title: "流程图",
@@ -99,7 +95,12 @@ export default [
                                 component: "./domain/List",
                                 title: "域列表",
                             },
-
+                            {
+                                path: "/domain/flow",
+                                name: "flow",
+                                title: "流程图",
+                                component: "./kingFlow/List",
+                            },
                             {
                                 path: "/domain/synonym",
                                 name: "synonym",

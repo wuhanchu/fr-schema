@@ -12,6 +12,8 @@ export default {
     "menu.domain": "域",
     "menu.domain.domainList": "域信息",
     "menu.domain.story": "故事",
+    "menu.domain.flow": "流程",
+
     "menu.entity": "实体",
     "menu.entity.relation": "实体关系",
     "menu.entity.relationType": "实体关系类型",

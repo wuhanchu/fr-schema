@@ -1,44 +1,36 @@
-import { createApi } from "@/outter/fr-schema/src/service"
-import answer from "./answer"
-import intention from "./intention"
-import node from "./node"
+import { createApi, createBasicApi } from "@/outter/fr-schema/src/service"
+import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 
-let service = createApi("intent")
+const schema = {
+    domain_key: {
+        title: "域",
+        sorter: true,
+        required: true,
+        type: schemaFieldType.Select,
+    },
+    key: {
+        required: true,
+        title: "编码",
+    },
+    create_time: {
+        title: "创建时间",
+        // required: true,
+        sorter: true,
+        addHide: true,
+        editHide: true,
+        listHide: true,
+        props: {
+            showTime: true,
+        },
+        type: schemaFieldType.DatePicker,
+    },
+}
 
-service.get = () => {
-    return { list: [] }
-}
-// service.getDetail = ()=>{
-//     return {list: []}
-// }
-/**
- * form current robot clone one new
- * @param id robot id
- * @param others
- * @returns new robot info
- */
-service.clone = ({ id, ...others }) => {
-    return createApi(`talk_robot/clone/${id}`).post(others)
-}
+const service = createApi("flow", schema, null, "eq.")
 
-/**
- * release current robot
- * @param id robot id
- */
-service.release = (id) => {
-    return createApi(`talk_robot/${id}/status`).put({ status: 2 })
-}
-service.withdraw = (id) => {
-    return createApi(`talk_robot/${id}/status`).put({ status: 1 })
-}
-service.sync = (data) => {
-    const { id, ...others } = data
-    return createApi(`update_all/${id}`).put(others)
-}
+service.uploadExcel = createBasicApi("intent/import").post
 
 export default {
+    schema,
     service,
-    answer,
-    intention,
-    node,
 }
