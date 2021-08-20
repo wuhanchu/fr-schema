@@ -47,7 +47,7 @@ service.get = async (args) => {
             return {
                 ...item,
                 show_question_txt: item.match_question_txt,
-                match: true,
+                match: item.user_confirm ? true : null,
             }
         } else {
             return {
@@ -56,7 +56,7 @@ service.get = async (args) => {
                     item.return_question &&
                     item.return_question[0] &&
                     item.return_question[0].answer,
-                match: false,
+                match: item.user_confirm ? false : null,
             }
         }
     })
