@@ -35,13 +35,13 @@ export const startDragToGraph = (graph, type, e) => {
                   width: 100,
                   height: 60,
                   data: {
-                      name: "未命名",
+                      name: "全局节点",
                       allow_repeat_time: 2,
                       types: "globle",
                   },
                   attrs: {
                       label: {
-                          text: "未命名",
+                          text: "全局节点",
                           fill: "#000000",
                           fontSize: 14,
                           textWrap: {
