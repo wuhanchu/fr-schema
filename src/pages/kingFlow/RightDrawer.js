@@ -106,7 +106,7 @@ class RightDrawer extends React.PureComponent {
                 )}
 
                 <Popconfirm
-                    title="是否删除此行为?"
+                    title="是否提交修改?"
                     onConfirm={async () => {
                         let data = this.props.graphChange()
                         await this.props.service.patch({
