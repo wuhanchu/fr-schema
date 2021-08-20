@@ -279,7 +279,18 @@ class KingFlow extends React.PureComponent {
                     fill: "#ffffff",
                 },
             },
-            ports: ports,
+            ports:
+                args.type !== "begin"
+                    ? ports
+                    : {
+                          ...ports,
+                          items: [
+                              {
+                                  id: "port2",
+                                  group: "bottom",
+                              },
+                          ],
+                      },
         })
         return args.key
     }
@@ -386,7 +397,6 @@ class KingFlow extends React.PureComponent {
             })
         })
         this.graph.on("edge:mouseup", (args) => {
-            console.log(args)
             if (!args.view.targetView) {
                 const id = `${Date.now()}`
                 const expGraph = this.graph
@@ -534,10 +544,28 @@ class KingFlow extends React.PureComponent {
             // },
             connecting: {
                 // 节点连接
-                anchor: "center",
+                anchor: "top",
                 connectionPoint: "anchor",
                 allowBlank: true,
                 snap: true,
+                // 显示可用的链接桩
+                validateConnection({
+                    sourceView,
+                    targetView,
+                    sourceMagnet,
+                    targetMagnet,
+                }) {
+                    if (
+                        targetMagnet &&
+                        targetMagnet.getAttribute("port-group") !== "top"
+                    ) {
+                        return false
+                    }
+                    if (sourceView === targetView) {
+                        return false
+                    }
+                    return true
+                },
                 createEdge: (args, other) => this.createEdgeFunc(),
             },
             highlighting: {
