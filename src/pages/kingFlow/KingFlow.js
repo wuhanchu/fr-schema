@@ -193,17 +193,12 @@ class KingFlow extends React.PureComponent {
     async getData() {
         let data = localStorage.getItem("flow" + this.props.record.id)
         data = JSON.parse(data)
-        console.log("本地数据")
         if (!data) {
             let res = await this.props.service.getDetail({
                 id: this.props.record.id,
             })
-            console.log(res)
-            if (res.config && res.config.node) {
+            if (res.config && res.config.node && res.config.node.length) {
                 data = res.config
-
-                console.log("用的远端数据")
-                console.log(data)
             } else {
                 data = {
                     node: [
@@ -534,9 +529,9 @@ class KingFlow extends React.PureComponent {
             },
             selecting: true, //可选
             snapline: true,
-            interacting: {
-                edgeLabelMovable: true,
-            },
+            // interacting: {
+            //     edgeLabelMovable: true,
+            // },
             connecting: {
                 // 节点连接
                 anchor: "center",
@@ -592,6 +587,9 @@ class KingFlow extends React.PureComponent {
                             fill: "#00000000",
                         },
                     },
+                    // position: {
+                    //     distance: -150
+                    // }
                 },
             ],
             data: {
