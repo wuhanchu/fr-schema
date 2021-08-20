@@ -54,6 +54,7 @@ class KingFlow extends React.PureComponent {
         console.log("data是", this.props.dict)
         this.initData()
         this.getIntent()
+        // this.changeEdgeType(3, null, "manhattan")
         this.graph.flowSetting = {
             key: this.props.record.key,
             domain_key: this.props.record.domain_key,
@@ -254,6 +255,7 @@ class KingFlow extends React.PureComponent {
             id: args.key,
             width: 100,
             height: 60,
+            shape: args.shape,
             position: {
                 x: args.position ? args.position.x : 300,
                 y: args.position ? args.position.y : 300,
@@ -284,24 +286,41 @@ class KingFlow extends React.PureComponent {
             },
             ports: ports,
         })
+        return args.key
     }
 
     addEdges(args) {
-        let edge = this.createEdgeFunc({
-            id: args.key,
-            data: { ...args },
-            source: { cell: args.begin, port: "port2" },
-            target: { cell: args.end, port: "port1" },
-        })
-
-        console.log("连线", {
-            id: args.key,
-            data: { ...args },
-            source: { cell: args.begin, port: "port2" },
-            target: { cell: args.end, port: "port1" },
-        })
-
-        this.graph.addEdge(edge)
+        if (args.begin) {
+            let edge = this.createEdgeFunc({
+                id: args.key,
+                data: { ...args },
+                source: { cell: args.begin, port: "port2" },
+                target: { cell: args.end, port: "port1" },
+            })
+            this.graph.addEdge(edge)
+        } else {
+            let endNode = this.graph.getCellById(args.end)
+            let key = `${Date.now()}`
+            this.addNodes({
+                key,
+                name: "全局节点",
+                action: [],
+                shape: "ellipse",
+                type: "globle",
+                allow_repeat_time: 2,
+                position: {
+                    x: endNode.store.data.position.x,
+                    y: endNode.store.data.position.y - 150,
+                },
+            })
+            let edge = this.createEdgeFunc({
+                id: args.key,
+                data: { ...args },
+                source: { cell: key, port: "port2" },
+                target: { cell: args.end, port: "port1" },
+            })
+            this.graph.addEdge(edge)
+        }
     }
 
     initData() {
@@ -445,15 +464,21 @@ class KingFlow extends React.PureComponent {
                     y: item.store.data.position.y,
                 },
             }
-            data.node.push(itemData)
+            if (nodeData.types !== "globle") data.node.push(itemData)
         })
         expGraph.getEdges().map((item, index) => {
             let nodeData = item.getData()
+            // if(this.graph.getCellById(item.store.data.source.cell).getData().type)
+            console.log("开始节点")
+            let begin = item.store.data.source.cell
+            if (this.graph.getCellById(begin).getData().types === "globle") {
+                begin = null
+            }
             if (!nodeData) {
                 nodeData = {}
             }
             let itemData = {
-                begin: item.store.data.source.cell,
+                begin: begin,
                 key: item.id,
                 end: item.store.data.target.cell,
                 name: nodeData.name,
@@ -537,8 +562,6 @@ class KingFlow extends React.PureComponent {
 
     // 更改 连线方式
     createEdgeFunc(args) {
-        console.log("新增线")
-        console.log(args)
         let { connectEdgeType } = this.state
         return new Shape.Edge({
             attrs: {

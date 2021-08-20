@@ -33,11 +33,11 @@ export const startDragToGraph = (graph, type, e) => {
             ? graph.createNode({
                   shape: "ellipse",
                   width: 100,
-                  height: 100,
+                  height: 60,
                   data: {
                       name: "未命名",
                       allow_repeat_time: 2,
-                      type: "globle",
+                      types: "globle",
                   },
                   attrs: {
                       label: {

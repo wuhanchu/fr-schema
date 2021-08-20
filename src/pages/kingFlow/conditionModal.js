@@ -150,23 +150,12 @@ export const ConditionModal = ({
                                 .toLowerCase()
                                 .indexOf(input.toLowerCase()) >= 0
                         }
-                        // onSearch={(value) =>
-                        //     testDebounceFn(value, setSelectData)
-                        // }
                         notFoundContent={null}
                     >
                         {options}
                     </Select>
                 </Form.Item>
-                {/* <Form.Item
-                    label="插槽"
-                    name="slot"
-                    rules={[
-                        { required: true, message: "请输入插槽！" },
-                    ]}
-                >
-                    <Input placeholder={"请输入节点重复次数"}/>
-                </Form.Item> */}
+
                 <Form.List name="slot">
                     {(fields, { add, remove }) => (
                         <>

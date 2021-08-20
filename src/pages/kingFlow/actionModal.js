@@ -5,7 +5,15 @@ import "antd/lib/style/index.css"
 import { FolderAddTwoTone } from "@ant-design/icons"
 import Modal from "antd/lib/modal/Modal"
 import clone from "clone"
+import AceEditor from "react-ace"
+import "ace-builds/src-noconflict/mode-json"
+
+// import 'brace/mode/json';//
+import "ace-builds/src-noconflict/theme-github"
+import "ace-builds/src-noconflict/ext-language_tools"
+
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons"
+import FormItem from "antd/lib/form/FormItem"
 
 function Random(min, max) {
     return Math.round(Math.random() * (max - min)) + min
@@ -31,32 +39,19 @@ export const ActionModal = ({
         action = expGraph.action
     }
     let initialValues = clone(defaultValue)
-    let param = []
-    if (defaultValue.param) {
-        Object.keys(defaultValue.param).forEach(function (key) {
-            param.push({ first: key, last: defaultValue.param[key] })
-        })
-    }
-
-    initialValues.param = param
     let actionList = []
     if (cell.getData && cell.getData().action) {
         actionList = cell.getData().action
     }
 
     const onFinish = (values) => {
-        let param = {}
         let myActions = clone(actions)
-        values.param &&
-            values.param.map((item) => {
-                param[item.first] = item.last
-            })
+        console.log(values.param)
         if (actionType === "add") {
             let actionKey = cell.id + `${Date.now()}`
             myActions.push({
                 ...values,
                 key: actionKey,
-                param,
             })
             actionList.push(actionKey)
             cell.setData({ action: actionList })
@@ -64,7 +59,6 @@ export const ActionModal = ({
             expGraphAction.push({
                 ...values,
                 key: actionKey,
-                param,
             })
             graph.action = expGraphAction
             graphChange()
@@ -72,17 +66,18 @@ export const ActionModal = ({
             if (expGraph.action) {
                 let arr = expGraph.action.map((item) => {
                     if (item.key === defaultValue.key) {
-                        return { ...values, param, key: defaultValue.key }
+                        return { ...values, key: defaultValue.key }
                     }
                     return item
                 })
                 myActions = myActions.map((item) => {
                     if (item.key === defaultValue.key) {
-                        return { ...values, param, key: defaultValue.key }
+                        return { ...values, key: defaultValue.key }
                     }
                     return item
                 })
                 // setActions(myActions)
+                console.log(arr)
                 expGraph.action = arr
                 graphChange()
             }
@@ -126,19 +121,37 @@ export const ActionModal = ({
             formRef.current.setFieldsValue({ name: dict[value.type].remark })
         }
     }
+
+    // 定义json 初始化值
+    let AceEditorValue = ""
+    if (initialValues["param"]) {
+        AceEditorValue = JSON.stringify(initialValues["param"], null, "\t")
+    }
+    if (formRef && formRef.current && formRef.current.getFieldsValue()[param]) {
+        if (typeof formRef.current.getFieldsValue()[param] === "object") {
+            AceEditorValue = JSON.stringify(
+                formRef.current.getFieldsValue()[param],
+                null,
+                "\t"
+            )
+        } else {
+            AceEditorValue = formRef.current.getFieldsValue()[param]
+        }
+    }
     return (
         <Modal
             title={"行为配置"}
             visible={visible}
             destroyOnClose={true}
+            width={"900px"}
             footer={false}
             onCancel={() => handleVisible(false)}
         >
             <Form
                 name="basic"
                 ref={formRef}
-                labelCol={{ span: 8 }}
-                wrapperCol={{ span: 12 }}
+                labelCol={{ span: 6 }}
+                wrapperCol={{ span: 14 }}
                 onValuesChange={onValuesChange}
                 initialValues={initialValues}
                 onFinish={onFinish}
@@ -163,81 +176,70 @@ export const ActionModal = ({
                         defaultValue={initialValues.name}
                     />
                 </Form.Item>
+                <Form.Item label="参数" name={"param"}>
+                    <div style={{ width: "497px" }}>
+                        <AceEditor
+                            placeholder={`请输入${"参数"}`}
+                            mode="json"
+                            // theme="tomorrow"
+                            name="blah2"
+                            wrapEnabled={true}
+                            onChange={(res) => {
+                                const obj = {}
+                                obj["param"] = res
+                                console.log(obj)
 
-                <Form.List name="param">
-                    {(fields, { add, remove }) => (
-                        <>
-                            {fields.map(
-                                ({ key, name, fieldKey, ...restField }) => (
-                                    <Space
-                                        key={key}
-                                        style={{ display: "flex" }}
-                                        align="baseline"
-                                    >
-                                        <Form.Item
-                                            {...restField}
-                                            wrapperCol={{ offset: 8, span: 12 }}
-                                            name={[name, "first"]}
-                                            fieldKey={[fieldKey, "first"]}
-                                            rules={[
-                                                {
-                                                    required: true,
-                                                    message: "请输入键名",
-                                                },
-                                            ]}
-                                        >
-                                            <Input placeholder="键名" />
-                                        </Form.Item>
-                                        <Form.Item
-                                            {...restField}
-                                            name={[name, "last"]}
-                                            fieldKey={[fieldKey, "last"]}
-                                            rules={[
-                                                {
-                                                    required: true,
-                                                    message: "请输入键值",
-                                                },
-                                            ]}
-                                        >
-                                            <Input
-                                                style={{
-                                                    width: "236px",
-                                                    marginLeft: "-26px",
-                                                }}
-                                                placeholder="键值"
-                                            />
-                                        </Form.Item>
-                                        <MinusCircleOutlined
-                                            onClick={() => remove(name)}
-                                        />
-                                    </Space>
-                                )
-                            )}
-                            <Form.Item wrapperCol={{ offset: 8, span: 12 }}>
-                                <Row gutter={24}>
-                                    <Col lg={16}>
-                                        <Button
-                                            onClick={() => add()}
-                                            block
-                                            icon={<PlusOutlined />}
-                                        >
-                                            添加参数
-                                        </Button>
-                                    </Col>
-                                    <Col lg={8}>
-                                        <Button
-                                            style={{ float: "right" }}
-                                            type="primary"
-                                            htmlType="submit"
-                                        >
-                                            提交
-                                        </Button>
-                                    </Col>
-                                </Row>
-                            </Form.Item>
-                        </>
-                    )}
-                </Form.List>
+                                try {
+                                    console.log(JSON.parse(res))
+                                    formRef.current.setFieldsValue({
+                                        param: JSON.parse(res),
+                                    })
+                                    console.log(
+                                        formRef.current.getFieldsValue()
+                                    )
+
+                                    console.log(obj)
+                                } catch (error) {
+                                    console.log(error)
+                                }
+                            }}
+                            fontSize={14}
+                            showPrintMargin
+                            showGutter
+                            width={"497px"}
+                            // style={props.style}
+                            height={"300px"}
+                            highlightActiveLine
+                            value={AceEditorValue}
+                            markers={[
+                                {
+                                    startRow: 0,
+                                    startCol: 2,
+                                    endRow: 1,
+                                    endCol: 20,
+                                    className: "error-marker",
+                                    type: "background",
+                                },
+                            ]}
+                            setOptions={{
+                                enableBasicAutocompletion: true,
+                                enableLiveAutocompletion: true,
+                                enableSnippets: true,
+                                showLineNumbers: true,
+                                tabSize: 2,
+                            }}
+                        />
+                    </div>
+                </Form.Item>
+                <Form.Item wrapperCol={{ offset: 8, span: 12 }}>
+                    <Button
+                        style={{ float: "right" }}
+                        type="primary"
+                        htmlType="submit"
+                    >
+                        提交
+                    </Button>
+                </Form.Item>
             </Form>
         </Modal>
     )
