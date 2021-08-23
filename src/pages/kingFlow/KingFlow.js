@@ -40,6 +40,7 @@ class KingFlow extends React.PureComponent {
             currentArrow: 1,
             cell: undefined,
             selectCell: "",
+            expGraphData: {},
         }
         this.deleteNode = this.deleteNode.bind(this)
         this.onChangeGridBack = this.onChangeGridBack.bind(this)
@@ -240,6 +241,9 @@ class KingFlow extends React.PureComponent {
         data.connection.map((item) => {
             this.addEdges(item)
         })
+        this.setState({
+            expGraphData: data,
+        })
 
         this.graph.action = data.action
         this.graph.condition = data.condition
@@ -307,6 +311,7 @@ class KingFlow extends React.PureComponent {
         } else {
             let endNode = this.graph.getCellById(args.end)
             let key = `${Date.now()}`
+            console.log("全局节点")
             this.addNodes({
                 key,
                 name: "全局节点",
@@ -325,6 +330,8 @@ class KingFlow extends React.PureComponent {
                 source: { cell: key, port: "port2" },
                 target: { cell: args.end, port: "port1" },
             })
+            console.log(edge)
+
             this.graph.addEdge(edge)
         }
     }
@@ -444,6 +451,10 @@ class KingFlow extends React.PureComponent {
             this.graphChange(args)
         })
 
+        this.graph.on("cell:changed", (args) => {
+            this.graphChange(args)
+        })
+
         this.getData()
         console.log(this.graph)
     }
@@ -463,7 +474,10 @@ class KingFlow extends React.PureComponent {
                 key: item.id,
                 action: nodeData.action,
                 allow_repeat_time: nodeData.allow_repeat_time,
-                type: nodeData.types,
+                type:
+                    nodeData.types === "globle" || nodeData.types === "begin"
+                        ? nodeData.types
+                        : "end",
                 position: {
                     x: item.store.data.position.x,
                     y: item.store.data.position.y,
@@ -478,6 +492,11 @@ class KingFlow extends React.PureComponent {
             let begin = item.store.data.source.cell
             if (this.graph.getCellById(begin).getData().types === "globle") {
                 begin = null
+            }
+            if (begin) {
+                let array = data.node.filter((item) => item.key === begin)
+                console.log(array)
+                if (array[0].type !== "begin") array[0].type = "normal"
             }
             if (!nodeData) {
                 nodeData = {}
@@ -494,6 +513,10 @@ class KingFlow extends React.PureComponent {
         data.action = expGraph.action
         data.condition = expGraph.condition
 
+        console.log("变化", data)
+        this.setState({
+            expGraphData: data,
+        })
         localStorage.setItem(
             "flow" + this.props.record.id,
             JSON.stringify(data)
@@ -521,6 +544,7 @@ class KingFlow extends React.PureComponent {
 
     initGraph() {
         let { grid } = this.state
+        let _this = this
         this.graph = new Graph({
             container: document.getElementById("containerChart"),
             history: true,
@@ -555,6 +579,8 @@ class KingFlow extends React.PureComponent {
                     sourceMagnet,
                     targetMagnet,
                 }) {
+                    // return true
+
                     if (
                         targetMagnet &&
                         targetMagnet.getAttribute("port-group") !== "top"
@@ -564,7 +590,31 @@ class KingFlow extends React.PureComponent {
                     if (sourceView === targetView) {
                         return false
                     }
-                    return true
+
+                    console.log(
+                        "数据室",
+                        sourceView,
+                        targetView,
+                        sourceMagnet,
+                        targetMagnet
+                    )
+
+                    const expGraph = this.graph
+                    console.log(expGraph)
+                    let isTrue = true
+
+                    if (targetView && sourceView) {
+                        _this.state.expGraphData.connection.map((item) => {
+                            if (
+                                item.end === targetView.cell.id &&
+                                item.begin === sourceView.cell.id
+                            ) {
+                                isTrue = false
+                            }
+                        })
+                    }
+
+                    return isTrue
                 },
                 createEdge: (args, other) => this.createEdgeFunc(),
             },
@@ -663,7 +713,12 @@ class KingFlow extends React.PureComponent {
     deleteNode() {
         let { chooseType } = this.state
         const cell = this.graph.getSelectedCells()
+        console.log(cell)
+        // const view = this.graph.findView(cell[0])
         this.graph.removeCells(cell)
+        // cell.
+        // view.unmount()
+        console.log(this.graph)
         chooseType = "grid"
         this.setState({ chooseType })
         this.graphChange()

@@ -10,9 +10,15 @@ import {
     Popconfirm,
     Tag,
     Select,
+    Tooltip,
 } from "antd"
 import "./RightDrawer.less"
-import { RiseOutlined, DeleteOutlined, CloseOutlined } from "@ant-design/icons"
+import {
+    RiseOutlined,
+    DeleteOutlined,
+    CloseOutlined,
+    QuestionCircleOutlined,
+} from "@ant-design/icons"
 import { ActionModal } from "./actionModal"
 import { ConditionModal } from "./conditionModal"
 import Sortable from "sortablejs/modular/sortable.complete.esm.js"
@@ -38,7 +44,6 @@ class RightDrawer extends React.PureComponent {
             ],
             showGrid: true,
             visible: false,
-            showCondition: false,
             gridType: "mesh",
             showAction: [],
             showCondition: [],
@@ -109,12 +114,17 @@ class RightDrawer extends React.PureComponent {
                     title="是否提交修改?"
                     onConfirm={async () => {
                         let data = this.props.graphChange()
-                        await this.props.service.patch({
-                            ...data,
-                            id: this.props.record.id,
-                        })
-                        localStorage.removeItem("flow" + this.props.record.id)
-                        this.props.handleSetVisibleFlow(false)
+
+                        if (this.isError(data)) {
+                            await this.props.service.patch({
+                                ...data,
+                                id: this.props.record.id,
+                            })
+                            localStorage.removeItem(
+                                "flow" + this.props.record.id
+                            )
+                            this.props.handleSetVisibleFlow(false)
+                        }
                     }}
                     okText="是"
                     cancelText="否"
@@ -129,14 +139,46 @@ class RightDrawer extends React.PureComponent {
         )
     }
 
-    renderGrid() {
-        let { gridTypeList, showGrid, gridType } = this.state
+    isError(data) {
+        console.log(data)
+        let isTrue = true
+        let nameArr = data.config.node.map((item) => {
+            return item.name
+        })
+        data.config.node.map((item) => {
+            // this.countName(nameArr, item.name)
+            if (
+                !item.allow_repeat_time ||
+                this.countName(nameArr, item.name) > 1
+            ) {
+                let cell = this.props.graph.getCellById(item.key)
+                cell.attr("body/stroke", "#ff4d4f")
+                isTrue = false
+            } else {
+                let cell = this.props.graph.getCellById(item.key)
+                cell.attr("body/stroke", undefined)
+            }
+        })
+        nameArr = data.config.connection.map((item) => {
+            return item.name
+        })
+        data.config.connection.map((item) => {
+            if (this.countName(nameArr, item.name) > 1) {
+                let cell = this.props.graph.getCellById(item.key)
+                console.log(cell)
+                cell.attr("line/stroke", "#ff4d4f")
+                isTrue = false
+            } else {
+                let cell = this.props.graph.getCellById(item.key)
+                cell.attr("line/stroke", "#1890ff")
+            }
+        })
 
+        return isTrue
+    }
+
+    renderGrid() {
         let { chooseType, record, graph } = this.props
-        const formItemLayout = {
-            labelCol: { span: 6 },
-            wrapperCol: { span: 14 },
-        }
         return (
             chooseType === "grid" && (
                 <div>
@@ -145,7 +187,6 @@ class RightDrawer extends React.PureComponent {
                         <Form
                             labelAlign="left"
                             colon={false}
-                            // {...formItemLayout}
                             initialValues={{ ...record }}
                             onValuesChange={(args) => {
                                 graph.flowSetting = args
@@ -162,20 +203,15 @@ class RightDrawer extends React.PureComponent {
                                     },
                                 ]}
                             >
-                                {/* <Input placeholder="请输入域" /> */}
                                 <Select
                                     showSearch
                                     placeholder={"请选择域!"}
                                     defaultActiveFirstOption={false}
-                                    // showArrow={false}
                                     filterOption={(input, option) =>
                                         option.children
                                             .toLowerCase()
                                             .indexOf(input.toLowerCase()) >= 0
                                     }
-                                    // onSearch={(value) =>
-                                    //     testDebounceFn(value, setSelectData)
-                                    // }
                                     notFoundContent={null}
                                 >
                                     {this.props.dict.domain &&
@@ -200,26 +236,6 @@ class RightDrawer extends React.PureComponent {
                             >
                                 <Input placeholder="请输入编码" />
                             </FormItem>
-                            {/* {showGrid && (
-                                <div>
-                                    <FormItem label="网格类型">
-                                        <Radio.Group value={gridType}
-                                                     onChange={e => this.onRadioChange(e)}>
-                                            <div style={{display: 'flex'}}>
-                                                {gridTypeList.map((item, index) =>
-                                                    <Radio key={`radio${index}`} value={item.value}>
-                                                        {item.label}
-                                                    </Radio>
-                                                )}
-                                            </div>
-
-                                        </Radio.Group>
-                                    </FormItem>
-                                    <FormItem label="网格大小">
-                                        <Slider min={0} max={10} defaultValue={1} onChange={(value) => this.onGridSizeChange(value)}/>
-                                    </FormItem>
-                                </div>
-                            )} */}
                         </Form>
                     </div>
                 </div>
@@ -319,21 +335,25 @@ class RightDrawer extends React.PureComponent {
 
     handleCFmName(rules, value, callback, type) {
         if (!value) {
-            callback()
+            callback && callback()
         } else {
             if (type === "node") {
                 let data = this.props.graph.getNodes().map((item) => {
                     return item.getData().name
                 })
                 if (this.countName(data, value) > 1) {
-                    callback(new Error("名称重复"))
+                    callback && callback(new Error("名称重复"))
+                    return false
+                } else {
+                    return true
                 }
             } else {
                 let data = this.props.graph.getEdges().map((item) => {
                     return item.getData().name
                 })
                 if (this.countName(data, value) > 1) {
-                    callback(new Error("名称重复"))
+                    callback && callback(new Error("名称重复"))
+                    return false
                 }
             }
         }
@@ -343,11 +363,6 @@ class RightDrawer extends React.PureComponent {
         let { chooseType, cell, graph } = this.props
         let _this = this
         let { isShow, showAction, showCondition } = this.state
-        // const formItemLayout = {
-        //     labelCol: { span: 8 },
-        //     wrapperCol: { span: 14 },
-        // }
-
         return (
             chooseType === "node" && (
                 <div>
@@ -362,7 +377,7 @@ class RightDrawer extends React.PureComponent {
                             preserve={false}
                             // form={form}
                             layout="vertical"
-                            onValuesChange={(args) => {
+                            onValuesChange={(args, data) => {
                                 cell.setData(args)
                                 cell.setAttrs({
                                     label: { text: args.name },
@@ -406,7 +421,18 @@ class RightDrawer extends React.PureComponent {
                                     placeholder="请输入允许重复次数"
                                 />
                             </FormItem>
-                            <FormItem label={"行为定义"}>
+                            <FormItem
+                                label={
+                                    <div>
+                                        行为定义
+                                        <Tooltip title="行为之间顺序执行，可以拖动进行排序">
+                                            <QuestionCircleOutlined
+                                                style={{ marginLeft: "5px" }}
+                                            />
+                                        </Tooltip>
+                                    </div>
+                                }
+                            >
                                 <ul
                                     style={{ margin: "0", padding: "0" }}
                                     id="items"
@@ -527,12 +553,6 @@ class RightDrawer extends React.PureComponent {
                                     </Tag>
                                 </ul>
                             </FormItem>
-                            {/* <FormItem label="功能">
-                                <Button type="primary" icon={<RiseOutlined/>} className="button"
-                                        style={{marginRight: '10px'}} onClick={_ => this.toTopZIndex()}>置顶</Button>
-                                <Button type="danger" className="button" icon={<DeleteOutlined/>}
-                                        onClick={_ => this.deleteNode()}>删除</Button>
-                            </FormItem> */}
                         </Form>
                     </div>
                 </div>
@@ -543,10 +563,6 @@ class RightDrawer extends React.PureComponent {
     renderEdge() {
         let { chooseType, cell, graph } = this.props
         let { showCondition } = this.state
-        const formItemLayout = {
-            labelCol: { span: 8 },
-            wrapperCol: { span: 14 },
-        }
         return (
             chooseType === "edge" && (
                 <div>
@@ -583,7 +599,6 @@ class RightDrawer extends React.PureComponent {
                                         required: true,
                                         // message: "请输入允许重复次数！",
                                     },
-                                    ,
                                     {
                                         validator: (rules, value, callback) => {
                                             this.handleCFmName(
@@ -599,8 +614,17 @@ class RightDrawer extends React.PureComponent {
                                 <Input placeholder="请输入名称" />
                             </FormItem>
                             <FormItem
-                                label="条件定义"
-                                extra="条件之间为或的关系"
+                                label={
+                                    <div>
+                                        条件定义
+                                        <Tooltip title="条件之间为或的关系,一个条件成立即条件成立">
+                                            <QuestionCircleOutlined
+                                                style={{ marginLeft: "5px" }}
+                                            />
+                                        </Tooltip>
+                                    </div>
+                                }
+                                // extra="条件之间为或的关系"
                             >
                                 <ul
                                     style={{ margin: "0", padding: "0" }}

@@ -107,6 +107,34 @@ export const ActionModal = ({
             value: "transfer_manual",
             remark: "转人工",
         },
+        response: {
+            value: "response",
+            remark: "返回生成文本",
+        },
+        get_question_by_global_key: {
+            value: "get_question_by_global_key",
+            remark: "根据全局key获取问题",
+        },
+        rasa_model_slot_set: {
+            value: "rasa_model_slot_set",
+            remark: "使用rasa 默认设置槽位方法获取槽位",
+        },
+        get_template: {
+            value: "get_template",
+            remark: "根据回复key搜索回复模板",
+        },
+        self_income_expenses_get_response: {
+            value: "self_income_expenses_get_response",
+            remark: "自有收支核算流程根据槽位搜索回复模板",
+        },
+        self_income_expenses_search_entity: {
+            value: "self_income_expenses_search_entity",
+            remark: "根据输入相似查询 想关联的实体",
+        },
+        self_income_expenses_balance_action: {
+            value: "self_income_expenses_balance_action",
+            remark: "根据不平的方向返回结果",
+        },
     }
     let formRef = React.createRef()
 
