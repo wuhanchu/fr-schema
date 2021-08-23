@@ -1,8 +1,6 @@
 import React from "react"
-import { Input, Tag, Form, Button, Space, Row, Col, Select } from "antd"
-import { useExperimentGraph } from "@/pages/flow/rx-models/experiment-graph"
+import { Input, Form, Button, Select } from "antd"
 import "antd/lib/style/index.css"
-import { FolderAddTwoTone } from "@ant-design/icons"
 import Modal from "antd/lib/modal/Modal"
 import clone from "clone"
 import AceEditor from "react-ace"
@@ -12,8 +10,8 @@ import "ace-builds/src-noconflict/mode-json"
 import "ace-builds/src-noconflict/theme-github"
 import "ace-builds/src-noconflict/ext-language_tools"
 
-import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons"
 import FormItem from "antd/lib/form/FormItem"
+const { OptGroup } = Select
 
 function Random(min, max) {
     return Math.round(Math.random() * (max - min)) + min
@@ -33,11 +31,6 @@ export const ActionModal = ({
     const [form] = Form.useForm()
 
     const expGraph = graph
-    console.log(graph)
-    let action = []
-    if (graph) {
-        action = expGraph.action
-    }
     let initialValues = clone(defaultValue)
     let actionList = []
     if (cell.getData && cell.getData().action) {
@@ -46,7 +39,6 @@ export const ActionModal = ({
 
     const onFinish = (values) => {
         let myActions = clone(actions)
-        console.log(values.param)
         if (actionType === "add") {
             let actionKey = cell.id + `${Date.now()}`
             myActions.push({
@@ -70,14 +62,6 @@ export const ActionModal = ({
                     }
                     return item
                 })
-                myActions = myActions.map((item) => {
-                    if (item.key === defaultValue.key) {
-                        return { ...values, key: defaultValue.key }
-                    }
-                    return item
-                })
-                // setActions(myActions)
-                console.log(arr)
                 expGraph.action = arr
                 graphChange()
             }
@@ -150,6 +134,8 @@ export const ActionModal = ({
         }
     }
 
+    console.log(expGraph)
+
     // 定义json 初始化值
     let AceEditorValue = ""
     if (initialValues["param"]) {
@@ -171,15 +157,15 @@ export const ActionModal = ({
             title={"行为配置"}
             visible={visible}
             destroyOnClose={true}
-            width={"900px"}
+            width={"700px"}
             footer={false}
             onCancel={() => handleVisible(false)}
         >
             <Form
                 name="basic"
                 ref={formRef}
-                labelCol={{ span: 6 }}
-                wrapperCol={{ span: 14 }}
+                labelCol={{ span: 4 }}
+                wrapperCol={{ span: 18 }}
                 onValuesChange={onValuesChange}
                 initialValues={initialValues}
                 onFinish={onFinish}
@@ -191,7 +177,7 @@ export const ActionModal = ({
                     rules={[{ required: true, message: "请输入类型！" }]}
                 >
                     <Select placeholder="请输入类型" style={{ width: "100%" }}>
-                        {options}
+                        <OptGroup label="全局的">{options}</OptGroup>
                     </Select>
                 </Form.Item>
                 <Form.Item
@@ -205,7 +191,7 @@ export const ActionModal = ({
                     />
                 </Form.Item>
                 <Form.Item label="参数" name={"param"}>
-                    <div style={{ width: "497px" }}>
+                    <div style={{ width: "489px" }}>
                         <AceEditor
                             placeholder={`请输入${"参数"}`}
                             mode="json"
@@ -234,7 +220,7 @@ export const ActionModal = ({
                             fontSize={14}
                             showPrintMargin
                             showGutter
-                            width={"497px"}
+                            width={"489px"}
                             // style={props.style}
                             height={"300px"}
                             highlightActiveLine
@@ -259,7 +245,7 @@ export const ActionModal = ({
                         />
                     </div>
                 </Form.Item>
-                <Form.Item wrapperCol={{ offset: 8, span: 12 }}>
+                <Form.Item wrapperCol={{ offset: 10, span: 12 }}>
                     <Button
                         style={{ float: "right" }}
                         type="primary"

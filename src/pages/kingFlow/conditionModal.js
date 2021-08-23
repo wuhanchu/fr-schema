@@ -110,7 +110,7 @@ export const ConditionModal = ({
     }
     return (
         <Modal
-            title={"行为配置"}
+            title={"条件配置"}
             visible={visible}
             destroyOnClose={true}
             footer={false}

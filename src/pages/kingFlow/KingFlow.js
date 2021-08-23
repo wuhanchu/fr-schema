@@ -284,7 +284,7 @@ class KingFlow extends React.PureComponent {
                 },
             },
             ports:
-                args.type !== "begin"
+                args.type !== "begin" && args.type !== "globle"
                     ? ports
                     : {
                           ...ports,

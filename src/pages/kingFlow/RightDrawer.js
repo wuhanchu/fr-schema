@@ -418,6 +418,7 @@ class RightDrawer extends React.PureComponent {
                             >
                                 <InputNumber
                                     style={{ width: "100%" }}
+                                    min="1"
                                     placeholder="请输入允许重复次数"
                                 />
                             </FormItem>
