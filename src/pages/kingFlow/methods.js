@@ -9,7 +9,7 @@ export const startDragToGraph = (graph, type, e) => {
                   data: {
                       name: "未命名",
                       allow_repeat_time: 2,
-                      types: normal,
+                      types: "normal",
                   },
                   attrs: {
                       label: {
