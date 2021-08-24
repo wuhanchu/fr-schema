@@ -95,12 +95,12 @@ export default [
                                 component: "./domain/List",
                                 title: "域列表",
                             },
-                            // {
-                            //     path: "/domain/flow",
-                            //     name: "flow",
-                            //     title: "流程图",
-                            //     component: "./kingFlow/List",
-                            // },
+                            {
+                                path: "/domain/flow",
+                                name: "flow",
+                                title: "流程图",
+                                component: "./kingFlow/List",
+                            },
                             {
                                 path: "/domain/synonym",
                                 name: "synonym",
