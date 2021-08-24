@@ -50,7 +50,7 @@ export const ConditionModal = ({
 
         values.slot &&
             values.slot.map((item) => {
-                slot[item.first] = item.last
+                slot[item.first] = item.last || null
             })
         if (conditionType === "add") {
             let conditionKey = cell.id + `${Date.now()}`
@@ -100,9 +100,12 @@ export const ConditionModal = ({
     let formRef = React.createRef()
 
     let options = []
-    intenList.map((item) => {
-        options.push(<Select.Option value={item.id}>{item.name}</Select.Option>)
-    })
+    intenList &&
+        intenList.map((item) => {
+            options.push(
+                <Select.Option value={item.key}>{item.name}</Select.Option>
+            )
+        })
     const onValuesChange = (value) => {
         if (value.type) {
             formRef.current.setFieldsValue({ name: dict[value.type].remark })
@@ -184,12 +187,12 @@ export const ConditionModal = ({
                                             {...restField}
                                             name={[name, "last"]}
                                             fieldKey={[fieldKey, "last"]}
-                                            rules={[
-                                                {
-                                                    required: true,
-                                                    message: "请输入键值",
-                                                },
-                                            ]}
+                                            // rules={[
+                                            //     {
+                                            //         required: true,
+                                            //         message: "请输入键值",
+                                            //     },
+                                            // ]}
                                         >
                                             <Input
                                                 style={{

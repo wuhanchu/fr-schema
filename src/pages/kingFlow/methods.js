@@ -4,11 +4,12 @@ export const startDragToGraph = (graph, type, e) => {
     const node =
         type === "Rect"
             ? graph.createNode({
-                  width: 100,
-                  height: 60,
+                  width: 110,
+                  height: 50,
                   data: {
                       name: "未命名",
                       allow_repeat_time: 2,
+                      types: normal,
                   },
                   attrs: {
                       label: {
@@ -32,8 +33,8 @@ export const startDragToGraph = (graph, type, e) => {
             : type === "Circle"
             ? graph.createNode({
                   shape: "ellipse",
-                  width: 100,
-                  height: 60,
+                  width: 110,
+                  height: 50,
                   data: {
                       name: "全局节点",
                       allow_repeat_time: 2,
@@ -58,19 +59,19 @@ export const startDragToGraph = (graph, type, e) => {
                   },
                   ports: ports,
               })
-            : graph.createNode({
-                  shape: "polygon",
-                  x: 40,
-                  y: 40,
-                  width: 120,
-                  height: 120,
+            : type === "begin"
+            ? graph.createNode({
+                  width: 110,
+                  height: 50,
                   data: {
-                      name: "未命名",
+                      name: "开始节点",
                       allow_repeat_time: 2,
+                      types: "begin",
                   },
                   attrs: {
+                      radius: 20,
                       label: {
-                          text: "未命名",
+                          text: "开始节点",
                           fill: "#000000",
                           fontSize: 14,
                           textWrap: {
@@ -80,13 +81,60 @@ export const startDragToGraph = (graph, type, e) => {
                           },
                       },
                       body: {
+                          rx: 20, // 圆角矩形
                           fill: "#ffffff",
                           stroke: "#000000",
                           refPoints: "0,10 10,0 20,10 10,20",
                           strokeWidth: 1,
                       },
                   },
-                  ports: ports,
+                  ports: {
+                      ...ports,
+                      items: [
+                          {
+                              id: "port2",
+                              group: "bottom",
+                          },
+                      ],
+                  },
+              })
+            : graph.createNode({
+                  width: 110,
+                  height: 50,
+                  data: {
+                      name: "结束节点",
+                      types: "end",
+                      allow_repeat_time: 2,
+                  },
+                  attrs: {
+                      radius: 20,
+                      label: {
+                          text: "结束节点",
+                          fill: "#000000",
+                          fontSize: 14,
+                          textWrap: {
+                              width: -50,
+                              height: "70%",
+                              ellipsis: true,
+                          },
+                      },
+                      body: {
+                          rx: 20, // 圆角矩形
+                          fill: "#ffffff",
+                          stroke: "#000000",
+                          refPoints: "0,10 10,0 20,10 10,20",
+                          strokeWidth: 1,
+                      },
+                  },
+                  ports: {
+                      ...ports,
+                      items: [
+                          {
+                              id: "port1",
+                              group: "top",
+                          },
+                      ],
+                  },
               })
     const dnd = new Addon.Dnd({ target: graph })
     dnd.start(node, e)

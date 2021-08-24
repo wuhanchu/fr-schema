@@ -190,7 +190,7 @@ const initData = {
 let data = {
     node: [
         {
-            name: "开始节点1",
+            name: "开始节点",
             key: "1603716783816",
             action: ["action_1", "action_2"],
             allow_repeat_time: 2,

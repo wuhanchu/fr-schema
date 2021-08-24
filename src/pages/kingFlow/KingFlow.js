@@ -8,7 +8,7 @@ import "./iconfont.css"
 import { startDragToGraph } from "./methods"
 import schema from "@/schemas/intent"
 import { ports } from "./methods"
-
+import Ellipse from "./ellipse.svg"
 import RightDrawer from "@/pages/kingFlow/RightDrawer"
 import { ConsoleSqlOutlined } from "@ant-design/icons"
 
@@ -34,10 +34,10 @@ class KingFlow extends React.PureComponent {
                 //连线方式
                 connector: "normal",
                 router: {
-                    name: "",
+                    name: "manhattan",
                 },
             },
-            currentArrow: 1,
+            currentArrow: 3,
             cell: undefined,
             selectCell: "",
             expGraphData: {},
@@ -47,7 +47,7 @@ class KingFlow extends React.PureComponent {
     }
 
     getIntent = async () => {
-        let data = await schema.service.get({ limit: 1000 })
+        let data = await schema.service.get({ limit: 1000, key: "not.eq.null" })
         this.setState({ intenList: data.list })
     }
 
@@ -107,13 +107,21 @@ class KingFlow extends React.PureComponent {
                             <i className="iconfont icon-circle" />
                         </div>
 
-                        {/* <div
+                        <div
                             className="btn"
-                            title="条件节点"
-                            onMouseDown={(e) => this.startDrag("polygon", e)}
+                            title="开始节点"
+                            onMouseDown={(e) => this.startDrag("begin", e)}
                         >
-                            <i className="iconfont icon-square rotate-square" />
-                        </div> */}
+                            <img style={{ marginTop: "-7px" }} src={Ellipse} />
+                        </div>
+                        <div
+                            className="btn"
+                            title="结束节点"
+                            onMouseDown={(e) => this.startDrag("end", e)}
+                        >
+                            {/* <i className="iconfont icon-square rotate-square" /> */}
+                            <img style={{ marginTop: "-7px" }} src={Ellipse} />
+                        </div>
                     </div>
                     <div className="btn-group">
                         <Tooltip title="直线箭头" placement="bottom">
@@ -204,7 +212,7 @@ class KingFlow extends React.PureComponent {
                 data = {
                     node: [
                         {
-                            name: "开始节点1",
+                            name: "开始节点",
                             key: `${Date.now()}`,
                             allow_repeat_time: 2,
                             type: "begin",
@@ -223,7 +231,7 @@ class KingFlow extends React.PureComponent {
             if (!data.node.length) {
                 data.node = [
                     {
-                        name: "开始节点1",
+                        name: "开始节点",
                         key: `${Date.now()}`,
                         allow_repeat_time: 2,
                         type: "begin",
@@ -252,8 +260,8 @@ class KingFlow extends React.PureComponent {
     addNodes(args) {
         this.graph.addNode({
             id: args.key,
-            width: 100,
-            height: 60,
+            width: 110,
+            height: 50,
             shape: args.shape,
             position: {
                 x: args.position ? args.position.x : 300,
@@ -278,13 +286,27 @@ class KingFlow extends React.PureComponent {
                     },
                 },
                 body: {
+                    rx:
+                        args.type === "begin" || args.type === "end"
+                            ? 20
+                            : undefined,
                     stroke: "#000000",
                     strokeWidth: 1,
                     fill: "#ffffff",
                 },
             },
             ports:
-                args.type !== "begin" && args.type !== "globle"
+                args.type === "end"
+                    ? {
+                          ...ports,
+                          items: [
+                              {
+                                  id: "port1",
+                                  group: "top",
+                              },
+                          ],
+                      }
+                    : args.type !== "begin" && args.type !== "globle"
                     ? ports
                     : {
                           ...ports,
@@ -311,7 +333,6 @@ class KingFlow extends React.PureComponent {
         } else {
             let endNode = this.graph.getCellById(args.end)
             let key = `${Date.now()}`
-            console.log("全局节点")
             this.addNodes({
                 key,
                 name: "全局节点",
@@ -370,13 +391,17 @@ class KingFlow extends React.PureComponent {
             this.setState({
                 chooseType: "",
             })
-            console.log(cell)
-            console.log("全局")
-            console.log(this.graph)
-            this.setState({
-                chooseType: cell.isNode() ? "node" : "edge",
-                cell: cell,
-            })
+            // console.log()
+            if (cell.getData().types === "globle") {
+                this.setState({
+                    chooseType: "grid",
+                })
+            } else {
+                this.setState({
+                    chooseType: cell.isNode() ? "node" : "edge",
+                    cell: cell,
+                })
+            }
         })
         this.graph.on("selection:changed", (args) => {
             args.added.forEach((cell) => {
@@ -409,8 +434,8 @@ class KingFlow extends React.PureComponent {
                 const expGraph = this.graph
                 this.graph.addNode({
                     id,
-                    width: 100,
-                    height: 60,
+                    width: 110,
+                    height: 50,
                     position: { x: args.x, y: args.y },
                     data: {
                         name: "未命名",
@@ -474,10 +499,7 @@ class KingFlow extends React.PureComponent {
                 key: item.id,
                 action: nodeData.action,
                 allow_repeat_time: nodeData.allow_repeat_time,
-                type:
-                    nodeData.types === "globle" || nodeData.types === "begin"
-                        ? nodeData.types
-                        : "end",
+                type: nodeData.types,
                 position: {
                     x: item.store.data.position.x,
                     y: item.store.data.position.y,
@@ -492,11 +514,6 @@ class KingFlow extends React.PureComponent {
             let begin = item.store.data.source.cell
             if (this.graph.getCellById(begin).getData().types === "globle") {
                 begin = null
-            }
-            if (begin) {
-                let array = data.node.filter((item) => item.key === begin)
-                console.log(array)
-                if (array[0].type !== "begin") array[0].type = "normal"
             }
             if (!nodeData) {
                 nodeData = {}

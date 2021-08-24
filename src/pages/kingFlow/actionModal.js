@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState, useEffect } from "react"
 import { Input, Form, Button, Select } from "antd"
 import "antd/lib/style/index.css"
 import Modal from "antd/lib/modal/Modal"
@@ -70,6 +70,15 @@ export const ActionModal = ({
         handleChangeShowAction()
     }
 
+    const [importData, setImportData] = useState([])
+    if (initialValues["param"]) {
+        var [AceEditorValue, setAceEditorValue] = useState(
+            JSON.stringify(initialValues["param"], null, "\t")
+        )
+    } else {
+        var [AceEditorValue, setAceEditorValue] = useState("")
+    }
+
     const onFinishFailed = (errorInfo) => {
         console.log("Failed:", errorInfo)
     }
@@ -136,22 +145,27 @@ export const ActionModal = ({
 
     console.log(expGraph)
 
-    // 定义json 初始化值
-    let AceEditorValue = ""
-    if (initialValues["param"]) {
-        AceEditorValue = JSON.stringify(initialValues["param"], null, "\t")
-    }
-    if (formRef && formRef.current && formRef.current.getFieldsValue()[param]) {
-        if (typeof formRef.current.getFieldsValue()[param] === "object") {
-            AceEditorValue = JSON.stringify(
-                formRef.current.getFieldsValue()[param],
-                null,
-                "\t"
-            )
-        } else {
-            AceEditorValue = formRef.current.getFieldsValue()[param]
+    useEffect(() => {
+        if (
+            formRef &&
+            formRef.current &&
+            formRef.current.getFieldsValue()["param"]
+        ) {
+            if (typeof formRef.current.getFieldsValue()["param"] === "object") {
+                setAceEditorValue(
+                    JSON.stringify(
+                        formRef.current.getFieldsValue()["param"],
+                        null,
+                        "\t"
+                    )
+                )
+            } else {
+                setAceEditorValue(formRef.current.getFieldsValue()["param"])
+            }
         }
-    }
+    }, [importData])
+    // 定义json 初始化值
+
     return (
         <Modal
             title={"行为配置"}
@@ -171,13 +185,38 @@ export const ActionModal = ({
                 onFinish={onFinish}
                 onFinishFailed={onFinishFailed}
             >
+                {actionType === "add" && (
+                    <Form.Item label="引用">
+                        <Select
+                            placeholder="请选择引用"
+                            style={{ width: "100%" }}
+                            onChange={(key) => {
+                                const importData = expGraph.action.filter(
+                                    (item) => item.key == key
+                                )[0]
+                                formRef.current.setFieldsValue(importData)
+                                setImportData(importData)
+                                initialValues["param"] = importData.param
+                            }}
+                        >
+                            {expGraph.action &&
+                                expGraph.action.map((item) => {
+                                    return (
+                                        <Select.Option value={item.key}>
+                                            {item.name}
+                                        </Select.Option>
+                                    )
+                                })}
+                        </Select>
+                    </Form.Item>
+                )}
                 <Form.Item
                     label="类型"
                     name="type"
                     rules={[{ required: true, message: "请输入类型！" }]}
                 >
-                    <Select placeholder="请输入类型" style={{ width: "100%" }}>
-                        <OptGroup label="全局的">{options}</OptGroup>
+                    <Select placeholder="请选择类型" style={{ width: "100%" }}>
+                        {options}
                     </Select>
                 </Form.Item>
                 <Form.Item
@@ -201,18 +240,10 @@ export const ActionModal = ({
                             onChange={(res) => {
                                 const obj = {}
                                 obj["param"] = res
-                                console.log(obj)
-
                                 try {
-                                    console.log(JSON.parse(res))
                                     formRef.current.setFieldsValue({
                                         param: JSON.parse(res),
                                     })
-                                    console.log(
-                                        formRef.current.getFieldsValue()
-                                    )
-
-                                    console.log(obj)
                                 } catch (error) {
                                     console.log(error)
                                 }

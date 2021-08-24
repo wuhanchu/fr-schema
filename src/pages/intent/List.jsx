@@ -289,7 +289,6 @@ class List extends ListPage {
         const { visibleFlow, record } = this.state
         return (
             <>
-                (
                 <Modal
                     title={"流程配置"}
                     visible={visibleFlow}
@@ -312,7 +311,7 @@ class List extends ListPage {
                         schemas={schemas.flow}
                     />
                 </Modal>
-                ){this.renderExportModal()}
+                {this.renderExportModal()}
             </>
         )
     }
