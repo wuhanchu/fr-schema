@@ -79,6 +79,7 @@ class RightDrawer extends React.PureComponent {
                         }}
                         type={"action"}
                         actions={showAction}
+                        expGraphData={this.props.expGraphData}
                         cell={cell}
                         visible={visible}
                         graph={graph}

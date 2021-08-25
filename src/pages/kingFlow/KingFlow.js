@@ -80,6 +80,7 @@ class KingFlow extends React.PureComponent {
                             this.props.handleSetVisibleFlow(args)
                         }}
                         cell={cell}
+                        expGraphData={this.state.expGraphData}
                         onDeleteNode={this.deleteNode}
                         selectCell={this.selectCell}
                         chooseType={chooseType}

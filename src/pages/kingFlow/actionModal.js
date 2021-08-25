@@ -27,9 +27,9 @@ export const ActionModal = ({
     cell,
     handleChangeShowAction,
     graphChange,
+    expGraphData,
 }) => {
     const [form] = Form.useForm()
-
     const expGraph = graph
     let initialValues = clone(defaultValue)
     let actionList = []
@@ -144,27 +144,30 @@ export const ActionModal = ({
     }
 
     console.log(expGraph)
+    let importDict = []
 
-    useEffect(() => {
-        if (
-            formRef &&
-            formRef.current &&
-            formRef.current.getFieldsValue()["param"]
-        ) {
-            if (typeof formRef.current.getFieldsValue()["param"] === "object") {
-                setAceEditorValue(
-                    JSON.stringify(
-                        formRef.current.getFieldsValue()["param"],
-                        null,
-                        "\t"
+    expGraphData.node &&
+        expGraphData.node.map((item) => {
+            let nodeActionDict = []
+            item.action &&
+                item.action.map((key) => {
+                    let oneNodeAction = expGraph.action.filter(
+                        (items) => items.key == key
+                    )[0]
+                    nodeActionDict.push(
+                        <Select.Option
+                            value={key + "nodeID_" + oneNodeAction.key}
+                        >
+                            {oneNodeAction.name}
+                        </Select.Option>
                     )
-                )
-            } else {
-                setAceEditorValue(formRef.current.getFieldsValue()["param"])
-            }
-        }
-    }, [importData])
-    // 定义json 初始化值
+                })
+            importDict.push(
+                <Select.OptGroup label={item.name}>
+                    {nodeActionDict}
+                </Select.OptGroup>
+            )
+        })
 
     return (
         <Modal
@@ -188,25 +191,38 @@ export const ActionModal = ({
                 {actionType === "add" && (
                     <Form.Item label="引用">
                         <Select
+                            showSearch
                             placeholder="请选择引用"
                             style={{ width: "100%" }}
                             onChange={(key) => {
                                 const importData = expGraph.action.filter(
-                                    (item) => item.key == key
+                                    (item) =>
+                                        item.key == key.split("nodeID_")[1]
                                 )[0]
                                 formRef.current.setFieldsValue(importData)
                                 setImportData(importData)
-                                initialValues["param"] = importData.param
+                                if (importData.param) {
+                                    setAceEditorValue(
+                                        JSON.stringify(
+                                            importData.param,
+                                            null,
+                                            "\t"
+                                        )
+                                    )
+                                } else {
+                                    setAceEditorValue("")
+                                }
                             }}
                         >
-                            {expGraph.action &&
+                            {/* {expGraph.action &&
                                 expGraph.action.map((item) => {
                                     return (
                                         <Select.Option value={item.key}>
                                             {item.name}
                                         </Select.Option>
                                     )
-                                })}
+                                })} */}
+                            {importDict}
                         </Select>
                     </Form.Item>
                 )}
