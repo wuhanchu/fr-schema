@@ -290,15 +290,25 @@ class Dialogue extends React.Component {
         let {
             inputValue,
             projectList,
+            flowList,
             defaultProject,
             checkboxValue,
             serviceId,
             conversationId,
         } = this.state
         let options = []
+        let flowOption = []
         projectList &&
             projectList.map((item, index) => {
                 options.push({
+                    label: item.name,
+                    value: item.id,
+                    defaultChecked: true,
+                })
+            })
+        flowList &&
+            flowList.map((item, index) => {
+                flowOption.push({
                     label: item.name,
                     value: item.id,
                     defaultChecked: true,
@@ -342,7 +352,6 @@ class Dialogue extends React.Component {
                                                 this.setState({
                                                     checkboxValue: data,
                                                 })
-                                                console.log(data)
                                             }}
                                             options={options}
                                             value={checkboxValue}
@@ -491,6 +500,10 @@ class Dialogue extends React.Component {
             limit: 10000,
             domain_key: this.props.record.key,
         })
+        let flow = await schemas.flow.service.get({
+            limit: 10000,
+            domain_key: this.props.record.key,
+        })
         let defaultProject = []
         project.list.map((item, index) => {
             defaultProject.push(item.id)
@@ -498,6 +511,7 @@ class Dialogue extends React.Component {
         console.log(defaultProject)
         this.setState({
             projectList: project.list,
+            flowList: flow.list,
             defaultProject,
             checkboxValue: defaultProject,
         })

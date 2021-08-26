@@ -108,13 +108,13 @@ class KingFlow extends React.PureComponent {
                             <i className="iconfont icon-circle" />
                         </div>
 
-                        <div
+                        {/* <div
                             className="btn"
                             title="开始节点"
                             onMouseDown={(e) => this.startDrag("begin", e)}
                         >
                             <img style={{ marginTop: "-7px" }} src={Ellipse} />
-                        </div>
+                        </div> */}
                         <div
                             className="btn"
                             title="结束节点"
@@ -729,17 +729,12 @@ class KingFlow extends React.PureComponent {
 
     // 删除节点
     deleteNode() {
-        let { chooseType } = this.state
         const cell = this.graph.getSelectedCells()
-        console.log(cell)
-        // const view = this.graph.findView(cell[0])
-        this.graph.removeCells(cell)
-        // cell.
-        // view.unmount()
-        console.log(this.graph)
-        chooseType = "grid"
-        this.setState({ chooseType })
-        this.graphChange()
+        if (cell[0].getData().types != "begin") {
+            this.graph.removeCells(cell)
+            this.setState({ chooseType: "grid" })
+            this.graphChange()
+        }
     }
 
     // 撤销

@@ -154,13 +154,14 @@ export const ActionModal = ({
                     let oneNodeAction = expGraph.action.filter(
                         (items) => items.key == key
                     )[0]
-                    nodeActionDict.push(
-                        <Select.Option
-                            value={key + "nodeID_" + oneNodeAction.key}
-                        >
-                            {oneNodeAction.name}
-                        </Select.Option>
-                    )
+                    oneNodeAction &&
+                        nodeActionDict.push(
+                            <Select.Option
+                                value={key + "nodeID_" + oneNodeAction.key}
+                            >
+                                {oneNodeAction.name}
+                            </Select.Option>
+                        )
                 })
             importDict.push(
                 <Select.OptGroup label={item.name}>
