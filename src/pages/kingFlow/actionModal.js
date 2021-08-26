@@ -88,6 +88,18 @@ export const ActionModal = ({
             value: "phone_play_audio",
             remark: "对接电话播放音频",
         },
+        reset_conversation: {
+            value: "reset_conversation",
+            remark: "重置会话",
+        },
+        node_redirect: {
+            value: "node_redirect",
+            remark: "执行完返回上一节点",
+        },
+        redirect_last_partial_node: {
+            value: "redirect_last_partial_node",
+            remark: "重定向当前行为前最后一个局部节点",
+        },
         phone_play_tts_audio: {
             value: "phone_play_tts_audio",
             remark: "对接电话播放语音合成音频",
