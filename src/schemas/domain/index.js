@@ -55,10 +55,25 @@ service.message = createApi(
     "eq."
 ).post
 
+// 创建会话
+service.flowConversation = createApi(
+    "/flow/conversation",
+    schema,
+    null,
+    "eq."
+).post
+
+// 发送消息
+service.flowMessage = createApi("/flow/message", schema, null, "eq.").post
+
 service.intentIdentify = async function (args) {
-    const data = await createApi('z_ai_service/nlu/intent_identify', schema, null).getBasic({ ...args });
-    return data;
-};
+    const data = await createApi(
+        "z_ai_service/nlu/intent_identify",
+        schema,
+        null
+    ).getBasic({ ...args })
+    return data
+}
 
 // 人员
 service.getDomainUser = async (args) => {

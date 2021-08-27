@@ -5,8 +5,10 @@ import {
     Button,
     Card,
     Input,
+    Radio,
     Spin,
     Popconfirm,
+    Form,
     Checkbox,
 } from "antd"
 import schemas from "@/schemas"
@@ -31,6 +33,7 @@ class Dialogue extends React.Component {
             isSpin: false,
             iphoneHeight: height * 0.82,
             conversationId: "",
+            type: "chat",
             serviceId: record.talk_service_id,
         }
         this.chatRef = React.createRef()
@@ -183,28 +186,52 @@ class Dialogue extends React.Component {
                                                 (_) => this.scrollToBottom()
                                             )
                                         }
-
-                                        let res = await schemas.domain.service.message(
-                                            {
-                                                service_id: serviceId,
-                                                conversation_id: conversationId,
-                                                text: data.payload,
-                                            }
-                                        )
+                                        let res
                                         let list = []
-                                        res.data &&
-                                            res.data.map((data) =>
-                                                list.push({
-                                                    content: data.text,
-                                                    onlyRead: true,
-                                                    buttons: data.buttons,
-                                                    name: "智能客服",
-                                                    time: new Date(),
-                                                    avatar:
-                                                        "http://img.binlive.cn/6.png",
-                                                    type: "left",
-                                                })
+
+                                        if (this.state.type == "chat") {
+                                            res = await schemas.domain.service.message(
+                                                {
+                                                    service_id: serviceId,
+                                                    conversation_id: conversationId,
+                                                    text: data.payload,
+                                                }
                                             )
+                                            res.data &&
+                                                res.data.map((data) =>
+                                                    list.push({
+                                                        content: data.text,
+                                                        onlyRead: true,
+                                                        buttons: data.buttons,
+                                                        name: "智能客服",
+                                                        time: new Date(),
+                                                        avatar:
+                                                            "http://img.binlive.cn/6.png",
+                                                        type: "left",
+                                                    })
+                                                )
+                                        } else {
+                                            res = await schemas.domain.service.flowMessage(
+                                                {
+                                                    domain_key: this.props
+                                                        .record.key,
+                                                    conversation_id: conversationId,
+                                                    text: data.payload,
+                                                }
+                                            )
+                                            list.push({
+                                                content: res.data.result.text,
+                                                onlyRead: true,
+                                                buttons:
+                                                    res.data.result.buttons,
+                                                name: "智能客服",
+                                                time: new Date(),
+                                                avatar:
+                                                    "http://img.binlive.cn/6.png",
+                                                type: "left",
+                                            })
+                                        }
+
                                         // 消息推进list 清空当前消息
                                         this.setState(
                                             {
@@ -309,11 +336,16 @@ class Dialogue extends React.Component {
         flowList &&
             flowList.map((item, index) => {
                 flowOption.push({
-                    label: item.name,
-                    value: item.id,
+                    label: item.key,
+                    value: item.key,
                     defaultChecked: true,
                 })
             })
+        const formItemLayout = {
+            labelCol: { span: 5 },
+            wrapperCol: { span: 18 },
+        }
+        const { type } = this.state
         return (
             <div
                 style={{
@@ -338,25 +370,90 @@ class Dialogue extends React.Component {
                         ref={this.inputRef}
                     />
                 </div>
-                {options.length !== 0 && (
+                {
                     <Popconfirm
                         title={() => {
                             return (
-                                <div>
-                                    请选择问题库！
+                                <div style={{ width: "400px" }}>
+                                    设置
                                     <br />
-                                    <div style={{ marginTop: "10px" }}>
-                                        <Checkbox.Group
-                                            defaultChecked
-                                            onChange={(data) => {
-                                                this.setState({
-                                                    checkboxValue: data,
-                                                })
-                                            }}
-                                            options={options}
-                                            value={checkboxValue}
-                                        />
-                                    </div>
+                                    <div
+                                        style={{
+                                            height: "30px",
+                                            width: "100%",
+                                        }}
+                                    ></div>
+                                    <Form
+                                        name="validate_other"
+                                        {...formItemLayout}
+                                        // onFinish={onFinish}
+                                        initialValues={{
+                                            type: type,
+                                        }}
+                                    >
+                                        <Form.Item
+                                            name="type"
+                                            label="对话类型"
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message:
+                                                        "Please pick an item!",
+                                                },
+                                            ]}
+                                        >
+                                            <Radio.Group
+                                                onChange={(props) => {
+                                                    this.setState({
+                                                        type:
+                                                            props.target.value,
+                                                    })
+                                                    console.log(props)
+                                                }}
+                                            >
+                                                <Radio.Button value="chat">
+                                                    闲聊
+                                                </Radio.Button>
+                                                <Radio.Button
+                                                    value="flow"
+                                                    disabled={!flowList.length}
+                                                >
+                                                    话术
+                                                </Radio.Button>
+                                            </Radio.Group>
+                                        </Form.Item>
+
+                                        {type === "chat" && options.length > 0 && (
+                                            <Form.Item label="知识库">
+                                                <Checkbox.Group
+                                                    defaultChecked
+                                                    onChange={(data) => {
+                                                        this.setState({
+                                                            checkboxValue: data,
+                                                        })
+                                                    }}
+                                                    options={options}
+                                                    value={checkboxValue}
+                                                />
+                                            </Form.Item>
+                                        )}
+                                        {type === "flow" && (
+                                            <Form.Item label="流程">
+                                                <Radio.Group
+                                                    value={this.state.flow_key}
+                                                    defaultChecked
+                                                    onChange={(data) => {
+                                                        this.setState({
+                                                            flow_key:
+                                                                data.target
+                                                                    .value,
+                                                        })
+                                                    }}
+                                                    options={flowOption}
+                                                ></Radio.Group>
+                                            </Form.Item>
+                                        )}
+                                    </Form>
                                 </div>
                             )
                         }}
@@ -364,18 +461,31 @@ class Dialogue extends React.Component {
                             this.setState({
                                 defaultProject: checkboxValue,
                             })
-                            if (
-                                this.state.checkboxValue &&
-                                this.state.checkboxValue.length
-                            ) {
-                                await schemas.domain.service.message({
-                                    service_id: serviceId,
-                                    conversation_id: conversationId,
-                                    text:
-                                        `/slot{"project\_id":"` +
-                                        checkboxValue.join(",") +
-                                        `"}`,
+
+                            if (this.state.type == "flow") {
+                                let res = await schemas.domain.service.flowConversation(
+                                    {
+                                        domain_key: this.props.record.key,
+                                        flow_key: this.state.flow_key,
+                                    }
+                                )
+                                this.setState({
+                                    conversationId: res.conversation_id,
                                 })
+                            } else {
+                                if (
+                                    this.state.checkboxValue &&
+                                    this.state.checkboxValue.length
+                                ) {
+                                    await schemas.domain.service.message({
+                                        service_id: serviceId,
+                                        conversation_id: conversationId,
+                                        text:
+                                            `/slot{"project\_id":"` +
+                                            checkboxValue.join(",") +
+                                            `"}`,
+                                    })
+                                }
                             }
                         }}
                         onCancel={() => {
@@ -389,7 +499,7 @@ class Dialogue extends React.Component {
                             <SettingOutlined />
                         </Button>
                     </Popconfirm>
-                )}
+                }
 
                 <Button
                     // size=""
@@ -431,23 +541,44 @@ class Dialogue extends React.Component {
                 { mockDetail: [...mockDetail], inputValue: "" },
                 (_) => this.scrollToBottom()
             )
-            let res = await schemas.domain.service.message({
-                service_id: serviceId,
-                conversation_id: conversationId,
-                text: inputValue,
-            })
+            let res
             let list = []
-            res.data &&
-                res.data.map((item) =>
-                    list.push({
-                        content: item.text,
-                        buttons: item.buttons,
-                        name: "智能客服",
-                        time: new Date(),
-                        avatar: "http://img.binlive.cn/6.png",
-                        type: "left",
-                    })
-                )
+
+            if (this.state.type == "chat") {
+                res = await schemas.domain.service.message({
+                    service_id: serviceId,
+                    conversation_id: conversationId,
+                    text: inputValue,
+                })
+                res.data &&
+                    res.data.map((item) =>
+                        list.push({
+                            content: item.text,
+                            buttons: item.buttons,
+                            name: "智能客服",
+                            time: new Date(),
+                            avatar: "http://img.binlive.cn/6.png",
+                            type: "left",
+                        })
+                    )
+            } else {
+                res = await schemas.domain.service.flowMessage({
+                    domain_key: this.props.record.key,
+                    conversation_id: conversationId,
+                    text: inputValue,
+                })
+                console.log(res)
+                list.push({
+                    content: res.data.result.text,
+                    onlyRead: true,
+                    buttons: res.data.result.buttons,
+                    name: "智能客服",
+                    time: new Date(),
+                    avatar: "http://img.binlive.cn/6.png",
+                    type: "left",
+                })
+            }
+
             // 消息推进list 清空当前消息
             this.setState(
                 { mockDetail: [...mockDetail, ...list], isSpin: false },
@@ -500,10 +631,10 @@ class Dialogue extends React.Component {
             limit: 10000,
             domain_key: this.props.record.key,
         })
-        let flow = await schemas.flow.service.get({
-            limit: 10000,
-            domain_key: this.props.record.key,
-        })
+        // let flow = await schemas.flow.service.get({
+        //     limit: 10000,
+        //     domain_key: this.props.record.key,
+        // })
         let defaultProject = []
         project.list.map((item, index) => {
             defaultProject.push(item.id)
@@ -511,7 +642,10 @@ class Dialogue extends React.Component {
         console.log(defaultProject)
         this.setState({
             projectList: project.list,
-            flowList: flow.list,
+            // flowList: flow.list,
+            flowList: [],
+
+            flow_key: flow.list.length ? flow.list[0].key : undefined,
             defaultProject,
             checkboxValue: defaultProject,
         })

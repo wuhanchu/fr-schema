@@ -47,7 +47,11 @@ class KingFlow extends React.PureComponent {
     }
 
     getIntent = async () => {
-        let data = await schema.service.get({ limit: 1000, key: "not.eq.null" })
+        let data = await schema.service.get({
+            limit: 1000,
+            key: "not.eq.null",
+            domain_key: this.props.record.domain_key,
+        })
         this.setState({ intenList: data.list })
     }
 
