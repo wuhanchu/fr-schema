@@ -52,7 +52,6 @@ class KingFlow extends React.PureComponent {
     }
 
     componentDidMount() {
-        console.log("data是", this.props.dict)
         this.initData()
         this.getIntent()
         // this.changeEdgeType(3, null, "manhattan")
@@ -192,6 +191,7 @@ class KingFlow extends React.PureComponent {
                                 style={styles.redo}
                                 alt=""
                                 onClick={(_) => this.redoOperate()}
+                                // onClick={(_) => this.formatGraph()}
                             />
                         </Tooltip>
                     </div>
@@ -352,7 +352,6 @@ class KingFlow extends React.PureComponent {
                 source: { cell: key, port: "port2" },
                 target: { cell: args.end, port: "port1" },
             })
-            console.log(edge)
 
             this.graph.addEdge(edge)
         }
@@ -392,7 +391,6 @@ class KingFlow extends React.PureComponent {
             this.setState({
                 chooseType: "",
             })
-            // console.log()
             if (cell.getData().types === "globle") {
                 this.setState({
                     chooseType: "grid",
@@ -482,7 +480,6 @@ class KingFlow extends React.PureComponent {
         })
 
         this.getData()
-        console.log(this.graph)
     }
 
     graphChange(args) {
@@ -511,7 +508,6 @@ class KingFlow extends React.PureComponent {
         expGraph.getEdges().map((item, index) => {
             let nodeData = item.getData()
             // if(this.graph.getCellById(item.store.data.source.cell).getData().type)
-            console.log("开始节点")
             let begin = item.store.data.source.cell
             if (this.graph.getCellById(begin).getData().types === "globle") {
                 begin = null
@@ -531,7 +527,6 @@ class KingFlow extends React.PureComponent {
         data.action = expGraph.action
         data.condition = expGraph.condition
 
-        console.log("变化", data)
         this.setState({
             expGraphData: data,
         })
@@ -609,16 +604,7 @@ class KingFlow extends React.PureComponent {
                         return false
                     }
 
-                    console.log(
-                        "数据室",
-                        sourceView,
-                        targetView,
-                        sourceMagnet,
-                        targetMagnet
-                    )
-
                     const expGraph = this.graph
-                    console.log(expGraph)
                     let isTrue = true
 
                     if (targetView && sourceView) {
@@ -767,6 +753,149 @@ class KingFlow extends React.PureComponent {
         }
         type && this.graph.showGrid()
         !type && this.graph.hideGrid()
+    }
+
+    // 格式化
+    formatGraph() {
+        let data = this.graph.toJSON().cells
+        let nodeList = [] // 视图中节点数据集
+        let edgeList = [] // 视图中线数据集
+        edgeList = data.filter((value) => {
+            return value.shape === "edge"
+        })
+        nodeList = data.filter((value) => {
+            return value.shape !== "edge"
+        })
+        // 找到开始节点
+        let firstNode = nodeList.find((value) => {
+            return value.data.types === "begin"
+        })
+        // 获取格式化数据
+        let list = this.deepNode([firstNode], nodeList, edgeList)
+        let dataList = list.dataList.sort(this.sortDown)
+        // dataList = dataList.filter((value) => value.tier.length !== 0)
+        // console.info('1213', dataList)
+        let arr = this.deepData(dataList[0].childrenNode, dataList)
+        let ids = []
+        let resNode = []
+        for (let i = 0; i < arr.length; i++) {
+            if (!ids.includes(arr[i].id)) {
+                resNode.push(arr[i])
+                ids.push(arr[i].id)
+            }
+        }
+        console.info("121323", arr, resNode, dataList)
+        let res = { cells: [...edgeList, firstNode, ...resNode] }
+
+        this.graph.fromJSON(res)
+    }
+
+    // 递归格式化数据
+    deepNode(nodes, nodeList, edgeList, tier = 0) {
+        let list = []
+        let dataList = []
+        let flag = false
+        let tierFlag = true
+        for (let i = 0; i < nodes.length; i++) {
+            let node = nodes[i]
+            tierFlag && (tier += 1)
+            node.tier = tier
+            tierFlag = false
+            let edges = edgeList.filter((value) => {
+                return value.source.cell === node.id
+            })
+            // 该节点无连线数据-> 当前节点为结束节点(某条分支的最后一个节点)
+            // if (!edges.length) {
+            //     continue;
+            // }
+            let nodeIds = [] // 当前节点的子节点id集合
+            edges.map((item) => nodeIds.push(item.target.cell))
+            let childrenNode = [] // 当前节点的子节点集合
+            childrenNode = nodeList.filter((value) => {
+                return nodeIds.includes(value.id)
+            })
+            // if (childrenNode.length > 2) {
+            //     node.position.x = node.direction === 'left' ? node.position.x - (260 * (childrenNode.length - 2)) : node.position.x + (260 * (childrenNode.length - 2))
+            // }
+            // if (flag) {
+            //     node.position.x = nodes[i - 2].position.x - (220 * (nodes[i - 2].childrenNode.length))
+            //     flag = false
+            // }
+            // // 子节点只有一个,节点显示在父节点正下方
+            // if (childrenNode.length === 1) {
+            //     childrenNode[0].position = {x: node.position.x, y: node.position.y + 150};
+            // }
+            // 多个子节点则左右放置
+            if (childrenNode.length > 0) {
+                flag = true
+                for (let j = 0; j < childrenNode.length; j++) {
+                    childrenNode[j].parentId = node.id
+                }
+            }
+            node.childrenNode = [...childrenNode]
+            // 递归子节点数据
+            list.push(...childrenNode)
+            let arr = this.deepNode(childrenNode, nodeList, edgeList, tier)
+            list.push(...arr.list)
+            dataList.push(node, ...arr.dataList)
+        }
+        return { list: list, dataList: dataList }
+    }
+
+    deepData(list, dataList) {
+        let res = []
+        console.info("111", list)
+        for (let i = 0; i < list.length; i++) {
+            if (list[i].childrenNode && list[i].parentId) {
+                let length = list[i].childrenNode.length
+                let index = dataList.findIndex((value) => {
+                    return value.id === list[i].parentId
+                })
+                let realIndex = dataList[index].childrenNode.findIndex(
+                    (value) => {
+                        return value.id === list[i].id
+                    }
+                )
+                console.info("parent", list[i], dataList[index])
+                let positionX = dataList[index].position.x
+                let positionY = dataList[index].position.y
+                let num = i + (length || 1)
+                console.info("1112312", realIndex, realIndex % 2 === 0)
+                if (realIndex % 2 === 0) {
+                    console.info(
+                        "left",
+                        list[i],
+                        positionX,
+                        num,
+                        positionX - 250 * num
+                    )
+                    list[i].position = {
+                        x: positionX - 165 * num,
+                        y: positionY + 150,
+                    }
+                } else {
+                    list[i].position = {
+                        x: positionX + 165 * (num - 1),
+                        y: positionY + 150,
+                    }
+                    console.info(
+                        "right",
+                        list[i],
+                        positionX,
+                        num,
+                        positionX + 250 * num
+                    )
+                }
+                res.push(...this.deepData(list[i].childrenNode, dataList))
+            }
+            res.push(list[i])
+        }
+        return res
+    }
+
+    // 排序规则(从小到大)
+    sortDown(a, b) {
+        return a.tier - b.tier
     }
 }
 
