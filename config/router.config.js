@@ -95,12 +95,12 @@ export default [
                                 component: "./domain/List",
                                 title: "域列表",
                             },
-                            {
-                                path: "/domain/flow",
-                                name: "flow",
-                                title: "流程图",
-                                component: "./kingFlow/List",
-                            },
+                            // {
+                            //     path: "/domain/flow",
+                            //     name: "flow",
+                            //     title: "流程图",
+                            //     component: "./kingFlow/List",
+                            // },
                             {
                                 path: "/domain/synonym",
                                 name: "synonym",
@@ -175,15 +175,6 @@ export default [
 
                                 component: "./authority/role/List",
                             },
-
-                            {
-                                // authority: ['user_get'],
-                                path: "/system/client",
-                                name: "client",
-                                title: "客户端管理",
-
-                                component: "./authority/clientList/List",
-                            },
                             {
                                 authority: ["license_get"],
                                 path: "/system/license",
@@ -192,6 +183,20 @@ export default [
 
                                 component:
                                     "./authority/permission/license/License",
+                            },
+                            {
+                                path: "/system/config",
+                                name: "config",
+                                title: "系统配置",
+                                component: "./config/List",
+                            },
+                            {
+                                // authority: ['user_get'],
+                                path: "/system/client",
+                                name: "client",
+                                title: "客户端管理",
+
+                                component: "./authority/clientList/List",
                             },
                         ],
                     },
