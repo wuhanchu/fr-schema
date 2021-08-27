@@ -645,7 +645,7 @@ class Dialogue extends React.Component {
             // flowList: flow.list,
             flowList: [],
 
-            flow_key: flow.list.length ? flow.list[0].key : undefined,
+            flow_key: undefined,
             defaultProject,
             checkboxValue: defaultProject,
         })
