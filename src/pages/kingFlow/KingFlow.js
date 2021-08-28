@@ -129,34 +129,34 @@ class KingFlow extends React.PureComponent {
                         </div>
                     </div>
                     <div className="btn-group">
-                        <Tooltip title="直线箭头" placement="bottom">
-                            <div
-                                className={
-                                    currentArrow === 1
-                                        ? "currentArrow btn"
-                                        : "btn"
-                                }
-                                onClick={(e) =>
-                                    this.changeEdgeType(1, "normal")
-                                }
-                            >
-                                <i className="iconfont icon-ai28" />
-                            </div>
-                        </Tooltip>
-                        <Tooltip title="曲线箭头" placement="bottom">
-                            <div
-                                className={
-                                    currentArrow === 2
-                                        ? "currentArrow btn"
-                                        : "btn"
-                                }
-                                onClick={(e) =>
-                                    this.changeEdgeType(2, "smooth")
-                                }
-                            >
-                                <i className="iconfont icon-Down-Right" />
-                            </div>
-                        </Tooltip>
+                        {/*<Tooltip title="直线箭头" placement="bottom">*/}
+                        {/*    <div*/}
+                        {/*        className={*/}
+                        {/*            currentArrow === 1*/}
+                        {/*                ? "currentArrow btn"*/}
+                        {/*                : "btn"*/}
+                        {/*        }*/}
+                        {/*        onClick={(e) =>*/}
+                        {/*            this.changeEdgeType(1, "normal")*/}
+                        {/*        }*/}
+                        {/*    >*/}
+                        {/*        <i className="iconfont icon-ai28" />*/}
+                        {/*    </div>*/}
+                        {/*</Tooltip>*/}
+                        {/*<Tooltip title="曲线箭头" placement="bottom">*/}
+                        {/*    <div*/}
+                        {/*        className={*/}
+                        {/*            currentArrow === 2*/}
+                        {/*                ? "currentArrow btn"*/}
+                        {/*                : "btn"*/}
+                        {/*        }*/}
+                        {/*        onClick={(e) =>*/}
+                        {/*            this.changeEdgeType(2, "smooth")*/}
+                        {/*        }*/}
+                        {/*    >*/}
+                        {/*        <i className="iconfont icon-Down-Right" />*/}
+                        {/*    </div>*/}
+                        {/*</Tooltip>*/}
                         <Tooltip title="直角箭头" placement="bottom">
                             <div
                                 className={

@@ -16,6 +16,7 @@ import utils from "@/outter/fr-schema-antd-utils/src"
 import mySvg from "../../../outter/fr-schema-antd-utils/src/components/GlobalHeader/my.svg"
 import rebotSvg from "../../../assets/rebot.svg"
 import { LoadingOutlined, SettingOutlined } from "@ant-design/icons"
+import { async } from "@antv/x6/lib/registry/marker/async"
 
 const height = window.screen.height * 0.5
 const width = window.screen.width
@@ -408,7 +409,6 @@ class Dialogue extends React.Component {
                                                         type:
                                                             props.target.value,
                                                     })
-                                                    console.log(props)
                                                 }}
                                             >
                                                 <Radio.Button value="chat">
@@ -471,12 +471,22 @@ class Dialogue extends React.Component {
                                 )
                                 this.setState({
                                     conversationId: res.conversation_id,
+                                    isFlow: true,
                                 })
                             } else {
                                 if (
                                     this.state.checkboxValue &&
                                     this.state.checkboxValue.length
                                 ) {
+                                    let res = await schemas.domain.service.conversation(
+                                        {
+                                            service_id: serviceId,
+                                            slot: {
+                                                domain_key: this.props.record
+                                                    .key,
+                                            },
+                                        }
+                                    )
                                     await schemas.domain.service.message({
                                         service_id: serviceId,
                                         conversation_id: conversationId,
@@ -484,6 +494,10 @@ class Dialogue extends React.Component {
                                             `/slot{"project\_id":"` +
                                             checkboxValue.join(",") +
                                             `"}`,
+                                    })
+                                    this.setState({
+                                        isFlow: false,
+                                        conversationId: res.data.id,
                                     })
                                 }
                             }
@@ -501,6 +515,30 @@ class Dialogue extends React.Component {
                     </Popconfirm>
                 }
 
+                {this.state.isFlow && (
+                    <Button
+                        // size=""
+                        disabled={this.state.isSpin}
+                        style={styles.sendButton}
+                        onClick={async (_) => {
+                            if (this.state.type == "flow") {
+                                this.setState({ isSpin: true })
+                                let res = await schemas.domain.service.flowConversation(
+                                    {
+                                        domain_key: this.props.record.key,
+                                        flow_key: this.state.flow_key,
+                                    }
+                                )
+                                this.setState({
+                                    conversationId: res.conversation_id,
+                                    isSpin: false,
+                                })
+                            }
+                        }}
+                    >
+                        重置
+                    </Button>
+                )}
                 <Button
                     // size=""
                     type="primary"
@@ -631,10 +669,11 @@ class Dialogue extends React.Component {
             limit: 10000,
             domain_key: this.props.record.key,
         })
-        // let flow = await schemas.flow.service.get({
-        //     limit: 10000,
-        //     domain_key: this.props.record.key,
-        // })
+        let flow
+        flow = await schemas.flow.service.get({
+            limit: 10000,
+            domain_key: this.props.record.key,
+        })
         let defaultProject = []
         project.list.map((item, index) => {
             defaultProject.push(item.id)
@@ -642,10 +681,10 @@ class Dialogue extends React.Component {
         console.log(defaultProject)
         this.setState({
             projectList: project.list,
-            // flowList: flow.list,
-            flowList: [],
+            flowList: flow.list,
+            // flowList: [],
 
-            flow_key: undefined,
+            flow_key: flow && flow.list.length ? flow.list[0].key : undefined,
             defaultProject,
             checkboxValue: defaultProject,
         })
