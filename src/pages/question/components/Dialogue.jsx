@@ -414,10 +414,7 @@ class Dialogue extends React.Component {
                                                 <Radio.Button value="chat">
                                                     闲聊
                                                 </Radio.Button>
-                                                <Radio.Button
-                                                    value="flow"
-                                                    disabled={!flowList.length}
-                                                >
+                                                <Radio.Button value="flow">
                                                     话术
                                                 </Radio.Button>
                                             </Radio.Group>
@@ -439,18 +436,24 @@ class Dialogue extends React.Component {
                                         )}
                                         {type === "flow" && (
                                             <Form.Item label="流程">
-                                                <Radio.Group
-                                                    value={this.state.flow_key}
-                                                    defaultChecked
-                                                    onChange={(data) => {
-                                                        this.setState({
-                                                            flow_key:
-                                                                data.target
-                                                                    .value,
-                                                        })
-                                                    }}
-                                                    options={flowOption}
-                                                ></Radio.Group>
+                                                {flowList.length ? (
+                                                    <Radio.Group
+                                                        value={
+                                                            this.state.flow_key
+                                                        }
+                                                        defaultChecked
+                                                        onChange={(data) => {
+                                                            this.setState({
+                                                                flow_key:
+                                                                    data.target
+                                                                        .value,
+                                                            })
+                                                        }}
+                                                        options={flowOption}
+                                                    ></Radio.Group>
+                                                ) : (
+                                                    "暂无话术"
+                                                )}
                                             </Form.Item>
                                         )}
                                     </Form>
@@ -462,17 +465,19 @@ class Dialogue extends React.Component {
                                 defaultProject: checkboxValue,
                             })
 
-                            if (this.state.type == "flow") {
-                                let res = await schemas.domain.service.flowConversation(
-                                    {
-                                        domain_key: this.props.record.key,
-                                        flow_key: this.state.flow_key,
-                                    }
-                                )
-                                this.setState({
-                                    conversationId: res.conversation_id,
-                                    isFlow: true,
-                                })
+                            if (this.state.type === "flow") {
+                                if (this.state.flow_key) {
+                                    let res = await schemas.domain.service.flowConversation(
+                                        {
+                                            domain_key: this.props.record.key,
+                                            flow_key: this.state.flow_key,
+                                        }
+                                    )
+                                    this.setState({
+                                        conversationId: res.conversation_id,
+                                        isFlow: true,
+                                    })
+                                }
                             } else {
                                 if (
                                     this.state.checkboxValue &&
