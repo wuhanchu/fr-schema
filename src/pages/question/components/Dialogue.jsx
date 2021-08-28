@@ -10,6 +10,7 @@ import {
     Popconfirm,
     Form,
     Checkbox,
+    Divider,
 } from "antd"
 import schemas from "@/schemas"
 import utils from "@/outter/fr-schema-antd-utils/src"
@@ -49,11 +50,17 @@ class Dialogue extends React.Component {
                     // className={style.}
                     ref={this.chatRef}
                 >
-                    {mockDetail.map((item, index) =>
-                        item.type === "right"
-                            ? this.renderOtherMessage(item, index)
-                            : this.renderSelfMessage(item, index)
-                    )}
+                    {mockDetail.map((item, index) => {
+                        if (item.type === "right") {
+                            return this.renderOtherMessage(item, index)
+                        } else {
+                            if (item.type === "left") {
+                                return this.renderSelfMessage(item, index)
+                            } else {
+                                return this.renderDivider(item)
+                            }
+                        }
+                    })}
                     {this.state.isSpin &&
                         this.renderSelfMessage(
                             {
@@ -73,6 +80,15 @@ class Dialogue extends React.Component {
                         )}
                 </div>
                 {this.renderInput()}
+            </div>
+        )
+    }
+
+    // 渲染分割线
+    renderDivider(item) {
+        return (
+            <div>
+                <Divider style={{ fontSize: "14px" }}>{item.content}</Divider>
             </div>
         )
     }
@@ -467,6 +483,22 @@ class Dialogue extends React.Component {
 
                             if (this.state.type === "flow") {
                                 if (this.state.flow_key) {
+                                    let { mockDetail } = this.state
+                                    let msg = {
+                                        content: "话术",
+                                        name: "我",
+                                        time: new Date(),
+                                        avatar: "http://img.binlive.cn/6.png",
+                                        type: "divider",
+                                    }
+                                    mockDetail.push(msg)
+                                    this.setState(
+                                        {
+                                            mockDetail: [...mockDetail],
+                                            inputValue: "",
+                                        },
+                                        (_) => this.scrollToBottom()
+                                    )
                                     let res = await schemas.domain.service.flowConversation(
                                         {
                                             domain_key: this.props.record.key,
@@ -478,12 +510,30 @@ class Dialogue extends React.Component {
                                         isFlow: true,
                                         isSpin: false,
                                     })
+
+                                    this.onSendMessage("/true")
                                 }
                             } else {
                                 if (
                                     this.state.checkboxValue &&
                                     this.state.checkboxValue.length
                                 ) {
+                                    let { mockDetail } = this.state
+                                    let msg = {
+                                        content: "闲聊",
+                                        name: "我",
+                                        time: new Date(),
+                                        avatar: "http://img.binlive.cn/6.png",
+                                        type: "divider",
+                                    }
+                                    mockDetail.push(msg)
+                                    this.setState(
+                                        {
+                                            mockDetail: [...mockDetail],
+                                            inputValue: "",
+                                        },
+                                        (_) => this.scrollToBottom()
+                                    )
                                     let res = await schemas.domain.service.conversation(
                                         {
                                             service_id: serviceId,
@@ -493,6 +543,7 @@ class Dialogue extends React.Component {
                                             },
                                         }
                                     )
+
                                     await schemas.domain.service.message({
                                         service_id: serviceId,
                                         conversation_id: conversationId,
@@ -529,16 +580,34 @@ class Dialogue extends React.Component {
                         onClick={async (_) => {
                             if (this.state.type == "flow") {
                                 this.setState({ isSpin: true })
+                                let { mockDetail } = this.state
+                                let msg = {
+                                    content: "话术",
+                                    name: "我",
+                                    time: new Date(),
+                                    avatar: "http://img.binlive.cn/6.png",
+                                    type: "divider",
+                                }
+                                mockDetail.push(msg)
+                                this.setState(
+                                    {
+                                        mockDetail: [...mockDetail],
+                                        inputValue: "",
+                                    },
+                                    (_) => this.scrollToBottom()
+                                )
                                 let res = await schemas.domain.service.flowConversation(
                                     {
                                         domain_key: this.props.record.key,
                                         flow_key: this.state.flow_key,
                                     }
                                 )
+
                                 this.setState({
                                     conversationId: res.conversation_id,
                                     isSpin: false,
                                 })
+                                this.onSendMessage("/true")
                             }
                         }}
                     >
@@ -559,15 +628,16 @@ class Dialogue extends React.Component {
     }
 
     // 发送消息
-    async onSendMessage() {
+    async onSendMessage(value) {
         let { inputValue, mockDetail, serviceId, conversationId } = this.state
         // 无内容或者只存在空格 不发送
         if (this.state.isSpin === true) {
             return
         }
         if (
-            !inputValue.replace(/[\r\n]/g, "") ||
-            !inputValue.replace(/[ ]/g, "")
+            !value &&
+            (!inputValue.replace(/[\r\n]/g, "") ||
+                !inputValue.replace(/[ ]/g, ""))
         ) {
             return
         }
@@ -580,7 +650,7 @@ class Dialogue extends React.Component {
                 avatar: "http://img.binlive.cn/6.png",
                 type: "right",
             }
-            mockDetail.push(msg)
+            if (!value) mockDetail.push(msg)
             this.setState(
                 { mockDetail: [...mockDetail], inputValue: "" },
                 (_) => this.scrollToBottom()
@@ -592,7 +662,7 @@ class Dialogue extends React.Component {
                 res = await schemas.domain.service.message({
                     service_id: serviceId,
                     conversation_id: conversationId,
-                    text: inputValue,
+                    text: inputValue ? inputValue : "",
                 })
                 res.data &&
                     res.data.map((item) =>
@@ -606,21 +676,34 @@ class Dialogue extends React.Component {
                         })
                     )
             } else {
-                res = await schemas.domain.service.flowMessage({
-                    domain_key: this.props.record.key,
-                    conversation_id: conversationId,
-                    text: inputValue,
-                })
-                console.log(res)
-                list.push({
-                    content: res.data.result.text,
-                    onlyRead: true,
-                    buttons: res.data.result.buttons,
-                    name: "智能客服",
-                    time: new Date(),
-                    avatar: "http://img.binlive.cn/6.png",
-                    type: "left",
-                })
+                try {
+                    res = await schemas.domain.service.flowMessage({
+                        domain_key: this.props.record.key,
+                        conversation_id: conversationId,
+                        text: inputValue,
+                    })
+                    console.log(res)
+                    list.push({
+                        content: res.data.result.text,
+                        onlyRead: true,
+                        buttons: res.data.result.buttons,
+                        name: "智能客服",
+                        time: new Date(),
+                        avatar: "http://img.binlive.cn/6.png",
+                        type: "left",
+                    })
+                } catch (error) {
+                    console.log(error)
+                    list.push({
+                        content: error.message,
+                        onlyRead: true,
+                        buttons: null,
+                        name: "智能客服",
+                        time: new Date(),
+                        avatar: "http://img.binlive.cn/6.png",
+                        type: "left",
+                    })
+                }
             }
 
             // 消息推进list 清空当前消息
