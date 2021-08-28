@@ -295,7 +295,7 @@ class Dialogue extends React.Component {
                     </div>
                 )}
                 {index === this.state.historyid &&
-                    this.renderDivider({ content: "历史消息" })}
+                    this.renderDivider({ content: "以上为历史消息" })}
             </>
         )
     }
