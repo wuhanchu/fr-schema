@@ -164,7 +164,12 @@ class Dialogue extends React.Component {
                                         if (this.state.isSpin === true) {
                                             return
                                         }
-                                        // if (index + 1 === mockDetail.length) {
+                                        if (
+                                            index + 1 !== mockDetail.length &&
+                                            this.state.type == "flow"
+                                        ) {
+                                            return
+                                        }
                                         this.setState({ isSpin: true })
                                         // mockDetail[
                                         //     index
