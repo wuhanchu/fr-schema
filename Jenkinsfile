@@ -83,14 +83,14 @@ pipeline {
 
                     steps{
                         sh 'pwd'
-                        sh 'docker build . -f ./docker/Dockerfile.hub -t server.aiknown.cn:31003/${GROUP}/${PROJECT}:${BRANCH_NAME}'
+                        sh 'docker build . -f ./docker/Dockerfile.hub -t 192.168.1.34:31003/${GROUP}/${PROJECT}:${BRANCH_NAME}'
                     }
                 }
 
                 stage('Docker Build Tag') {
                     when { buildingTag()}
                     steps{
-                        sh 'docker build . -f ./docker/Dockerfile.hub -t server.aiknown.cn:31003/${GROUP}/${PROJECT}:${TAG_NAME}'
+                        sh 'docker build . -f ./docker/Dockerfile.hub -t 192.168.1.34:31003/${GROUP}/${PROJECT}:${TAG_NAME}'
                     }
                 }
             }
@@ -112,9 +112,9 @@ pipeline {
                         }
                     }
                     steps {
-                        withDockerRegistry(registry: [url: "https://server.aiknown.cn:31003", credentialsId: 'harbor']) {
-                            sh 'docker push server.aiknown.cn:31003/${GROUP}/${PROJECT}:${BRANCH_NAME}'
-                            sh 'docker rmi server.aiknown.cn:31003/${GROUP}/${PROJECT}:${BRANCH_NAME}'
+                        withDockerRegistry(registry: [url: "https://192.168.1.34:31003", credentialsId: 'harbor']) {
+                            sh 'docker push 192.168.1.34:31003/${GROUP}/${PROJECT}:${BRANCH_NAME}'
+                            sh 'docker rmi 192.168.1.34:31003/${GROUP}/${PROJECT}:${BRANCH_NAME}'
                         }
                     }
                 }
@@ -123,9 +123,9 @@ pipeline {
                     when { buildingTag() }
 
                     steps{
-                        withDockerRegistry(registry: [url: "https://server.aiknown.cn:31003", credentialsId: 'harbor']) {
-                            sh 'docker push server.aiknown.cn:31003/${GROUP}/${PROJECT}:${TAG_NAME}'
-                            sh 'docker rmi server.aiknown.cn:31003/${GROUP}/${PROJECT}:${TAG_NAME}'
+                        withDockerRegistry(registry: [url: "https://192.168.1.34:31003", credentialsId: 'harbor']) {
+                            sh 'docker push 192.168.1.34:31003/${GROUP}/${PROJECT}:${TAG_NAME}'
+                            sh 'docker rmi 192.168.1.34:31003/${GROUP}/${PROJECT}:${TAG_NAME}'
                         }
                     }
                 }
