@@ -476,6 +476,7 @@ class Dialogue extends React.Component {
                                     this.setState({
                                         conversationId: res.conversation_id,
                                         isFlow: true,
+                                        isSpin: false,
                                     })
                                 }
                             } else {
