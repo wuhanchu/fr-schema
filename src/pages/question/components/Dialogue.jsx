@@ -294,6 +294,8 @@ class Dialogue extends React.Component {
                         })}
                     </div>
                 )}
+                {index === this.state.historyid &&
+                    this.renderDivider({ content: "历史消息" })}
             </>
         )
     }
@@ -489,21 +491,9 @@ class Dialogue extends React.Component {
                             if (this.state.type === "flow") {
                                 if (this.state.flow_key) {
                                     let { mockDetail } = this.state
-                                    let msg = {
-                                        content: "闲聊结束",
-                                        name: "我",
-                                        time: new Date(),
-                                        avatar: "http://img.binlive.cn/6.png",
-                                        type: "divider",
-                                    }
-                                    mockDetail.push(msg)
-                                    this.setState(
-                                        {
-                                            mockDetail: [...mockDetail],
-                                            inputValue: "",
-                                        },
-                                        (_) => this.scrollToBottom()
-                                    )
+                                    this.setState({
+                                        historyid: mockDetail.length - 1,
+                                    })
                                     let res = await schemas.domain.service.flowConversation(
                                         {
                                             domain_key: this.props.record.key,
@@ -524,21 +514,9 @@ class Dialogue extends React.Component {
                                     this.state.checkboxValue.length
                                 ) {
                                     let { mockDetail } = this.state
-                                    let msg = {
-                                        content: "会话结束",
-                                        name: "我",
-                                        time: new Date(),
-                                        avatar: "http://img.binlive.cn/6.png",
-                                        type: "divider",
-                                    }
-                                    mockDetail.push(msg)
-                                    this.setState(
-                                        {
-                                            mockDetail: [...mockDetail],
-                                            inputValue: "",
-                                        },
-                                        (_) => this.scrollToBottom()
-                                    )
+                                    this.setState({
+                                        historyid: mockDetail.length - 1,
+                                    })
                                     let res = await schemas.domain.service.conversation(
                                         {
                                             service_id: serviceId,
@@ -586,21 +564,10 @@ class Dialogue extends React.Component {
                             if (this.state.type == "flow") {
                                 this.setState({ isSpin: true })
                                 let { mockDetail } = this.state
-                                let msg = {
-                                    content: "话术结束",
-                                    name: "我",
-                                    time: new Date(),
-                                    avatar: "http://img.binlive.cn/6.png",
-                                    type: "divider",
-                                }
-                                mockDetail.push(msg)
-                                this.setState(
-                                    {
-                                        mockDetail: [...mockDetail],
-                                        inputValue: "",
-                                    },
-                                    (_) => this.scrollToBottom()
-                                )
+
+                                this.setState({
+                                    historyid: mockDetail.length - 1,
+                                })
                                 let res = await schemas.domain.service.flowConversation(
                                     {
                                         domain_key: this.props.record.key,
