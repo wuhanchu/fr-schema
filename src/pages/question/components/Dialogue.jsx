@@ -490,7 +490,7 @@ class Dialogue extends React.Component {
                                 if (this.state.flow_key) {
                                     let { mockDetail } = this.state
                                     let msg = {
-                                        content: "话术",
+                                        content: "闲聊结束",
                                         name: "我",
                                         time: new Date(),
                                         avatar: "http://img.binlive.cn/6.png",
@@ -525,7 +525,7 @@ class Dialogue extends React.Component {
                                 ) {
                                     let { mockDetail } = this.state
                                     let msg = {
-                                        content: "闲聊",
+                                        content: "会话结束",
                                         name: "我",
                                         time: new Date(),
                                         avatar: "http://img.binlive.cn/6.png",
@@ -587,7 +587,7 @@ class Dialogue extends React.Component {
                                 this.setState({ isSpin: true })
                                 let { mockDetail } = this.state
                                 let msg = {
-                                    content: "话术",
+                                    content: "话术结束",
                                     name: "我",
                                     time: new Date(),
                                     avatar: "http://img.binlive.cn/6.png",
