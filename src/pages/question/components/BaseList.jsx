@@ -1,7 +1,6 @@
 import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
 import schemas from "@/schemas"
-import DataList from "@/outter/fr-schema-antd-utils/src/components/Page/DataList"
 import Authorized from "@/outter/fr-schema-antd-utils/src/components/Authorized/Authorized"
 import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
 import {
@@ -16,25 +15,23 @@ import {
     Empty,
     AutoComplete,
 } from "antd"
-import ImportModal from "@/outter/fr-schema-antd-utils/src/components/modal/ImportModal"
 import React from "react"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import * as _ from "lodash"
 import clone from "clone"
 import { DeleteOutlined, UploadOutlined } from "@ant-design/icons"
-import {
-    exportData,
-    exportDataByTemplate,
-} from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
+import { exportDataByTemplate } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
 import { checkedAndUpload } from "@/utils/minio"
 import frSchema from "@/outter/fr-schema/src"
+
 const { decorateList } = frSchema
+import EditPage from "@/components/editTable/EditPage"
 
 const confirm = Modal.confirm
 const Minio = require("minio")
 
 @Form.create()
-class BaseList extends DataList {
+class BaseList extends EditPage {
     constructor(props) {
         const importTemplateUrl = (
             BASE_PATH + "/import/掌数_知料_知识库信息导入.xlsx"
@@ -44,15 +41,14 @@ class BaseList extends DataList {
                 ? props.record.config.info_schema
                 : {}
 
-        console.log(config)
         Object.keys(config).forEach(function (key) {
-            console.log(config[key])
             config[key].isExpand = true
         })
         super(props, {
             operateWidth: 150,
             schema: clone({ ...schemas.question.schema, ...config }),
             service: schemas.question.service,
+            showEdit: false,
             allowExport: true,
             showSelect: true,
             allowImport: true,
@@ -94,6 +90,7 @@ class BaseList extends DataList {
         data = this.dataConvert(data)
         return data
     }
+
     async getDict() {
         const response = await this.service.get({
             ...this.meta.queryArgs,
@@ -107,7 +104,6 @@ class BaseList extends DataList {
         response.list.forEach((item) => {
             if (!_.isNil(item.label)) {
                 item.label.forEach((value) => {
-                    console.log(value)
                     labelDictList[value] = {
                         value: value,
                         remark: value,
@@ -316,6 +312,7 @@ class BaseList extends DataList {
             </>
         )
     }
+
     /**
      * 渲染信息弹出框
      * @param customProps 定制的属性
@@ -689,6 +686,7 @@ class BaseList extends DataList {
             )
         )
     }
+
     async handleUploadExcel(data, schema) {
         // 更新
         let response
@@ -710,6 +708,11 @@ class BaseList extends DataList {
         this.props.handleChangeCallback && this.props.handleChangeCallback()
 
         return response
+    }
+
+    // 数据扩展
+    dataExtra(item) {
+        item.question_extend = item.question_extend.split("\n")
     }
 }
 
