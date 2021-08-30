@@ -333,6 +333,35 @@ class KingFlow extends React.PureComponent {
                 data: { ...args },
                 source: { cell: args.begin, port: "port2" },
                 target: { cell: args.end, port: "port1" },
+                tools: [
+                    // {
+                    //     name: 'source-arrowhead',
+                    //     args: {
+                    //         tagName: "circle",
+                    //         attrs: {
+                    //             r: 4,
+                    //             fill: "#F7F7FA",
+                    //             stroke: "#000000A6",
+                    //             "stroke-width": 1,
+                    //             cursor: "move",
+                    //         },
+                    //     }
+                    // },
+                    {
+                        name: "target-arrowhead",
+                        args: {
+                            tagName: "path",
+                            attrs: {
+                                // r: 6,
+                                d: "M -5 -4 5 0 -5 4 Z",
+                                fill: "#1890ff",
+                                stroke: "#1890ff",
+                                // "stroke-width": 1,
+                                cursor: "move",
+                            },
+                        },
+                    },
+                ],
             })
             this.graph.addEdge(edge)
         } else {
@@ -355,6 +384,23 @@ class KingFlow extends React.PureComponent {
                 data: { ...args },
                 source: { cell: key, port: "port2" },
                 target: { cell: args.end, port: "port1" },
+                tools: [
+                    // { name: 'source-arrowhead' },
+                    {
+                        name: "target-arrowhead",
+                        args: {
+                            tagName: "path",
+                            attrs: {
+                                // r: 6,
+                                d: "M -5 -4 5 0 -5 4 Z",
+                                fill: "#1890ff",
+                                stroke: "#1890ff",
+                                // "stroke-width": 1,
+                                cursor: "move",
+                            },
+                        },
+                    },
+                ],
             })
             console.log(edge)
 
@@ -663,10 +709,7 @@ class KingFlow extends React.PureComponent {
                 line: {
                     stroke: "#1890ff",
                     strokeWidth: 1,
-                    targetMarker: {
-                        name: "classic",
-                        size: 8,
-                    },
+                    targetMarker: false,
                     strokeDasharray: 0, //虚线
                     style: {
                         animation: "ant-line 30s infinite linear",
