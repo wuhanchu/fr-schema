@@ -131,7 +131,11 @@ class RightDrawer extends React.PureComponent {
                     cancelText="否"
                 >
                     <Button
-                        style={{ position: "absolute", right: 0, bottom: 0 }}
+                        style={{
+                            position: "absolute",
+                            right: "20px",
+                            bottom: "20px",
+                        }}
                     >
                         提交
                     </Button>

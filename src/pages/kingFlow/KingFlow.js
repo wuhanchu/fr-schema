@@ -612,6 +612,10 @@ class KingFlow extends React.PureComponent {
             container: document.getElementById("containerChart"),
             history: true,
             panning: true,
+            selecting: {
+                enabled: true,
+                rubberband: true, // 启用框选
+            },
             transforming: {
                 clearAll: true,
                 clearOnBlankMouseDown: true,
@@ -763,7 +767,7 @@ class KingFlow extends React.PureComponent {
     // 删除节点
     deleteNode() {
         const cell = this.graph.getSelectedCells()
-        if (cell[0].getData().types != "begin") {
+        if (cell && cell[0] && cell[0].getData().types != "begin") {
             this.graph.removeCells(cell)
             this.setState({ chooseType: "grid" })
             this.graphChange()
