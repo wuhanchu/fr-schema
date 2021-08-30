@@ -44,11 +44,6 @@ export default [
                 name: "dialogue",
                 component: "./question/components/Dialogue",
             },
-            {
-                path: "/outter/kingFlow",
-                title: "流程图",
-                component: "./kingFlow/KingFlow",
-            },
         ],
     },
 

@@ -115,7 +115,8 @@
         "wavesurfer.js": "4.6.0",
         "xlsx": "0.16.9",
         "yamljs": "^0.3.0",
-        "zip-js": "^0.0.2"
+        "zip-js": "^0.0.2",
+        "core-decorators": "^0.20.0"
     },
     "devDependencies": {
         "@ant-design/pro-cli": "2.0.4",

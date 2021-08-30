@@ -2,7 +2,7 @@ import { createApi, createBasicApi } from "@/outter/fr-schema/src/service"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import projectService from "./../project"
 import { verifyJson } from "@/outter/fr-schema-antd-utils/src/utils/component"
-import { message, AutoComplete } from "antd"
+import { message, Tooltip } from "antd"
 import { checkedAndUpload } from "@/utils/minio"
 
 const Minio = require("minio")
@@ -18,6 +18,7 @@ const schema = {
             autoSize: { minRows: 2, maxRows: 6 },
         },
         sorter: true,
+        editable: true,
     },
     question_extend: {
         title: "扩展问",
@@ -26,19 +27,26 @@ const schema = {
         props: {
             autoSize: { minRows: 2, maxRows: 6 },
         },
-        listHide: true,
         exportConcat: true,
         extra: "每行表示一个问题",
+        editable: true,
+        render: (item, record) => (
+            <Tooltip title={item}>
+                {item.length > 20 ? item.substring(0, 20) + "..." : item}
+            </Tooltip>
+        ),
     },
 
     group: {
         title: "分组",
+        type: schemaFieldType.Select,
         searchPrefix: "like",
         // required: true,
         render: (data, item) => {
             return item.group
         },
         sorter: true,
+        editable: true,
     },
     label: {
         title: "标签",
@@ -46,20 +54,16 @@ const schema = {
         props: {
             mode: "tags",
         },
+        editable: true,
     },
     global_key: {
         title: "全局变量",
         extra: "作为对话机器人的匹配主键",
-    },
-    external_id: {
-        title: "外部编号",
-        addHide: true,
-        editHide: true,
+        editable: true,
     },
     answer: {
         title: "答案",
         required: true,
-        listHide: true,
         type: schemaFieldType.BraftEditor,
         // span: 24,
         position: "right",
@@ -69,6 +73,17 @@ const schema = {
             },
         },
         lineWidth: "480px",
+        editable: true,
+        render: (item, record) => {
+            let res = item.length > 20 ? item.substring(0, 20) + "..." : item
+            return (
+                <Tooltip
+                    title={<div dangerouslySetInnerHTML={{ __html: item }} />}
+                >
+                    <div dangerouslySetInnerHTML={{ __html: res }} />
+                </Tooltip>
+            )
+        },
         props: {
             style: {
                 // width: "348px",
@@ -167,15 +182,17 @@ const schema = {
             ],
         },
     },
+    external_id: {
+        title: "外部编号",
+        addHide: true,
+        editHide: true,
+    },
 }
 
 const service = createApi("question", schema, null, "eq.")
 service.get = async function (args) {
     const res = await createApi("question", schema, null, null).get(args)
     let list = res.list.map((item) => {
-        if (item.question_extend) {
-            console.log(item.question_extend.join("\n"))
-        }
         return {
             ...item,
             question_extend: item.question_extend
