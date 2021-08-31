@@ -28,6 +28,15 @@ const schema = {
 
 const service = createApi("flow", schema, null, "eq.")
 
+service.patch = async (args) => {
+    await createApi("flow", schema, null, "eq.").patch(args)
+    await createApi("flow_history", schema, null, "eq.").post({
+        config: args.config,
+        flow_key: args.key,
+        domain_key: args.domain_key,
+    })
+}
+
 service.uploadExcel = createBasicApi("intent/import").post
 
 export default {
