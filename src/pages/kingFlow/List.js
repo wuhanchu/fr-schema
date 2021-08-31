@@ -4,14 +4,9 @@ import schemas from "@/schemas"
 import React from "react"
 import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
-import { Divider, Card, Modal, Button, message } from "antd"
+import { Divider, Modal } from "antd"
 import frSchema from "@/outter/fr-schema/src"
-import { exportData } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
-import { schemaFieldType } from "@/outter/fr-schema/src/schema"
-import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
-import ImportModal from "@/outter/fr-schema-antd-utils/src/components/modal/ImportModal"
 import ChartModal from "@/pages/kingFlow/KingFlow"
-import WordModel from "@/outter/fr-schema-antd-utils/src/components/GGeditor/WordModel/index"
 
 const { decorateList } = frSchema
 

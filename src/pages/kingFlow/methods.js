@@ -1,4 +1,4 @@
-import { Graph, Shape, Addon, FunctionExt } from "@antv/x6"
+import { Addon } from "@antv/x6"
 // 拖拽生成四边形或者圆形
 export const startDragToGraph = (graph, type, e) => {
     const node =

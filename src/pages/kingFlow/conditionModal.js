@@ -1,8 +1,6 @@
 import React from "react"
-import { Input, Tag, Form, Button, Space, Row, Col, Select } from "antd"
-import { useExperimentGraph } from "@/pages/flow/rx-models/experiment-graph"
+import { Input, Form, Button, Space, Row, Col, Select } from "antd"
 import "antd/lib/style/index.css"
-import { FolderAddTwoTone } from "@ant-design/icons"
 import Modal from "antd/lib/modal/Modal"
 import clone from "clone"
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons"
@@ -23,8 +21,6 @@ export const ConditionModal = ({
     handleChangeShowCondition,
     graphChange,
 }) => {
-    const [form] = Form.useForm()
-
     const expGraph = graph
     let condition = []
     if (graph) {
@@ -137,12 +133,7 @@ export const ConditionModal = ({
                     <Input placeholder={"请输入名称"} />
                 </Form.Item>
 
-                <Form.Item
-                    label="意图"
-                    name="intent"
-                    // rules={[{ required: true, message: "请输入意图！" }]}
-                >
-                    {/* <Input placeholder={"请输入意图"} /> */}
+                <Form.Item label="意图" name="intent">
                     <Select
                         showSearch
                         placeholder={"请选择意图"}
@@ -187,12 +178,6 @@ export const ConditionModal = ({
                                             {...restField}
                                             name={[name, "last"]}
                                             fieldKey={[fieldKey, "last"]}
-                                            // rules={[
-                                            //     {
-                                            //         required: true,
-                                            //         message: "请输入键值",
-                                            //     },
-                                            // ]}
                                         >
                                             <Input
                                                 style={{
@@ -209,9 +194,6 @@ export const ConditionModal = ({
                                 )
                             )}
                             <Form.Item wrapperCol={{ offset: 8, span: 12 }}>
-                                {/* <Button type="dashed" style={{ float: 'right', width: '236px', position: 'absolute', right: '0px' }} onClick={() => add()} block icon={<PlusOutlined />}>
-                                    添加插槽
-                                </Button> */}
                                 <Row gutter={24}>
                                     <Col lg={16}>
                                         <Button

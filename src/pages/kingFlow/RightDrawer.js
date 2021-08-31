@@ -3,9 +3,6 @@ import {
     Form,
     Input,
     Button,
-    Radio,
-    Slider,
-    Switch,
     InputNumber,
     Popconfirm,
     Tag,
@@ -13,12 +10,7 @@ import {
     Tooltip,
 } from "antd"
 import "./RightDrawer.less"
-import {
-    RiseOutlined,
-    DeleteOutlined,
-    CloseOutlined,
-    QuestionCircleOutlined,
-} from "@ant-design/icons"
+import { CloseOutlined, QuestionCircleOutlined } from "@ant-design/icons"
 import { ActionModal } from "./actionModal"
 import { ConditionModal } from "./conditionModal"
 import Sortable from "sortablejs/modular/sortable.complete.esm.js"

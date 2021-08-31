@@ -1,16 +1,14 @@
 import React from "react"
-import { Graph, Shape, FunctionExt, DataUri } from "@antv/x6"
+import { Graph, Shape, FunctionExt } from "@antv/x6"
 import { Tooltip } from "antd"
 import "./kingFlow.less"
 import insertCss from "insert-css"
-import ReactDOM from "react-dom"
 import "./iconfont.css"
 import { startDragToGraph } from "./methods"
 import schema from "@/schemas/intent"
 import { ports } from "./methods"
 import Ellipse from "./ellipse.svg"
 import RightDrawer from "@/pages/kingFlow/RightDrawer"
-import { ConsoleSqlOutlined } from "@ant-design/icons"
 
 const data = {}
 
@@ -110,14 +108,6 @@ class KingFlow extends React.PureComponent {
                         >
                             <i className="iconfont icon-circle" />
                         </div>
-
-                        {/* <div
-                            className="btn"
-                            title="开始节点"
-                            onMouseDown={(e) => this.startDrag("begin", e)}
-                        >
-                            <img style={{ marginTop: "-7px" }} src={Ellipse} />
-                        </div> */}
                         <div
                             className="btn"
                             title="结束节点"
@@ -128,34 +118,6 @@ class KingFlow extends React.PureComponent {
                         </div>
                     </div>
                     <div className="btn-group">
-                        {/*<Tooltip title="直线箭头" placement="bottom">*/}
-                        {/*    <div*/}
-                        {/*        className={*/}
-                        {/*            currentArrow === 1*/}
-                        {/*                ? "currentArrow btn"*/}
-                        {/*                : "btn"*/}
-                        {/*        }*/}
-                        {/*        onClick={(e) =>*/}
-                        {/*            this.changeEdgeType(1, "normal")*/}
-                        {/*        }*/}
-                        {/*    >*/}
-                        {/*        <i className="iconfont icon-ai28" />*/}
-                        {/*    </div>*/}
-                        {/*</Tooltip>*/}
-                        {/*<Tooltip title="曲线箭头" placement="bottom">*/}
-                        {/*    <div*/}
-                        {/*        className={*/}
-                        {/*            currentArrow === 2*/}
-                        {/*                ? "currentArrow btn"*/}
-                        {/*                : "btn"*/}
-                        {/*        }*/}
-                        {/*        onClick={(e) =>*/}
-                        {/*            this.changeEdgeType(2, "smooth")*/}
-                        {/*        }*/}
-                        {/*    >*/}
-                        {/*        <i className="iconfont icon-Down-Right" />*/}
-                        {/*    </div>*/}
-                        {/*</Tooltip>*/}
                         <Tooltip title="直角箭头" placement="bottom">
                             <div
                                 className={

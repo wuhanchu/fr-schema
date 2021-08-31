@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 import { Input, Form, Button, Select } from "antd"
 import "antd/lib/style/index.css"
 import Modal from "antd/lib/modal/Modal"
@@ -6,7 +6,6 @@ import clone from "clone"
 import AceEditor from "react-ace"
 import "ace-builds/src-noconflict/mode-json"
 
-// import 'brace/mode/json';//
 import "ace-builds/src-noconflict/theme-github"
 import "ace-builds/src-noconflict/ext-language_tools"
 
@@ -29,7 +28,6 @@ export const ActionModal = ({
     graphChange,
     expGraphData,
 }) => {
-    const [form] = Form.useForm()
     const expGraph = graph
     let initialValues = clone(defaultValue)
     let actionList = []
