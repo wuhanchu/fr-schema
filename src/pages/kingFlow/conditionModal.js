@@ -5,10 +5,6 @@ import Modal from "antd/lib/modal/Modal"
 import clone from "clone"
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons"
 
-function Random(min, max) {
-    return Math.round(Math.random() * (max - min)) + min
-}
-
 export const ConditionModal = ({
     visible,
     handleVisible,

@@ -9,13 +9,6 @@ import "ace-builds/src-noconflict/mode-json"
 import "ace-builds/src-noconflict/theme-github"
 import "ace-builds/src-noconflict/ext-language_tools"
 
-import FormItem from "antd/lib/form/FormItem"
-const { OptGroup } = Select
-
-function Random(min, max) {
-    return Math.round(Math.random() * (max - min)) + min
-}
-
 export const ActionModal = ({
     visible,
     handleVisible,
@@ -162,7 +155,7 @@ export const ActionModal = ({
             item.action &&
                 item.action.map((key) => {
                     let oneNodeAction = expGraph.action.filter(
-                        (items) => items.key == key
+                        (items) => items.key === key
                     )[0]
                     oneNodeAction &&
                         nodeActionDict.push(
@@ -208,7 +201,7 @@ export const ActionModal = ({
                             onChange={(key) => {
                                 const importData = expGraph.action.filter(
                                     (item) =>
-                                        item.key == key.split("nodeID_")[1]
+                                        item.key === key.split("nodeID_")[1]
                                 )[0]
                                 formRef.current.setFieldsValue(importData)
                                 setImportData(importData)
@@ -225,14 +218,6 @@ export const ActionModal = ({
                                 }
                             }}
                         >
-                            {/* {expGraph.action &&
-                                expGraph.action.map((item) => {
-                                    return (
-                                        <Select.Option value={item.key}>
-                                            {item.name}
-                                        </Select.Option>
-                                    )
-                                })} */}
                             {importDict}
                         </Select>
                     </Form.Item>

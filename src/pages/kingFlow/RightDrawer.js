@@ -287,45 +287,34 @@ class RightDrawer extends React.PureComponent {
         this.handleChangeShowAction()
         this.handleChangeShowCondition()
         let { chooseType, cell } = this.props
-        let _this = this
-        if (chooseType == "node") {
+        if (chooseType === "node") {
             var el = document.getElementById("items")
             this.formNode.current.validateFields()
             var sortable =
                 el &&
                 new Sortable(el, {
                     onChange: function (/**Event*/ evt) {
-                        evt.newIndex // most likely why this event is used is to get the dragging element's current index
                         let sortableData = clone(cell.getData().action)
-                        console.log(
-                            "测试",
-                            evt.newIndex,
-                            evt.oldIndex,
-                            ...sortableData
-                        )
+
                         let temp = sortableData[evt.oldIndex]
                         sortableData[evt.oldIndex] = sortableData[evt.newIndex]
                         sortableData[evt.newIndex] = temp
-                        console.log(...sortableData)
                         cell.setData({
                             action: [...sortableData],
                         })
                         // _this.props.graphChange()
                     },
                 })
-            el = document.getElementById("items")
         }
 
-        if (chooseType == "edge") {
+        if (chooseType === "edge") {
             this.formEdge.current.validateFields()
         }
     }
 
     countName(arr, num) {
         var countArr = arr.filter(function isBigEnough(value) {
-            console.log(value, num)
-            console.log(value == num)
-            return value == num
+            return value === num
         })
         return countArr.length
     }
@@ -358,8 +347,7 @@ class RightDrawer extends React.PureComponent {
 
     renderNode() {
         let { chooseType, cell, graph } = this.props
-        let _this = this
-        let { isShow, showAction, showCondition } = this.state
+        let { isShow, showAction } = this.state
         return (
             chooseType === "node" && (
                 <div>
@@ -498,8 +486,7 @@ class RightDrawer extends React.PureComponent {
                                                                 actionList &&
                                                                     actionList.map(
                                                                         (
-                                                                            item,
-                                                                            index
+                                                                            item
                                                                         ) => {
                                                                             let filterAction = graph.action.filter(
                                                                                 (
@@ -680,10 +667,7 @@ class RightDrawer extends React.PureComponent {
 
                                                             actionList &&
                                                                 actionList.map(
-                                                                    (
-                                                                        item,
-                                                                        index
-                                                                    ) => {
+                                                                    (item) => {
                                                                         let filterAction = graph.condition.filter(
                                                                             (
                                                                                 list
@@ -735,12 +719,6 @@ class RightDrawer extends React.PureComponent {
                                     </Tag>
                                 </ul>
                             </FormItem>
-                            {/* <FormItem label="功能">
-                            <Button type="primary" icon={<RiseOutlined />} className="button"
-                                style={{ marginRight: '10px' }} onClick={_ => this.toTopZIndex()}>置顶</Button>
-                            <Button type="danger" class="margin-left-10" className="button" icon={<DeleteOutlined />}
-                                onClick={_ => this.deleteNode()}>删除</Button>
-                        </FormItem> */}
                         </Form>
                     </div>
                 </div>

@@ -45,18 +45,17 @@ class KingFlow extends React.PureComponent {
     }
 
     getIntent = async () => {
-        let data = await schema.service.get({
+        const res = await schema.service.get({
             limit: 1000,
             key: "not.eq.null",
             domain_key: this.props.record.domain_key,
         })
-        this.setState({ intenList: data.list })
+        this.setState({ intenList: res.list })
     }
 
     componentDidMount() {
         this.initData()
         this.getIntent()
-        // this.changeEdgeType(3, null, "manhattan")
         this.graph.flowSetting = {
             key: this.props.record.key,
             domain_key: this.props.record.domain_key,
@@ -544,7 +543,6 @@ class KingFlow extends React.PureComponent {
                 enabled: true,
                 orthogonal: false,
             },
-            selecting: true, //可选
             snapline: true,
             // interacting: {
             //     edgeLabelMovable: true,
