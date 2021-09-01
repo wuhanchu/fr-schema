@@ -12,6 +12,10 @@ const schema = {
         required: true,
         title: "编码",
     },
+    name: {
+        required: true,
+        title: "名称",
+    },
     create_time: {
         title: "创建时间",
         // required: true,

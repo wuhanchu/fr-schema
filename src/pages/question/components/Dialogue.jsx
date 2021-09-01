@@ -360,7 +360,7 @@ class Dialogue extends React.Component {
         flowList &&
             flowList.map((item, index) => {
                 flowOption.push({
-                    label: item.key,
+                    label: item.name,
                     value: item.key,
                     defaultChecked: true,
                 })
@@ -396,6 +396,7 @@ class Dialogue extends React.Component {
                 </div>
                 {
                     <Popconfirm
+                        disabled={this.state.isSpin}
                         title={() => {
                             return (
                                 <div style={{ width: "400px" }}>
@@ -496,12 +497,13 @@ class Dialogue extends React.Component {
                                     })
                                     let res = await schemas.domain.service.flowConversation(
                                         {
+                                            type: "flow",
                                             domain_key: this.props.record.key,
                                             flow_key: this.state.flow_key,
                                         }
                                     )
                                     this.setState({
-                                        conversationId: res.conversation_id,
+                                        conversationId: res.data.id,
                                         isFlow: true,
                                         isSpin: false,
                                     })
@@ -549,7 +551,10 @@ class Dialogue extends React.Component {
                         }}
                         okText="确定"
                     >
-                        <Button style={styles.sendButton}>
+                        <Button
+                            style={styles.sendButton}
+                            disabled={this.state.isSpin}
+                        >
                             <SettingOutlined />
                         </Button>
                     </Popconfirm>
@@ -574,13 +579,14 @@ class Dialogue extends React.Component {
                                 })
                                 let res = await schemas.domain.service.flowConversation(
                                     {
+                                        type: "flow",
                                         domain_key: this.props.record.key,
                                         flow_key: this.state.flow_key,
                                     }
                                 )
 
                                 this.setState({
-                                    conversationId: res.conversation_id,
+                                    conversationId: res.data.id,
                                     isSpin: false,
                                 })
                                 this.onSendMessage("/true")

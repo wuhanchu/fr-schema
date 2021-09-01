@@ -173,15 +173,16 @@ class KingFlow extends React.PureComponent {
                         </Tooltip>
                     </div>
                 </div>
-                {/* <div className="operating-right">
+                <div className="operating-right">
                     <Select
-                        defaultValue="第一次"
+                        bordered={false}
+                        // defaultValue=
+                        value={"根据时间选择历史数据"}
                         style={{ textAlign: "right", width: "170px" }}
-                        onChange={() => {
-                            console.log("修改")
-
+                        onChange={(index) => {
                             this.graph.dispose()
                             this.initData()
+                            this.getData(this.state.historyList[index].config)
                             this.graph.flowSetting = {
                                 key: this.props.record.key,
                                 domain_key: this.props.record.domain_key,
@@ -197,24 +198,30 @@ class KingFlow extends React.PureComponent {
                                         )}
                                     </Option>
                                 )
-                            })} */}
-                {/* <Option value="第一次">第一次</Option>
+                            })}
+                        {/* <Option value="第一次">第一次</Option>
                         <Option value="第二次">第二次</Option>
                         <Option value="第三次">第三次</Option> */}
-                {/* </Select> */}
-                {/* </div> */}
+                    </Select>
+                </div>
             </div>
         )
     }
 
     getData = async (config) => {
         let _this = this
+        let data
+        if (config) {
+            data = config
+        } else {
+            data = localStorage.getItem("flow" + this.props.record.id)
+            data = JSON.parse(data)
+        }
 
-        let data = localStorage.getItem("flow" + this.props.record.id)
         //     let data =
         // if(config){
         // }
-        data = JSON.parse(data)
+
         if (!data) {
             let res = await this.props.service.getDetail({
                 id: this.props.record.id,
@@ -434,25 +441,11 @@ class KingFlow extends React.PureComponent {
             args.added.forEach((cell) => {
                 this.selectCell = cell
                 if (cell.isEdge()) {
-                    cell.isEdge() && cell.attr("line/strokeDasharray", 5) //虚线蚂蚁线
-                    // cell.addTools([
-                    //     {
-                    //         name: "vertices",
-                    //         args: {
-                    //             padding: 4,
-                    //             attrs: {
-                    //                 strokeWidth: 0.1,
-                    //                 stroke: "#2d8cf0",
-                    //                 fill: "#ffffff",
-                    //             },
-                    //         },
-                    //     },
-                    // ])
+                    cell.isEdge() && cell.attr("line/strokeDasharray", 5)
                 }
             })
             args.removed.forEach((cell) => {
-                cell.isEdge() && cell.attr("line/strokeDasharray", 0) //正常线
-                // cell.removeTools()
+                cell.isEdge() && cell.attr("line/strokeDasharray", 0)
             })
         })
         this.graph.on("edge:mouseup", (args) => {
@@ -702,7 +695,7 @@ class KingFlow extends React.PureComponent {
                     //     distance: -150
                     // }
                     position: {
-                        distance: -100,
+                        distance: -70,
                     },
                 },
             ],

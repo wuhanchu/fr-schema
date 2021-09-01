@@ -57,22 +57,22 @@ service.message = createApi(
 
 // 创建会话
 service.flowConversation = createApi(
-    "flow/conversation",
+    "chat/conversation",
     schema,
     null,
     "eq."
 ).post
 
-// 创建会话
+// 结束
 service.closeConversation = createApi(
-    "flow/conversation",
+    "chat/conversation",
     schema,
     null,
     "eq."
 ).put
 
 // 发送消息
-service.flowMessage = createApi("/flow/message", schema, null, "eq.").post
+service.flowMessage = createApi("chat/message", schema, null, "eq.").post
 
 service.intentIdentify = async function (args) {
     const data = await createApi(
