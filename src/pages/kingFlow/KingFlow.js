@@ -173,7 +173,7 @@ class KingFlow extends React.PureComponent {
                         </Tooltip>
                     </div>
                 </div>
-                <div className="operating-right">
+                {/* <div className="operating-right">
                     <Select
                         defaultValue="第一次"
                         style={{ textAlign: "right", width: "170px" }}
@@ -197,12 +197,12 @@ class KingFlow extends React.PureComponent {
                                         )}
                                     </Option>
                                 )
-                            })}
-                        {/* <Option value="第一次">第一次</Option>
+                            })} */}
+                {/* <Option value="第一次">第一次</Option>
                         <Option value="第二次">第二次</Option>
                         <Option value="第三次">第三次</Option> */}
-                    </Select>
-                </div>
+                {/* </Select> */}
+                {/* </div> */}
             </div>
         )
     }
