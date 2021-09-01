@@ -75,11 +75,9 @@ service.closeConversation = createApi(
 service.flowMessage = createApi("chat/message", schema, null, "eq.").post
 
 service.intentIdentify = async function (args) {
-    const data = await createApi(
-        "z_ai_service/nlu/intent_identify",
-        schema,
-        null
-    ).getBasic({ ...args })
+    const data = await createApi("intent/identify", schema, null).getBasic({
+        ...args,
+    })
     return data
 }
 

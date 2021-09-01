@@ -5,6 +5,7 @@ import {
     Spin,
     Tag,
     message,
+    Tooltip,
     Empty,
     Modal,
     Button,
@@ -31,7 +32,7 @@ class IntentIdentify extends React.Component {
             console.log("Success:", values)
             this.setState({ isSpin: true })
             let response = await service.service.intentIdentify({
-                service_id: this.props.record.id,
+                domain_key: this.props.record.key,
                 text: values.text,
             })
             this.setState({
@@ -91,7 +92,8 @@ class IntentIdentify extends React.Component {
                                     <div style={{ marginBottom: "10px" }}>
                                         <Typography.Text>
                                             识别的意图：
-                                            {this.state.data.intent.name}
+                                            {this.state.data.intent &&
+                                                this.state.data.intent.name}
                                         </Typography.Text>
                                     </div>
                                     <List
@@ -112,10 +114,21 @@ class IntentIdentify extends React.Component {
                                                 >
                                                     <List.Item.Meta
                                                         title={
-                                                            <a>{item.name}</a>
+                                                            <Tooltip
+                                                                placement="topLeft"
+                                                                title={
+                                                                    item.match_regex
+                                                                }
+                                                            >
+                                                                <a>
+                                                                    {item.name}
+                                                                </a>
+                                                            </Tooltip>
                                                         }
                                                     />
-                                                    <div>{item.confidence}</div>
+                                                    <div>
+                                                        {item.compatibility}
+                                                    </div>
                                                 </Skeleton>
                                             </List.Item>
                                         )}

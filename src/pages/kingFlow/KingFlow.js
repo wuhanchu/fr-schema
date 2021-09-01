@@ -1,16 +1,19 @@
 import React from "react"
 import { Graph, Shape, FunctionExt } from "@antv/x6"
-import { Tooltip, Select } from "antd"
+import { Tooltip, Select, Modal, Spin } from "antd"
 import "./kingFlow.less"
 import insertCss from "insert-css"
 import "./iconfont.css"
 import { startDragToGraph } from "./methods"
 import schema from "@/schemas/intent"
 import { ports } from "./methods"
+import clone from "clone"
 import Ellipse from "./ellipse.svg"
 import RightDrawer from "@/pages/kingFlow/RightDrawer"
+import { ExclamationCircleOutlined } from "@ant-design/icons"
 
 const { Option } = Select
+const { confirm } = Modal
 const data = {}
 
 class KingFlow extends React.PureComponent {
@@ -18,6 +21,7 @@ class KingFlow extends React.PureComponent {
         super(props)
         this.state = {
             chooseType: "grid",
+            spinning: true,
             grid: {
                 // 网格设置
                 size: 20, // 网格大小 10px
@@ -57,17 +61,21 @@ class KingFlow extends React.PureComponent {
         const res = await schema.service.getFlowHistory({
             limit: 1000,
             flow_key: this.props.record.key,
+            config: "not.is.null",
             domain_key: this.props.record.domain_key,
         })
         console.log("历史数据是", res.list)
         this.setState({ historyList: res.list })
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         this.initData()
         this.getData()
-        this.getIntent()
-        this.getHistory()
+        await this.getIntent()
+        await this.getHistory()
+        this.setState({
+            spinning: false,
+        })
         this.graph.flowSetting = {
             key: this.props.record.key,
             domain_key: this.props.record.domain_key,
@@ -77,134 +85,185 @@ class KingFlow extends React.PureComponent {
     render() {
         let { currentArrow, chooseType, cell, intenList } = this.state
         return (
-            <div className="container_warp">
-                <div id="containerChart" />
-                {chooseType && (
-                    <RightDrawer
-                        service={this.props.service}
-                        record={this.props.record}
-                        intenList={intenList}
-                        dict={this.props.dict}
-                        graphChange={() => {
-                            return this.graphChange()
-                        }}
-                        handleSetVisibleFlow={(args) => {
-                            this.props.handleSetVisibleFlow(args)
-                        }}
-                        cell={cell}
-                        expGraphData={this.state.expGraphData}
-                        onDeleteNode={this.deleteNode}
-                        selectCell={this.selectCell}
-                        chooseType={chooseType}
-                        graph={this.graph}
-                        setChooseType={(args) => {
-                            this.setState({ chooseType: args })
-                        }}
-                        changeGridBack={this.onChangeGridBack}
-                    />
-                )}
-                <div className="operating">
-                    <div className="btn-group">
-                        <div
-                            className="btn"
-                            title="普通节点"
-                            onMouseDown={(e) => this.startDrag("Rect", e)}
-                        >
-                            <i className="iconfont icon-square" />
-                        </div>
-                        <div
-                            className="btn"
-                            title="全局节点"
-                            onMouseDown={(e) => this.startDrag("Circle", e)}
-                        >
-                            <i className="iconfont icon-circle" />
-                        </div>
-                        <div
-                            className="btn"
-                            title="结束节点"
-                            onMouseDown={(e) => this.startDrag("end", e)}
-                        >
-                            {/* <i className="iconfont icon-square rotate-square" /> */}
-                            <img style={{ marginTop: "-7px" }} src={Ellipse} />
-                        </div>
-                    </div>
-                    <div className="btn-group">
-                        <Tooltip title="直角箭头" placement="bottom">
-                            <div
-                                className={
-                                    currentArrow === 3
-                                        ? "currentArrow btn"
-                                        : "btn"
-                                }
-                                onClick={(e) =>
-                                    this.changeEdgeType(3, null, "manhattan")
-                                }
-                            >
-                                <i className="iconfont icon-jiantou" />
-                            </div>
-                        </Tooltip>
-                    </div>
-                    <div className="btn-group">
-                        <Tooltip title="删除" placement="bottom">
+            <Spin tip="加载中..." spinning={this.state.spinning}>
+                <div className="container_warp">
+                    <div id="containerChart" />
+                    {chooseType && (
+                        <RightDrawer
+                            service={this.props.service}
+                            record={this.props.record}
+                            intenList={intenList}
+                            dict={this.props.dict}
+                            graphChange={() => {
+                                return this.graphChange()
+                            }}
+                            handleSetVisibleFlow={(args) => {
+                                this.props.handleSetVisibleFlow(args)
+                            }}
+                            cell={cell}
+                            expGraphData={this.state.expGraphData}
+                            onDeleteNode={this.deleteNode}
+                            selectCell={this.selectCell}
+                            chooseType={chooseType}
+                            graph={this.graph}
+                            setChooseType={(args) => {
+                                this.setState({ chooseType: args })
+                            }}
+                            changeGridBack={this.onChangeGridBack}
+                        />
+                    )}
+                    <div className="operating">
+                        <div className="btn-group">
                             <div
                                 className="btn"
-                                style={{ marginTop: "5px" }}
-                                onClick={(_) => this.deleteNode()}
+                                title="普通节点"
+                                onMouseDown={(e) => this.startDrag("Rect", e)}
                             >
-                                <i className="iconfont icon-shanchu" />
+                                <i className="iconfont icon-square" />
                             </div>
-                        </Tooltip>
-                        <Tooltip title="撤销" placement="bottom">
-                            <img
-                                src={require("@/assets/undo.png")}
-                                style={styles.undo}
-                                alt=""
-                                onClick={(_) => this.undoOperate()}
-                            />
-                        </Tooltip>
-                        <Tooltip title="重做" placement="bottom">
-                            <img
-                                src={require("@/assets/redo.png")}
-                                style={styles.redo}
-                                alt=""
-                                onClick={(_) => this.redoOperate()}
-                                // onClick={(_) => this.formatGraph()}
-                            />
-                        </Tooltip>
+                            <div
+                                className="btn"
+                                title="全局节点"
+                                onMouseDown={(e) => this.startDrag("Circle", e)}
+                            >
+                                <i className="iconfont icon-circle" />
+                            </div>
+                            <div
+                                className="btn"
+                                title="结束节点"
+                                onMouseDown={(e) => this.startDrag("end", e)}
+                            >
+                                {/* <i className="iconfont icon-square rotate-square" /> */}
+                                <img
+                                    style={{ marginTop: "-7px" }}
+                                    src={Ellipse}
+                                />
+                            </div>
+                        </div>
+                        <div className="btn-group">
+                            <Tooltip title="直角箭头" placement="bottom">
+                                <div
+                                    className={
+                                        currentArrow === 3
+                                            ? "currentArrow btn"
+                                            : "btn"
+                                    }
+                                    onClick={(e) =>
+                                        this.changeEdgeType(
+                                            3,
+                                            null,
+                                            "manhattan"
+                                        )
+                                    }
+                                >
+                                    <i className="iconfont icon-jiantou" />
+                                </div>
+                            </Tooltip>
+                        </div>
+                        <div className="btn-group">
+                            <Tooltip title="删除" placement="bottom">
+                                <div
+                                    className="btn"
+                                    style={{ marginTop: "5px" }}
+                                    onClick={(_) => this.deleteNode()}
+                                >
+                                    <i className="iconfont icon-shanchu" />
+                                </div>
+                            </Tooltip>
+                            <Tooltip title="撤销" placement="bottom">
+                                <img
+                                    src={require("@/assets/undo.png")}
+                                    style={styles.undo}
+                                    alt=""
+                                    onClick={(_) => this.undoOperate()}
+                                />
+                            </Tooltip>
+                            <Tooltip title="重做" placement="bottom">
+                                <img
+                                    src={require("@/assets/redo.png")}
+                                    style={styles.redo}
+                                    alt=""
+                                    onClick={(_) => this.redoOperate()}
+                                    // onClick={(_) => this.formatGraph()}
+                                />
+                            </Tooltip>
+                        </div>
                     </div>
-                </div>
-                <div className="operating-right">
-                    <Select
-                        bordered={false}
-                        // defaultValue=
-                        value={"根据时间选择历史数据"}
-                        style={{ textAlign: "right", width: "170px" }}
-                        onChange={(index) => {
-                            this.graph.dispose()
-                            this.initData()
-                            this.getData(this.state.historyList[index].config)
-                            this.graph.flowSetting = {
-                                key: this.props.record.key,
-                                domain_key: this.props.record.domain_key,
-                            }
-                        }}
-                    >
-                        {this.state.historyList &&
-                            this.state.historyList.map((item, index) => {
-                                return (
-                                    <Option value={index}>
-                                        {item.create_time.format(
-                                            "YYYY-MM-DD HH:mm:ss"
-                                        )}
-                                    </Option>
+                    <div className="operating-right">
+                        <Select
+                            bordered={false}
+                            // defaultValue=
+                            value={this.state.historyIndex}
+                            placeholder={"选择历史版本"}
+                            style={{ textAlign: "right", width: "170px" }}
+                            onChange={(index) => {
+                                let _this = this
+                                let data = localStorage.getItem(
+                                    "flow" + this.props.record.id
                                 )
-                            })}
-                        {/* <Option value="第一次">第一次</Option>
+                                if (data) {
+                                    confirm({
+                                        title: "是否切换版本？",
+                                        icon: <ExclamationCircleOutlined />,
+                                        content:
+                                            "切换版本会丢失本地缓存数据，请先提交保存，是否继续。",
+                                        okText: "确定",
+                                        cancelText: "取消",
+                                        onOk() {
+                                            _this.graph.dispose()
+                                            _this.initData()
+                                            _this.getData(
+                                                _this.state.historyList[index]
+                                                    .config
+                                            )
+                                            _this.graph.flowSetting = {
+                                                key: _this.props.record.key,
+                                                domain_key:
+                                                    _this.props.record
+                                                        .domain_key,
+                                            }
+                                            _this.setState({
+                                                historyIndex: index,
+                                            })
+                                        },
+                                        onCancel() {
+                                            console.log("Cancel")
+                                        },
+                                    })
+                                } else {
+                                    _this.graph.dispose()
+                                    _this.initData()
+                                    _this.getData(
+                                        _this.state.historyList[index].config
+                                    )
+                                    _this.graph.flowSetting = {
+                                        key: _this.props.record.key,
+                                        domain_key:
+                                            _this.props.record.domain_key,
+                                    }
+                                    _this.setState({
+                                        historyIndex: index,
+                                    })
+                                }
+                            }}
+                        >
+                            {this.state.historyList &&
+                                this.state.historyList.map((item, index) => {
+                                    return (
+                                        <Option value={index}>
+                                            {item.create_time.format(
+                                                "YYYY-MM-DD HH:mm:ss"
+                                            )}
+                                        </Option>
+                                    )
+                                })}
+                            {/* <Option value="第一次">第一次</Option>
                         <Option value="第二次">第二次</Option>
                         <Option value="第三次">第三次</Option> */}
-                    </Select>
+                        </Select>
+                    </div>
                 </div>
-            </div>
+            </Spin>
         )
     }
 
@@ -212,7 +271,8 @@ class KingFlow extends React.PureComponent {
         let _this = this
         let data
         if (config) {
-            data = config
+            console.log("有配置")
+            data = clone(config)
         } else {
             data = localStorage.getItem("flow" + this.props.record.id)
             data = JSON.parse(data)
