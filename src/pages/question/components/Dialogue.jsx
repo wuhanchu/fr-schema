@@ -11,6 +11,7 @@ import {
     Form,
     Checkbox,
     Divider,
+    message,
 } from "antd"
 import schemas from "@/schemas"
 import utils from "@/outter/fr-schema-antd-utils/src"
@@ -676,15 +677,7 @@ class Dialogue extends React.Component {
                     })
                 } catch (error) {
                     console.log(error)
-                    list.push({
-                        content: error.message,
-                        onlyRead: true,
-                        buttons: null,
-                        name: "智能客服",
-                        time: new Date(),
-                        avatar: "http://img.binlive.cn/6.png",
-                        type: "left",
-                    })
+                    message.error(error.message)
                 }
             }
 
