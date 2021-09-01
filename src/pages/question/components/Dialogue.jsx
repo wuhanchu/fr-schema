@@ -488,6 +488,7 @@ class Dialogue extends React.Component {
                         onConfirm={async (data) => {
                             this.setState({
                                 defaultProject: checkboxValue,
+                                isSpin: true,
                             })
 
                             if (this.state.type === "flow") {
@@ -544,6 +545,7 @@ class Dialogue extends React.Component {
                                     })
                                 }
                             }
+                            this.setState({ isSpin: false })
                         }}
                         onCancel={() => {
                             this.setState({
