@@ -57,11 +57,19 @@ service.message = createApi(
 
 // 创建会话
 service.flowConversation = createApi(
-    "/flow/conversation",
+    "flow/conversation",
     schema,
     null,
     "eq."
 ).post
+
+// 创建会话
+service.closeConversation = createApi(
+    "flow/conversation",
+    schema,
+    null,
+    "eq."
+).put
 
 // 发送消息
 service.flowMessage = createApi("/flow/message", schema, null, "eq.").post

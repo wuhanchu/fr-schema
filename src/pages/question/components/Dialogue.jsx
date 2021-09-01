@@ -568,6 +568,10 @@ class Dialogue extends React.Component {
                                 this.setState({
                                     historyid: mockDetail.length - 1,
                                 })
+                                await schemas.domain.service.closeConversation({
+                                    domain_key: this.props.record.key,
+                                    conversation_id: this.state.conversationId,
+                                })
                                 let res = await schemas.domain.service.flowConversation(
                                     {
                                         domain_key: this.props.record.key,
