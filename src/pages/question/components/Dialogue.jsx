@@ -212,47 +212,53 @@ class Dialogue extends React.Component {
                                         let res
                                         let list = []
 
-                                        if (this.state.type == "chat") {
-                                            res = await schemas.domain.service.message(
-                                                {
-                                                    service_id: serviceId,
-                                                    conversation_id: conversationId,
-                                                    text: data.payload,
-                                                }
-                                            )
-                                            res.data &&
-                                                res.data.map((data) =>
-                                                    list.push({
-                                                        content: data.text,
-                                                        onlyRead: true,
-                                                        buttons: data.buttons,
-                                                        name: "智能客服",
-                                                        time: new Date(),
-                                                        avatar:
-                                                            "http://img.binlive.cn/6.png",
-                                                        type: "left",
-                                                    })
+                                        try {
+                                            if (this.state.type == "chat") {
+                                                res = await schemas.domain.service.message(
+                                                    {
+                                                        service_id: serviceId,
+                                                        conversation_id: conversationId,
+                                                        text: data.payload,
+                                                    }
                                                 )
-                                        } else {
-                                            res = await schemas.domain.service.flowMessage(
-                                                {
-                                                    domain_key: this.props
-                                                        .record.key,
-                                                    conversation_id: conversationId,
-                                                    text: data.payload,
-                                                }
-                                            )
-                                            list.push({
-                                                content: res.data.result.text,
-                                                onlyRead: true,
-                                                buttons:
-                                                    res.data.result.buttons,
-                                                name: "智能客服",
-                                                time: new Date(),
-                                                avatar:
-                                                    "http://img.binlive.cn/6.png",
-                                                type: "left",
-                                            })
+                                                res.data &&
+                                                    res.data.map((data) =>
+                                                        list.push({
+                                                            content: data.text,
+                                                            onlyRead: true,
+                                                            buttons:
+                                                                data.buttons,
+                                                            name: "智能客服",
+                                                            time: new Date(),
+                                                            avatar:
+                                                                "http://img.binlive.cn/6.png",
+                                                            type: "left",
+                                                        })
+                                                    )
+                                            } else {
+                                                res = await schemas.domain.service.flowMessage(
+                                                    {
+                                                        domain_key: this.props
+                                                            .record.key,
+                                                        conversation_id: conversationId,
+                                                        text: data.payload,
+                                                    }
+                                                )
+                                                list.push({
+                                                    content:
+                                                        res.data.result.text,
+                                                    onlyRead: true,
+                                                    buttons:
+                                                        res.data.result.buttons,
+                                                    name: "智能客服",
+                                                    time: new Date(),
+                                                    avatar:
+                                                        "http://img.binlive.cn/6.png",
+                                                    type: "left",
+                                                })
+                                            }
+                                        } catch (error) {
+                                            message.error(error.message)
                                         }
 
                                         // 消息推进list 清空当前消息
@@ -507,10 +513,10 @@ class Dialogue extends React.Component {
                                     this.setState({
                                         conversationId: res.data.id,
                                         isFlow: true,
-                                        isSpin: false,
+                                        // isSpin: false,
                                     })
 
-                                    this.onSendMessage("/true")
+                                    await this.onSendMessage("/true")
                                 }
                             } else {
                                 if (
@@ -616,7 +622,7 @@ class Dialogue extends React.Component {
     async onSendMessage(value) {
         let { inputValue, mockDetail, serviceId, conversationId } = this.state
         // 无内容或者只存在空格 不发送
-        if (this.state.isSpin === true) {
+        if (!value && this.state.isSpin === true) {
             return
         }
         if (
