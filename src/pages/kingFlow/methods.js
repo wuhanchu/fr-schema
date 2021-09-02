@@ -38,7 +38,7 @@ export const startDragToGraph = (graph, type, e) => {
                   data: {
                       name: "全局节点",
                       allow_repeat_time: 2,
-                      types: "globle",
+                      types: "global",
                   },
                   attrs: {
                       label: {

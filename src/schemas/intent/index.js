@@ -81,8 +81,6 @@ service.get = async function (args) {
             regex: item.regex ? item.regex.join("\n") : null,
         }
     })
-    console.log("list")
-    console.log(list)
     return { ...res, list: list }
 }
 
@@ -115,6 +113,8 @@ service.post = async function (args, schema) {
     })
     return res
 }
+
+service.getFlowHistory = createApi("flow_history", schema, null, "eq.").get
 
 service.patch = async function (args, schema) {
     let example = null
