@@ -111,9 +111,9 @@ export const ActionModal = ({
             value: "get_question_by_global_key",
             remark: "根据全局key获取问题",
         },
-        rasa_model_slot_set: {
-            value: "rasa_model_slot_set",
-            remark: "使用rasa 默认设置槽位方法获取槽位",
+        concat_text_by_slot: {
+            value: "concat_text_by_slot",
+            remark: "根据槽位合成文本",
         },
         get_template: {
             value: "get_template",
