@@ -32,7 +32,9 @@ const schema = {
         editable: true,
         render: (item, record) => (
             <Tooltip title={item}>
-                {item.length > 20 ? item.substring(0, 20) + "..." : item}
+                {item && item.length > 20
+                    ? item.substring(0, 20) + "..."
+                    : item}
             </Tooltip>
         ),
     },
