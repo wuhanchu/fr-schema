@@ -146,7 +146,6 @@ export const ActionModal = ({
         }
     }
 
-    console.log(expGraph)
     let importDict = []
 
     expGraphData.node &&

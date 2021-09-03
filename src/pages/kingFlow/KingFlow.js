@@ -422,8 +422,8 @@ class KingFlow extends React.PureComponent {
             let edge = this.createEdgeFunc({
                 id: args.key,
                 data: { ...args },
-                source: { cell: args.begin, port: "port2" },
-                target: { cell: args.end, port: "port1" },
+                source: { cell: args.begin, port: args.beginPort || "port2" },
+                target: { cell: args.end, port: args.endPort || "port1" },
             })
             this.graph.addEdge(edge)
         } else {
@@ -444,7 +444,7 @@ class KingFlow extends React.PureComponent {
             let edge = this.createEdgeFunc({
                 id: args.key,
                 data: { ...args },
-                source: { cell: key, port: "port2" },
+                source: { cell: key, port: args.beginPort || "port2" },
                 target: { cell: args.end, port: "port1" },
             })
 
@@ -588,6 +588,7 @@ class KingFlow extends React.PureComponent {
         })
         expGraph.getEdges().map((item, index) => {
             let nodeData = item.getData()
+            console.log("线是", item)
             // if(this.graph.getCellById(item.store.data.source.cell).getData().type)
             let begin = item.store.data.source.cell
             // if (this.graph.getCellById(begin).getData().types === "global") {
@@ -598,11 +599,14 @@ class KingFlow extends React.PureComponent {
             }
             let itemData = {
                 begin: begin,
+                beginPort: item.store.data.source.port,
+                endPort: item.store.data.target.port,
                 key: item.id,
                 end: item.store.data.target.cell,
                 name: nodeData.name,
                 condition: nodeData.condition,
             }
+            console.log("数据是", itemData)
             data.connection.push(itemData)
         })
         data.action = expGraph.action
@@ -680,7 +684,7 @@ class KingFlow extends React.PureComponent {
 
                     if (
                         targetMagnet &&
-                        targetMagnet.getAttribute("port-group") !== "top"
+                        targetMagnet.getAttribute("port-group") === "bottom"
                     ) {
                         return false
                     }
@@ -751,9 +755,6 @@ class KingFlow extends React.PureComponent {
                             fill: "#00000000",
                         },
                     },
-                    // position: {
-                    //     distance: -150
-                    // }
                     position: {
                         distance: -70,
                     },
