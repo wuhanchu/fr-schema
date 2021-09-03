@@ -16,7 +16,7 @@ import {
     List,
     Typography,
 } from "antd"
-
+import { formatData } from "@/utils/utils"
 const { Panel } = Collapse
 
 class IntentIdentify extends React.Component {
@@ -100,7 +100,10 @@ class IntentIdentify extends React.Component {
                                         <Typography.Text>
                                             匹配文本：
                                             {this.state.data.intent &&
-                                            this.state.data.intent.match_regex || this.state.data.intent.match_standard_discourse}
+                                                (this.state.data.intent
+                                                    .match_regex ||
+                                                    this.state.data.intent
+                                                        .match_standard_discourse)}
                                         </Typography.Text>
                                     </div>
                                     <List
@@ -134,7 +137,10 @@ class IntentIdentify extends React.Component {
                                                         }
                                                     />
                                                     <div>
-                                                        {item.compatibility}
+                                                        {formatData(
+                                                            item.compatibility,
+                                                            5
+                                                        )}
                                                     </div>
                                                 </Skeleton>
                                             </List.Item>
