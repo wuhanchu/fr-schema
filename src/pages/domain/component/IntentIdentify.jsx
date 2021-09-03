@@ -96,6 +96,13 @@ class IntentIdentify extends React.Component {
                                                 this.state.data.intent.name}
                                         </Typography.Text>
                                     </div>
+                                    <div style={{ marginBottom: "10px" }}>
+                                        <Typography.Text>
+                                            匹配文本：
+                                            {this.state.data.intent &&
+                                            this.state.data.intent.match_regex || this.state.data.intent.match_standard_discourse}
+                                        </Typography.Text>
+                                    </div>
                                     <List
                                         header={<div>意图排名</div>}
                                         footer={false}

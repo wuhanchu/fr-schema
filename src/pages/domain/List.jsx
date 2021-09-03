@@ -5,7 +5,7 @@ import React, { Fragment } from "react"
 import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
 import SearchPageModal from "@/pages/question/components/SearchPageModal"
-import { Divider, message, Modal, Popconfirm } from "antd"
+import { Divider, message, Modal, Popconfirm, Menu, Dropdown } from "antd"
 import DialogueModal from "@/pages/question/components/DialogueModal"
 import YamlEdit from "@/pages/story/yamlEdiit"
 import frSchema from "@/outter/fr-schema/src"
@@ -15,6 +15,7 @@ import HotWord from "./component/HotWord"
 import SearchHistory from "./component/SearchHistory"
 
 import IntentIdentify from "./component/IntentIdentify"
+import {DownOutlined} from '@ant-design/icons';
 
 const { schemaFieldType } = frSchema
 
@@ -240,16 +241,112 @@ class List extends ListPage {
     }
 
     renderOperateColumnExtend(record) {
+        const menu = (
+            <Menu>
+                <Menu.Item>
+                    <a
+                        onClick={() => {
+                            this.setState({ record, visibleSearch: true })
+                        }}
+                    >
+                        搜索
+                    </a>
+                </Menu.Item>
+                <Menu.Item>
+                    <a
+                        onClick={() => {
+                            this.setState({
+                                showYamlEdit: true,
+                                record,
+                                schemasName: "content",
+                            })
+                        }}
+                    >
+                        内容
+                    </a>
+                </Menu.Item>
+                <Menu.Item>
+                    <a
+                        onClick={() => {
+                            this.setState({
+                                showYamlEdit: true,
+                                record,
+                                schemasName: "config",
+                            })
+                        }}
+                    >
+                        配置
+                    </a>
+                </Menu.Item>
+                <Menu.Item>
+                    <Popconfirm
+                        title="是否将数据同步到引擎？"
+                        onConfirm={async (e) => {
+                            await this.service.sync({ domain_key: record.key })
+                            message.success("数据同步中！")
+                            e.stopPropagation()
+                        }}
+                    >
+                        <a>同步</a>
+                    </Popconfirm>
+                </Menu.Item>
+                <Menu.Item>
+                    <a
+                        onClick={async () => {
+                            const domainUser = await this.service.getDomainUser({
+                                domain_key: `eq.${record.key}`,
+                            })
+                            const teamHaveUser = []
+                            if (domainUser) {
+                                domainUser.list.map((item) => {
+                                    teamHaveUser.push(item.user_id)
+                                    return item
+                                })
+                            }
+                            this.setState({
+                                record,
+                                visibleAssign: true,
+                                teamHaveUser: teamHaveUser,
+                            })
+                            this.setState({
+                                record,
+                                teamHaveUser,
+                                visibleAssign: true,
+                                domainUser: domainUser.list,
+                            })
+                        }}
+                    >
+                        人员分配
+                    </a>
+                </Menu.Item>
+                <Menu.Item>
+                    <a
+                        onClick={async () => {
+                            this.setState({
+                                showHotWord: true,
+                                record,
+                            })
+                        }}
+                    >
+                        热门问题
+                    </a>
+                </Menu.Item>
+                <Menu.Item>
+                    <a
+                        onClick={async () => {
+                            this.setState({
+                                visibleSearchHistory: true,
+                                record,
+                            })
+                        }}
+                    >
+                        搜索历史
+                    </a>
+                </Menu.Item>
+            </Menu>
+        )
         return (
             <Fragment>
-                <Divider type="vertical" />
-                <a
-                    onClick={() => {
-                        this.setState({ record, visibleSearch: true })
-                    }}
-                >
-                    搜索
-                </a>
                 <Divider type="vertical" />
                 <a
                     onClick={() => {
@@ -257,80 +354,6 @@ class List extends ListPage {
                     }}
                 >
                     对话
-                </a>
-                <Divider type="vertical" />
-                <a
-                    onClick={() => {
-                        this.setState({
-                            showYamlEdit: true,
-                            record,
-                            schemasName: "content",
-                        })
-                    }}
-                >
-                    内容
-                </a>
-                <Divider type="vertical" />
-                <a
-                    onClick={() => {
-                        this.setState({
-                            showYamlEdit: true,
-                            record,
-                            schemasName: "config",
-                        })
-                    }}
-                >
-                    配置
-                </a>
-                <Divider type="vertical" />
-                <Popconfirm
-                    title="是否将数据同步到引擎？"
-                    onConfirm={async (e) => {
-                        await this.service.sync({ domain_key: record.key })
-                        message.success("数据同步中！")
-                        e.stopPropagation()
-                    }}
-                >
-                    <a>同步</a>
-                </Popconfirm>
-                <Divider type="vertical" />
-                <a
-                    onClick={async () => {
-                        const domainUser = await this.service.getDomainUser({
-                            domain_key: `eq.${record.key}`,
-                        })
-                        const teamHaveUser = []
-                        if (domainUser) {
-                            domainUser.list.map((item) => {
-                                teamHaveUser.push(item.user_id)
-                                return item
-                            })
-                        }
-                        this.setState({
-                            record,
-                            visibleAssign: true,
-                            teamHaveUser: teamHaveUser,
-                        })
-                        this.setState({
-                            record,
-                            teamHaveUser,
-                            visibleAssign: true,
-                            domainUser: domainUser.list,
-                        })
-                    }}
-                >
-                    人员分配
-                </a>
-                <Divider type="vertical" />
-                <a
-                    onClick={async () => {
-                        this.setState({
-                            showHotWord: true,
-                            record,
-                        })
-                    }}
-                >
-                    热门问题
                 </a>
                 <Divider type="vertical" />
                 <a
@@ -344,16 +367,11 @@ class List extends ListPage {
                     意图识别
                 </a>
                 <Divider type="vertical" />
-                <a
-                    onClick={async () => {
-                        this.setState({
-                            visibleSearchHistory: true,
-                            record,
-                        })
-                    }}
-                >
-                    搜索历史
-                </a>
+                <Dropdown overlay={menu}>
+                    <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
+                        更多<DownOutlined />
+                    </a>
+                </Dropdown>
             </Fragment>
         )
     }
