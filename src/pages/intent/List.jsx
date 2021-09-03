@@ -388,6 +388,24 @@ class List extends ListPage {
     sortUp(a, b) {
         return b.tier - a.tier
     }
+
+    /**
+     * 重置查询
+     */
+    handleFormReset = () => {
+        const { order } = this.props
+
+        this.formRef.current.resetFields()
+        this.setState(
+            {
+                pagination: { ...this.state.pagination, currentPage: 1 },
+                searchValues: { order, logical_path: "." },
+            },
+            () => {
+                this.refreshList()
+            }
+        )
+    }
 }
 
 export default List
