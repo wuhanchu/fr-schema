@@ -57,7 +57,23 @@ export const startDragToGraph = (graph, type, e) => {
                           fill: "#ffffff",
                       },
                   },
-                  ports: ports,
+                  ports: {
+                      ...ports,
+                      items: [
+                          {
+                              id: "port2",
+                              group: "bottom",
+                          },
+                          {
+                              id: "port3",
+                              group: "left",
+                          },
+                          {
+                              id: "port4",
+                              group: "right",
+                          },
+                      ],
+                  },
               })
             : type === "begin"
             ? graph.createNode({
@@ -149,7 +165,7 @@ export const ports = {
                     r: 4,
                     magnet: true,
                     stroke: "#2D8CF0",
-                    strokeWidth: 2,
+                    strokeWidth: 1,
                     fill: "#fff",
                 },
             },
@@ -162,7 +178,7 @@ export const ports = {
                     r: 4,
                     magnet: true,
                     stroke: "#2D8CF0",
-                    strokeWidth: 2,
+                    strokeWidth: 1,
                     fill: "#fff",
                 },
             },
@@ -174,7 +190,7 @@ export const ports = {
                     r: 4,
                     magnet: true,
                     stroke: "#2D8CF0",
-                    strokeWidth: 2,
+                    strokeWidth: 1,
                     fill: "#fff",
                 },
             },
@@ -186,7 +202,7 @@ export const ports = {
                     r: 4,
                     magnet: true,
                     stroke: "#2D8CF0",
-                    strokeWidth: 2,
+                    strokeWidth: 1,
                     fill: "#fff",
                 },
             },

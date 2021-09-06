@@ -27,8 +27,18 @@ export const ActionModal = ({
     if (cell.getData && cell.getData().action) {
         actionList = cell.getData().action
     }
+    let isMore = 0
+    expGraphData.node.map((item) => {
+        item.action &&
+            item.action.map((item) => {
+                if (item === defaultValue.key) {
+                    isMore = isMore + 1
+                }
+            })
+    })
 
     const onFinish = (values) => {
+        console.log("数据室", values)
         let myActions = clone(actions)
         if (actionType === "add") {
             let actionKey = cell.id + `${Date.now()}`
@@ -49,10 +59,13 @@ export const ActionModal = ({
             if (expGraph.action) {
                 let arr = expGraph.action.map((item) => {
                     if (item.key === defaultValue.key) {
+                        console.log(values)
                         return { ...values, key: defaultValue.key }
                     }
                     return item
                 })
+                expGraph.action = null
+
                 expGraph.action = arr
                 graphChange()
             }
@@ -62,6 +75,8 @@ export const ActionModal = ({
     }
 
     const [importData, setImportData] = useState([])
+    const [isImport, setIsImport] = useState(null)
+
     if (initialValues["param"]) {
         var [AceEditorValue, setAceEditorValue] = useState(
             JSON.stringify(initialValues["param"], null, "\t")
@@ -159,7 +174,7 @@ export const ActionModal = ({
                     oneNodeAction &&
                         nodeActionDict.push(
                             <Select.Option
-                                value={key + "nodeID_" + oneNodeAction.key}
+                                value={item.key + "nodeID_" + oneNodeAction.key}
                             >
                                 {oneNodeAction.name}
                             </Select.Option>
@@ -203,6 +218,7 @@ export const ActionModal = ({
                                         item.key === key.split("nodeID_")[1]
                                 )[0]
                                 formRef.current.setFieldsValue(importData)
+                                setIsImport(key.split("nodeID_")[1])
                                 setImportData(importData)
                                 if (importData.param) {
                                     setAceEditorValue(
@@ -253,8 +269,14 @@ export const ActionModal = ({
                                 obj["param"] = res
                                 try {
                                     formRef.current.setFieldsValue({
+                                        param: undefined,
+                                    })
+                                    formRef.current.setFieldsValue({
                                         param: JSON.parse(res),
                                     })
+
+                                    console.log("数据是")
+                                    console.log(JSON.parse(res))
                                 } catch (error) {
                                     console.log(error)
                                 }
@@ -288,13 +310,85 @@ export const ActionModal = ({
                     </div>
                 </Form.Item>
                 <Form.Item wrapperCol={{ offset: 10, span: 12 }}>
-                    <Button
-                        style={{ float: "right" }}
-                        type="primary"
-                        htmlType="submit"
-                    >
-                        提交
-                    </Button>
+                    {isMore <= 1 && !isImport && (
+                        <Button
+                            style={{ float: "right" }}
+                            type="primary"
+                            htmlType="submit"
+                        >
+                            更新
+                        </Button>
+                    )}
+                    {(isMore > 1 || isImport) && (
+                        <Button
+                            style={{ float: "right", marginRight: "10px" }}
+                            type="primary"
+                            onClick={() => {
+                                let key = defaultValue.key || isImport
+                                let myActions = clone(actions)
+                                let values = formRef.current.getFieldsValue()
+                                let actionKey = cell.id + `${Date.now()}`
+                                myActions.push({
+                                    ...values,
+                                    key: actionKey,
+                                })
+                                console.log(actionList)
+                                if (!isImport) {
+                                    actionList.splice(
+                                        actionList.findIndex((item) => {
+                                            console.log(item)
+                                            return key === item
+                                        }),
+                                        1
+                                    )
+                                }
+
+                                console.log(actionList)
+                                actionList.push(actionKey)
+
+                                cell.setData({ action: actionList })
+                                let expGraphAction = [...graph.action]
+                                expGraphAction.push({
+                                    ...values,
+                                    key: actionKey,
+                                })
+                                graph.action = expGraphAction
+                                graphChange()
+                                handleVisible(false)
+                                handleChangeShowAction()
+                            }}
+                        >
+                            更新
+                        </Button>
+                    )}
+                    {(isMore > 1 || isImport) && (
+                        <Button
+                            style={{ float: "right", marginRight: "10px" }}
+                            type="primary"
+                            onClick={() => {
+                                let key = isImport || defaultValue.key
+                                if (isImport) {
+                                    actionList.push(isImport)
+                                    cell.setData({ action: actionList })
+                                }
+
+                                let values = formRef.current.getFieldsValue()
+                                let arr = expGraph.action.map((item) => {
+                                    if (item.key === key) {
+                                        return { ...values, key: key }
+                                    }
+                                    return item
+                                })
+
+                                expGraph.action = arr
+                                graphChange()
+                                handleVisible(false)
+                                handleChangeShowAction()
+                            }}
+                        >
+                            更新并同步
+                        </Button>
+                    )}
                 </Form.Item>
             </Form>
         </Modal>

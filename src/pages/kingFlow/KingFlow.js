@@ -64,7 +64,6 @@ class KingFlow extends React.PureComponent {
             config: "not.is.null",
             domain_key: this.props.record.domain_key,
         })
-        console.log("历史数据是", res.list)
         this.setState({ historyList: res.list })
     }
 
@@ -139,26 +138,6 @@ class KingFlow extends React.PureComponent {
                                     src={Ellipse}
                                 />
                             </div>
-                        </div>
-                        <div className="btn-group">
-                            <Tooltip title="直角箭头" placement="bottom">
-                                <div
-                                    className={
-                                        currentArrow === 3
-                                            ? "currentArrow btn"
-                                            : "btn"
-                                    }
-                                    onClick={(e) =>
-                                        this.changeEdgeType(
-                                            3,
-                                            null,
-                                            "manhattan"
-                                        )
-                                    }
-                                >
-                                    <i className="iconfont icon-jiantou" />
-                                </div>
-                            </Tooltip>
                         </div>
                         <div className="btn-group">
                             <Tooltip title="删除" placement="bottom">
@@ -411,6 +390,14 @@ class KingFlow extends React.PureComponent {
                                   id: "port2",
                                   group: "bottom",
                               },
+                              {
+                                  id: "port3",
+                                  group: "left",
+                              },
+                              {
+                                  id: "port4",
+                                  group: "right",
+                              },
                           ],
                       },
         })
@@ -486,16 +473,10 @@ class KingFlow extends React.PureComponent {
             this.setState({
                 chooseType: "",
             })
-            if (cell.getData().types === "global") {
-                this.setState({
-                    chooseType: "grid",
-                })
-            } else {
-                this.setState({
-                    chooseType: cell.isNode() ? "node" : "edge",
-                    cell: cell,
-                })
-            }
+            this.setState({
+                chooseType: cell.isNode() ? "node" : "edge",
+                cell: cell,
+            })
         })
         this.graph.on("selection:changed", (args) => {
             args.added.forEach((cell) => {
