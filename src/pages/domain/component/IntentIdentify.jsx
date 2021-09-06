@@ -3,8 +3,6 @@ import service from "@/schemas/domain/index"
 import {
     Collapse,
     Spin,
-    Tag,
-    message,
     Tooltip,
     Empty,
     Modal,
@@ -29,7 +27,6 @@ class IntentIdentify extends React.Component {
 
     renderContent() {
         const onFinish = async (values) => {
-            console.log("Success:", values)
             this.setState({ isSpin: true })
             let response = await service.service.intentIdentify({
                 domain_key: this.props.record.key,
@@ -39,7 +36,6 @@ class IntentIdentify extends React.Component {
                 data: response.data,
                 isSpin: false,
             })
-            console.log(response.data)
         }
 
         const onFinishFailed = (errorInfo) => {

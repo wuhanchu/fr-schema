@@ -16,7 +16,6 @@ const { utils } = frSchema
 @Form.create()
 class List extends DataList {
     constructor(props) {
-        console.log(props)
         super(props, {
             schema: schemas.hotWord.schema,
             service: schemas.hotWord.service,

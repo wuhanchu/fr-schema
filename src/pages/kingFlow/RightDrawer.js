@@ -41,7 +41,6 @@ class RightDrawer extends React.PureComponent {
             showCondition: [],
             isShow: true,
         }
-        console.log("props.dict.domain_key", props.dict)
     }
 
     render() {
@@ -62,7 +61,6 @@ class RightDrawer extends React.PureComponent {
                     haveEnd = true
                 }
             })
-        console.log("是否有结束节点", haveEnd)
         return (
             <div className="drawer_container">
                 {this.renderGrid()}
@@ -153,7 +151,6 @@ class RightDrawer extends React.PureComponent {
     }
 
     isError(data) {
-        console.log(data)
         let isTrue = true
         let nameArr = data.config.node.map((item) => {
             return item.name
@@ -178,7 +175,6 @@ class RightDrawer extends React.PureComponent {
         data.config.connection.map((item) => {
             if (this.countName(nameArr, item.name) > 1) {
                 let cell = this.props.graph.getCellById(item.key)
-                console.log(cell)
                 cell.attr("line/stroke", "#ff4d4f")
                 isTrue = false
             } else {
@@ -258,7 +254,6 @@ class RightDrawer extends React.PureComponent {
 
     handleChangeShowAction() {
         let { chooseType, cell } = this.props
-        console.log(this.props)
         if (cell) {
             const action = this.props.graph && this.props.graph.action
             let showAction = []
@@ -455,11 +450,6 @@ class RightDrawer extends React.PureComponent {
                                                     >
                                                         <span
                                                             onClick={() => {
-                                                                // setVisible(true)
-
-                                                                console.log(
-                                                                    item
-                                                                )
                                                                 this.setState({
                                                                     visible: true,
                                                                     activationData: item,
@@ -496,9 +486,7 @@ class RightDrawer extends React.PureComponent {
                                                                         ...actionList,
                                                                     ],
                                                                 })
-                                                                console.log(
-                                                                    "shanchu"
-                                                                )
+
                                                                 actionList &&
                                                                     actionList.map(
                                                                         (
@@ -646,7 +634,6 @@ class RightDrawer extends React.PureComponent {
                                                 >
                                                     <span
                                                         onClick={() => {
-                                                            console.log(item)
                                                             this.setState({
                                                                 conditionVisible: true,
                                                                 activationData: item,
@@ -705,7 +692,6 @@ class RightDrawer extends React.PureComponent {
                                                                     }
                                                                 )
 
-                                                            console.log(cell)
                                                             this.setState({
                                                                 showCondition: myConditions,
                                                             })

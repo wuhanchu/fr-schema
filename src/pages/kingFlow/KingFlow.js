@@ -250,7 +250,6 @@ class KingFlow extends React.PureComponent {
         let _this = this
         let data
         if (config) {
-            console.log("有配置")
             data = clone(config)
         } else {
             data = localStorage.getItem("flow" + this.props.record.id)
@@ -318,7 +317,6 @@ class KingFlow extends React.PureComponent {
         //     })
         //     this.setState({key: key})
         data.node.map((item) => {
-            console.log(item)
             this.addNodes(item)
         })
         data.connection.map((item) => {
@@ -563,18 +561,11 @@ class KingFlow extends React.PureComponent {
                     y: item.store.data.position.y,
                 },
             }
-            // if (nodeData.types !== "global")
-            console.log(itemData)
             data.node.push(itemData)
         })
         expGraph.getEdges().map((item, index) => {
             let nodeData = item.getData()
-            console.log("线是", item)
-            // if(this.graph.getCellById(item.store.data.source.cell).getData().type)
             let begin = item.store.data.source.cell
-            // if (this.graph.getCellById(begin).getData().types === "global") {
-            //     begin = null
-            // }
             if (!nodeData) {
                 nodeData = {}
             }
@@ -587,7 +578,6 @@ class KingFlow extends React.PureComponent {
                 name: nodeData.name,
                 condition: nodeData.condition,
             }
-            console.log("数据是", itemData)
             data.connection.push(itemData)
         })
         data.action = expGraph.action
@@ -861,8 +851,6 @@ class KingFlow extends React.PureComponent {
         // 获取格式化数据
         let list = this.deepNode([firstNode], nodeList, edgeList)
         let dataList = list.dataList.sort(this.sortDown)
-        // dataList = dataList.filter((value) => value.tier.length !== 0)
-        // console.info('1213', dataList)
         let arr = this.deepData(dataList[0].childrenNode, dataList)
         let ids = []
         let resNode = []
@@ -872,7 +860,6 @@ class KingFlow extends React.PureComponent {
                 ids.push(arr[i].id)
             }
         }
-        console.info("121323", arr, resNode, dataList)
         let res = { cells: [...edgeList, firstNode, ...resNode] }
 
         this.graph.fromJSON(res)
@@ -932,7 +919,6 @@ class KingFlow extends React.PureComponent {
 
     deepData(list, dataList) {
         let res = []
-        console.info("111", list)
         for (let i = 0; i < list.length; i++) {
             if (list[i].childrenNode && list[i].parentId) {
                 let length = list[i].childrenNode.length
@@ -944,19 +930,10 @@ class KingFlow extends React.PureComponent {
                         return value.id === list[i].id
                     }
                 )
-                console.info("parent", list[i], dataList[index])
                 let positionX = dataList[index].position.x
                 let positionY = dataList[index].position.y
                 let num = i + (length || 1)
-                console.info("1112312", realIndex, realIndex % 2 === 0)
                 if (realIndex % 2 === 0) {
-                    console.info(
-                        "left",
-                        list[i],
-                        positionX,
-                        num,
-                        positionX - 250 * num
-                    )
                     list[i].position = {
                         x: positionX - 165 * num,
                         y: positionY + 150,
@@ -966,13 +943,6 @@ class KingFlow extends React.PureComponent {
                         x: positionX + 165 * (num - 1),
                         y: positionY + 150,
                     }
-                    console.info(
-                        "right",
-                        list[i],
-                        positionX,
-                        num,
-                        positionX + 250 * num
-                    )
                 }
                 res.push(...this.deepData(list[i].childrenNode, dataList))
             }

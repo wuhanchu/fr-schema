@@ -1,7 +1,6 @@
 import React, { PureComponent } from "react"
-import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
-import { message, Modal, Skeleton, Spin } from "antd"
+import { Modal, Skeleton, Spin } from "antd"
 import InfoForm from "@/outter/fr-schema-antd-utils/src/components/Page/InfoForm"
 import departmentService from "@/pages/authority/department/service"
 import { dataConvert } from "@/pages/authority/department/DataList"

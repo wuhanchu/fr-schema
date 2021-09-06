@@ -1,20 +1,20 @@
-import {connect} from "dva"
+import { connect } from "dva"
 import ListPage from "@/outter/fr-schema-antd-utils/src/components/Page/ListPage"
 import schemas from "@/schemas"
 import React from "react"
-import {Form} from "@ant-design/compatible"
+import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
-import {Divider, Card, Modal, Button, message} from "antd"
+import { Modal, Button, message } from "antd"
 import frSchema from "@/outter/fr-schema/src"
-import {exportData} from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
-import {schemaFieldType} from "@/outter/fr-schema/src/schema"
+import { exportData } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
+import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
 import ImportModal from "@/outter/fr-schema-antd-utils/src/components/modal/ImportModal"
 import ChartModal from "@/pages/kingFlow/KingFlow"
 
-const {decorateList} = frSchema
+const { decorateList } = frSchema
 
-@connect(({global}) => ({
+@connect(({ global }) => ({
     dict: global.dict,
 }))
 @Form.create()
@@ -28,13 +28,13 @@ class List extends ListPage {
             schema: schemas.intent.schema,
             service: schemas.intent.service,
             importTemplateUrl,
-            queryArgs: {pageSize: 10000},
+            queryArgs: { pageSize: 10000 },
             mini: true,
         })
-        this.schema.domain_key.dict = this.props.dict.domain;
+        this.schema.domain_key.dict = this.props.dict.domain
         this.state = {
             ...this.state,
-            searchValues: {logical_path: "."}
+            searchValues: { logical_path: "." },
         }
     }
 
@@ -60,7 +60,7 @@ class List extends ListPage {
                 )}
                 <Button
                     onClick={() => {
-                        this.setState({visibleImport: true})
+                        this.setState({ visibleImport: true })
                     }}
                 >
                     导入
@@ -69,7 +69,7 @@ class List extends ListPage {
                 <Button
                     loading={this.state.exportLoading}
                     onClick={() => {
-                        this.setState({visibleExport: true})
+                        this.setState({ visibleExport: true })
                     }}
                 >
                     导出
@@ -99,7 +99,7 @@ class List extends ListPage {
         let response
         try {
             response = await this.service.uploadExcel(
-                {...data, file: data.file.file},
+                { ...data, file: data.file.file },
                 schema
             )
         } catch (error) {
@@ -118,7 +118,7 @@ class List extends ListPage {
     }
 
     async handleExport(args, schema) {
-        this.setState({exportLoading: true}, async () => {
+        this.setState({ exportLoading: true }, async () => {
             let column = this.getColumns(false).filter((item) => {
                 return !item.isExpand && item.key !== "external_id"
             })
@@ -162,7 +162,7 @@ class List extends ListPage {
             })
             data = decorateList(data.list, this.schema)
             await exportData("意图", data, columns)
-            this.setState({exportLoading: false})
+            this.setState({ exportLoading: false })
         })
         this.handleVisibleExportModal()
     }
@@ -171,10 +171,10 @@ class List extends ListPage {
         if (this.props.renderInfoModal) {
             return this.props.renderInfoModal()
         }
-        const {form} = this.props
+        const { form } = this.props
         const renderForm = this.props.renderForm || this.renderForm
-        const {resource, title, addArgs} = this.meta
-        const {visibleExport, infoData, action} = this.state
+        const { resource, title, addArgs } = this.meta
+        const { visibleExport, infoData, action } = this.state
         const updateMethods = {
             handleVisibleModal: this.handleVisibleExportModal.bind(this),
             handleUpdate: this.handleUpdate.bind(this),
@@ -249,8 +249,8 @@ class List extends ListPage {
                 errorKey={"question_standard"}
                 title={"导入"}
                 sliceNum={1}
-                onCancel={() => this.setState({visibleImport: false})}
-                onChange={(data) => this.setState({importData: data})}
+                onCancel={() => this.setState({ visibleImport: false })}
+                onChange={(data) => this.setState({ importData: data })}
                 onOk={async () => {
                     // to convert
                     const data = this.state.importData.map((item) => {
@@ -281,7 +281,7 @@ class List extends ListPage {
                     // let postData = data.filters
 
                     await this.service.upInsert(data)
-                    this.setState({visibleImport: false})
+                    this.setState({ visibleImport: false })
                     this.refreshList()
                 }}
             />
@@ -289,21 +289,21 @@ class List extends ListPage {
     }
 
     renderExtend() {
-        const {visibleFlow, record} = this.state
+        const { visibleFlow, record } = this.state
         return (
             <>
                 <Modal
                     title={"流程配置"}
                     visible={visibleFlow}
                     width={"90%"}
-                    style={{top: 20, bottom: 20}}
+                    style={{ top: 20, bottom: 20 }}
                     footer={null}
                     destroyOnClose={true}
                     onOk={() => {
-                        this.setState({visibleFlow: false})
+                        this.setState({ visibleFlow: false })
                     }}
                     onCancel={() => {
-                        this.setState({visibleFlow: false})
+                        this.setState({ visibleFlow: false })
                     }}
                     closable={false}
                 >
@@ -320,7 +320,7 @@ class List extends ListPage {
 
     // 搜索
     renderSearchBar() {
-        const {name, domain_key} = this.schema
+        const { name, domain_key } = this.schema
         const filters = this.createFilters(
             {
                 domain_key,
@@ -332,7 +332,11 @@ class List extends ListPage {
     }
 
     renderList(inProps = {}) {
-        inProps = {expandable: {onExpand: (expanded, record) => this.onExpand(expanded, record)}}
+        inProps = {
+            expandable: {
+                onExpand: (expanded, record) => this.onExpand(expanded, record),
+            },
+        }
         return super.renderList(inProps)
     }
 
@@ -340,26 +344,29 @@ class List extends ListPage {
     async onExpand(expanded, record) {
         // 如果已经获取过,不在重复调用接口
         if (record.children.length) {
-            return;
+            return
         }
         // 加载
-        this.setState({listLoading: true});
+        this.setState({ listLoading: true })
         // 获取子意图
         let res = await super.requestList({
-            logical_path: 'like.' + record.logical_path + '.*',
+            logical_path: "like." + record.logical_path + ".*",
             // domain_key: record.domain_key,
-            pageSize: 10000,  // 显示所有意图,不分页
+            pageSize: 10000, // 显示所有意图,不分页
         })
         if (res.list.length) {
             // 子意图排序 层级最深在最上面
             let list = decorateList(res.list, this.schema)
-            list = list.sort(this.sortUp);
+            list = list.sort(this.sortUp)
             let result = []
             let arr = []
             for (let i = 0; i < list.length; i++) {
                 // 获取当前意图的所有上层意图
                 arr = list.filter((value) => {
-                    return value.logical_path !== list[i].logical_path && list[i].logical_path.includes(value.logical_path)
+                    return (
+                        value.logical_path !== list[i].logical_path &&
+                        list[i].logical_path.includes(value.logical_path)
+                    )
                 })
                 // 存在上层意图则标明当前遍历意图为其他意图的子意图
                 if (arr.length) {
@@ -377,12 +384,11 @@ class List extends ListPage {
             record.children = [...result]
         } else {
             // 没有子意图时提示,并取消 + 按钮
-            record.children = null;
-            message.info('当前意图没有子意图')
+            record.children = null
+            message.info("当前意图没有子意图")
         }
-        this.setState({listLoading: false})
+        this.setState({ listLoading: false })
     }
-
 
     // 排序规则(从大到小)
     sortUp(a, b) {

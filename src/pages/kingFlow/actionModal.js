@@ -38,7 +38,6 @@ export const ActionModal = ({
     })
 
     const onFinish = (values) => {
-        console.log("数据室", values)
         let myActions = clone(actions)
         if (actionType === "add") {
             let actionKey = cell.id + `${Date.now()}`
@@ -59,7 +58,6 @@ export const ActionModal = ({
             if (expGraph.action) {
                 let arr = expGraph.action.map((item) => {
                     if (item.key === defaultValue.key) {
-                        console.log(values)
                         return { ...values, key: defaultValue.key }
                     }
                     return item
@@ -274,9 +272,6 @@ export const ActionModal = ({
                                     formRef.current.setFieldsValue({
                                         param: JSON.parse(res),
                                     })
-
-                                    console.log("数据是")
-                                    console.log(JSON.parse(res))
                                 } catch (error) {
                                     console.log(error)
                                 }
@@ -332,18 +327,15 @@ export const ActionModal = ({
                                     ...values,
                                     key: actionKey,
                                 })
-                                console.log(actionList)
                                 if (!isImport) {
                                     actionList.splice(
                                         actionList.findIndex((item) => {
-                                            console.log(item)
                                             return key === item
                                         }),
                                         1
                                     )
                                 }
 
-                                console.log(actionList)
                                 actionList.push(actionKey)
 
                                 cell.setData({ action: actionList })
