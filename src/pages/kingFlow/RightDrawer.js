@@ -53,8 +53,16 @@ class RightDrawer extends React.PureComponent {
             showCondition,
             conditionVisible,
         } = this.state
-        const { graph, cell, intenList } = this.props
-
+        const { graph, cell, intenList, expGraphData } = this.props
+        let haveEnd = false
+        expGraphData &&
+            expGraphData.node &&
+            expGraphData.node.map((item) => {
+                if (item.type === "end") {
+                    haveEnd = true
+                }
+            })
+        console.log("是否有结束节点", haveEnd)
         return (
             <div className="drawer_container">
                 {this.renderGrid()}
@@ -104,7 +112,15 @@ class RightDrawer extends React.PureComponent {
                 )}
 
                 <Popconfirm
-                    title="是否提交修改?"
+                    title={
+                        haveEnd ? (
+                            "是否提交修改?"
+                        ) : (
+                            <span style={{ color: "#f5222d" }}>
+                                当前结束节点异常，是否提交
+                            </span>
+                        )
+                    }
                     onConfirm={async () => {
                         let data = this.props.graphChange()
 
