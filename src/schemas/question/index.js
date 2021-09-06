@@ -80,7 +80,7 @@ const schema = {
             let res = item.length > 20 ? item.substring(0, 20) + "..." : item
             return (
                 <Tooltip
-                    title={<div dangerouslySetInnerHTML={{ __html: item }} />}
+                    title={<div style={{maxHeight: '400px',overflowY: 'auto'}} dangerouslySetInnerHTML={{ __html: item }} />}
                 >
                     <div dangerouslySetInnerHTML={{ __html: res }} />
                 </Tooltip>
@@ -88,11 +88,8 @@ const schema = {
         },
         props: {
             style: {
-                // width: "348px",
                 height: "388px",
-
                 border: "1px solid #d9d9d9",
-                // overflow: "scroll",
             },
             wrapperWidth: "900px",
             wrapperStyle: {

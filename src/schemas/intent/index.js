@@ -16,11 +16,14 @@ const schema = {
     name: {
         title: "名称",
         searchPrefix: "like",
-
         sorter: true,
         required: true,
     },
-
+    logical_path: {
+        title: '意图路径',
+        searchPrefix: "not.like",
+        listHide: true,
+    },
     example: {
         title: "例子",
         type: schemaFieldType.TextArea,
@@ -74,6 +77,8 @@ service.get = async function (args) {
     let list = res.list.map((item) => {
         return {
             ...item,
+            tier: item.logical_path.split('.').length,
+            children: [],
             example: item.example ? item.example.join("\n") : null,
             standard_discourse: item.standard_discourse
                 ? item.standard_discourse.join("\n")
