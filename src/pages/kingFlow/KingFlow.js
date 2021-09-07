@@ -773,7 +773,7 @@ class KingFlow extends React.PureComponent {
 
     // 拖拽生成正方形或者圆形
     startDrag(type, e) {
-        startDragToGraph(this.graph, type, e)
+        startDragToGraph(this.graph, type, e, this.graphChange.bind(this))
     }
 
     // 改变边形状

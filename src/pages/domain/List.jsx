@@ -15,7 +15,7 @@ import HotWord from "./component/HotWord"
 import SearchHistory from "./component/SearchHistory"
 
 import IntentIdentify from "./component/IntentIdentify"
-import {DownOutlined} from '@ant-design/icons';
+import { DownOutlined } from "@ant-design/icons"
 
 const { schemaFieldType } = frSchema
 
@@ -33,6 +33,7 @@ class List extends ListPage {
             infoProps: {
                 offline: true,
             },
+            operateWidth: "270px",
         })
     }
 
@@ -293,9 +294,11 @@ class List extends ListPage {
                 <Menu.Item>
                     <a
                         onClick={async () => {
-                            const domainUser = await this.service.getDomainUser({
-                                domain_key: `eq.${record.key}`,
-                            })
+                            const domainUser = await this.service.getDomainUser(
+                                {
+                                    domain_key: `eq.${record.key}`,
+                                }
+                            )
                             const teamHaveUser = []
                             if (domainUser) {
                                 domainUser.list.map((item) => {
@@ -368,8 +371,12 @@ class List extends ListPage {
                 </a>
                 <Divider type="vertical" />
                 <Dropdown overlay={menu}>
-                    <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
-                        更多<DownOutlined />
+                    <a
+                        className="ant-dropdown-link"
+                        onClick={(e) => e.preventDefault()}
+                    >
+                        更多
+                        <DownOutlined />
                     </a>
                 </Dropdown>
             </Fragment>

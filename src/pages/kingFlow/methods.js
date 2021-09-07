@@ -1,6 +1,6 @@
 import { Addon } from "@antv/x6"
 // 拖拽生成四边形或者圆形
-export const startDragToGraph = (graph, type, e) => {
+export const startDragToGraph = (graph, type, e, callback) => {
     const node =
         type === "Rect"
             ? graph.createNode({
@@ -154,6 +154,7 @@ export const startDragToGraph = (graph, type, e) => {
               })
     const dnd = new Addon.Dnd({ target: graph })
     dnd.start(node, e)
+    callback()
 }
 export const ports = {
     groups: {

@@ -19,6 +19,7 @@ class List extends DataList {
             infoProps: {
                 width: "900px",
             },
+            operateWidth: "100px",
         })
     }
 

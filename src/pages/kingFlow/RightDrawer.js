@@ -115,7 +115,7 @@ class RightDrawer extends React.PureComponent {
                             "是否提交修改?"
                         ) : (
                             <span style={{ color: "#f5222d" }}>
-                                当前结束节点异常，是否提交
+                                暂无结束节点，是否提交
                             </span>
                         )
                     }
@@ -158,8 +158,9 @@ class RightDrawer extends React.PureComponent {
         data.config.node.map((item) => {
             // this.countName(nameArr, item.name)
             if (
-                !item.allow_repeat_time ||
-                this.countName(nameArr, item.name) > 1
+                (!item.allow_repeat_time ||
+                    this.countName(nameArr, item.name) > 1) &&
+                item.type !== "global"
             ) {
                 let cell = this.props.graph.getCellById(item.key)
                 cell.attr("body/stroke", "#ff4d4f")

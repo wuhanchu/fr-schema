@@ -30,6 +30,7 @@ class List extends ListPage {
             importTemplateUrl,
             queryArgs: { pageSize: 10000 },
             mini: true,
+            operateWidth: "100px",
         })
         this.schema.domain_key.dict = this.props.dict.domain
         this.state = {
