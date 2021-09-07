@@ -37,6 +37,7 @@ class Dialogue extends React.Component {
             iphoneHeight: height * 0.82,
             conversationId: "",
             type: "chat",
+            flowResultLenght: 1,
             serviceId: record.talk_service_id,
         }
         this.chatRef = React.createRef()
@@ -166,7 +167,9 @@ class Dialogue extends React.Component {
                                             return
                                         }
                                         if (
-                                            index + 1 !== mockDetail.length &&
+                                            index +
+                                                this.state.flowResultLenght <
+                                                mockDetail.length &&
                                             this.state.type == "flow"
                                         ) {
                                             return
@@ -244,18 +247,32 @@ class Dialogue extends React.Component {
                                                         text: data.payload,
                                                     }
                                                 )
-                                                list.push({
-                                                    content:
-                                                        res.data.result.text,
-                                                    onlyRead: true,
-                                                    buttons:
-                                                        res.data.result.buttons,
-                                                    name: "智能客服",
-                                                    time: new Date(),
-                                                    avatar:
-                                                        "http://img.binlive.cn/6.png",
-                                                    type: "left",
-                                                })
+                                                if (
+                                                    res.data &&
+                                                    res.data.result
+                                                ) {
+                                                    res.data.result.map(
+                                                        (data) =>
+                                                            list.push({
+                                                                content:
+                                                                    data.text,
+                                                                onlyRead: true,
+                                                                buttons:
+                                                                    data.buttons,
+                                                                name:
+                                                                    "智能客服",
+                                                                time: new Date(),
+                                                                avatar:
+                                                                    "http://img.binlive.cn/6.png",
+                                                                type: "left",
+                                                            })
+                                                    )
+                                                    this.setState({
+                                                        flowResultLenght:
+                                                            res.data.result
+                                                                .length,
+                                                    })
+                                                }
                                             }
                                         } catch (error) {
                                             message.error(error.message)
@@ -281,13 +298,17 @@ class Dialogue extends React.Component {
                                         marginBottom: "10px",
                                         letterSpacing: "1px",
                                         backgroundColor:
-                                            index + 1 === mockDetail.length
+                                            index +
+                                                this.state.flowResultLenght >=
+                                            mockDetail.length
                                                 ? "#1890ff"
                                                 : data.isClick === true
                                                 ? "#bae7ff"
                                                 : "#ccc",
                                         color:
-                                            index + 1 === mockDetail.length
+                                            index +
+                                                this.state.flowResultLenght >=
+                                            mockDetail.length
                                                 ? "#fff"
                                                 : "#000",
                                         ...clientStyle,
@@ -551,7 +572,10 @@ class Dialogue extends React.Component {
                                     })
                                 }
                             }
-                            this.setState({ isSpin: false })
+                            this.setState({
+                                isSpin: false,
+                                flowResultLenght: 1,
+                            })
                         }}
                         onCancel={() => {
                             this.setState({
@@ -673,16 +697,22 @@ class Dialogue extends React.Component {
                         conversation_id: conversationId,
                         text: inputValue,
                     })
-                    console.log(res)
-                    list.push({
-                        content: res.data.result.text,
-                        onlyRead: true,
-                        buttons: res.data.result.buttons,
-                        name: "智能客服",
-                        time: new Date(),
-                        avatar: "http://img.binlive.cn/6.png",
-                        type: "left",
-                    })
+                    if (res.data && res.data.result) {
+                        res.data.result.map((data) =>
+                            list.push({
+                                content: data.text,
+                                onlyRead: true,
+                                buttons: data.buttons,
+                                name: "智能客服",
+                                time: new Date(),
+                                avatar: "http://img.binlive.cn/6.png",
+                                type: "left",
+                            })
+                        )
+                        this.setState({
+                            flowResultLenght: res.data.result.length,
+                        })
+                    }
                 } catch (error) {
                     console.log(error)
                     message.error(error.message)
