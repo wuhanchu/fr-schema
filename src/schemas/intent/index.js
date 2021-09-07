@@ -16,11 +16,14 @@ const schema = {
     name: {
         title: "名称",
         searchPrefix: "like",
-
         sorter: true,
         required: true,
     },
-
+    logical_path: {
+        title: "意图路径",
+        searchPrefix: "not.like",
+        listHide: true,
+    },
     example: {
         title: "例子",
         type: schemaFieldType.TextArea,
@@ -74,6 +77,8 @@ service.get = async function (args) {
     let list = res.list.map((item) => {
         return {
             ...item,
+            tier: item.logical_path.split(".").length,
+            children: [],
             example: item.example ? item.example.join("\n") : null,
             standard_discourse: item.standard_discourse
                 ? item.standard_discourse.join("\n")
@@ -81,8 +86,6 @@ service.get = async function (args) {
             regex: item.regex ? item.regex.join("\n") : null,
         }
     })
-    console.log("list")
-    console.log(list)
     return { ...res, list: list }
 }
 
@@ -115,6 +118,8 @@ service.post = async function (args, schema) {
     })
     return res
 }
+
+service.getFlowHistory = createApi("flow_history", schema, null, "eq.").get
 
 service.patch = async function (args, schema) {
     let example = null

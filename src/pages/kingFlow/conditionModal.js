@@ -206,7 +206,7 @@ export const ConditionModal = ({
                                             type="primary"
                                             htmlType="submit"
                                         >
-                                            提交
+                                            更新
                                         </Button>
                                     </Col>
                                 </Row>

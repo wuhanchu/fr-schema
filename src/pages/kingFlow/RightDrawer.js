@@ -41,7 +41,6 @@ class RightDrawer extends React.PureComponent {
             showCondition: [],
             isShow: true,
         }
-        console.log("props.dict.domain_key", props.dict)
     }
 
     render() {
@@ -53,8 +52,15 @@ class RightDrawer extends React.PureComponent {
             showCondition,
             conditionVisible,
         } = this.state
-        const { graph, cell, intenList } = this.props
-
+        const { graph, cell, intenList, expGraphData } = this.props
+        let haveEnd = false
+        expGraphData &&
+            expGraphData.node &&
+            expGraphData.node.map((item) => {
+                if (item.type === "end") {
+                    haveEnd = true
+                }
+            })
         return (
             <div className="drawer_container">
                 {this.renderGrid()}
@@ -104,7 +110,15 @@ class RightDrawer extends React.PureComponent {
                 )}
 
                 <Popconfirm
-                    title="是否提交修改?"
+                    title={
+                        haveEnd ? (
+                            "是否提交修改?"
+                        ) : (
+                            <span style={{ color: "#f5222d" }}>
+                                暂无结束节点，是否提交
+                            </span>
+                        )
+                    }
                     onConfirm={async () => {
                         let data = this.props.graphChange()
 
@@ -137,7 +151,6 @@ class RightDrawer extends React.PureComponent {
     }
 
     isError(data) {
-        console.log(data)
         let isTrue = true
         let nameArr = data.config.node.map((item) => {
             return item.name
@@ -145,8 +158,9 @@ class RightDrawer extends React.PureComponent {
         data.config.node.map((item) => {
             // this.countName(nameArr, item.name)
             if (
-                !item.allow_repeat_time ||
-                this.countName(nameArr, item.name) > 1
+                (!item.allow_repeat_time ||
+                    this.countName(nameArr, item.name) > 1) &&
+                item.type !== "global"
             ) {
                 let cell = this.props.graph.getCellById(item.key)
                 cell.attr("body/stroke", "#ff4d4f")
@@ -162,7 +176,6 @@ class RightDrawer extends React.PureComponent {
         data.config.connection.map((item) => {
             if (this.countName(nameArr, item.name) > 1) {
                 let cell = this.props.graph.getCellById(item.key)
-                console.log(cell)
                 cell.attr("line/stroke", "#ff4d4f")
                 isTrue = false
             } else {
@@ -242,7 +255,6 @@ class RightDrawer extends React.PureComponent {
 
     handleChangeShowAction() {
         let { chooseType, cell } = this.props
-        console.log(this.props)
         if (cell) {
             const action = this.props.graph && this.props.graph.action
             let showAction = []
@@ -439,11 +451,6 @@ class RightDrawer extends React.PureComponent {
                                                     >
                                                         <span
                                                             onClick={() => {
-                                                                // setVisible(true)
-
-                                                                console.log(
-                                                                    item
-                                                                )
                                                                 this.setState({
                                                                     visible: true,
                                                                     activationData: item,
@@ -480,9 +487,7 @@ class RightDrawer extends React.PureComponent {
                                                                         ...actionList,
                                                                     ],
                                                                 })
-                                                                console.log(
-                                                                    "shanchu"
-                                                                )
+
                                                                 actionList &&
                                                                     actionList.map(
                                                                         (
@@ -630,7 +635,6 @@ class RightDrawer extends React.PureComponent {
                                                 >
                                                     <span
                                                         onClick={() => {
-                                                            console.log(item)
                                                             this.setState({
                                                                 conditionVisible: true,
                                                                 activationData: item,
@@ -689,7 +693,6 @@ class RightDrawer extends React.PureComponent {
                                                                     }
                                                                 )
 
-                                                            console.log(cell)
                                                             this.setState({
                                                                 showCondition: myConditions,
                                                             })

@@ -1,6 +1,6 @@
 import { Addon } from "@antv/x6"
 // 拖拽生成四边形或者圆形
-export const startDragToGraph = (graph, type, e) => {
+export const startDragToGraph = (graph, type, e, callback) => {
     const node =
         type === "Rect"
             ? graph.createNode({
@@ -38,7 +38,7 @@ export const startDragToGraph = (graph, type, e) => {
                   data: {
                       name: "全局节点",
                       allow_repeat_time: 2,
-                      types: "globle",
+                      types: "global",
                   },
                   attrs: {
                       label: {
@@ -57,7 +57,23 @@ export const startDragToGraph = (graph, type, e) => {
                           fill: "#ffffff",
                       },
                   },
-                  ports: ports,
+                  ports: {
+                      ...ports,
+                      items: [
+                          {
+                              id: "port2",
+                              group: "bottom",
+                          },
+                          {
+                              id: "port3",
+                              group: "left",
+                          },
+                          {
+                              id: "port4",
+                              group: "right",
+                          },
+                      ],
+                  },
               })
             : type === "begin"
             ? graph.createNode({
@@ -138,6 +154,7 @@ export const startDragToGraph = (graph, type, e) => {
               })
     const dnd = new Addon.Dnd({ target: graph })
     dnd.start(node, e)
+    callback()
 }
 export const ports = {
     groups: {
@@ -149,7 +166,7 @@ export const ports = {
                     r: 4,
                     magnet: true,
                     stroke: "#2D8CF0",
-                    strokeWidth: 2,
+                    strokeWidth: 1,
                     fill: "#fff",
                 },
             },
@@ -162,35 +179,35 @@ export const ports = {
                     r: 4,
                     magnet: true,
                     stroke: "#2D8CF0",
-                    strokeWidth: 2,
+                    strokeWidth: 1,
                     fill: "#fff",
                 },
             },
         },
-        // left: {
-        //   position: 'left',
-        //   attrs: {
-        //     circle: {
-        //       r: 4,
-        //       magnet: true,
-        //       stroke: '#2D8CF0',
-        //       strokeWidth: 2,
-        //       fill: '#fff',
-        //     },
-        //   },
-        // },
-        // right: {
-        //   position: 'right',
-        //   attrs: {
-        //     circle: {
-        //       r: 4,
-        //       magnet: true,
-        //       stroke: '#2D8CF0',
-        //       strokeWidth: 2,
-        //       fill: '#fff',
-        //     },
-        //   },
-        // },
+        left: {
+            position: "left",
+            attrs: {
+                circle: {
+                    r: 4,
+                    magnet: true,
+                    stroke: "#2D8CF0",
+                    strokeWidth: 1,
+                    fill: "#fff",
+                },
+            },
+        },
+        right: {
+            position: "right",
+            attrs: {
+                circle: {
+                    r: 4,
+                    magnet: true,
+                    stroke: "#2D8CF0",
+                    strokeWidth: 1,
+                    fill: "#fff",
+                },
+            },
+        },
     },
     items: [
         {
@@ -201,13 +218,13 @@ export const ports = {
             id: "port2",
             group: "bottom",
         },
-        // {
-        //   id: 'port3',
-        //   group: 'left',
-        // },
-        // {
-        //   id: 'port4',
-        //   group: 'right',
-        // }
+        {
+            id: "port3",
+            group: "left",
+        },
+        {
+            id: "port4",
+            group: "right",
+        },
     ],
 }

@@ -4,14 +4,13 @@ import schemas from "@/schemas"
 import React from "react"
 import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
-import { Divider, Card, Modal, Button, message } from "antd"
+import { Modal, Button, message } from "antd"
 import frSchema from "@/outter/fr-schema/src"
 import { exportData } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
 import ImportModal from "@/outter/fr-schema-antd-utils/src/components/modal/ImportModal"
 import ChartModal from "@/pages/kingFlow/KingFlow"
-import WordModel from "@/outter/fr-schema-antd-utils/src/components/GGeditor/WordModel/index"
 
 const { decorateList } = frSchema
 
@@ -29,8 +28,15 @@ class List extends ListPage {
             schema: schemas.intent.schema,
             service: schemas.intent.service,
             importTemplateUrl,
+            queryArgs: { pageSize: 10000 },
+            mini: true,
+            operateWidth: "100px",
         })
         this.schema.domain_key.dict = this.props.dict.domain
+        this.state = {
+            ...this.state,
+            searchValues: { logical_path: "." },
+        }
     }
 
     /**
@@ -72,6 +78,7 @@ class List extends ListPage {
             </>
         )
     }
+
     handleVisibleExportModal = (flag, record, action) => {
         this.setState({
             visibleExport: !!flag,
@@ -87,6 +94,7 @@ class List extends ListPage {
             action,
         })
     }
+
     async handleUploadExcel(data, schema) {
         // 更新
         let response
@@ -115,8 +123,6 @@ class List extends ListPage {
             let column = this.getColumns(false).filter((item) => {
                 return !item.isExpand && item.key !== "external_id"
             })
-            console.log(column)
-
             let columns = [
                 {
                     title: "编号",
@@ -150,7 +156,6 @@ class List extends ListPage {
                     key: "standard_discourse",
                 },
             ]
-            console.log(columns)
             let data = await this.requestList({
                 pageSize: 1000000,
                 offset: 0,
@@ -274,8 +279,6 @@ class List extends ListPage {
                                 : undefined,
                         }
                     })
-                    console.log(data)
-
                     // let postData = data.filters
 
                     await this.service.upInsert(data)
@@ -285,6 +288,7 @@ class List extends ListPage {
             />
         )
     }
+
     renderExtend() {
         const { visibleFlow, record } = this.state
         return (
@@ -297,7 +301,6 @@ class List extends ListPage {
                     footer={null}
                     destroyOnClose={true}
                     onOk={() => {
-                        console.log(window.__isReactDndBackendSetUp)
                         this.setState({ visibleFlow: false })
                     }}
                     onCancel={() => {
@@ -315,6 +318,7 @@ class List extends ListPage {
             </>
         )
     }
+
     // 搜索
     renderSearchBar() {
         const { name, domain_key } = this.schema
@@ -326,6 +330,88 @@ class List extends ListPage {
             5
         )
         return this.createSearchBar(filters)
+    }
+
+    renderList(inProps = {}) {
+        inProps = {
+            expandable: {
+                onExpand: (expanded, record) => this.onExpand(expanded, record),
+            },
+        }
+        return super.renderList(inProps)
+    }
+
+    // 展开
+    async onExpand(expanded, record) {
+        // 如果已经获取过,不在重复调用接口
+        if (record.children.length) {
+            return
+        }
+        // 加载
+        this.setState({ listLoading: true })
+        // 获取子意图
+        let res = await super.requestList({
+            logical_path: "like." + record.logical_path + ".*",
+            // domain_key: record.domain_key,
+            pageSize: 10000, // 显示所有意图,不分页
+        })
+        if (res.list.length) {
+            // 子意图排序 层级最深在最上面
+            let list = decorateList(res.list, this.schema)
+            list = list.sort(this.sortUp)
+            let result = []
+            let arr = []
+            for (let i = 0; i < list.length; i++) {
+                // 获取当前意图的所有上层意图
+                arr = list.filter((value) => {
+                    return (
+                        value.logical_path !== list[i].logical_path &&
+                        list[i].logical_path.includes(value.logical_path)
+                    )
+                })
+                // 存在上层意图则标明当前遍历意图为其他意图的子意图
+                if (arr.length) {
+                    // 获取当前遍历意图的父意图 并加入其父意图的子集中
+                    arr = arr.sort(this.sortUp)
+                    let index = list.findIndex((value) => {
+                        return value.id === arr[0].id
+                    })
+                    list[index].children.push(list[i])
+                } else {
+                    // 不存在上层意图表示当前遍历意图为最高子意图
+                    result.push(list[i])
+                }
+            }
+            record.children = [...result]
+        } else {
+            // 没有子意图时提示,并取消 + 按钮
+            record.children = null
+            message.info("当前意图没有子意图")
+        }
+        this.setState({ listLoading: false })
+    }
+
+    // 排序规则(从大到小)
+    sortUp(a, b) {
+        return b.tier - a.tier
+    }
+
+    /**
+     * 重置查询
+     */
+    handleFormReset = () => {
+        const { order } = this.props
+
+        this.formRef.current.resetFields()
+        this.setState(
+            {
+                pagination: { ...this.state.pagination, currentPage: 1 },
+                searchValues: { order, logical_path: "." },
+            },
+            () => {
+                this.refreshList()
+            }
+        )
     }
 }
 

@@ -1,10 +1,9 @@
-import React from 'react';
-import service from '@/schemas/domain/index';
+import React from "react"
+import service from "@/schemas/domain/index"
 import {
     Collapse,
     Spin,
-    Tag,
-    message,
+    Tooltip,
     Empty,
     Modal,
     Button,
@@ -14,10 +13,9 @@ import {
     Skeleton,
     List,
     Typography,
-} from 'antd';
-// import { Form } from '@ant-design/compatible';
-
-const { Panel } = Collapse;
+} from "antd"
+import { formatData } from "@/utils/utils"
+const { Panel } = Collapse
 
 class IntentIdentify extends React.Component {
     state = {
@@ -25,33 +23,31 @@ class IntentIdentify extends React.Component {
         loading: true,
         success: false,
         isSpin: false,
-    };
+    }
 
     renderContent() {
         const onFinish = async (values) => {
-            console.log('Success:', values);
-            this.setState({ isSpin: true });
+            this.setState({ isSpin: true })
             let response = await service.service.intentIdentify({
-                service_id: this.props.record.id,
+                domain_key: this.props.record.key,
                 text: values.text,
-            });
+            })
             this.setState({
                 data: response.data,
                 isSpin: false,
-            });
-            console.log(response.data);
-        };
+            })
+        }
 
         const onFinishFailed = (errorInfo) => {
-            console.log('Failed:', errorInfo);
-        };
+            console.log("Failed:", errorInfo)
+        }
 
         return (
             <>
                 <div>
                     <Form
                         name="basic"
-                        layout={'inline'}
+                        layout={"inline"}
                         labelCol={{ span: 8 }}
                         wrapperCol={{ span: 16 }}
                         initialValues={{ remember: true }}
@@ -61,9 +57,14 @@ class IntentIdentify extends React.Component {
                         <Form.Item
                             label="解析文本"
                             name="text"
-                            rules={[{ required: true, message: '请输入对话文本' }]}
+                            rules={[
+                                { required: true, message: "请输入对话文本" },
+                            ]}
                         >
-                            <Input placeholder={'请输入对话文本'} style={{ width: '400px' }} />
+                            <Input
+                                placeholder={"请输入对话文本"}
+                                style={{ width: "400px" }}
+                            />
                         </Form.Item>
 
                         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
@@ -74,19 +75,31 @@ class IntentIdentify extends React.Component {
                     </Form>
                 </div>
                 <Spin spinning={this.state.isSpin}>
-                    <div style={{ marginTop: '10px' }}>
+                    <div style={{ marginTop: "10px" }}>
                         <Card>
                             {!this.state.data && <Empty />}
                             {this.state.data && (
                                 <div>
-                                    <div style={{ marginBottom: '10px' }}>
+                                    <div style={{ marginBottom: "10px" }}>
                                         <Typography.Text>
                                             解析文本：{this.state.data.text}
                                         </Typography.Text>
                                     </div>
-                                    <div style={{ marginBottom: '10px' }}>
+                                    <div style={{ marginBottom: "10px" }}>
                                         <Typography.Text>
-                                            识别的意图：{this.state.data.intent.name}
+                                            识别的意图：
+                                            {this.state.data.intent &&
+                                                this.state.data.intent.name}
+                                        </Typography.Text>
+                                    </div>
+                                    <div style={{ marginBottom: "10px" }}>
+                                        <Typography.Text>
+                                            匹配文本：
+                                            {this.state.data.intent &&
+                                                (this.state.data.intent
+                                                    .match_regex ||
+                                                    this.state.data.intent
+                                                        .match_standard_discourse)}
                                         </Typography.Text>
                                     </div>
                                     <List
@@ -94,7 +107,9 @@ class IntentIdentify extends React.Component {
                                         footer={false}
                                         size="small"
                                         bordered
-                                        dataSource={this.state.data.intent_ranking}
+                                        dataSource={
+                                            this.state.data.intent_ranking
+                                        }
                                         renderItem={(item) => (
                                             <List.Item>
                                                 <Skeleton
@@ -103,8 +118,26 @@ class IntentIdentify extends React.Component {
                                                     loading={item.loading}
                                                     active
                                                 >
-                                                    <List.Item.Meta title={<a>{item.name}</a>} />
-                                                    <div>{item.confidence}</div>
+                                                    <List.Item.Meta
+                                                        title={
+                                                            <Tooltip
+                                                                placement="topLeft"
+                                                                title={
+                                                                    item.match_regex
+                                                                }
+                                                            >
+                                                                <a>
+                                                                    {item.name}
+                                                                </a>
+                                                            </Tooltip>
+                                                        }
+                                                    />
+                                                    <div>
+                                                        {formatData(
+                                                            item.compatibility,
+                                                            5
+                                                        )}
+                                                    </div>
                                                 </Skeleton>
                                             </List.Item>
                                         )}
@@ -115,7 +148,7 @@ class IntentIdentify extends React.Component {
                     </div>
                 </Spin>
             </>
-        );
+        )
     }
 
     render() {
@@ -132,17 +165,17 @@ class IntentIdentify extends React.Component {
                                 result: [],
                                 loading: true,
                                 success: false,
-                            });
+                            })
                         }}
-                        width={'630px'}
+                        width={"630px"}
                         maskClosable
                     >
                         {this.renderContent()}
                     </Modal>
                 }
             </>
-        );
+        )
     }
 }
 
-export default IntentIdentify;
+export default IntentIdentify
