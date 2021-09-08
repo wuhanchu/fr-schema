@@ -20,7 +20,7 @@ const schema = {
         required: true,
     },
     logical_path: {
-        title: '意图路径',
+        title: "意图路径",
         searchPrefix: "not.like",
         listHide: true,
     },
@@ -77,7 +77,7 @@ service.get = async function (args) {
     let list = res.list.map((item) => {
         return {
             ...item,
-            tier: item.logical_path.split('.').length,
+            tier: item.logical_path.split(".").length,
             children: [],
             example: item.example ? item.example.join("\n") : null,
             standard_discourse: item.standard_discourse

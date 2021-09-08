@@ -80,7 +80,12 @@ const schema = {
             let res = item.length > 20 ? item.substring(0, 20) + "..." : item
             return (
                 <Tooltip
-                    title={<div style={{maxHeight: '400px',overflowY: 'auto'}} dangerouslySetInnerHTML={{ __html: item }} />}
+                    title={
+                        <div
+                            style={{ maxHeight: "400px", overflowY: "auto" }}
+                            dangerouslySetInnerHTML={{ __html: item }}
+                        />
+                    }
                 >
                     <div dangerouslySetInnerHTML={{ __html: res }} />
                 </Tooltip>
