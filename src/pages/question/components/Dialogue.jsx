@@ -27,6 +27,7 @@ class Dialogue extends Chat {
             flowOption: [],
             flow_key: "",
             historyid: "",
+            resultFlowLenght: 1,
             domain_key: record.key,
         }
     }
@@ -194,7 +195,8 @@ class Dialogue extends Chat {
                                         return
                                     }
                                     if (
-                                        index + 1 !== messageList.length &&
+                                        index + this.state.resultFlowLenght <
+                                            messageList.length &&
                                         type === "flow"
                                     ) {
                                         return
@@ -266,17 +268,24 @@ class Dialogue extends Chat {
                                                     text: data.payload,
                                                 }
                                             )
-                                            list.push({
-                                                content: res.data.result.text,
-                                                onlyRead: true,
-                                                buttons:
-                                                    res.data.result.buttons,
-                                                name: "智能客服",
-                                                time: new Date(),
-                                                avatar:
-                                                    "http://img.binlive.cn/6.png",
-                                                type: "left",
-                                            })
+                                            if (res.data && res.data.result) {
+                                                res.data.result.map((data) =>
+                                                    list.push({
+                                                        content: data.text,
+                                                        onlyRead: true,
+                                                        buttons: data.buttons,
+                                                        name: "智能客服",
+                                                        time: new Date(),
+                                                        avatar:
+                                                            "http://img.binlive.cn/6.png",
+                                                        type: "left",
+                                                    })
+                                                )
+                                                this.setState({
+                                                    resultFlowLenght:
+                                                        res.data.result.length,
+                                                })
+                                            }
                                         }
                                     } catch (error) {
                                         message.error(error.message)
@@ -301,13 +310,15 @@ class Dialogue extends Chat {
                                     marginBottom: "10px",
                                     letterSpacing: "1px",
                                     backgroundColor:
-                                        index + 1 === messageList.length
+                                        index + this.state.resultFlowLenght >=
+                                        messageList.length
                                             ? "#1890ff"
                                             : data.isClick === true
                                             ? "#bae7ff"
                                             : "#ccc",
                                     color:
-                                        index + 1 === messageList.length
+                                        index + this.state.resultFlowLenght >=
+                                        messageList.length
                                             ? "#fff"
                                             : "#000",
                                     fontSize: "12px",
@@ -398,7 +409,7 @@ class Dialogue extends Chat {
                 param.isFlow = false
             }
         }
-        this.setState({ isSpin: false, ...param })
+        this.setState({ isSpin: false, ...param, resultFlowLenght: 1 })
     }
 
     // 重置
@@ -462,7 +473,7 @@ class Dialogue extends Chat {
                 avatar: "http://img.binlive.cn/6.png",
                 type: "right",
             }
-            messageList.push(msg)
+            if (!value) messageList.push(msg)
             this.setState(
                 { messageList: [...messageList], inputValue: "" },
                 (_) => this.scrollToBottom()
@@ -494,15 +505,22 @@ class Dialogue extends Chat {
                         conversation_id: conversationId,
                         text: inputValue,
                     })
-                    list.push({
-                        content: res.data.result.text,
-                        onlyRead: true,
-                        buttons: res.data.result.buttons,
-                        name: "智能客服",
-                        time: new Date(),
-                        avatar: "http://img.binlive.cn/6.png",
-                        type: "left",
-                    })
+                    if (res.data && res.data.result) {
+                        res.data.result.map((data) =>
+                            list.push({
+                                content: data.text,
+                                onlyRead: true,
+                                buttons: data.buttons,
+                                name: "智能客服",
+                                time: new Date(),
+                                avatar: "http://img.binlive.cn/6.png",
+                                type: "left",
+                            })
+                        )
+                        this.setState({
+                            resultFlowLenght: res.data.result.length,
+                        })
+                    }
                 } catch (error) {
                     message.error(error.message)
                 }
