@@ -235,6 +235,7 @@ class BaseList extends EditPage {
                                                 item.key !== "external_id"
                                             )
                                         })
+                                        console.log("导出数组", columns)
                                         // let data = this.state.data.list
                                         // if (this.props.exportMore) {
                                         let data = await this.requestList({
@@ -262,6 +263,21 @@ class BaseList extends EditPage {
                                             dataIndex: "question_extend",
                                             key: "question_extend",
                                         }
+                                        let question_standard = {
+                                            title: "标准问",
+                                            dataIndex: "question_standard",
+                                            key: "question_standard",
+                                        }
+                                        let group = {
+                                            title: "分组",
+                                            dataIndex: "group",
+                                            key: "group",
+                                        }
+                                        let label = {
+                                            title: "标签",
+                                            dataIndex: "label",
+                                            key: "label",
+                                        }
                                         let info = {
                                             title: "其他",
                                             dataIndex: "info",
@@ -269,10 +285,12 @@ class BaseList extends EditPage {
                                         }
                                         columns = [
                                             external_id,
-                                            ...columns,
+                                            question_standard,
+                                            group,
+                                            label,
+                                            info,
                                             answer,
                                             question_extend,
-                                            info,
                                         ]
                                         await exportDataByTemplate(
                                             this.props.record.name,
