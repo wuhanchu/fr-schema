@@ -77,7 +77,7 @@ const schema = {
         lineWidth: "480px",
         editable: true,
         render: (item, record) => {
-            let res = item.length > 20 ? item.substring(0, 20) + "..." : item
+            let res = item && item.length > 20 ? item.substring(0, 20) + "..." : item
             return (
                 <Tooltip
                     title={
