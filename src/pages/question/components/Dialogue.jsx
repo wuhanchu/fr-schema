@@ -26,8 +26,8 @@ class Dialogue extends Chat {
             options: [],
             flowOption: [],
             flow_key: "",
-            historyid: "",
-            resultFlowLenght: 1,
+            historyId: "",
+            resultFlowLength: 1,
             domain_key: record.key,
         }
     }
@@ -39,11 +39,11 @@ class Dialogue extends Chat {
     }
 
     renderService(item, index) {
-        let { historyid } = this.state
+        let { historyId } = this.state
         return (
             <div>
                 {super.renderService(item, index)}
-                {index === historyid &&
+                {index === historyId &&
                     this.renderDivider({ content: "以上为历史消息" })}
             </div>
         )
@@ -169,8 +169,41 @@ class Dialogue extends Chat {
         )
     }
 
-    // 机器人回复扩展
-    renderLeftExtra(item, index) {
+    arrPush(messages, type) {
+        let list = []
+        let { messageList } = this.state
+        if (type === "left") {
+            messages.map((data) =>
+                list.push({
+                    content: data.text,
+                    onlyRead: true,
+                    buttons: data.buttons,
+                    name: "智能客服",
+                    time: new Date(),
+                    avatar: "http://img.binlive.cn/6.png",
+                    type: "left",
+                })
+            )
+            this.setState({ isSpin: false })
+        } else {
+            list.push({
+                content: messages.content,
+                name: "我",
+                time: new Date(),
+                avatar: "http://img.binlive.cn/6.png",
+                type: "right",
+            })
+        }
+        this.setState(
+            {
+                messageList: [...messageList, ...list],
+                inputValue: "",
+            },
+            (_) => this.scrollToBottom()
+        )
+    }
+
+    async operaClick(data, index, buttonIndex) {
         let {
             messageList,
             type,
@@ -178,7 +211,66 @@ class Dialogue extends Chat {
             conversationId,
             isSpin,
             domain_key,
+            resultFlowLength,
         } = this.state
+        if (isSpin === true) {
+            return
+        }
+        if (index + resultFlowLength < messageList.length && type === "flow") {
+            return
+        }
+        this.setState({ isSpin: true })
+        messageList[index].buttons = messageList[index].buttons.map(
+            (item, ind) => {
+                if (ind === buttonIndex) {
+                    return {
+                        ...item,
+                        isClick: true,
+                    }
+                } else {
+                    return {
+                        ...item,
+                        isClick: false,
+                    }
+                }
+            }
+        )
+
+        if (data.payload[0] !== "/") {
+            this.arrPush({ content: data.payload }, "right")
+        }
+        let res
+        try {
+            if (type === "chat") {
+                res = await schemas.domain.service.message({
+                    service_id: serviceId,
+                    conversation_id: conversationId,
+                    text: data.payload,
+                })
+                if (res.data) {
+                    this.arrPush(res.data, "left")
+                }
+            } else {
+                res = await schemas.domain.service.flowMessage({
+                    domain_key,
+                    conversation_id: conversationId,
+                    text: data.payload,
+                })
+                if (res.data && res.data.result) {
+                    this.arrPush(res.data.result, "left")
+                    this.setState({
+                        resultFlowLength: res.data.result.length,
+                    })
+                }
+            }
+        } catch (error) {
+            message.error(error.message)
+        }
+    }
+
+    // 机器人回复扩展
+    renderLeftExtra(item, index) {
+        let { messageList, resultFlowLength } = this.state
         return (
             item.buttons && (
                 <div
@@ -190,119 +282,12 @@ class Dialogue extends Chat {
                     {item.buttons.map((data, indexs) => {
                         return (
                             <a
-                                onClick={async () => {
-                                    if (isSpin === true) {
-                                        return
-                                    }
-                                    if (
-                                        index + this.state.resultFlowLenght <
-                                            messageList.length &&
-                                        type === "flow"
-                                    ) {
-                                        return
-                                    }
-                                    this.setState({ isSpin: true })
-                                    messageList[index].buttons = messageList[
-                                        index
-                                    ].buttons.map((item, ind) => {
-                                        if (ind === indexs) {
-                                            return {
-                                                ...item,
-                                                isClick: true,
-                                            }
-                                        } else {
-                                            return {
-                                                ...item,
-                                                isClick: false,
-                                            }
-                                        }
-                                    })
-
-                                    if (data.payload[0] !== "/") {
-                                        let msg = {
-                                            content: data.payload,
-                                            name: "我",
-                                            time: new Date(),
-                                            avatar:
-                                                "http://img.binlive.cn/6.png",
-                                            type: "right",
-                                        }
-                                        messageList.push(msg)
-                                        this.setState(
-                                            {
-                                                messageList: [...messageList],
-                                            },
-                                            (_) => this.scrollToBottom()
-                                        )
-                                    }
-                                    let res
-                                    let list = []
-
-                                    try {
-                                        if (type === "chat") {
-                                            res = await schemas.domain.service.message(
-                                                {
-                                                    service_id: serviceId,
-                                                    conversation_id: conversationId,
-                                                    text: data.payload,
-                                                }
-                                            )
-                                            res.data &&
-                                                res.data.map((data) =>
-                                                    list.push({
-                                                        content: data.text,
-                                                        onlyRead: true,
-                                                        buttons: data.buttons,
-                                                        name: "智能客服",
-                                                        time: new Date(),
-                                                        avatar:
-                                                            "http://img.binlive.cn/6.png",
-                                                        type: "left",
-                                                    })
-                                                )
-                                        } else {
-                                            res = await schemas.domain.service.flowMessage(
-                                                {
-                                                    domain_key,
-                                                    conversation_id: conversationId,
-                                                    text: data.payload,
-                                                }
-                                            )
-                                            if (res.data && res.data.result) {
-                                                res.data.result.map((data) =>
-                                                    list.push({
-                                                        content: data.text,
-                                                        onlyRead: true,
-                                                        buttons: data.buttons,
-                                                        name: "智能客服",
-                                                        time: new Date(),
-                                                        avatar:
-                                                            "http://img.binlive.cn/6.png",
-                                                        type: "left",
-                                                    })
-                                                )
-                                                this.setState({
-                                                    resultFlowLenght:
-                                                        res.data.result.length,
-                                                })
-                                            }
-                                        }
-                                    } catch (error) {
-                                        message.error(error.message)
-                                    }
-
-                                    // 消息推进list 清空当前消息
-                                    this.setState(
-                                        {
-                                            messageList: [
-                                                ...messageList,
-                                                ...list,
-                                            ],
-                                            isSpin: false,
-                                        },
-                                        (_) => this.scrollToBottom()
-                                    )
-                                }}
+                                onClick={this.operaClick.bind(
+                                    this,
+                                    data,
+                                    index,
+                                    indexs
+                                )}
                                 style={{
                                     ...styles.msgView,
                                     marginRight: "15px",
@@ -310,14 +295,14 @@ class Dialogue extends Chat {
                                     marginBottom: "10px",
                                     letterSpacing: "1px",
                                     backgroundColor:
-                                        index + this.state.resultFlowLenght >=
+                                        index + resultFlowLength >=
                                         messageList.length
                                             ? "#1890ff"
                                             : data.isClick === true
                                             ? "#bae7ff"
                                             : "#ccc",
                                     color:
-                                        index + this.state.resultFlowLenght >=
+                                        index + resultFlowLength >=
                                         messageList.length
                                             ? "#fff"
                                             : "#000",
@@ -376,7 +361,7 @@ class Dialogue extends Chat {
             domain_key,
         } = this.state
         this.setState({ defaultProject: checkboxValue, isSpin: true })
-        let param = { historyid: messageList.length - 1 }
+        let param = { historyId: messageList.length - 1 }
         let res
         if (type === "flow") {
             if (flow_key) {
@@ -409,7 +394,7 @@ class Dialogue extends Chat {
                 param.isFlow = false
             }
         }
-        this.setState({ isSpin: false, ...param, resultFlowLenght: 1 })
+        this.setState({ isSpin: false, ...param, resultFlowLength: 1 })
     }
 
     // 重置
@@ -422,7 +407,7 @@ class Dialogue extends Chat {
             domain_key,
         } = this.state
         if (type === "flow") {
-            this.setState({ isSpin: true, historyid: messageList.length - 1 })
+            this.setState({ isSpin: true, historyId: messageList.length - 1 })
             await schemas.domain.service.closeConversation({
                 domain_key,
                 conversation_id: conversationId,
@@ -466,20 +451,10 @@ class Dialogue extends Chat {
         }
         this.setState({ isSpin: true })
         try {
-            let msg = {
-                content: inputValue,
-                name: "我",
-                time: new Date(),
-                avatar: "http://img.binlive.cn/6.png",
-                type: "right",
+            if (!value) {
+                this.arrPush({ content: inputValue }, "right")
             }
-            if (!value) messageList.push(msg)
-            this.setState(
-                { messageList: [...messageList], inputValue: "" },
-                (_) => this.scrollToBottom()
-            )
             let res
-            let list = []
 
             if (type === "chat") {
                 res = await schemas.domain.service.message({
@@ -487,17 +462,9 @@ class Dialogue extends Chat {
                     conversation_id: conversationId,
                     text: inputValue ? inputValue : "",
                 })
-                res.data &&
-                    res.data.map((item) =>
-                        list.push({
-                            content: item.text,
-                            buttons: item.buttons,
-                            name: "智能客服",
-                            time: new Date(),
-                            avatar: "http://img.binlive.cn/6.png",
-                            type: "left",
-                        })
-                    )
+                if (res.data) {
+                    this.arrPush(res.data, "left")
+                }
             } else {
                 try {
                     res = await schemas.domain.service.flowMessage({
@@ -506,19 +473,9 @@ class Dialogue extends Chat {
                         text: inputValue,
                     })
                     if (res.data && res.data.result) {
-                        res.data.result.map((data) =>
-                            list.push({
-                                content: data.text,
-                                onlyRead: true,
-                                buttons: data.buttons,
-                                name: "智能客服",
-                                time: new Date(),
-                                avatar: "http://img.binlive.cn/6.png",
-                                type: "left",
-                            })
-                        )
+                        this.arrPush(res.data.result, "left")
                         this.setState({
-                            resultFlowLenght: res.data.result.length,
+                            resultFlowLength: res.data.result.length,
                         })
                     }
                 } catch (error) {
@@ -526,10 +483,6 @@ class Dialogue extends Chat {
                 }
             }
             // 消息推进list 清空当前消息
-            this.setState(
-                { messageList: [...messageList, ...list], isSpin: false },
-                (_) => this.scrollToBottom()
-            )
         } catch (error) {
             this.setState({ isSpin: false })
         }
@@ -545,6 +498,7 @@ class Dialogue extends Chat {
             service_id: serviceId,
             slot: { domain_key },
         })
+
         messageList.push({
             content: "您好，请问有什么可以帮您？",
             name: "智能客服",

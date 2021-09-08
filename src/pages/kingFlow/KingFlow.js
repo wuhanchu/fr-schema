@@ -1,12 +1,11 @@
 import React from "react"
-import { Graph, Shape, FunctionExt } from "@antv/x6"
 import { Tooltip, Select, Modal, Spin } from "antd"
 import "./kingFlow.less"
 import insertCss from "insert-css"
 import "./iconfont.css"
 import { startDragToGraph } from "./methods"
 import schema from "@/schemas/intent"
-import { ports } from "./methods"
+import { ports, createEdgeFunc, initGraph } from "./methods"
 import clone from "clone"
 import Ellipse from "./ellipse.svg"
 import RightDrawer from "@/pages/kingFlow/RightDrawer"
@@ -14,7 +13,6 @@ import { ExclamationCircleOutlined } from "@ant-design/icons"
 
 const { Option } = Select
 const { confirm } = Modal
-const data = {}
 
 class KingFlow extends React.PureComponent {
     constructor(props) {
@@ -22,31 +20,12 @@ class KingFlow extends React.PureComponent {
         this.state = {
             chooseType: "grid",
             spinning: true,
-            grid: {
-                // 网格设置
-                size: 20, // 网格大小 10px
-                visible: true, // 渲染网格背景
-                type: "mesh",
-                args: {
-                    color: "#D0D0D0",
-                    thickness: 1, // 网格线宽度/网格点大小
-                    factor: 10,
-                },
-            },
-            connectEdgeType: {
-                //连线方式
-                connector: "normal",
-                router: {
-                    name: "manhattan",
-                },
-            },
             currentArrow: 3,
             cell: undefined,
             selectCell: "",
             expGraphData: {},
         }
         this.deleteNode = this.deleteNode.bind(this)
-        this.onChangeGridBack = this.onChangeGridBack.bind(this)
     }
 
     getIntent = async () => {
@@ -82,7 +61,7 @@ class KingFlow extends React.PureComponent {
     }
 
     render() {
-        let { currentArrow, chooseType, cell, intenList } = this.state
+        let { chooseType, cell, intenList } = this.state
         return (
             <Spin tip="加载中..." spinning={this.state.spinning}>
                 <div className="container_warp">
@@ -132,7 +111,6 @@ class KingFlow extends React.PureComponent {
                                 title="结束节点"
                                 onMouseDown={(e) => this.startDrag("end", e)}
                             >
-                                {/* <i className="iconfont icon-square rotate-square" /> */}
                                 <img
                                     style={{ marginTop: "-7px" }}
                                     src={Ellipse}
@@ -163,7 +141,6 @@ class KingFlow extends React.PureComponent {
                                     style={styles.redo}
                                     alt=""
                                     onClick={(_) => this.redoOperate()}
-                                    // onClick={(_) => this.formatGraph()}
                                 />
                             </Tooltip>
                         </div>
@@ -171,60 +148,10 @@ class KingFlow extends React.PureComponent {
                     <div className="operating-right">
                         <Select
                             bordered={false}
-                            // defaultValue=
                             value={this.state.historyIndex}
                             placeholder={"选择历史版本"}
                             style={{ textAlign: "right", width: "170px" }}
-                            onChange={(index) => {
-                                let _this = this
-                                let data = localStorage.getItem(
-                                    "flow" + this.props.record.id
-                                )
-                                if (data) {
-                                    confirm({
-                                        title: "是否切换版本？",
-                                        icon: <ExclamationCircleOutlined />,
-                                        content:
-                                            "切换版本会丢失本地缓存数据，请先提交保存，是否继续。",
-                                        okText: "确定",
-                                        cancelText: "取消",
-                                        onOk() {
-                                            _this.graph.dispose()
-                                            _this.initData()
-                                            _this.getData(
-                                                _this.state.historyList[index]
-                                                    .config
-                                            )
-                                            _this.graph.flowSetting = {
-                                                key: _this.props.record.key,
-                                                domain_key:
-                                                    _this.props.record
-                                                        .domain_key,
-                                            }
-                                            _this.setState({
-                                                historyIndex: index,
-                                            })
-                                        },
-                                        onCancel() {
-                                            console.log("Cancel")
-                                        },
-                                    })
-                                } else {
-                                    _this.graph.dispose()
-                                    _this.initData()
-                                    _this.getData(
-                                        _this.state.historyList[index].config
-                                    )
-                                    _this.graph.flowSetting = {
-                                        key: _this.props.record.key,
-                                        domain_key:
-                                            _this.props.record.domain_key,
-                                    }
-                                    _this.setState({
-                                        historyIndex: index,
-                                    })
-                                }
-                            }}
+                            onChange={this.onHistoryChange.bind(this)}
                         >
                             {this.state.historyList &&
                                 this.state.historyList.map((item, index) => {
@@ -236,14 +163,51 @@ class KingFlow extends React.PureComponent {
                                         </Option>
                                     )
                                 })}
-                            {/* <Option value="第一次">第一次</Option>
-                        <Option value="第二次">第二次</Option>
-                        <Option value="第三次">第三次</Option> */}
                         </Select>
                     </div>
                 </div>
             </Spin>
         )
+    }
+
+    onHistoryChange(index) {
+        let _this = this
+        let data = localStorage.getItem("flow" + this.props.record.id)
+        if (data) {
+            confirm({
+                title: "是否切换版本？",
+                icon: <ExclamationCircleOutlined />,
+                content: "切换版本会丢失本地缓存数据，请先提交保存，是否继续。",
+                okText: "确定",
+                cancelText: "取消",
+                onOk() {
+                    _this.graph.dispose()
+                    _this.initData()
+                    _this.getData(_this.state.historyList[index].config)
+                    _this.graph.flowSetting = {
+                        key: _this.props.record.key,
+                        domain_key: _this.props.record.domain_key,
+                    }
+                    _this.setState({
+                        historyIndex: index,
+                    })
+                },
+                onCancel() {
+                    console.log("Cancel")
+                },
+            })
+        } else {
+            _this.graph.dispose()
+            _this.initData()
+            _this.getData(_this.state.historyList[index].config)
+            _this.graph.flowSetting = {
+                key: _this.props.record.key,
+                domain_key: _this.props.record.domain_key,
+            }
+            _this.setState({
+                historyIndex: index,
+            })
+        }
     }
 
     getData = async (config) => {
@@ -255,11 +219,6 @@ class KingFlow extends React.PureComponent {
             data = localStorage.getItem("flow" + this.props.record.id)
             data = JSON.parse(data)
         }
-
-        //     let data =
-        // if(config){
-        // }
-
         if (!data) {
             let res = await this.props.service.getDetail({
                 id: this.props.record.id,
@@ -301,21 +260,6 @@ class KingFlow extends React.PureComponent {
                 ]
             }
         }
-
-        // let key = `${Date.now()}`
-        //     this.addNodes({
-        //         key,
-        //         name: "全局节点",
-        //         action: [],
-        //         shape: "ellipse",
-        //         type: "global",
-        //         allow_repeat_time: 2,
-        //         position: {
-        //             x: 0,
-        //             y: 150,
-        //         },
-        //     })
-        //     this.setState({key: key})
         data.node.map((item) => {
             this.addNodes(item)
         })
@@ -325,7 +269,6 @@ class KingFlow extends React.PureComponent {
         this.setState({
             expGraphData: data,
         })
-
         this.graph.action = data.action
         this.graph.condition = data.condition
     }
@@ -404,7 +347,7 @@ class KingFlow extends React.PureComponent {
 
     addEdges(args) {
         if (args.begin) {
-            let edge = this.createEdgeFunc({
+            let edge = createEdgeFunc({
                 id: args.key,
                 data: { ...args },
                 source: { cell: args.begin, port: args.beginPort || "port2" },
@@ -426,7 +369,7 @@ class KingFlow extends React.PureComponent {
                     y: endNode.store.data.position.y - 150,
                 },
             })
-            let edge = this.createEdgeFunc({
+            let edge = createEdgeFunc({
                 id: args.key,
                 data: { ...args },
                 source: { cell: key, port: args.beginPort || "port2" },
@@ -437,8 +380,35 @@ class KingFlow extends React.PureComponent {
         }
     }
 
+    validateConnection(sourceView, targetView, sourceMagnet, targetMagnet) {
+        if (
+            targetMagnet &&
+            targetMagnet.getAttribute("port-group") === "bottom"
+        ) {
+            return false
+        }
+        if (sourceView === targetView) {
+            return false
+        }
+        let isTrue = true
+        if (targetView && sourceView) {
+            this.state.expGraphData.connection.map((item) => {
+                if (
+                    item.end === targetView.cell.id &&
+                    item.begin === sourceView.cell.id
+                ) {
+                    isTrue = false
+                }
+            })
+        }
+        return isTrue
+    }
+
     initData() {
-        this.initGraph()
+        this.graph = initGraph(
+            this.state.expGraphData,
+            this.validateConnection.bind(this)
+        )
         insertCss(`
               @keyframes ant-line {
                 to {
@@ -446,24 +416,6 @@ class KingFlow extends React.PureComponent {
                 }
               }
             `)
-        this.graph.fromJSON(data)
-        this.graph.history.redo()
-        this.graph.history.undo()
-        // 鼠标移入移出节点
-        this.graph.on(
-            "node:mouseenter",
-            FunctionExt.debounce(() => {
-                const container = document.getElementById("containerChart")
-                const ports = container.querySelectorAll(".x6-port-body")
-                this.showPorts(ports, true)
-            }),
-            500
-        )
-        this.graph.on("node:mouseleave", () => {
-            const container = document.getElementById("containerChart")
-            const ports = container.querySelectorAll(".x6-port-body")
-            this.showPorts(ports, false)
-        })
         this.graph.on("blank:click", () => {
             this.setState({ chooseType: "grid" })
         })
@@ -490,7 +442,6 @@ class KingFlow extends React.PureComponent {
         this.graph.on("edge:mouseup", (args) => {
             if (!args.view.targetView) {
                 const id = `${Date.now()}`
-                const expGraph = this.graph
                 this.graph.addNode({
                     id,
                     width: 110,
@@ -539,7 +490,7 @@ class KingFlow extends React.PureComponent {
             this.graphChange(args)
         })
     }
-
+    // 得到数据
     graphChange(args) {
         const expGraph = this.graph
         let data = {
@@ -592,7 +543,7 @@ class KingFlow extends React.PureComponent {
         )
         return { config: data, ...expGraph.flowSetting }
     }
-
+    // 链接节点
     async onConnectNode(args) {
         const { edge = {}, isNew } = args
         const { source, target } = edge
@@ -610,350 +561,34 @@ class KingFlow extends React.PureComponent {
         }
         return { success: true }
     }
-
-    initGraph() {
-        let { grid } = this.state
-        let _this = this
-        this.graph = new Graph({
-            container: document.getElementById("containerChart"),
-            history: true,
-            panning: true,
-            selecting: {
-                enabled: true,
-                // rubberband: true, // 启用框选
-            },
-            transforming: {
-                clearAll: true,
-                clearOnBlankMouseDown: true,
-            },
-            width: 1700,
-            height: "100%",
-            grid: grid,
-            resizing: {
-                //调整节点宽高
-                enabled: true,
-                orthogonal: false,
-            },
-            snapline: true,
-            // interacting: {
-            //     edgeLabelMovable: true,
-            // },
-            connecting: {
-                // 节点连接
-                anchor: "top",
-                connectionPoint: "anchor",
-                allowBlank: true,
-                snap: true,
-                // 显示可用的链接桩
-                validateConnection({
-                    sourceView,
-                    targetView,
-                    sourceMagnet,
-                    targetMagnet,
-                }) {
-                    // return true
-
-                    if (
-                        targetMagnet &&
-                        targetMagnet.getAttribute("port-group") === "bottom"
-                    ) {
-                        return false
-                    }
-                    if (sourceView === targetView) {
-                        return false
-                    }
-
-                    const expGraph = this.graph
-                    let isTrue = true
-
-                    if (targetView && sourceView) {
-                        _this.state.expGraphData.connection.map((item) => {
-                            if (
-                                item.end === targetView.cell.id &&
-                                item.begin === sourceView.cell.id
-                            ) {
-                                isTrue = false
-                            }
-                        })
-                    }
-
-                    return isTrue
-                },
-                createEdge: (args, other) => this.createEdgeFunc(),
-            },
-            highlighting: {
-                magnetAvailable: {
-                    name: "stroke",
-                    args: {
-                        padding: 4,
-                        attrs: {
-                            strokeWidth: 4,
-                            stroke: "#6a6c8a",
-                        },
-                    },
-                },
-            },
-        })
-    }
-
-    // 更改 连线方式
-    createEdgeFunc(args) {
-        let { connectEdgeType } = this.state
-        return new Shape.Edge({
-            attrs: {
-                line: {
-                    stroke: "#1890ff",
-                    strokeWidth: 1,
-                    targetMarker: false,
-                    // strokeDasharray: 0, //虚线
-                    style: {
-                        animation: "ant-line 30s infinite linear",
-                    },
-                },
-            },
-
-            labels: [
-                {
-                    attrs: {
-                        text: {
-                            text:
-                                (args && args.data && args.data.name) ||
-                                "未命名",
-                            fontSize: 14,
-                            fill: "#000000A6",
-                        },
-                        body: {
-                            fill: "#00000000",
-                        },
-                    },
-                    position: {
-                        distance: -70,
-                    },
-                },
-            ],
-            data: {
-                name: "未命名",
-            },
-            connector: connectEdgeType.connector,
-            router: {
-                name: connectEdgeType.router.name || "",
-            },
-            zIndex: 0,
-
-            tools: [
-                // { name: 'source-arrowhead' },
-                {
-                    name: "target-arrowhead",
-                    args: {
-                        tagName: "path",
-                        attrs: {
-                            // r: 6,
-                            d: "M -5 -4 5 0 -5 4 Z",
-                            fill: "#1890ff",
-                            stroke: "#1890ff",
-                            // "stroke-width": 1,
-                            cursor: "move",
-                        },
-                    },
-                },
-            ],
-            ...args,
-            position: {
-                distance: -50,
-            },
-        })
-    }
-
     // 是否显示 链接桩
     showPorts(ports, show) {
         for (let i = 0, len = ports.length; i < len; i = i + 1) {
             ports[i].style.visibility = show ? "visible" : "hidden"
         }
     }
-
     // 拖拽生成正方形或者圆形
     startDrag(type, e) {
         startDragToGraph(this.graph, type, e, this.graphChange.bind(this))
     }
-
-    // 改变边形状
-    changeEdgeType(index, type = "normal", routeName = "") {
-        let { connectEdgeType } = this.state
-        connectEdgeType = {
-            connector: type,
-            router: {
-                name: routeName,
-            },
-        }
-        this.setState({
-            currentArrow: index,
-            connectEdgeType: { ...connectEdgeType },
-        })
-    }
-
     // 删除节点
     deleteNode() {
         const cell = this.graph.getSelectedCells()
-        if (cell && cell[0] && cell[0].getData().types != "begin") {
+        if (cell && cell[0] && cell[0].getData().types !== "begin") {
             this.graph.removeCells(cell)
             this.setState({ chooseType: "grid" })
             this.graphChange()
         }
     }
-
     // 撤销
     undoOperate() {
         this.graph.history.undo()
         this.graphChange()
     }
-
     // 重做
     redoOperate() {
         this.graph.history.redo()
         this.graphChange()
-    }
-
-    onChangeGridBack(type) {
-        let { grid } = this.state
-        if (typeof type === "string") {
-            grid.type = type
-            this.graph.drawGrid({
-                ...grid,
-            })
-            return
-        }
-        if (typeof type === "number") {
-            grid.args.thickness = type
-            this.graph.drawGrid({
-                ...grid,
-            })
-            return
-        }
-        type && this.graph.showGrid()
-        !type && this.graph.hideGrid()
-    }
-
-    // 格式化
-    formatGraph() {
-        let data = this.graph.toJSON().cells
-        let nodeList = [] // 视图中节点数据集
-        let edgeList = [] // 视图中线数据集
-        edgeList = data.filter((value) => {
-            return value.shape === "edge"
-        })
-        nodeList = data.filter((value) => {
-            return value.shape !== "edge"
-        })
-        // 找到开始节点
-        let firstNode = nodeList.find((value) => {
-            return value.data.types === "begin"
-        })
-        // 获取格式化数据
-        let list = this.deepNode([firstNode], nodeList, edgeList)
-        let dataList = list.dataList.sort(this.sortDown)
-        let arr = this.deepData(dataList[0].childrenNode, dataList)
-        let ids = []
-        let resNode = []
-        for (let i = 0; i < arr.length; i++) {
-            if (!ids.includes(arr[i].id)) {
-                resNode.push(arr[i])
-                ids.push(arr[i].id)
-            }
-        }
-        let res = { cells: [...edgeList, firstNode, ...resNode] }
-
-        this.graph.fromJSON(res)
-    }
-
-    // 递归格式化数据
-    deepNode(nodes, nodeList, edgeList, tier = 0) {
-        let list = []
-        let dataList = []
-        let flag = false
-        let tierFlag = true
-        for (let i = 0; i < nodes.length; i++) {
-            let node = nodes[i]
-            tierFlag && (tier += 1)
-            node.tier = tier
-            tierFlag = false
-            let edges = edgeList.filter((value) => {
-                return value.source.cell === node.id
-            })
-            // 该节点无连线数据-> 当前节点为结束节点(某条分支的最后一个节点)
-            // if (!edges.length) {
-            //     continue;
-            // }
-            let nodeIds = [] // 当前节点的子节点id集合
-            edges.map((item) => nodeIds.push(item.target.cell))
-            let childrenNode = [] // 当前节点的子节点集合
-            childrenNode = nodeList.filter((value) => {
-                return nodeIds.includes(value.id)
-            })
-            // if (childrenNode.length > 2) {
-            //     node.position.x = node.direction === 'left' ? node.position.x - (260 * (childrenNode.length - 2)) : node.position.x + (260 * (childrenNode.length - 2))
-            // }
-            // if (flag) {
-            //     node.position.x = nodes[i - 2].position.x - (220 * (nodes[i - 2].childrenNode.length))
-            //     flag = false
-            // }
-            // // 子节点只有一个,节点显示在父节点正下方
-            // if (childrenNode.length === 1) {
-            //     childrenNode[0].position = {x: node.position.x, y: node.position.y + 150};
-            // }
-            // 多个子节点则左右放置
-            if (childrenNode.length > 0) {
-                flag = true
-                for (let j = 0; j < childrenNode.length; j++) {
-                    childrenNode[j].parentId = node.id
-                }
-            }
-            node.childrenNode = [...childrenNode]
-            // 递归子节点数据
-            list.push(...childrenNode)
-            let arr = this.deepNode(childrenNode, nodeList, edgeList, tier)
-            list.push(...arr.list)
-            dataList.push(node, ...arr.dataList)
-        }
-        return { list: list, dataList: dataList }
-    }
-
-    deepData(list, dataList) {
-        let res = []
-        for (let i = 0; i < list.length; i++) {
-            if (list[i].childrenNode && list[i].parentId) {
-                let length = list[i].childrenNode.length
-                let index = dataList.findIndex((value) => {
-                    return value.id === list[i].parentId
-                })
-                let realIndex = dataList[index].childrenNode.findIndex(
-                    (value) => {
-                        return value.id === list[i].id
-                    }
-                )
-                let positionX = dataList[index].position.x
-                let positionY = dataList[index].position.y
-                let num = i + (length || 1)
-                if (realIndex % 2 === 0) {
-                    list[i].position = {
-                        x: positionX - 165 * num,
-                        y: positionY + 150,
-                    }
-                } else {
-                    list[i].position = {
-                        x: positionX + 165 * (num - 1),
-                        y: positionY + 150,
-                    }
-                }
-                res.push(...this.deepData(list[i].childrenNode, dataList))
-            }
-            res.push(list[i])
-        }
-        return res
-    }
-
-    // 排序规则(从小到大)
-    sortDown(a, b) {
-        return a.tier - b.tier
     }
 }
 

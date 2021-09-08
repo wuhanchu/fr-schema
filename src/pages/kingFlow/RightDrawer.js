@@ -24,19 +24,7 @@ class RightDrawer extends React.PureComponent {
     constructor(props) {
         super(props)
         this.state = {
-            gridTypeList: [
-                {
-                    label: "四边网格",
-                    value: "mesh",
-                },
-                {
-                    label: "点状网格",
-                    value: "dot",
-                },
-            ],
-            showGrid: true,
             visible: false,
-            gridType: "mesh",
             showAction: [],
             showCondition: [],
             isShow: true,
@@ -156,7 +144,6 @@ class RightDrawer extends React.PureComponent {
             return item.name
         })
         data.config.node.map((item) => {
-            // this.countName(nameArr, item.name)
             if (
                 (!item.allow_repeat_time ||
                     this.countName(nameArr, item.name) > 1) &&
@@ -314,7 +301,6 @@ class RightDrawer extends React.PureComponent {
                         cell.setData({
                             action: [...sortableData],
                         })
-                        // _this.props.graphChange()
                     },
                 })
         }
@@ -356,9 +342,60 @@ class RightDrawer extends React.PureComponent {
             }
         }
     }
+    // 删除条件或者行为
+    onDelete(item, type) {
+        let { cell, graph } = this.props
+        let { showAction, showCondition } = this.state
+        let data = []
+        if (type === "action") {
+            data = showAction
+        } else {
+            data = showCondition
+        }
+        let myData = []
+        let dataList = new Set(data.map((item) => item.key))
+        dataList.delete(item.key)
+        if (type === "action") {
+            cell.setData({ action: null })
+            cell.setData({
+                action: [...dataList],
+            })
+        } else {
+            cell.setData({ condition: null })
+            cell.setData({
+                condition: [...dataList],
+            })
+        }
+        dataList &&
+            dataList.map((item) => {
+                let filterAction = []
+                if (type === "action") {
+                    filterAction = graph.action.filter(
+                        (list) => list.key === item
+                    )
+                } else {
+                    filterAction = graph.condition.filter(
+                        (list) => list.key === item
+                    )
+                }
+
+                if (filterAction && filterAction[0]) {
+                    myData.push(filterAction[0])
+                }
+            })
+        if (type === "action") {
+            this.setState({
+                showAction: myData,
+            })
+        } else {
+            this.setState({
+                showCondition: myData,
+            })
+        }
+    }
 
     renderNode() {
-        let { chooseType, cell, graph } = this.props
+        let { chooseType, cell } = this.props
         let { isShow, showAction } = this.state
         return (
             chooseType === "node" && (
@@ -370,9 +407,7 @@ class RightDrawer extends React.PureComponent {
                             labelAlign="left"
                             colon={false}
                             initialValues={cell.getData()}
-                            // {...formItemLayout}
                             preserve={false}
-                            // form={form}
                             layout="vertical"
                             onValuesChange={(args, data) => {
                                 cell.setData(args)
@@ -387,7 +422,6 @@ class RightDrawer extends React.PureComponent {
                                 rules={[
                                     {
                                         required: true,
-                                        // message: "请输入名称！",
                                     },
                                     {
                                         validator: (rules, value, callback) => {
@@ -446,9 +480,7 @@ class RightDrawer extends React.PureComponent {
                                                     }}
                                                     key={item.key}
                                                 >
-                                                    <Tag
-                                                    // closable
-                                                    >
+                                                    <Tag>
                                                         <span
                                                             onClick={() => {
                                                                 this.setState({
@@ -463,62 +495,11 @@ class RightDrawer extends React.PureComponent {
                                                         </span>
                                                         <Popconfirm
                                                             title="是否删除此行为?"
-                                                            onConfirm={() => {
-                                                                let myAction = []
-
-                                                                let actionList = new Set(
-                                                                    showAction.map(
-                                                                        (
-                                                                            item
-                                                                        ) => {
-                                                                            return item.key
-                                                                        }
-                                                                    )
-                                                                )
-                                                                cell.setData({
-                                                                    action: null,
-                                                                })
-
-                                                                actionList.delete(
-                                                                    item.key
-                                                                )
-                                                                cell.setData({
-                                                                    action: [
-                                                                        ...actionList,
-                                                                    ],
-                                                                })
-
-                                                                actionList &&
-                                                                    actionList.map(
-                                                                        (
-                                                                            item
-                                                                        ) => {
-                                                                            let filterAction = graph.action.filter(
-                                                                                (
-                                                                                    list
-                                                                                ) => {
-                                                                                    return (
-                                                                                        list.key ===
-                                                                                        item
-                                                                                    )
-                                                                                }
-                                                                            )
-                                                                            if (
-                                                                                filterAction &&
-                                                                                filterAction[0]
-                                                                            ) {
-                                                                                myAction.push(
-                                                                                    filterAction[0]
-                                                                                )
-                                                                            }
-                                                                        }
-                                                                    )
-
-                                                                this.setState({
-                                                                    showAction: myAction,
-                                                                })
-                                                            }}
-                                                            // onCancel={cancel}
+                                                            onConfirm={this.onDelete.bind(
+                                                                this,
+                                                                item,
+                                                                "action"
+                                                            )}
                                                             okText="是"
                                                             cancelText="否"
                                                         >
@@ -563,7 +544,6 @@ class RightDrawer extends React.PureComponent {
                             labelAlign="left"
                             colon={false}
                             initialValues={cell.getData()}
-                            // {...formItemLayout}
                             layout="vertical"
                             onValuesChange={(args) => {
                                 cell.setData(args)
@@ -587,7 +567,6 @@ class RightDrawer extends React.PureComponent {
                                 rules={[
                                     {
                                         required: true,
-                                        // message: "请输入允许重复次数！",
                                     },
                                     {
                                         validator: (rules, value, callback) => {
@@ -614,12 +593,8 @@ class RightDrawer extends React.PureComponent {
                                         </Tooltip>
                                     </div>
                                 }
-                                // extra="条件之间为或的关系"
                             >
-                                <ul
-                                    style={{ margin: "0", padding: "0" }}
-                                    // id="items"
-                                >
+                                <ul style={{ margin: "0", padding: "0" }}>
                                     {showCondition.map((item, index) => {
                                         return (
                                             <li
@@ -630,9 +605,7 @@ class RightDrawer extends React.PureComponent {
                                                 }}
                                                 key={item.key}
                                             >
-                                                <Tag
-                                                // closable
-                                                >
+                                                <Tag>
                                                     <span
                                                         onClick={() => {
                                                             this.setState({
@@ -647,57 +620,10 @@ class RightDrawer extends React.PureComponent {
                                                     </span>
                                                     <Popconfirm
                                                         title="是否删除此条件?"
-                                                        onConfirm={() => {
-                                                            let myConditions = []
-
-                                                            let actionList = new Set(
-                                                                showCondition.map(
-                                                                    (item) => {
-                                                                        return item.key
-                                                                    }
-                                                                )
-                                                            )
-                                                            cell.setData({
-                                                                condition: null,
-                                                            })
-                                                            actionList.delete(
-                                                                item.key
-                                                            )
-                                                            cell.setData({
-                                                                condition: [
-                                                                    ...actionList,
-                                                                ],
-                                                            })
-
-                                                            actionList &&
-                                                                actionList.map(
-                                                                    (item) => {
-                                                                        let filterAction = graph.condition.filter(
-                                                                            (
-                                                                                list
-                                                                            ) => {
-                                                                                return (
-                                                                                    list.key ===
-                                                                                    item
-                                                                                )
-                                                                            }
-                                                                        )
-                                                                        if (
-                                                                            filterAction &&
-                                                                            filterAction[0]
-                                                                        ) {
-                                                                            myConditions.push(
-                                                                                filterAction[0]
-                                                                            )
-                                                                        }
-                                                                    }
-                                                                )
-
-                                                            this.setState({
-                                                                showCondition: myConditions,
-                                                            })
-                                                        }}
-                                                        // onCancel={cancel}
+                                                        onConfirm={this.onDelete.bind(
+                                                            this,
+                                                            item
+                                                        )}
                                                         okText="是"
                                                         cancelText="否"
                                                     >
@@ -727,35 +653,6 @@ class RightDrawer extends React.PureComponent {
                 </div>
             )
         )
-    }
-
-    // 置顶
-    toTopZIndex() {
-        let { selectCell } = this.props
-        selectCell.toFront()
-    }
-
-    // 删除
-    deleteNode() {
-        let { onDeleteNode } = this.props
-        onDeleteNode && onDeleteNode()
-    }
-
-    onSwitchChange(checked) {
-        let { changeGridBack } = this.props
-        this.setState({ showGrid: checked })
-        changeGridBack && changeGridBack(checked)
-    }
-
-    onRadioChange(e) {
-        let { changeGridBack } = this.props
-        this.setState({ gridType: e.target.value })
-        changeGridBack && changeGridBack(e.target.value)
-    }
-
-    onGridSizeChange(value) {
-        let { changeGridBack } = this.props
-        changeGridBack && changeGridBack(value)
     }
 }
 

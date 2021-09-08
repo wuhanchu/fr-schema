@@ -1,4 +1,4 @@
-import { Addon } from "@antv/x6"
+import { Addon, FunctionExt, Graph, Shape } from "@antv/x6"
 // 拖拽生成四边形或者圆形
 export const startDragToGraph = (graph, type, e, callback) => {
     const node =
@@ -227,4 +227,162 @@ export const ports = {
             group: "right",
         },
     ],
+}
+// 连线
+export function createEdgeFunc(args) {
+    return new Shape.Edge({
+        attrs: {
+            line: {
+                stroke: "#1890ff",
+                strokeWidth: 1,
+                targetMarker: false,
+                // strokeDasharray: 0, //虚线
+                style: {
+                    animation: "ant-line 30s infinite linear",
+                },
+            },
+        },
+
+        labels: [
+            {
+                attrs: {
+                    text: {
+                        text: (args && args.data && args.data.name) || "未命名",
+                        fontSize: 14,
+                        fill: "#000000A6",
+                    },
+                    body: {
+                        fill: "#00000000",
+                    },
+                },
+                position: {
+                    distance: -70,
+                },
+            },
+        ],
+        data: {
+            name: "未命名",
+        },
+        connector: "normal",
+        router: {
+            name: "manhattan",
+        },
+        zIndex: 0,
+
+        tools: [
+            // { name: 'source-arrowhead' },
+            {
+                name: "target-arrowhead",
+                args: {
+                    tagName: "path",
+                    attrs: {
+                        // r: 6,
+                        d: "M -5 -4 5 0 -5 4 Z",
+                        fill: "#1890ff",
+                        stroke: "#1890ff",
+                        // "stroke-width": 1,
+                        cursor: "move",
+                    },
+                },
+            },
+        ],
+        ...args,
+        position: {
+            distance: -50,
+        },
+    })
+}
+
+// 初始化图
+export function initGraph(expGraphData, callback) {
+    let graph = new Graph({
+        container: document.getElementById("containerChart"),
+        history: true,
+        panning: true,
+        selecting: {
+            enabled: true,
+        },
+        transforming: {
+            clearAll: true,
+            clearOnBlankMouseDown: true,
+        },
+        width: 1700,
+        height: "100%",
+        grid: {
+            size: 20, // 网格大小 10px
+            visible: true, // 渲染网格背景
+            type: "mesh",
+            args: {
+                color: "#D0D0D0",
+                thickness: 1, // 网格线宽度/网格点大小
+                factor: 10,
+            },
+        },
+        resizing: {
+            //调整节点宽高
+            enabled: true,
+            orthogonal: false,
+        },
+        snapline: true,
+        connecting: {
+            // 节点连接
+            anchor: "top",
+            connectionPoint: "anchor",
+            allowBlank: true,
+            snap: true,
+            // 显示可用的链接桩
+            validateConnection({
+                sourceView,
+                targetView,
+                sourceMagnet,
+                targetMagnet,
+            }) {
+                return callback(
+                    sourceView,
+                    targetView,
+                    sourceMagnet,
+                    targetMagnet
+                )
+            },
+            createEdge: (args, other) => createEdgeFunc(),
+        },
+        highlighting: {
+            magnetAvailable: {
+                name: "stroke",
+                args: {
+                    padding: 4,
+                    attrs: {
+                        strokeWidth: 4,
+                        stroke: "#6a6c8a",
+                    },
+                },
+            },
+        },
+    })
+
+    graph.fromJSON({})
+    graph.history.redo()
+    graph.history.undo()
+    graph.on(
+        "node:mouseenter",
+        FunctionExt.debounce(() => {
+            const container = document.getElementById("containerChart")
+            const ports = container.querySelectorAll(".x6-port-body")
+            showPorts(ports, true)
+        }),
+        500
+    )
+    graph.on("node:mouseleave", () => {
+        const container = document.getElementById("containerChart")
+        const ports = container.querySelectorAll(".x6-port-body")
+        showPorts(ports, false)
+    })
+
+    return graph
+}
+
+function showPorts(ports, show) {
+    for (let i = 0, len = ports.length; i < len; i = i + 1) {
+        ports[i].style.visibility = show ? "visible" : "hidden"
+    }
 }
