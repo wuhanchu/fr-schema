@@ -1,8 +1,13 @@
-import React from "react"
+import React, { useState } from "react"
 import { Input, Form, Button, Space, Row, Col, Select } from "antd"
 import "antd/lib/style/index.css"
 import Modal from "antd/lib/modal/Modal"
 import clone from "clone"
+import AceEditor from "react-ace"
+import "ace-builds/src-noconflict/mode-json"
+
+import "ace-builds/src-noconflict/theme-github"
+import "ace-builds/src-noconflict/ext-language_tools"
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons"
 
 export const ConditionModal = ({
@@ -23,33 +28,26 @@ export const ConditionModal = ({
         condition = expGraph.condition
     }
     let initialValues = clone(defaultValue)
-    let slot = []
-    if (defaultValue.slot) {
-        Object.keys(defaultValue.slot).forEach(function (key) {
-            slot.push({ first: key, last: defaultValue.slot[key] })
-        })
-    }
+    // let slot = []
 
-    initialValues.slot = slot
     let conditionList = []
     if (cell && cell.getData && cell.getData().condition) {
         conditionList = cell.getData().condition
     }
 
     const onFinish = (values) => {
-        let slot = {}
+        // let slot = {}
         let myConditions = clone(conditions)
 
-        values.slot &&
-            values.slot.map((item) => {
-                slot[item.first] = item.last || null
-            })
+        // values.slot &&
+        //     values.slot.map((item) => {
+        //         slot[item.first] = item.last || null
+        //     })
         if (conditionType === "add") {
             let conditionKey = cell.id + `${Date.now()}`
             myConditions.push({
                 ...values,
                 key: conditionKey,
-                slot,
             })
             conditionList.push(conditionKey)
             cell.setData({ condition: conditionList })
@@ -57,7 +55,6 @@ export const ConditionModal = ({
             expGraphCondition.push({
                 ...values,
                 key: conditionKey,
-                slot,
             })
             graph.condition = null
             graph.condition = expGraphCondition
@@ -66,13 +63,13 @@ export const ConditionModal = ({
             if (expGraph.condition) {
                 let arr = expGraph.condition.map((item) => {
                     if (item.key === defaultValue.key) {
-                        return { ...values, slot, key: defaultValue.key }
+                        return { ...values, key: defaultValue.key }
                     }
                     return item
                 })
                 myConditions = myConditions.map((item) => {
                     if (item.key === defaultValue.key) {
-                        return { ...values, slot, key: defaultValue.key }
+                        return { ...values, key: defaultValue.key }
                     }
                     return item
                 })
@@ -103,19 +100,29 @@ export const ConditionModal = ({
             formRef.current.setFieldsValue({ name: dict[value.type].remark })
         }
     }
+
+    if (initialValues["slot"]) {
+        var [AceEditorValue, setAceEditorValue] = useState(
+            JSON.stringify(initialValues["slot"], null, "\t")
+        )
+    } else {
+        var [AceEditorValue, setAceEditorValue] = useState("")
+    }
+
     return (
         <Modal
             title={"条件配置"}
             visible={visible}
             destroyOnClose={true}
+            width={"700px"}
             footer={false}
             onCancel={() => handleVisible(false)}
         >
             <Form
                 name="basic"
                 ref={formRef}
-                labelCol={{ span: 8 }}
-                wrapperCol={{ span: 12 }}
+                labelCol={{ span: 4 }}
+                wrapperCol={{ span: 18 }}
                 onValuesChange={onValuesChange}
                 initialValues={initialValues}
                 onFinish={onFinish}
@@ -145,75 +152,66 @@ export const ConditionModal = ({
                         {options}
                     </Select>
                 </Form.Item>
+                <Form.Item label="插槽" name={"slot"}>
+                    <div style={{ width: "489px" }}>
+                        <AceEditor
+                            placeholder={`请输入${"参数"}`}
+                            mode="json"
+                            // theme="tomorrow"
+                            name="blah2"
+                            wrapEnabled={true}
+                            onChange={(res) => {
+                                const obj = {}
+                                obj["slot"] = res
+                                try {
+                                    formRef.current.setFieldsValue({
+                                        slot: undefined,
+                                    })
+                                    formRef.current.setFieldsValue({
+                                        slot: JSON.parse(res),
+                                    })
+                                } catch (error) {
+                                    console.log(error)
+                                }
+                            }}
+                            fontSize={14}
+                            showPrintMargin
+                            showGutter
+                            width={"489px"}
+                            // style={props.style}
+                            height={"300px"}
+                            highlightActiveLine
+                            value={AceEditorValue}
+                            markers={[
+                                {
+                                    startRow: 0,
+                                    startCol: 2,
+                                    endRow: 1,
+                                    endCol: 20,
+                                    className: "error-marker",
+                                    type: "background",
+                                },
+                            ]}
+                            setOptions={{
+                                enableBasicAutocompletion: true,
+                                enableLiveAutocompletion: true,
+                                enableSnippets: true,
+                                showLineNumbers: true,
+                                tabSize: 2,
+                            }}
+                        />
+                    </div>
+                </Form.Item>
 
-                <Form.List name="slot">
-                    {(fields, { add, remove }) => (
-                        <>
-                            {fields.map(
-                                ({ key, name, fieldKey, ...restField }) => (
-                                    <Space
-                                        key={key}
-                                        style={{ display: "flex" }}
-                                        align="baseline"
-                                    >
-                                        <Form.Item
-                                            {...restField}
-                                            wrapperCol={{ offset: 8, span: 12 }}
-                                            name={[name, "first"]}
-                                            fieldKey={[fieldKey, "first"]}
-                                            rules={[
-                                                {
-                                                    required: true,
-                                                    message: "请输入键名",
-                                                },
-                                            ]}
-                                        >
-                                            <Input placeholder="键名" />
-                                        </Form.Item>
-                                        <Form.Item
-                                            {...restField}
-                                            name={[name, "last"]}
-                                            fieldKey={[fieldKey, "last"]}
-                                        >
-                                            <Input
-                                                style={{
-                                                    width: "236px",
-                                                    marginLeft: "-26px",
-                                                }}
-                                                placeholder="键值"
-                                            />
-                                        </Form.Item>
-                                        <MinusCircleOutlined
-                                            onClick={() => remove(name)}
-                                        />
-                                    </Space>
-                                )
-                            )}
-                            <Form.Item wrapperCol={{ offset: 8, span: 12 }}>
-                                <Row gutter={24}>
-                                    <Col lg={16}>
-                                        <Button
-                                            onClick={() => add()}
-                                            block
-                                            icon={<PlusOutlined />}
-                                        >
-                                            添加插槽
-                                        </Button>
-                                    </Col>
-                                    <Col lg={8}>
-                                        <Button
-                                            style={{ float: "right" }}
-                                            type="primary"
-                                            htmlType="submit"
-                                        >
-                                            更新
-                                        </Button>
-                                    </Col>
-                                </Row>
-                            </Form.Item>
-                        </>
-                    )}
-                </Form.List>
+                <Form.Item wrapperCol={{ offset: 10, span: 12 }}>
+                    <Button
+                        style={{ float: "right" }}
+                        type="primary"
+                        htmlType="submit"
+                    >
+                        更新
+                    </Button>
+                </Form.Item>
             </Form>
         </Modal>
     )
