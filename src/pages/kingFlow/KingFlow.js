@@ -29,24 +29,27 @@ class KingFlow extends React.PureComponent {
     }
 
     getIntent = async () => {
+        const { record } = this.props
         const res = await schema.service.get({
             limit: 1000,
             key: "not.eq.null",
-            domain_key: this.props.record.domain_key,
+            domain_key: record.domain_key,
         })
         this.setState({ intenList: res.list })
     }
     getHistory = async () => {
+        const { record } = this.props
         const res = await schema.service.getFlowHistory({
             limit: 1000,
-            flow_key: this.props.record.key,
+            flow_key: record.key,
             config: "not.is.null",
-            domain_key: this.props.record.domain_key,
+            domain_key: record.domain_key,
         })
         this.setState({ historyList: res.list })
     }
 
     async componentDidMount() {
+        const { record } = this.props
         this.initData()
         this.getData()
         await this.getIntent()
@@ -55,23 +58,24 @@ class KingFlow extends React.PureComponent {
             spinning: false,
         })
         this.graph.flowSetting = {
-            key: this.props.record.key,
-            domain_key: this.props.record.domain_key,
+            key: record.key,
+            domain_key: record.domain_key,
         }
     }
 
     render() {
         let { chooseType, cell, intenList } = this.state
+        const { service, record, dict } = this.props
         return (
             <Spin tip="加载中..." spinning={this.state.spinning}>
                 <div className="container_warp">
                     <div id="containerChart" />
                     {chooseType && (
                         <RightDrawer
-                            service={this.props.service}
-                            record={this.props.record}
+                            service={service}
+                            record={record}
                             intenList={intenList}
-                            dict={this.props.dict}
+                            dict={dict}
                             graphChange={() => {
                                 return this.graphChange()
                             }}
@@ -172,7 +176,8 @@ class KingFlow extends React.PureComponent {
 
     onHistoryChange(index) {
         let _this = this
-        let data = localStorage.getItem("flow" + this.props.record.id)
+        const { record } = this.props
+        let data = localStorage.getItem("flow" + record.id)
         if (data) {
             confirm({
                 title: "是否切换版本？",
@@ -185,8 +190,8 @@ class KingFlow extends React.PureComponent {
                     _this.initData()
                     _this.getData(_this.state.historyList[index].config)
                     _this.graph.flowSetting = {
-                        key: _this.props.record.key,
-                        domain_key: _this.props.record.domain_key,
+                        key: record.key,
+                        domain_key: record.domain_key,
                     }
                     _this.setState({
                         historyIndex: index,
@@ -201,8 +206,8 @@ class KingFlow extends React.PureComponent {
             _this.initData()
             _this.getData(_this.state.historyList[index].config)
             _this.graph.flowSetting = {
-                key: _this.props.record.key,
-                domain_key: _this.props.record.domain_key,
+                key: record.key,
+                domain_key: record.domain_key,
             }
             _this.setState({
                 historyIndex: index,
@@ -212,16 +217,17 @@ class KingFlow extends React.PureComponent {
 
     getData = async (config) => {
         let _this = this
+        const { record, service } = this.props
         let data
         if (config) {
             data = clone(config)
         } else {
-            data = localStorage.getItem("flow" + this.props.record.id)
+            data = localStorage.getItem("flow" + record.id)
             data = JSON.parse(data)
         }
         if (!data) {
-            let res = await this.props.service.getDetail({
-                id: this.props.record.id,
+            let res = await service.getDetail({
+                id: record.id,
             })
             if (res.config && res.config.node && res.config.node.length) {
                 data = res.config

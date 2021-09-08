@@ -386,3 +386,70 @@ function showPorts(ports, show) {
         ports[i].style.visibility = show ? "visible" : "hidden"
     }
 }
+
+export function isError(data, graph) {
+    let isTrue = true
+    let nameArr = data.config.node.map((item) => {
+        return item.name
+    })
+    data.config.node.map((item) => {
+        if (
+            (!item.allow_repeat_time || countName(nameArr, item.name) > 1) &&
+            item.type !== "global"
+        ) {
+            let cell = graph.getCellById(item.key)
+            cell.attr("body/stroke", "#ff4d4f")
+            isTrue = false
+        } else {
+            let cell = graph.getCellById(item.key)
+            cell.attr("body/stroke", undefined)
+        }
+    })
+    nameArr = data.config.connection.map((item) => {
+        return item.name
+    })
+    data.config.connection.map((item) => {
+        if (countName(nameArr, item.name) > 1) {
+            let cell = graph.getCellById(item.key)
+            cell.attr("line/stroke", "#ff4d4f")
+            isTrue = false
+        } else {
+            let cell = graph.getCellById(item.key)
+            cell.attr("line/stroke", "#1890ff")
+        }
+    })
+    return isTrue
+}
+
+export function countName(arr, num) {
+    var countArr = arr.filter(function isBigEnough(value) {
+        return value === num
+    })
+    return countArr.length
+}
+
+export function handleCFmName(rules, value, callback, type, graph) {
+    if (!value) {
+        callback && callback()
+    } else {
+        if (type === "node") {
+            let data = graph.getNodes().map((item) => {
+                return item.getData().name
+            })
+            if (countName(data, value) > 1) {
+                callback && callback(new Error("名称重复"))
+                return false
+            } else {
+                return true
+            }
+        } else {
+            let data = graph.getEdges().map((item) => {
+                return item.getData().name
+            })
+            if (countName(data, value) > 1) {
+                callback && callback(new Error("名称重复"))
+                return false
+            }
+        }
+    }
+}
