@@ -190,13 +190,13 @@ class List extends ListPage {
                             this.setState({ showHotWord: false })
                         }}
                     >
-                        <HotWord record={this.state.record}></HotWord>
+                        <HotWord record={this.state.record}/>
                     </Modal>
                 )}
                 {visibleSearchHistory && (
                     <Modal
                         title={"搜索历史"}
-                        width={"70%"}
+                        width={"90%"}
                         visible={this.state.visibleSearchHistory}
                         footer={null}
                         onCancel={() => {
@@ -205,7 +205,7 @@ class List extends ListPage {
                     >
                         <SearchHistory
                             record={this.state.record}
-                        ></SearchHistory>
+                        />
                     </Modal>
                 )}
             </Fragment>
