@@ -114,7 +114,7 @@ class List extends ListPage {
             <Fragment>
                 {visibleQuestion && (
                     <Modal
-                        width={"90%"}
+                        width={"95%"}
                         visible={true}
                         footer={null}
                         onCancel={() => {
