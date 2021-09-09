@@ -20,6 +20,15 @@ const schema = {
         },
         sorter: true,
         editable: true,
+        fixed: 'left'
+    },
+    label: {
+        title: "标签",
+        type: schemaFieldType.Select,
+        props: {
+            mode: "tags",
+        },
+        editable: true,
     },
     question_extend: {
         title: "扩展问",
@@ -49,14 +58,6 @@ const schema = {
             return item.group
         },
         sorter: true,
-        editable: true,
-    },
-    label: {
-        title: "标签",
-        type: schemaFieldType.Select,
-        props: {
-            mode: "tags",
-        },
         editable: true,
     },
     global_key: {
