@@ -278,6 +278,11 @@ class BaseList extends EditPage {
                                             dataIndex: "label",
                                             key: "label",
                                         }
+                                        let global_key = {
+                                            title: "全局变量",
+                                            dataIndex: "global_key",
+                                            key: "global_key",
+                                        }
                                         let info = {
                                             title: "其他",
                                             dataIndex: "info",
@@ -288,9 +293,10 @@ class BaseList extends EditPage {
                                             question_standard,
                                             group,
                                             label,
-                                            info,
+                                            global_key,
                                             answer,
                                             question_extend,
+                                            info,
                                         ]
                                         await exportDataByTemplate(
                                             this.props.record.name,
