@@ -77,7 +77,8 @@ const schema = {
         lineWidth: "480px",
         editable: true,
         render: (item, record) => {
-            let res = item && item.length > 20 ? item.substring(0, 20) + "..." : item
+            let res =
+                item && item.length > 20 ? item.substring(0, 20) + "..." : item
             return (
                 <Tooltip
                     title={
@@ -103,7 +104,7 @@ const schema = {
             },
             media: {
                 uploadFn: async (param) => {
-                    let bucketName = "zknowninfo"
+                    // let bucketName = "zknowninfo"
                     // param.progress(100)
                     // await service.getMinioToken()
                     let minioConfig = (
@@ -117,6 +118,7 @@ const schema = {
                         secretKey: minioConfig.SecretAccessKey,
                         sessionToken: minioConfig.SessionToken,
                     })
+                    let bucketName = minioConfig.bucket
                     checkedAndUpload(
                         bucketName,
                         param.file,

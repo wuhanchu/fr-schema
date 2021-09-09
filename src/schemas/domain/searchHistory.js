@@ -15,14 +15,14 @@ const schema = {
     },
 
     show_question_txt: {
-        title: "匹配文本",
+        title: "匹配问题",
         required: true,
         searchPrefix: "like",
-        sorter: true,
     },
     match: {
         title: "是否匹配",
-        listHide: true,
+        // listHide: true,
+        width: "170px",
         type: schemaFieldType.Select,
         dict: {
             true: {
@@ -46,7 +46,12 @@ service.get = async (args) => {
         if (item.match_question_id) {
             return {
                 ...item,
-                show_question_txt: item.match_question_txt,
+                show_question_txt: item.return_question
+                    ? item.return_question.filter(
+                          (returnQuestionList) =>
+                              returnQuestionList.id === item.match_question_id
+                      )[0].match_question_title
+                    : "",
                 match: item.user_confirm ? true : null,
             }
         } else {
@@ -55,7 +60,7 @@ service.get = async (args) => {
                 show_question_txt:
                     item.return_question &&
                     item.return_question[0] &&
-                    item.return_question[0].answer,
+                    item.return_question[0].match_question_title,
                 match: item.user_confirm ? false : null,
             }
         }

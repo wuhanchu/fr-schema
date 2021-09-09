@@ -390,9 +390,11 @@ class BaseList extends EditPage {
             secretKey: minioConfig.SecretAccessKey,
             sessionToken: minioConfig.SessionToken,
         })
+        let bucketName = minioConfig.bucket
+
         try {
             checkedAndUpload(
-                "zknowninfo",
+                bucketName,
                 file,
                 minioClient,
                 minioConfig,

@@ -5,16 +5,17 @@ import React from "react"
 import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
 import frSchema from "@/outter/fr-schema/src"
-import { listToDict } from "@/outter/fr-schema/src/dict"
 import Modal from "antd/lib/modal/Modal"
-import { Card, Radio } from "antd"
+import { Radio, List, Tag } from "antd"
+import { formatData } from "@/utils/utils"
 
 const { utils } = frSchema
+
 @connect(({ global }) => ({
     dict: global.dict,
 }))
 @Form.create()
-class List extends DataList {
+class MyList extends DataList {
     constructor(props) {
         console.log(props)
         super(props, {
@@ -24,6 +25,8 @@ class List extends DataList {
             infoProps: {
                 width: "900px",
             },
+            operateWidth: "100px",
+
             showEdit: false,
             showDelete: false,
             // readOnly: true,
@@ -32,32 +35,46 @@ class List extends DataList {
                 ...props.queryArgs,
                 domain_key: props.record.key,
                 limit: 10,
-                // match_question_txt: 'not.is.null'
             },
         })
     }
 
     async componentDidMount() {
         super.componentDidMount()
-    }
-    renderOperateColumnExtend(record) {
-        const onChange = (e) => {
-            console.log("radio checked", e.target.value)
-            // setValue(e.target.value);
+        const onChange = (e, data) => {
             this.setState({ listLoading: true })
             this.handleUpdate({
                 user_confirm: true,
-                ...record,
+                ...data,
                 match: e.target.value,
             })
         }
-
+        this.schema.match.render = (item, data) => {
+            return (
+                <>
+                    <Radio.Group
+                        onChange={(e) => {
+                            onChange(e, data)
+                        }}
+                        value={data.match}
+                    >
+                        <Radio value={true}>匹配</Radio>
+                        <Radio value={false}>不匹配</Radio>
+                    </Radio.Group>
+                </>
+            )
+        }
+    }
+    renderOperateColumnExtend(record) {
         return (
             <>
-                <Radio.Group onChange={onChange} value={record.match}>
-                    <Radio value={true}>对</Radio>
-                    <Radio value={false}>错</Radio>
-                </Radio.Group>
+                <a
+                    onClick={() => {
+                        this.setState({ record, showAnswer: true })
+                    }}
+                >
+                    匹配列表
+                </a>
             </>
         )
     }
@@ -68,9 +85,9 @@ class List extends DataList {
             <>
                 {showAnswer && (
                     <Modal
-                        title="答案"
+                        title="匹配列表"
                         footer={false}
-                        // centered
+                        width={700}
                         onCancel={() => {
                             this.setState({
                                 showAnswer: false,
@@ -78,20 +95,57 @@ class List extends DataList {
                         }}
                         visible={true}
                     >
-                        <Card bordered={false}>
-                            <div
-                                dangerouslySetInnerHTML={{
-                                    __html:
-                                        record.answer &&
-                                        record.answer
-                                            .replace(
-                                                /<b>/g,
-                                                "<b style='color:red;'>"
-                                            )
-                                            .replace(/\n/g, "<br/>"),
-                                }}
-                            />
-                        </Card>
+                        <List
+                            size="large"
+                            style={{ maxHeight: "60vh", overflowY: "auto" }}
+                            bordered
+                            dataSource={record.return_question || []}
+                            renderItem={(item) => (
+                                <List.Item
+                                    actions={[
+                                        <a key="list-loadmore-more">
+                                            {formatData(item.compatibility, 5)}
+                                        </a>,
+                                    ]}
+                                >
+                                    <List.Item.Meta
+                                        title={
+                                            <div>
+                                                {item.match_question_title}
+                                                {record.match_question_id ===
+                                                item.id ? (
+                                                    <Tag color="#108ee9">
+                                                        已匹配问题
+                                                    </Tag>
+                                                ) : (
+                                                    ""
+                                                )}
+                                            </div>
+                                        }
+                                        description={
+                                            <div
+                                                style={{
+                                                    marginBottom: "-10px",
+                                                }}
+                                                dangerouslySetInnerHTML={{
+                                                    __html:
+                                                        item.answer &&
+                                                        item.answer
+                                                            .replace(
+                                                                /<b>/g,
+                                                                "<b style='color:red;'>"
+                                                            )
+                                                            .replace(
+                                                                /\n/g,
+                                                                "<br/>"
+                                                            ),
+                                                }}
+                                            />
+                                        }
+                                    />
+                                </List.Item>
+                            )}
+                        />
                     </Modal>
                 )}
             </>
@@ -104,7 +158,6 @@ class List extends DataList {
         const filters = this.createFilters(
             {
                 search,
-                match,
             },
             5
         )
@@ -112,4 +165,4 @@ class List extends DataList {
     }
 }
 
-export default List
+export default MyList
