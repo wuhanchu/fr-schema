@@ -23,6 +23,7 @@ import { DeleteOutlined, UploadOutlined } from "@ant-design/icons"
 import { exportDataByTemplate } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
 import { checkedAndUpload } from "@/utils/minio"
 import frSchema from "@/outter/fr-schema/src"
+import { v4 as uuidv4 } from "uuid"
 
 const { decorateList } = frSchema
 import EditPage from "@/components/editTable/EditPage"
@@ -391,17 +392,15 @@ class BaseList extends EditPage {
             sessionToken: minioConfig.SessionToken,
         })
         let bucketName = minioConfig.bucket
-
         try {
             checkedAndUpload(
                 bucketName,
                 file,
                 minioClient,
                 minioConfig,
+                uuidv4(),
                 (res) => {
-                    // 输出url
                     message.success(`文件上传成功`)
-                    // this.state.attachment.push(res)
                     let attachment = []
                     if (this.state.attachment)
                         attachment = clone(this.state.attachment)
@@ -430,7 +429,6 @@ class BaseList extends EditPage {
     renderExtend() {
         const props = {
             name: "file",
-            // action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
             headers: {
                 authorization: "authorization-text",
             },

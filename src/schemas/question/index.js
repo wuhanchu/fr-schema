@@ -1,9 +1,10 @@
 import { createApi, createBasicApi } from "@/outter/fr-schema/src/service"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import projectService from "./../project"
-import { verifyJson } from "@/outter/fr-schema-antd-utils/src/utils/component"
+import moment from "moment"
 import { message, Tooltip } from "antd"
 import { checkedAndUpload } from "@/utils/minio"
+import { v4 as uuidv4 } from "uuid"
 
 const Minio = require("minio")
 
@@ -104,9 +105,6 @@ const schema = {
             },
             media: {
                 uploadFn: async (param) => {
-                    // let bucketName = "zknowninfo"
-                    // param.progress(100)
-                    // await service.getMinioToken()
                     let minioConfig = (
                         await projectService.service.getMinioToken()
                     ).data
@@ -118,16 +116,19 @@ const schema = {
                         secretKey: minioConfig.SecretAccessKey,
                         sessionToken: minioConfig.SessionToken,
                     })
+                    let fileUuid = uuidv4()
                     let bucketName = minioConfig.bucket
                     checkedAndUpload(
                         bucketName,
                         param.file,
                         minioClient,
                         minioConfig,
+                        fileUuid,
                         (res) => {
                             // 输出url
                             let fileName = param.file.name
                             message.success(`文件上传成功`)
+                            console.log("文件上传成功", param)
                             param.success({
                                 url: minioConfig.secure
                                     ? "https://" +
@@ -136,16 +137,24 @@ const schema = {
                                       minioConfig.port +
                                       "/" +
                                       bucketName +
+                                      "/z_know_info/" +
+                                      moment(new Date()).format("YYYYMMDD") +
                                       "/" +
-                                      fileName
+                                      fileUuid +
+                                      "." +
+                                      fileName.split(".").pop().toLowerCase()
                                     : "http://" +
                                       minioConfig.endpoint +
                                       ":" +
                                       minioConfig.port +
                                       "/" +
                                       bucketName +
+                                      "/z_know_info/" +
+                                      moment(new Date()).format("YYYYMMDD") +
                                       "/" +
-                                      fileName,
+                                      fileUuid +
+                                      "." +
+                                      fileName.split(".").pop().toLowerCase(),
                                 meta: {
                                     loop: true, // 指定音视频是否循环播放
                                     autoPlay: false, // 指定音视频是否自动播放

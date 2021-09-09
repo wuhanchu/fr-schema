@@ -75,7 +75,6 @@ service.get = async (args) => {
 }
 
 service.patch = async (args) => {
-    console.log(args)
     if (!args.match_question_id && args.match) {
         args.match_project_id =
             args.return_question &&

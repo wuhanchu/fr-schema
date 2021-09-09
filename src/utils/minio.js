@@ -1,3 +1,4 @@
+import moment from "moment"
 const Minio = require("minio")
 const stream = require("stream")
 
@@ -40,7 +41,8 @@ export function uploadFile(
     file,
     minioClient,
     mininConfig,
-    callback
+    callback,
+    fileUuid
 ) {
     // 获取文件类型及大小
     const fileName = file.name
@@ -64,6 +66,8 @@ export function uploadFile(
         reader2.readAsArrayBuffer(blob)
         reader2.onload = (ex) => {
             // 定义流
+
+            console.log("文件", file, fileUuid)
             const bufferStream = new stream.PassThrough()
             // 将buffer写入
             bufferStream.end(Buffer.from(ex.target.result))
@@ -71,7 +75,12 @@ export function uploadFile(
             try {
                 minioClient.putObject(
                     bucketName,
-                    fileName,
+                    "z_know_info/" +
+                        moment(new Date()).format("YYYYMMDD") +
+                        "/" +
+                        fileUuid +
+                        "." +
+                        fileName.split(".").pop().toLowerCase(),
                     bufferStream,
                     fileSize,
                     metadata,
@@ -99,16 +108,34 @@ export function uploadFile(
                                                       mininConfig.port +
                                                       "/" +
                                                       bucketName +
+                                                      "/z_know_info/" +
+                                                      moment(new Date()).format(
+                                                          "YYYYMMDD"
+                                                      ) +
                                                       "/" +
+                                                      fileUuid +
+                                                      "." +
                                                       fileName
+                                                          .split(".")
+                                                          .pop()
+                                                          .toLowerCase()
                                                 : "http://" +
                                                       mininConfig.endpoint +
                                                       ":" +
                                                       mininConfig.port +
                                                       "/" +
                                                       bucketName +
+                                                      "/z_know_info/" +
+                                                      moment(new Date()).format(
+                                                          "YYYYMMDD"
+                                                      ) +
                                                       "/" +
+                                                      fileUuid +
+                                                      "." +
                                                       fileName
+                                                          .split(".")
+                                                          .pop()
+                                                          .toLowerCase()
                                         ),
                                         bucketName,
                                         fileName: file.name,
@@ -132,6 +159,7 @@ export function checkedAndUpload(
     info,
     minioClient,
     mininConfig,
+    fileUuid,
     callback,
     callError
 ) {
@@ -143,10 +171,24 @@ export function checkedAndUpload(
                     callError()
                     return
                 }
-                uploadFile(bucketName, info, minioClient, mininConfig, callback)
+                uploadFile(
+                    bucketName,
+                    info,
+                    minioClient,
+                    mininConfig,
+                    callback,
+                    fileUuid
+                )
             })
         } else {
-            uploadFile(bucketName, info, minioClient, mininConfig, callback)
+            uploadFile(
+                bucketName,
+                info,
+                minioClient,
+                mininConfig,
+                callback,
+                fileUuid
+            )
         }
     })
 }

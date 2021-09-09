@@ -92,7 +92,7 @@ class MyList extends DataList {
                     <Modal
                         title="匹配列表"
                         footer={false}
-                        width={700}
+                        width={900}
                         onCancel={() => {
                             this.setState({
                                 showAnswer: false,
@@ -133,6 +133,7 @@ class MyList extends DataList {
                                                     __html:
                                                         item.answer &&
                                                         item.answer
+                                                            .trim()
                                                             .replace(
                                                                 /<b>/g,
                                                                 "<b style='color:red;'>"
