@@ -1,8 +1,5 @@
 import { createApi } from "@/outter/fr-schema/src/service"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
-import { verifyJson } from "@/outter/fr-schema-antd-utils/src/utils/component"
-import moments from "moment"
-import { Radio } from "antd"
 
 const schema = {
     id: {
@@ -14,6 +11,11 @@ const schema = {
         searchPrefix: "like",
     },
 
+    match_project_id: {
+        title: "匹配问题库",
+        required: true,
+        type: schemaFieldType.Select,
+    },
     show_question_txt: {
         title: "匹配问题",
         required: true,
@@ -50,7 +52,7 @@ service.get = async (args) => {
                     ? item.return_question.filter(
                           (returnQuestionList) =>
                               returnQuestionList.id === item.match_question_id
-                      )[0].match_question_title
+                      )[0].question
                     : "",
                 match: item.user_confirm ? true : null,
             }
@@ -60,8 +62,12 @@ service.get = async (args) => {
                 show_question_txt:
                     item.return_question &&
                     item.return_question[0] &&
-                    item.return_question[0].match_question_title,
+                    item.return_question[0].question,
                 match: item.user_confirm ? false : null,
+                match_project_id:
+                    item.return_question &&
+                    item.return_question[0] &&
+                    item.return_question[0].project_id,
             }
         }
     })
@@ -95,6 +101,7 @@ service.patch = async (args) => {
     args.match = undefined
     args.match_remark = undefined
     args.show_question_txt = undefined
+    args.match_project_id_remark = undefined
     args.user_confirm = true
     let data = await createApi("search_history", schema, null, "eq.").patch(
         args

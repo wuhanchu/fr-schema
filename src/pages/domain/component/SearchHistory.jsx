@@ -8,6 +8,8 @@ import frSchema from "@/outter/fr-schema/src"
 import Modal from "antd/lib/modal/Modal"
 import { Radio, List, Tag } from "antd"
 import { formatData } from "@/utils/utils"
+import projectService from "@/schemas/project"
+import { listToDict } from "@/outter/fr-schema/src/dict"
 
 const { utils } = frSchema
 
@@ -40,6 +42,7 @@ class MyList extends DataList {
     }
 
     async componentDidMount() {
+        let res = await projectService.service.get({ limit: 1000 })
         super.componentDidMount()
         const onChange = (e, data) => {
             this.setState({ listLoading: true })
@@ -49,6 +52,8 @@ class MyList extends DataList {
                 match: e.target.value,
             })
         }
+        console.log("dict", this.props.dict)
+        this.schema.match_project_id.dict = listToDict(res.list)
         this.schema.match.render = (item, data) => {
             return (
                 <>
@@ -111,7 +116,7 @@ class MyList extends DataList {
                                     <List.Item.Meta
                                         title={
                                             <div>
-                                                {item.match_question_title}
+                                                {item.question}
                                                 {record.match_question_id ===
                                                 item.id ? (
                                                     <Tag color="#108ee9">
@@ -124,9 +129,6 @@ class MyList extends DataList {
                                         }
                                         description={
                                             <div
-                                                style={{
-                                                    marginBottom: "-10px",
-                                                }}
                                                 dangerouslySetInnerHTML={{
                                                     __html:
                                                         item.answer &&
