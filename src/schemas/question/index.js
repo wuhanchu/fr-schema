@@ -20,7 +20,7 @@ const schema = {
         },
         sorter: true,
         editable: true,
-        fixed: 'left'
+        fixed: "left",
     },
     label: {
         title: "标签",
@@ -119,6 +119,7 @@ const schema = {
                     })
                     let fileUuid = uuidv4()
                     let bucketName = minioConfig.bucket
+                    console.log(minioConfig)
                     checkedAndUpload(
                         bucketName,
                         param.file,
@@ -131,31 +132,16 @@ const schema = {
                             message.success(`文件上传成功`)
                             console.log("文件上传成功", param)
                             param.success({
-                                url: minioConfig.secure
-                                    ? "https://" +
-                                      minioConfig.endpoint +
-                                      ":" +
-                                      minioConfig.port +
-                                      "/" +
-                                      bucketName +
-                                      "/z_know_info/" +
-                                      moment(new Date()).format("YYYYMMDD") +
-                                      "/" +
-                                      fileUuid +
-                                      "." +
-                                      fileName.split(".").pop().toLowerCase()
-                                    : "http://" +
-                                      minioConfig.endpoint +
-                                      ":" +
-                                      minioConfig.port +
-                                      "/" +
-                                      bucketName +
-                                      "/z_know_info/" +
-                                      moment(new Date()).format("YYYYMMDD") +
-                                      "/" +
-                                      fileUuid +
-                                      "." +
-                                      fileName.split(".").pop().toLowerCase(),
+                                url:
+                                    minioConfig.minio_server_url +
+                                    "/" +
+                                    bucketName +
+                                    "/z_know_info/" +
+                                    moment(new Date()).format("YYYYMMDD") +
+                                    "/" +
+                                    fileUuid +
+                                    "." +
+                                    fileName.split(".").pop().toLowerCase(),
                                 meta: {
                                     loop: true, // 指定音视频是否循环播放
                                     autoPlay: false, // 指定音视频是否自动播放

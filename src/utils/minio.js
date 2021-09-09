@@ -33,14 +33,14 @@ export function toBlob(base64Data) {
  * @param {*} file info为antd上传组件的file
  * @param {*} callback 回调函数，返回下载url
  * @param {*} minioClient minio对象
- * @param {*} mininConfig 配置
+ * @param {*} minioConfig 配置
  */
 
 export function uploadFile(
     bucketName,
     file,
     minioClient,
-    mininConfig,
+    minioConfig,
     callback,
     fileUuid
 ) {
@@ -101,41 +101,20 @@ export function uploadFile(
                                     callback({
                                         // url: presignedUrl,
                                         url: encodeURI(
-                                            mininConfig.secure
-                                                ? "https://" +
-                                                      mininConfig.endpoint +
-                                                      ":" +
-                                                      mininConfig.port +
-                                                      "/" +
-                                                      bucketName +
-                                                      "/z_know_info/" +
-                                                      moment(new Date()).format(
-                                                          "YYYYMMDD"
-                                                      ) +
-                                                      "/" +
-                                                      fileUuid +
-                                                      "." +
-                                                      fileName
-                                                          .split(".")
-                                                          .pop()
-                                                          .toLowerCase()
-                                                : "http://" +
-                                                      mininConfig.endpoint +
-                                                      ":" +
-                                                      mininConfig.port +
-                                                      "/" +
-                                                      bucketName +
-                                                      "/z_know_info/" +
-                                                      moment(new Date()).format(
-                                                          "YYYYMMDD"
-                                                      ) +
-                                                      "/" +
-                                                      fileUuid +
-                                                      "." +
-                                                      fileName
-                                                          .split(".")
-                                                          .pop()
-                                                          .toLowerCase()
+                                            minioConfig.minio_server_url +
+                                                "/" +
+                                                bucketName +
+                                                "/z_know_info/" +
+                                                moment(new Date()).format(
+                                                    "YYYYMMDD"
+                                                ) +
+                                                "/" +
+                                                fileUuid +
+                                                "." +
+                                                fileName
+                                                    .split(".")
+                                                    .pop()
+                                                    .toLowerCase()
                                         ),
                                         bucketName,
                                         fileName: file.name,
@@ -158,11 +137,20 @@ export function checkedAndUpload(
     bucketName,
     info,
     minioClient,
-    mininConfig,
+    minioConfig,
     fileUuid,
     callback,
     callError
 ) {
+    console.log(
+        bucketName,
+        info,
+        minioClient,
+        minioConfig,
+        fileUuid,
+        callback,
+        callError
+    )
     minioClient.bucketExists(bucketName, (err) => {
         if (err) {
             minioClient.makeBucket(bucketName, "us-east-1", (err1) => {
@@ -175,7 +163,7 @@ export function checkedAndUpload(
                     bucketName,
                     info,
                     minioClient,
-                    mininConfig,
+                    minioConfig,
                     callback,
                     fileUuid
                 )
@@ -185,7 +173,7 @@ export function checkedAndUpload(
                 bucketName,
                 info,
                 minioClient,
-                mininConfig,
+                minioConfig,
                 callback,
                 fileUuid
             )
