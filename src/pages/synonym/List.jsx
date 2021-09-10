@@ -16,7 +16,7 @@ class List extends ListPage {
         super(props, {
             schema: schemas.synonym.schema,
             service: schemas.synonym.service,
-            operateWidth: "100px",
+            operateWidth: "120px",
         })
         this.schema.domain_key.dict = this.props.dict.domain
     }

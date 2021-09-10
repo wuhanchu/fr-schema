@@ -15,7 +15,7 @@ class List extends DataList {
         super(props, {
             schema: schemas.relationType.schema,
             service: schemas.relationType.service,
-            operateWidth: "100px",
+            operateWidth: "120px",
         })
         this.schema.domain_key.dict = this.props.dict.domain
     }

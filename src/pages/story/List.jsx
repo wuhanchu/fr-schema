@@ -16,7 +16,7 @@ class List extends ListPage {
         super(props, {
             schema: schemas.story.schema,
             service: schemas.story.service,
-            operateWidth: "150px",
+            operateWidth: "170px",
         })
     }
 

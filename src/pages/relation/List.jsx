@@ -17,7 +17,7 @@ class List extends DataList {
             schema: schemas.relation.schema,
             service: schemas.relation.service,
             // readOnly: true,
-            operateWidth: "100px",
+            operateWidth: "120px",
             infoProps: {
                 // width: "900px",
                 offline: true,
