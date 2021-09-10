@@ -27,7 +27,7 @@ import SearchPageModal from "@/pages/question/components/SearchPageModal"
 class List extends ListPage {
     constructor(props) {
         super(props, {
-            operateWidth: 260,
+            operateWidth: 280,
             schema: schemas.project.schema,
             service: schemas.project.service,
             infoProps: {

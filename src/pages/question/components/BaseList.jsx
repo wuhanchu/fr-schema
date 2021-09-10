@@ -46,7 +46,7 @@ class BaseList extends EditPage {
             config[key].isExpand = true
         })
         super(props, {
-            operateWidth: 150,
+            operateWidth: 120,
             schema: clone({ ...schemas.question.schema, ...config }),
             service: schemas.question.service,
             showEdit: false,
@@ -736,7 +736,8 @@ class BaseList extends EditPage {
 
     // 数据扩展
     dataExtra(item) {
-        item.question_extend = item.question_extend && item.question_extend.split("\n")
+        item.question_extend =
+            item.question_extend && item.question_extend.split("\n")
     }
 }
 

@@ -33,7 +33,7 @@ class List extends ListPage {
             infoProps: {
                 offline: true,
             },
-            operateWidth: "270px",
+            operateWidth: "290px",
         })
     }
 
@@ -190,7 +190,7 @@ class List extends ListPage {
                             this.setState({ showHotWord: false })
                         }}
                     >
-                        <HotWord record={this.state.record}/>
+                        <HotWord record={this.state.record} />
                     </Modal>
                 )}
                 {visibleSearchHistory && (
@@ -203,9 +203,7 @@ class List extends ListPage {
                             this.setState({ visibleSearchHistory: false })
                         }}
                     >
-                        <SearchHistory
-                            record={this.state.record}
-                        />
+                        <SearchHistory record={this.state.record} />
                     </Modal>
                 )}
             </Fragment>

@@ -25,7 +25,7 @@ class List extends ListPage {
             schema: schemas.flow.schema,
             service: schemas.flow.service,
             importTemplateUrl,
-            operateWidth: "170px",
+            operateWidth: "190px",
         })
         this.schema.domain_key.dict = this.props.dict.domain
         console.log(props)

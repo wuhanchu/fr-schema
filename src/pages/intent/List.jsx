@@ -28,9 +28,9 @@ class List extends ListPage {
             schema: schemas.intent.schema,
             service: schemas.intent.service,
             importTemplateUrl,
-            queryArgs: { pageSize: 10000 },
+            queryArgs: { pageSize: 10000, limit: 10000 },
             mini: true,
-            operateWidth: "100px",
+            operateWidth: "120px",
         })
         this.schema.domain_key.dict = this.props.dict.domain
         this.state = {

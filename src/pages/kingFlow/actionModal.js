@@ -128,6 +128,10 @@ export const ActionModal = ({
             value: "concat_text_by_slot",
             remark: "根据槽位合成文本",
         },
+        return_text_by_order: {
+            value: "return_text_by_order",
+            remark: "多文本次序返回",
+        },
         get_template: {
             value: "get_template",
             remark: "根据回复key搜索回复模板",

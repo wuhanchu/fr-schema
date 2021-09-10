@@ -39,6 +39,7 @@ class yamlEdiit extends Component {
             lineWrapping: true,
         }
         const { value } = this.state
+
         return (
             <Modal
                 visible={true}
@@ -47,6 +48,14 @@ class yamlEdiit extends Component {
                 okText={"确定"}
                 cancelText={"取消"}
                 onCancel={() => {
+                    console.log(this.props.record)
+                    console.log(
+                        value === this.props.record[this.props.schemasName]
+                    )
+                    if (value === this.props.record[this.props.schemasName]) {
+                        this.props.handleSetYamlEditVisible(false)
+                        return
+                    }
                     confirm({
                         title: "提示",
                         content: "关闭对话框将不会保留未确认内容！",
