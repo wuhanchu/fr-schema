@@ -393,8 +393,9 @@ class Dialogue extends Chat {
                 param.conversationId = res.data.id
                 param.isFlow = false
             }
+            this.setState({ isSpin: false })
         }
-        this.setState({ isSpin: false, ...param, resultFlowLength: 1 })
+        this.setState({ ...param, resultFlowLength: 1 })
     }
 
     // 重置
