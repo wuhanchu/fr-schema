@@ -76,13 +76,13 @@ const schema = {
                 span: 4,
             },
         },
+        width: 450,
         lineWidth: "480px",
         editable: true,
         render: (item, record) => {
-            let res =
-                item && item.length > 20 ? item.substring(0, 20) + "..." : item
             return (
                 <Tooltip
+                    overlayInnerStyle={{ minWidth: 400 }}
                     title={
                         <div
                             style={{ maxHeight: "400px", overflowY: "auto" }}
@@ -90,7 +90,10 @@ const schema = {
                         />
                     }
                 >
-                    <div dangerouslySetInnerHTML={{ __html: res }} />
+                    <div
+                        style={{ maxHeight: "40px", overflowY: "auto" }}
+                        dangerouslySetInnerHTML={{ __html: item }}
+                    />
                 </Tooltip>
             )
         },
