@@ -44,6 +44,11 @@ export default [
                 name: "dialogue",
                 component: "./question/components/Dialogue",
             },
+            {
+                path: "/outter/workDetail",
+                name: "dialogue",
+                component: "./outPage/workDetail",
+            },
         ],
     },
 

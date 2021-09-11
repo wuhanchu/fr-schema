@@ -43,31 +43,12 @@ const EditableCell = ({
                 inputRef.current && inputRef.current.focus()
                 return
             }
-            form.current = form
+
             item.props.style = { ...item.props.style, height: "260px" }
+            form.current = form
+            inputRef.current && inputRef.current.draftInstance.focus()
         }
     }, [editing])
-
-    useEffect(() => {
-        if (editing && item.type === "BraftEditor") {
-            document.addEventListener("click", clickCallback, false)
-            return () => {
-                document.removeEventListener("click", clickCallback, false)
-            }
-        }
-    }, [editing])
-
-    const clickCallback = (event) => {
-        let focusNum = parseInt(localStorage.getItem("focusNum"))
-        if (focusNum === 2) {
-            localStorage.setItem("focusNum", "0")
-            setEditing(false)
-            return
-        }
-        if (focusNum === 0) {
-            localStorage.setItem("focusNum", "2")
-        }
-    }
 
     const toggleEdit = () => {
         setEditing(!editing)
@@ -76,18 +57,14 @@ const EditableCell = ({
         })
     }
 
-    const initEditorClick = async () => {
-        let flag = parseInt(localStorage.getItem("focusNum"))
-        if (item.type === "BraftEditor") {
-            return
-        }
-        localStorage.setItem("focusNum", "0")
-        toggleEdit()
-    }
-
     const save = async () => {
         try {
-            const values = await form.validateFields()
+            let values
+            if (item.type === "BraftEditor") {
+                values = await form.getFieldsValue()
+            } else {
+                values = await form.validateFields()
+            }
             toggleEdit()
             if (values[dataIndex] === record[dataIndex]) return
             handleSave({ ...record, ...values })
@@ -105,7 +82,7 @@ const EditableCell = ({
             item.unit
                 ? item.key
                 : dataIndex
-        let param = {}
+
         childNode = (
             <Form.Item
                 style={{
@@ -121,28 +98,23 @@ const EditableCell = ({
             >
                 {createComponent(
                     item,
-                    {},
+                    { [dataIndex]: record[dataIndex] },
                     { onBlur: save, ref: inputRef, form },
                     "edit",
                     "90%"
                 )}
             </Form.Item>
         )
+
         childNode = editing ? (
-            <div
-                onClick={(_) => {
-                    localStorage.setItem("focusNum", "1")
-                }}
-            >
-                {childNode}
-            </div>
+            childNode
         ) : (
             <div
                 className="editable-cell-value-wrap"
                 style={{
                     paddingRight: 24,
                 }}
-                onClick={initEditorClick}
+                onClick={toggleEdit}
             >
                 {children}
             </div>
