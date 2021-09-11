@@ -51,10 +51,12 @@ const EditableCell = ({
     }, [editing])
 
     const toggleEdit = () => {
-        setEditing(!editing)
-        form.setFieldsValue({
-            [dataIndex]: record[dataIndex],
-        })
+        if (item.type !== "BraftEditor") {
+            setEditing(!editing)
+            form.setFieldsValue({
+                [dataIndex]: record[dataIndex],
+            })
+        }
     }
 
     const save = async () => {

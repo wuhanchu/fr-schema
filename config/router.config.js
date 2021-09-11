@@ -195,7 +195,6 @@ export default [
                                 path: "/system/client",
                                 name: "client",
                                 title: "客户端管理",
-
                                 component: "./authority/clientList/List",
                             },
                         ],
