@@ -46,10 +46,10 @@ class BaseList extends EditPage {
             config[key].isExpand = true
         })
         super(props, {
-            operateWidth: 120,
+            operateWidth: 170,
             schema: clone({ ...schemas.question.schema, ...config }),
             service: schemas.question.service,
-            showEdit: false,
+            // showEdit: false,
             allowExport: true,
             showSelect: true,
             allowImport: true,
@@ -139,8 +139,6 @@ class BaseList extends EditPage {
             return (
                 <AutoComplete
                     style={{ width: "100%", maxWidth: "300px" }}
-                    // onSelect={onSelect}
-                    // onSearch={onSearch}
                     placeholder="请输入分组"
                 >
                     {options}
@@ -228,17 +226,7 @@ class BaseList extends EditPage {
                                 this.setState(
                                     { exportLoading: true },
                                     async () => {
-                                        let columns = this.getColumns(
-                                            false
-                                        ).filter((item) => {
-                                            return (
-                                                !item.isExpand &&
-                                                item.key !== "external_id"
-                                            )
-                                        })
-                                        console.log("导出数组", columns)
-                                        // let data = this.state.data.list
-                                        // if (this.props.exportMore) {
+                                        let columns
                                         let data = await this.requestList({
                                             pageSize: 1000000,
                                             offset: 0,
@@ -248,7 +236,6 @@ class BaseList extends EditPage {
                                             this.schema
                                         )
                                         // }
-                                        let hint = {}
                                         let external_id = {
                                             title: "编号",
                                             dataIndex: "external_id",
@@ -352,15 +339,26 @@ class BaseList extends EditPage {
         const { visibleModal, infoData, action } = this.state
         const updateMethods = {
             handleVisibleModal: this.handleVisibleModal.bind(this),
-            handleUpdate: this.handleUpdate.bind(this),
+            handleUpdate: (args) => {
+                this.editData(args)
+                this.setState({ visibleModal: false })
+            },
             handleAdd: this.handleAdd.bind(this),
         }
 
+        let infoProps = {}
+        if (action !== "edit") {
+            infoProps = this.meta.infoProps
+        } else {
+            infoProps = {
+                offline: true,
+            }
+        }
         return (
             visibleModal && (
                 <InfoModal
                     renderForm={renderForm}
-                    title={title}
+                    title={action !== "edit" ? title : "答案"}
                     action={action}
                     resource={resource}
                     {...updateMethods}
@@ -369,9 +367,31 @@ class BaseList extends EditPage {
                     addArgs={addArgs}
                     meta={this.meta}
                     service={this.service}
-                    schema={this.schema}
-                    {...this.meta.infoProps}
+                    schema={
+                        action !== "edit"
+                            ? this.schema
+                            : {
+                                  answer: {
+                                      ...this.schema.answer,
+                                      isNoTitle: true,
+                                      props: {
+                                          ...this.schema.answer.props,
+                                          style: {
+                                              ...this.schema.answer.props.style,
+                                              width: "700px",
+                                              marginTop: "-24px",
+                                              marginLeft: "-24px",
+                                              height: "436px",
+                                              marginBottom: "-48px",
+                                              border: false,
+                                          },
+                                      },
+                                      span: 24,
+                                  },
+                              }
+                    }
                     {...customProps}
+                    {...infoProps}
                 />
             )
         )

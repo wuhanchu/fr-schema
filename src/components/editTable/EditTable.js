@@ -1,15 +1,15 @@
-import React, {useContext, useState, useEffect, useRef, Fragment} from "react"
-import {Table, Button, Form, Alert} from "antd"
+import React, { useContext, useState, useEffect, useRef, Fragment } from "react"
+import { Table, Button, Form, Alert } from "antd"
 import "./EditTable.css"
-import {autobind} from "core-decorators"
+import { autobind } from "core-decorators"
 import StandardTable from "@/outter/fr-schema-antd-utils/src/components/StandardTable"
 import styles from "@/outter/fr-schema-antd-utils/src/components/StandardTable/index.less"
 
 const EditableContext = React.createContext(null)
-import {createComponent} from "@/outter/fr-schema-antd-utils/src/utils/component"
+import { createComponent } from "@/outter/fr-schema-antd-utils/src/utils/component"
 
 // 行
-const EditableRow = ({index, ...props}) => {
+const EditableRow = ({ index, ...props }) => {
     const [form] = Form.useForm()
     return (
         <Form form={form} component={false}>
@@ -22,16 +22,16 @@ const EditableRow = ({index, ...props}) => {
 
 // 单元格
 const EditableCell = ({
-                          title,
-                          editable,
-                          children,
-                          dataIndex,
-                          record,
-                          handleSave,
-                          renderInput,
-                          item,
-                          ...restProps
-                      }) => {
+    title,
+    editable,
+    children,
+    dataIndex,
+    record,
+    handleSave,
+    renderInput,
+    item,
+    ...restProps
+}) => {
     const [editing, setEditing] = useState(false)
     const inputRef = useRef(null)
     const form = useContext(EditableContext)
@@ -44,31 +44,30 @@ const EditableCell = ({
                 return
             }
             form.current = form
-            item.props.style = {...item.props.style, height: "260px"}
+            item.props.style = { ...item.props.style, height: "260px" }
         }
     }, [editing])
 
     useEffect(() => {
         if (editing && item.type === "BraftEditor") {
-            document.addEventListener("click", clickCallback, false);
+            document.addEventListener("click", clickCallback, false)
             return () => {
-                document.removeEventListener("click", clickCallback, false);
-            };
+                document.removeEventListener("click", clickCallback, false)
+            }
         }
-    }, [editing]);
+    }, [editing])
 
     const clickCallback = (event) => {
-        let focusNum = parseInt(localStorage.getItem('focusNum'));
+        let focusNum = parseInt(localStorage.getItem("focusNum"))
         if (focusNum === 2) {
-            localStorage.setItem('focusNum', '0');
+            localStorage.setItem("focusNum", "0")
             setEditing(false)
-            return;
+            return
         }
         if (focusNum === 0) {
-            localStorage.setItem('focusNum', '2');
+            localStorage.setItem("focusNum", "2")
         }
     }
-
 
     const toggleEdit = () => {
         setEditing(!editing)
@@ -78,11 +77,11 @@ const EditableCell = ({
     }
 
     const initEditorClick = async () => {
-        let flag = parseInt(localStorage.getItem('focusNum'));
-        if ( item.type === 'BraftEditor' && flag === 2) {
-            return;
+        let flag = parseInt(localStorage.getItem("focusNum"))
+        if (item.type === "BraftEditor") {
+            return
         }
-        localStorage.setItem('focusNum', '0');
+        localStorage.setItem("focusNum", "0")
         toggleEdit()
     }
 
@@ -90,8 +89,8 @@ const EditableCell = ({
         try {
             const values = await form.validateFields()
             toggleEdit()
-            if (values[dataIndex] === record[dataIndex]) return;
-            handleSave({...record, ...values})
+            if (values[dataIndex] === record[dataIndex]) return
+            handleSave({ ...record, ...values })
         } catch (errInfo) {
             console.log("保存失败:", errInfo)
         }
@@ -123,16 +122,20 @@ const EditableCell = ({
                 {createComponent(
                     item,
                     {},
-                    {onBlur: save, ref: inputRef, form},
+                    { onBlur: save, ref: inputRef, form },
                     "edit",
                     "90%"
                 )}
             </Form.Item>
         )
         childNode = editing ? (
-            <div onClick={_ => {
-                localStorage.setItem('focusNum', '1')
-            }}>{childNode}</div>
+            <div
+                onClick={(_) => {
+                    localStorage.setItem("focusNum", "1")
+                }}
+            >
+                {childNode}
+            </div>
         ) : (
             <div
                 className="editable-cell-value-wrap"
@@ -156,7 +159,6 @@ class EditableTable extends StandardTable {
         this.state = {
             ...this.state,
         }
-
     }
 
     // 数据修改
@@ -165,10 +167,10 @@ class EditableTable extends StandardTable {
     }
 
     render() {
-        const {selectedRowKeys, needTotalList} = this.state
+        const { selectedRowKeys, needTotalList } = this.state
         const {
             selectedRows,
-            data: {list, pagination},
+            data: { list, pagination },
             loading,
             columns,
             rowKey,
@@ -226,18 +228,18 @@ class EditableTable extends StandardTable {
                             message={
                                 <Fragment>
                                     已选择{" "}
-                                    <a style={{fontWeight: 600}}>
+                                    <a style={{ fontWeight: 600 }}>
                                         {selectedRowKeys.length}
                                     </a>{" "}
                                     项&nbsp;&nbsp;
                                     {needTotalList.map((item) => (
                                         <span
-                                            style={{marginLeft: 8}}
+                                            style={{ marginLeft: 8 }}
                                             key={item.dataIndex}
                                         >
                                             {item.title}
                                             总计&nbsp;
-                                            <span style={{fontWeight: 600}}>
+                                            <span style={{ fontWeight: 600 }}>
                                                 {item.render
                                                     ? item.render(item.total)
                                                     : item.total}
@@ -246,7 +248,7 @@ class EditableTable extends StandardTable {
                                     ))}
                                     <a
                                         onClick={this.cleanSelectedKeys}
-                                        style={{marginLeft: 24}}
+                                        style={{ marginLeft: 24 }}
                                     >
                                         清空
                                     </a>
@@ -268,7 +270,7 @@ class EditableTable extends StandardTable {
                     columns={columnsRes}
                     pagination={paginationProps}
                     onChange={this.handleTableChange}
-                    scroll={{x: "max-content"}}
+                    scroll={{ x: "max-content" }}
                     size={"middle"}
                     {...otherProps}
                 />
