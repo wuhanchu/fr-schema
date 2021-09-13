@@ -66,6 +66,14 @@ const EditableCell = ({
                 values = await form.getFieldsValue()
             } else {
                 values = await form.validateFields()
+                if (Array.isArray(values[dataIndex]))  {
+                    values[dataIndex]= values[dataIndex].filter((values) => {
+                        return values.trim() !== ''
+                    })
+                }
+                if (typeof values[dataIndex] === 'string') {
+                    values[dataIndex] = values[dataIndex].trim()
+                }
             }
             toggleEdit()
             if (values[dataIndex] === record[dataIndex]) return
