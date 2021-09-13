@@ -91,14 +91,14 @@ class List extends ListPage {
                 >
                     搜索
                 </a>
-                <Divider type="vertical" />
+                {/* <Divider type="vertical" />
                 <a
                     onClick={() => {
                         this.setState({ record, visibleDemo: true })
                     }}
                 >
                     演示对话
-                </a>
+                </a> */}
                 <Divider type="vertical" />
                 <Dropdown overlay={menu}>
                     <a href="#">
