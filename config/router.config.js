@@ -46,8 +46,8 @@ export default [
             },
             {
                 path: "/outter/workDetail",
-                name: "dialogue",
-                component: "./outPage/workDetail",
+                name: "workDetail",
+                component: "./outPage/WorkDetail",
             },
         ],
     },
