@@ -91,14 +91,18 @@ class List extends ListPage {
                 >
                     搜索
                 </a>
-                {/* <Divider type="vertical" />
-                <a
-                    onClick={() => {
-                        this.setState({ record, visibleDemo: true })
-                    }}
-                >
-                    演示对话
-                </a> */}
+                {this.props.location.query.conversation_id && (
+                    <>
+                        <Divider type="vertical" />
+                        <a
+                            onClick={() => {
+                                this.setState({ record, visibleDemo: true })
+                            }}
+                        >
+                            演示对话
+                        </a>
+                    </>
+                )}
                 <Divider type="vertical" />
                 <Dropdown overlay={menu}>
                     <a href="#">
@@ -172,7 +176,10 @@ class List extends ListPage {
                             style={{ border: "none" }}
                             width="100%"
                             height="400"
-                            src="http://127.0.0.1:8000/outter/workDetail?conversation_id=262aa74c-0067-441b-b839-93a1ac02369f"
+                            src={
+                                "http://127.0.0.1:8000/outter/workDetail?conversation_id=" +
+                                this.props.location.query.conversation_id
+                            }
                         ></iframe>
                     </Modal>
                 )}
