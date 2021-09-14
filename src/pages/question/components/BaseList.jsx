@@ -495,13 +495,13 @@ class BaseList extends EditPage {
                         <Button
                             type="primary"
                             onClick={async () => {
-                                if (!this.state.isUpload) {
-                                    this.setState({
-                                        showAnnex: false,
-                                        loadingAnnex: false,
-                                    })
-                                    return
-                                }
+                                // if (!this.state.isUpload) {
+                                //     this.setState({
+                                //         showAnnex: false,
+                                //         loadingAnnex: false,
+                                //     })
+                                //     return
+                                // }
                                 await this.service.patch(
                                     {
                                         id: this.state.record.id,
