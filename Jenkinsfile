@@ -38,7 +38,7 @@ pipeline {
                     }
 
                     when {
-                        anyOf {branch 'master'; tag '*datanown*'}
+                        anyOf {branch 'master'; tag '*dataknown*'}
                      }
 
                     steps{
@@ -51,9 +51,9 @@ pipeline {
                 stage('Build Standard') {
                     when {
                        anyOf {
-                        //    branch 'develop'; 
-                           allOf{ buildingTag();  
-                           not { tag '*datanown*'}}}
+                        //    branch 'develop';
+                           allOf{ buildingTag();
+                           not { tag '*dataknown*'}}}
                      }
 
                      agent {
