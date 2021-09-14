@@ -34,7 +34,8 @@ class List extends ListPage {
         this.schema.domain_key.dict = this.props.dict.domain
         this.state = {
             ...this.state,
-            searchValues: { logical_path: "." },
+            searchValues: {logical_path: "."},
+            expandedRowKeys: [],
         }
     }
 
@@ -302,9 +303,11 @@ class List extends ListPage {
     }
 
     renderList(inProps = {}) {
+        let {expandedRowKeys} = this.state
         inProps = {
             expandable: {
                 onExpand: (expanded, record) => this.onExpand(expanded, record),
+                expandedRowKeys
             },
         }
         return super.renderList(inProps)
@@ -312,17 +315,35 @@ class List extends ListPage {
 
     // 展开
     async onExpand(expanded, record) {
+        let {expandedRowKeys} = this.state;
+        let flag = expandedRowKeys.includes(record.id); // 是否已经展开过
+        // 展开
+        if (expanded) {
+            // 新数据添加
+            if (!flag) {
+                expandedRowKeys.push(record.id);
+            }
+        } else {
+            // 收起则把数据去除
+            if (flag) {
+                expandedRowKeys = expandedRowKeys.filter((value) => {
+                    return value !== record.id
+                })
+            }
+        }
+        this.setState({expandedRowKeys: [...expandedRowKeys]})
         // 如果已经获取过,不在重复调用接口
         if (record.children.length) {
             return
         }
         // 加载
-        this.setState({ listLoading: true })
+        this.setState({listLoading: true})
         // 获取子意图
         let res = await super.requestList({
             logical_path: "like." + record.logical_path + ".*",
             // domain_key: record.domain_key,
             pageSize: 10000, // 显示所有意图,不分页
+            name: null,
         })
         if (res.list.length) {
             // 子意图排序 层级最深在最上面
@@ -365,6 +386,32 @@ class List extends ListPage {
         return b.tier - a.tier
     }
 
+    // 搜索
+    onSearch(fieldsValue) {
+        //  更新列表
+        const searchValues = { ...this.state.searchValues }
+
+        Object.keys(fieldsValue).forEach((key) => {
+            if (!fieldsValue[key]) {
+                delete searchValues[key]
+                return
+            }
+
+            searchValues[key] = fieldsValue[key]
+        })
+
+        this.setState(
+            {
+                pagination: { ...this.state.pagination, currentPage: 1 },
+                searchValues: {...searchValues, logical_path: searchValues.name ? null : '.'},
+                expandedRowKeys: []
+            },
+            async () => {
+                this.refreshList()
+            }
+        )
+    }
+
     /**
      * 重置查询
      */
@@ -374,8 +421,9 @@ class List extends ListPage {
         this.formRef.current.resetFields()
         this.setState(
             {
-                pagination: { ...this.state.pagination, currentPage: 1 },
-                searchValues: { order, logical_path: "." },
+                pagination: {...this.state.pagination, currentPage: 1},
+                searchValues: {order, logical_path: "."},
+                expandedRowKeys: [],
             },
             () => {
                 this.refreshList()
