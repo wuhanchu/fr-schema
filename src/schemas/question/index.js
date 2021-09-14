@@ -139,8 +139,8 @@ const schema = {
                             param.success({
                                 url:
                                     minioConfig.minio_server_url +
-                                    "/" +
-                                    bucketName +
+                                    // "/" +
+                                    // bucketName +
                                     "/z_know_info/" +
                                     moment(new Date()).format("YYYYMMDD") +
                                     "/" +

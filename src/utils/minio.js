@@ -102,8 +102,8 @@ export function uploadFile(
                                         // url: presignedUrl,
                                         url: encodeURI(
                                             minioConfig.minio_server_url +
-                                                "/" +
-                                                bucketName +
+                                                // "/" +
+                                                // bucketName +
                                                 "/z_know_info/" +
                                                 moment(new Date()).format(
                                                     "YYYYMMDD"
