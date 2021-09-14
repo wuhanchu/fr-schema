@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { Input, Form, Button, Select } from "antd"
+import { Input, Form, Button, Select, Divider } from "antd"
 import "antd/lib/style/index.css"
 import Modal from "antd/lib/modal/Modal"
 import clone from "clone"
@@ -308,10 +308,24 @@ export const ActionModal = ({
                         />
                     </div>
                 </Form.Item>
+                <Divider
+                    style={{
+                        bottom: "-158px",
+                        height: "2px",
+                        margin: "0px",
+                        marginBottom: "-30px",
+                        width: "700px",
+                        marginLeft: "-24px",
+                    }}
+                />
                 <Form.Item wrapperCol={{ offset: 10, span: 12 }}>
                     {isMore <= 1 && !isImport && (
                         <Button
-                            style={{ float: "right" }}
+                            style={{
+                                float: "right",
+                                bottom: "-38px",
+                                right: "-61px",
+                            }}
                             type="primary"
                             htmlType="submit"
                         >
@@ -320,7 +334,11 @@ export const ActionModal = ({
                     )}
                     {(isMore > 1 || isImport) && (
                         <Button
-                            style={{ float: "right", marginRight: "10px" }}
+                            style={{
+                                float: "right",
+                                bottom: "-38px",
+                                right: "-61px",
+                            }}
                             type="primary"
                             onClick={() => {
                                 let key = defaultValue.key || isImport
@@ -359,7 +377,11 @@ export const ActionModal = ({
                     )}
                     {(isMore > 1 || isImport) && (
                         <Button
-                            style={{ float: "right", marginRight: "10px" }}
+                            style={{
+                                float: "right",
+                                marginRight: "-51px",
+                                bottom: "-38px",
+                            }}
                             type="primary"
                             onClick={() => {
                                 let key = isImport || defaultValue.key

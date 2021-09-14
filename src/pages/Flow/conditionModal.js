@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { Input, Form, Button, Space, Row, Col, Select } from "antd"
+import { Input, Form, Button, Space, Row, Col, Select, Divider } from "antd"
 import "antd/lib/style/index.css"
 import Modal from "antd/lib/modal/Modal"
 import clone from "clone"
@@ -202,10 +202,24 @@ export const ConditionModal = ({
                         />
                     </div>
                 </Form.Item>
+                <Divider
+                    style={{
+                        bottom: "-158px",
+                        height: "2px",
+                        margin: "0px",
+                        marginBottom: "-30px",
+                        width: "700px",
+                        marginLeft: "-24px",
+                    }}
+                />
 
                 <Form.Item wrapperCol={{ offset: 10, span: 12 }}>
                     <Button
-                        style={{ float: "right" }}
+                        style={{
+                            float: "right",
+                            bottom: "-38px",
+                            right: "-61px",
+                        }}
                         type="primary"
                         htmlType="submit"
                     >
