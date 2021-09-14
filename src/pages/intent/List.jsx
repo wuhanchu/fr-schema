@@ -376,7 +376,6 @@ class List extends ListPage {
         } else {
             // 没有子意图时提示,并取消 + 按钮
             record.children = null
-            message.info("当前意图没有子意图")
         }
         this.setState({ listLoading: false })
     }
