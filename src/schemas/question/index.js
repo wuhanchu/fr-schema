@@ -91,7 +91,7 @@ const schema = {
                     }
                 >
                     <div
-                        style={{ maxHeight: "40px", overflowY: "auto" }}
+                        style={{ maxHeight: "40px", overflow: "hidden" }}
                         dangerouslySetInnerHTML={{ __html: item }}
                     />
                 </Tooltip>
@@ -101,6 +101,7 @@ const schema = {
             style: {
                 height: "388px",
                 border: "1px solid #d9d9d9",
+                width: "480px",
             },
             defaultLinkTarget: "_blank",
             wrapperWidth: "900px",

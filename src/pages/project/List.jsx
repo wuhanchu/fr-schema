@@ -27,7 +27,7 @@ import SearchPageModal from "@/pages/question/components/SearchPageModal"
 class List extends ListPage {
     constructor(props) {
         super(props, {
-            operateWidth: 280,
+            operateWidth: 340,
             schema: schemas.project.schema,
             service: schemas.project.service,
             infoProps: {
@@ -91,6 +91,18 @@ class List extends ListPage {
                 >
                     搜索
                 </a>
+                {this.props.location.query.conversation_id && (
+                    <>
+                        <Divider type="vertical" />
+                        <a
+                            onClick={() => {
+                                this.setState({ record, visibleDemo: true })
+                            }}
+                        >
+                            演示对话
+                        </a>
+                    </>
+                )}
                 <Divider type="vertical" />
                 <Dropdown overlay={menu}>
                     <a href="#">
@@ -107,6 +119,7 @@ class List extends ListPage {
             record,
             visibleSearch,
             visibleDialogue,
+            visibleDemo,
             visibleExport,
             visibleImport,
         } = this.state
@@ -142,6 +155,33 @@ class List extends ListPage {
                         title={record.name + "知识搜索"}
                         record={record}
                     />
+                )}
+                {visibleDemo && (
+                    <Modal
+                        footer={false}
+                        style={{ padding: 0 }}
+                        width={900}
+                        title={"演示对话"}
+                        visible={true}
+                        onOk={() => {
+                            this.setState({ visibleDemo: false })
+                        }}
+                        onCancel={() => {
+                            this.setState({ visibleDemo: false })
+                        }}
+                    >
+                        <iframe
+                            id="inlineFrameExample"
+                            title="Inline Frame Example"
+                            style={{ border: "none" }}
+                            width="100%"
+                            height="400"
+                            src={
+                                "http://127.0.0.1:8000/outter/workDetail?conversation_id=" +
+                                this.props.location.query.conversation_id
+                            }
+                        ></iframe>
+                    </Modal>
                 )}
                 {visibleExport && (
                     <Modal
