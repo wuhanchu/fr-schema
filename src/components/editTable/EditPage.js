@@ -1,13 +1,13 @@
-import React, {Fragment} from "react"
+import React, { Fragment } from "react"
 import frSchemaUtils from "@/outter/fr-schema-antd-utils/src"
-import {autobind} from "core-decorators"
+import { autobind } from "core-decorators"
 import frSchema from "@/outter/fr-schema/src"
 
-const {decorateList} = frSchema
+const { decorateList } = frSchema
 
-const {DataList} = frSchemaUtils.components
+const { DataList } = frSchemaUtils.components
 import EditTable from "@/components/editTable/EditTable"
-import {Button, message} from "antd"
+import { Button, message } from "antd"
 
 @autobind
 class EditPage extends DataList {
@@ -19,8 +19,12 @@ class EditPage extends DataList {
             e.returnValue = dialogText
             return dialogText
         }
-        let commitParamStr = this.state.commitParamStr || ["id", "project_id"]
-        this.setState({editRow: [], commitParamStr: [...commitParamStr]})
+        let commitParamStr = this.state.commitParamStr || [
+            "id",
+            "project_id",
+            "answer",
+        ]
+        this.setState({ editRow: [], commitParamStr: [...commitParamStr] })
     }
 
     componentWillUnmount() {
@@ -36,9 +40,9 @@ class EditPage extends DataList {
      * @returns {*}
      */
     renderList(inProps = {}) {
-        let {loading} = this.props
-        const {showSelect, scroll, mini, tableSelectAll} = this.meta
-        let {data, listLoading, selectedRows, tableFooter} = this.state
+        let { loading } = this.props
+        const { showSelect, scroll, mini, tableSelectAll } = this.meta
+        let { data, listLoading, selectedRows, tableFooter } = this.state
 
         // judge weather hide select
         let otherProps = {}
@@ -60,7 +64,7 @@ class EditPage extends DataList {
         let footer = ""
         // 列表底部 显示统计数据(如金额)
         tableFooter &&
-        tableFooter.map((item) => (footer += this.reduceTableTotal(item)))
+            tableFooter.map((item) => (footer += this.reduceTableTotal(item)))
         if (footer) {
             otherProps.footer = () => <div>{footer}</div>
         }
@@ -103,10 +107,10 @@ class EditPage extends DataList {
         this.state.editRow.push(record)
         const index = newData.findIndex((item) => record.id === item.id)
         const item = newData[index]
-        newData.splice(index, 1, {...item, ...record})
+        newData.splice(index, 1, { ...item, ...record })
         newData = decorateList(newData, this.schema) // 显示数据处理
         this.setState({
-            data: {...this.state.data, list: [...newData]},
+            data: { ...this.state.data, list: [...newData] },
             editRow: [...this.state.editRow],
         })
     }
@@ -117,7 +121,7 @@ class EditPage extends DataList {
             message.info("您目前暂未修改任何数据")
             return
         }
-        this.setState({listLoading: true})
+        this.setState({ listLoading: true })
         let obj = {}
         // 过滤重复数据
         this.state.editRow = this.state.editRow.reduce(function (item, next) {
@@ -136,19 +140,18 @@ class EditPage extends DataList {
             for (let j = 0; j < this.state.commitParamStr.length; j++) {
                 item[this.state.commitParamStr[j]] = this.state.editRow[i][
                     this.state.commitParamStr[j]
-                    ]
+                ]
             }
             this.dataExtra(item)
-            this.state.editRow[i] = {...item}
+            this.state.editRow[i] = { ...item }
         }
         await this.updateService()
         message.success("保存成功")
-        this.setState({editRow: [], listLoading: false})
+        this.setState({ editRow: [], listLoading: false })
     }
 
     // 数据扩展
-    dataExtra(item) {
-    }
+    dataExtra(item) {}
 
     // 修改接口
     async updateService() {

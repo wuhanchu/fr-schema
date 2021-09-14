@@ -78,7 +78,6 @@ const schema = {
         },
         width: 450,
         lineWidth: "480px",
-        editable: true,
         render: (item, record) => {
             return (
                 <Tooltip
