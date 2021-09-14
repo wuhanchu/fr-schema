@@ -1,20 +1,26 @@
 import React from "react"
-import { Tooltip, Select, Modal, Spin } from "antd"
-import "./kingFlow.less"
+import { Tooltip, Select, Modal, Spin, Popconfirm, Button } from "antd"
+import "./Flow.less"
 import insertCss from "insert-css"
 import "./iconfont.css"
 import { startDragToGraph } from "./methods"
 import schema from "@/schemas/intent"
-import { ports, createEdgeFunc, initGraph } from "./methods"
+import {
+    ports,
+    createEdgeFunc,
+    initGraph,
+    isError,
+    handleCFmName,
+} from "./methods"
 import clone from "clone"
 import Ellipse from "./ellipse.svg"
-import RightDrawer from "@/pages/kingFlow/RightDrawer"
+import RightDrawer from "./RightDrawer"
 import { ExclamationCircleOutlined } from "@ant-design/icons"
 
 const { Option } = Select
 const { confirm } = Modal
 
-class KingFlow extends React.PureComponent {
+class Flow extends React.PureComponent {
     constructor(props) {
         super(props)
         this.state = {
@@ -64,8 +70,16 @@ class KingFlow extends React.PureComponent {
     }
 
     render() {
-        let { chooseType, cell, intenList } = this.state
+        let { chooseType, cell, intenList, expGraphData } = this.state
         const { service, record, dict } = this.props
+        let haveEnd = false
+        expGraphData &&
+            expGraphData.node &&
+            expGraphData.node.map((item) => {
+                if (item.type === "end") {
+                    haveEnd = true
+                }
+            })
         return (
             <Spin tip="加载中..." spinning={this.state.spinning}>
                 <div className="container_warp">
@@ -169,6 +183,44 @@ class KingFlow extends React.PureComponent {
                                 })}
                         </Select>
                     </div>
+                </div>
+                <div className="operation">
+                    <Popconfirm
+                        title={
+                            haveEnd ? (
+                                "是否提交修改?"
+                            ) : (
+                                <span style={{ color: "#f5222d" }}>
+                                    暂无结束节点，是否提交
+                                </span>
+                            )
+                        }
+                        onConfirm={async () => {
+                            let data = this.graphChange()
+
+                            if (isError(data, this.graph)) {
+                                await service.patch({
+                                    ...data,
+                                    id: record.id,
+                                })
+                                localStorage.removeItem("flow" + record.id)
+                                this.props.handleSetVisibleFlow(false)
+                            }
+                        }}
+                        okText="是"
+                        cancelText="否"
+                    >
+                        <Button
+                            type="primary"
+                            style={{
+                                position: "absolute",
+                                right: "0px",
+                                bottom: "-2px",
+                            }}
+                        >
+                            提交
+                        </Button>
+                    </Popconfirm>
                 </div>
             </Spin>
         )
@@ -612,4 +664,4 @@ const styles = {
     },
 }
 
-export default KingFlow
+export default Flow

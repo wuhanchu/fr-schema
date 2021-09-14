@@ -80,11 +80,6 @@ export default [
                     },
 
                     {
-                        path: "/kingFlow",
-                        title: "流程图",
-                        component: "./kingFlow/KingFlow",
-                    },
-                    {
                         path: "/domain",
                         name: "domain",
                         // component: "./domain/List",
@@ -99,7 +94,7 @@ export default [
                                 path: "/domain/flow",
                                 name: "flow",
                                 title: "流程图",
-                                component: "./kingFlow/List",
+                                component: "./Flow/List",
                             },
                             {
                                 path: "/domain/synonym",

@@ -2,7 +2,6 @@ import React from "react"
 import {
     Form,
     Input,
-    Button,
     InputNumber,
     Popconfirm,
     Tag,
@@ -41,22 +40,7 @@ class RightDrawer extends React.PureComponent {
             showCondition,
             conditionVisible,
         } = this.state
-        const {
-            graph,
-            cell,
-            intenList,
-            expGraphData,
-            graphChange,
-            record,
-        } = this.props
-        let haveEnd = false
-        expGraphData &&
-            expGraphData.node &&
-            expGraphData.node.map((item) => {
-                if (item.type === "end") {
-                    haveEnd = true
-                }
-            })
+        const { graph, cell, intenList, expGraphData, graphChange } = this.props
         return (
             <div className="drawer_container">
                 {this.renderGrid()}
@@ -104,42 +88,6 @@ class RightDrawer extends React.PureComponent {
                         }}
                     />
                 )}
-
-                <Popconfirm
-                    title={
-                        haveEnd ? (
-                            "是否提交修改?"
-                        ) : (
-                            <span style={{ color: "#f5222d" }}>
-                                暂无结束节点，是否提交
-                            </span>
-                        )
-                    }
-                    onConfirm={async () => {
-                        let data = graphChange()
-
-                        if (isError(data, graph)) {
-                            await this.props.service.patch({
-                                ...data,
-                                id: record.id,
-                            })
-                            localStorage.removeItem("flow" + record.id)
-                            this.props.handleSetVisibleFlow(false)
-                        }
-                    }}
-                    okText="是"
-                    cancelText="否"
-                >
-                    <Button
-                        style={{
-                            position: "absolute",
-                            right: "20px",
-                            bottom: "20px",
-                        }}
-                    >
-                        提交
-                    </Button>
-                </Popconfirm>
             </div>
         )
     }

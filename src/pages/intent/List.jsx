@@ -10,7 +10,6 @@ import { exportData } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
 import ImportModal from "@/outter/fr-schema-antd-utils/src/components/modal/ImportModal"
-import ChartModal from "@/pages/kingFlow/KingFlow"
 
 const { decorateList } = frSchema
 
@@ -286,36 +285,6 @@ class List extends ListPage {
                     this.refreshList()
                 }}
             />
-        )
-    }
-
-    renderExtend() {
-        const { visibleFlow, record } = this.state
-        return (
-            <>
-                <Modal
-                    title={"流程配置"}
-                    visible={visibleFlow}
-                    width={"90%"}
-                    style={{ top: 20, bottom: 20 }}
-                    footer={null}
-                    destroyOnClose={true}
-                    onOk={() => {
-                        this.setState({ visibleFlow: false })
-                    }}
-                    onCancel={() => {
-                        this.setState({ visibleFlow: false })
-                    }}
-                    closable={false}
-                >
-                    <ChartModal
-                        visibleRelease={false}
-                        record={record}
-                        schemas={schemas.flow}
-                    />
-                </Modal>
-                {this.renderExportModal()}
-            </>
         )
     }
 

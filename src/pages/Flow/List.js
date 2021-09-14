@@ -6,7 +6,7 @@ import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
 import { Divider, Modal } from "antd"
 import frSchema from "@/outter/fr-schema/src"
-import ChartModal from "@/pages/kingFlow/KingFlow"
+import ChartModal from "./Flow"
 
 const { decorateList } = frSchema
 
@@ -52,7 +52,7 @@ class List extends ListPage {
         return (
             <>
                 <Modal
-                    title={"流程配置"}
+                    title={"流程编辑"}
                     visible={visibleFlow}
                     width={"90%"}
                     style={{ top: 20, bottom: 20 }}
