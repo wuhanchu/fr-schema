@@ -41,7 +41,7 @@ class List extends ListPage {
                         this.setState({ record, visibleFlow: true })
                     }}
                 >
-                    编辑流程
+                    流程编辑
                 </a>
             </>
         )
