@@ -22,7 +22,6 @@ const schema = {
     logical_path: {
         title: "意图路径",
         searchPrefix: "not.like",
-        listHide: true,
     },
     example: {
         title: "例子",
