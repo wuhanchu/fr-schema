@@ -24,16 +24,25 @@ import { exportDataByTemplate } from "@/outter/fr-schema-antd-utils/src/utils/xl
 import { checkedAndUpload } from "@/utils/minio"
 import frSchema from "@/outter/fr-schema/src"
 import { v4 as uuidv4 } from "uuid"
+import { connect } from "dva"
+import EditPage from "@/components/editTable/EditPage"
+import projectService from "@/schemas/project"
+import configService from "@/schemas/config/service"
+
+import moment from "moment"
 
 const { decorateList } = frSchema
-import EditPage from "@/components/editTable/EditPage"
-
 const confirm = Modal.confirm
 const Minio = require("minio")
 
+@connect(({ global }) => ({
+    dict: global.dict,
+    data: global.data,
+}))
 @Form.create()
 class BaseList extends EditPage {
     constructor(props) {
+        console.log(props)
         const importTemplateUrl = (
             BASE_PATH + "/import/掌数_知料_知识库信息导入.xlsx"
         ).replace("//", "/")
@@ -66,7 +75,64 @@ class BaseList extends EditPage {
         })
     }
 
+    setBraftEditor() {
+        this.schema.answer.props.media = {
+            uploadFn: async (param) => {
+                let fileUuid = uuidv4()
+                let minioConfig = {}
+                var minioClient = {}
+                let bucketName = ""
+                if (
+                    !this.props.dict.config.minio_pattern ||
+                    this.props.dict.config.minio_pattern.remark !== "server"
+                ) {
+                    minioConfig = (
+                        await schemas.project.service.getMinioToken()
+                    ).data
+                    minioClient = new Minio.Client({
+                        endPoint: minioConfig.endpoint,
+                        port: parseInt(minioConfig.port),
+                        useSSL: minioConfig.secure,
+                        accessKey: minioConfig.AccessKeyId,
+                        secretKey: minioConfig.SecretAccessKey,
+                        sessionToken: minioConfig.SessionToken,
+                    })
+                    bucketName = minioConfig.bucket
+                }
+                checkedAndUpload(
+                    bucketName,
+                    param.file,
+                    minioClient,
+                    minioConfig,
+                    fileUuid,
+                    (res) => {
+                        // 输出url
+                        message.success(`文件上传成功`)
+                        console.log("文件上传成功", param)
+                        param.success({
+                            url: res.url,
+                            meta: {
+                                loop: true, // 指定音视频是否循环播放
+                                autoPlay: false, // 指定音视频是否自动播放
+                                controls: false, // 指定音视频是否显示控制栏
+                                //   poster: 'http://xxx/xx.png', // 指定视频播放器的封面
+                            },
+                        })
+                    },
+                    () => {
+                        message.error(`文件上传失败`)
+                    },
+                    this.props.dict.config.minio_pattern &&
+                        this.props.dict.config.minio_pattern.remark === "server"
+                        ? "server"
+                        : "sdk"
+                )
+            },
+        }
+    }
+
     async componentDidMount() {
+        this.setBraftEditor()
         await super.componentDidMount()
     }
 
@@ -401,17 +467,25 @@ class BaseList extends EditPage {
         this.setState({
             loadingAnnex: true,
         })
-        let minioConfig = (await schemas.project.service.getMinioToken()).data
+        let minioConfig = {}
+        var minioClient = {}
+        let bucketName = ""
+        if (
+            !this.props.dict.config.minio_pattern ||
+            this.props.dict.config.minio_pattern.remark !== "server"
+        ) {
+            minioConfig = (await schemas.project.service.getMinioToken()).data
+            minioClient = new Minio.Client({
+                endPoint: minioConfig.endpoint,
+                port: parseInt(minioConfig.port),
+                useSSL: minioConfig.secure,
+                accessKey: minioConfig.AccessKeyId,
+                secretKey: minioConfig.SecretAccessKey,
+                sessionToken: minioConfig.SessionToken,
+            })
+            bucketName = minioConfig.bucket
+        }
 
-        var minioClient = new Minio.Client({
-            endPoint: minioConfig.endpoint,
-            port: parseInt(minioConfig.port),
-            useSSL: minioConfig.secure,
-            accessKey: minioConfig.AccessKeyId,
-            secretKey: minioConfig.SecretAccessKey,
-            sessionToken: minioConfig.SessionToken,
-        })
-        let bucketName = minioConfig.bucket
         try {
             checkedAndUpload(
                 bucketName,
@@ -420,6 +494,7 @@ class BaseList extends EditPage {
                 minioConfig,
                 uuidv4(),
                 (res) => {
+                    console.log(res)
                     message.success(`文件上传成功`)
                     let attachment = []
                     if (this.state.attachment)
@@ -437,7 +512,11 @@ class BaseList extends EditPage {
                         loadingAnnex: false,
                         isUpload: true,
                     })
-                }
+                },
+                this.props.dict.config.minio_pattern &&
+                    this.props.dict.config.minio_pattern.remark === "server"
+                    ? "server"
+                    : "sdk"
             )
         } catch (error) {
             message.error("上传失败")

@@ -2,6 +2,8 @@ import frSchema from "@/outter/fr-schema/src"
 import question from "@/schemas/question/index"
 
 import domain from "@/schemas/domain/index"
+import configService from "@/schemas/config/service"
+
 import { useState } from "react"
 
 export function useGridAttr() {
@@ -44,9 +46,11 @@ const GlobalModel = {
         notices: [],
         dict: {
             domain: {},
+            config: {},
         },
         data: {
             domain: [],
+            config: [],
         },
     },
     effects: {
@@ -120,6 +124,7 @@ const GlobalModel = {
 
             const res = yield all({
                 domain: call(domain.service.get, { pageSize: 10000 }),
+                config: call(configService.get, { pageSize: 10000 }),
             })
 
             Object.keys(res).forEach((key) => (data[key] = res[key].list))
@@ -129,6 +134,12 @@ const GlobalModel = {
                 null,
                 "key",
                 "name"
+            )
+            dict.config = utils.dict.listToDict(
+                data.config,
+                null,
+                "key",
+                "value"
             )
             // update current dict
             yield put({

@@ -1,10 +1,7 @@
 import { createApi, createBasicApi } from "@/outter/fr-schema/src/service"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import projectService from "./../project"
-import moment from "moment"
-import { message, Tooltip } from "antd"
-import { checkedAndUpload } from "@/utils/minio"
-import { v4 as uuidv4 } from "uuid"
+import { Tooltip } from "antd"
 
 const Minio = require("minio")
 
@@ -108,78 +105,14 @@ const schema = {
                 marginLeft: "-34px",
                 marginTop: "20px",
             },
-            media: {
-                uploadFn: async (param) => {
-                    let minioConfig = (
-                        await projectService.service.getMinioToken()
-                    ).data
-                    var minioClient = new Minio.Client({
-                        endPoint: minioConfig.endpoint,
-                        port: parseInt(minioConfig.port),
-                        useSSL: minioConfig.secure,
-                        accessKey: minioConfig.AccessKeyId,
-                        secretKey: minioConfig.SecretAccessKey,
-                        sessionToken: minioConfig.SessionToken,
-                    })
-                    let fileUuid = uuidv4()
-                    let bucketName = minioConfig.bucket
-                    console.log(minioConfig)
-                    checkedAndUpload(
-                        bucketName,
-                        param.file,
-                        minioClient,
-                        minioConfig,
-                        fileUuid,
-                        (res) => {
-                            // 输出url
-                            let fileName = param.file.name
-                            message.success(`文件上传成功`)
-                            console.log("文件上传成功", param)
-                            param.success({
-                                url:
-                                    minioConfig.minio_server_url +
-                                    // "/" +
-                                    // bucketName +
-                                    "/z_know_info/" +
-                                    moment(new Date()).format("YYYYMMDD") +
-                                    "/" +
-                                    fileUuid +
-                                    "." +
-                                    fileName.split(".").pop().toLowerCase(),
-                                meta: {
-                                    loop: true, // 指定音视频是否循环播放
-                                    autoPlay: false, // 指定音视频是否自动播放
-                                    controls: false, // 指定音视频是否显示控制栏
-                                    //   poster: 'http://xxx/xx.png', // 指定视频播放器的封面
-                                },
-                            })
-                        },
-                        () => {
-                            message.error(`文件上传失败`)
-                        }
-                    )
-                },
-            },
-            // 全屏 fullscreen
             controls: [
-                // "undo",
-                // "redo",
-                // "separator",
                 "font-size",
-                // "line-height",
-                // "letter-spacing",
                 "text-color",
                 "bold",
                 "italic",
-                // "underline",
-                // "text-indent",
-                // "text-align",
-                // "list-ul",
-                // "list-ol",
                 "media",
                 "blockquote",
                 "code",
-                // "separator",
                 "link",
                 {
                     key: "fullscreen",
@@ -269,6 +202,8 @@ service.patch = async function (args, schema) {
 service.search = createApi("search", schema).getBasic
 
 service.uploadExcel = createBasicApi("project/import").post
+
+service.upload = createBasicApi("file").post
 
 export default {
     schema,

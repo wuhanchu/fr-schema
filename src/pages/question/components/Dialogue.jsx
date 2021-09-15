@@ -180,7 +180,6 @@ class Dialogue extends Chat {
                     buttons: data.buttons,
                     name: "智能客服",
                     time: new Date(),
-                    avatar: "http://img.binlive.cn/6.png",
                     type: "left",
                 })
             )
@@ -190,7 +189,6 @@ class Dialogue extends Chat {
                 content: messages.content,
                 name: "我",
                 time: new Date(),
-                avatar: "http://img.binlive.cn/6.png",
                 type: "right",
             })
         }
@@ -504,7 +502,6 @@ class Dialogue extends Chat {
             content: "您好，请问有什么可以帮您？",
             name: "智能客服",
             time: new Date(),
-            avatar: "http://img.binlive.cn/6.png",
             type: "left",
         })
         this.setState({

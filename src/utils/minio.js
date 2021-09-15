@@ -1,4 +1,5 @@
 import moment from "moment"
+import question from "@/schemas/question/index"
 const Minio = require("minio")
 const stream = require("stream")
 
@@ -132,33 +133,37 @@ export function uploadFile(
 }
 
 // 先判断桶是否存在, 如果可确保桶已经存在，则直接调用upload方法
-
-export function checkedAndUpload(
+// @connect(({ global }) => ({ dict: global.dict }))
+export async function checkedAndUpload(
     bucketName,
     info,
     minioClient,
     minioConfig,
     fileUuid,
     callback,
-    callError
+    callError,
+    type
 ) {
-    console.log(
-        bucketName,
-        info,
-        minioClient,
-        minioConfig,
-        fileUuid,
-        callback,
-        callError
-    )
-    minioClient.bucketExists(bucketName, (err) => {
-        if (err) {
-            minioClient.makeBucket(bucketName, "us-east-1", (err1) => {
-                if (err1) {
-                    console.error(`文件上传失败123`)
-                    callError()
-                    return
-                }
+    console.log("类型", type)
+    if (type === "sdk") {
+        minioClient.bucketExists(bucketName, (err) => {
+            if (err) {
+                minioClient.makeBucket(bucketName, "us-east-1", (err1) => {
+                    if (err1) {
+                        console.error(`文件上传失败123`)
+                        callError()
+                        return
+                    }
+                    uploadFile(
+                        bucketName,
+                        info,
+                        minioClient,
+                        minioConfig,
+                        callback,
+                        fileUuid
+                    )
+                })
+            } else {
                 uploadFile(
                     bucketName,
                     info,
@@ -167,18 +172,14 @@ export function checkedAndUpload(
                     callback,
                     fileUuid
                 )
-            })
-        } else {
-            uploadFile(
-                bucketName,
-                info,
-                minioClient,
-                minioConfig,
-                callback,
-                fileUuid
-            )
-        }
-    })
+            }
+        })
+    } else {
+        let data = await question.service.upload({ file: info })
+        console.log(info)
+        console.log({ fileName: info.name, url: data.data.file_link })
+        callback({ fileName: info.name, url: data.data.file_link })
+    }
 }
 
 /**
