@@ -66,12 +66,12 @@ const EditableCell = ({
                 values = await form.getFieldsValue()
             } else {
                 values = await form.validateFields()
-                if (Array.isArray(values[dataIndex]))  {
-                    values[dataIndex]= values[dataIndex].filter((values) => {
-                        return values.trim() !== ''
+                if (Array.isArray(values[dataIndex])) {
+                    values[dataIndex] = values[dataIndex].filter((values) => {
+                        return values.trim() !== ""
                     })
                 }
-                if (typeof values[dataIndex] === 'string') {
+                if (typeof values[dataIndex] === "string") {
                     values[dataIndex] = values[dataIndex].trim()
                 }
             }
@@ -252,9 +252,9 @@ class EditableTable extends StandardTable {
                     columns={columnsRes}
                     pagination={paginationProps}
                     onChange={this.handleTableChange}
-                    scroll={{ x: "max-content" }}
                     size={"middle"}
                     {...otherProps}
+                    scroll={{ x: "max-content", y: 500 }}
                 />
             </div>
         )
