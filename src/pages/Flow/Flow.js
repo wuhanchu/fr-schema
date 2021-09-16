@@ -589,8 +589,46 @@ class Flow extends React.PureComponent {
             }
             data.connection.push(itemData)
         })
-        data.action = expGraph.action
-        data.condition = expGraph.condition
+
+        let action = []
+        expGraph.action &&
+            expGraph.action.map((oneAction) => {
+                let isHave = false
+                expGraph.getNodes().map((item, index) => {
+                    let nodeData = item.getData()
+                    if (
+                        nodeData.action &&
+                        nodeData.action.indexOf(oneAction.key) > -1
+                    ) {
+                        isHave = true
+                    }
+                })
+                if (isHave) {
+                    action.push(oneAction)
+                }
+            })
+
+        let condition = []
+        expGraph.condition &&
+            expGraph.condition.map((oneCondition) => {
+                let isHave = false
+                expGraph.getEdges().map((item, index) => {
+                    let nodeData = item.getData()
+                    if (
+                        nodeData.condition &&
+                        nodeData.condition.indexOf(oneCondition.key) > -1
+                    ) {
+                        isHave = true
+                    }
+                })
+                if (isHave) {
+                    condition.push(oneCondition)
+                }
+            })
+
+        data.action = action
+        data.condition = condition
+        console.log(data)
 
         this.setState({
             expGraphData: data,
