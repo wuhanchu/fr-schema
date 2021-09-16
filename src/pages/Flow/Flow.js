@@ -6,13 +6,14 @@ import "./iconfont.css"
 import { startDragToGraph } from "./methods"
 import schema from "@/schemas/intent"
 import { v4 as uuidv4 } from "uuid"
-
+import styled from "styled-components"
 import {
     ports,
     createEdgeFunc,
     initGraph,
     isError,
     handleCFmName,
+    getTree,
 } from "./methods"
 import clone from "clone"
 import Ellipse from "./ellipse.svg"
@@ -22,6 +23,11 @@ import { ExclamationCircleOutlined } from "@ant-design/icons"
 const { Option } = Select
 const { confirm } = Modal
 
+const ZSSelectStyle = styled(Select)`
+    .ant-select-selection-placeholder {
+        color: #000;
+    }
+`
 class Flow extends React.PureComponent {
     constructor(props) {
         super(props)
@@ -43,7 +49,8 @@ class Flow extends React.PureComponent {
             key: "not.eq.null",
             domain_key: record.domain_key,
         })
-        this.setState({ intenList: res.list })
+        let list = getTree(res.list)
+        this.setState({ intenList: list })
     }
     getHistory = async () => {
         const { record } = this.props
@@ -166,11 +173,11 @@ class Flow extends React.PureComponent {
                         </div>
                     </div>
                     <div className="operating-right">
-                        <Select
+                        <ZSSelectStyle
                             bordered={false}
                             value={this.state.historyIndex}
                             placeholder={"选择历史版本"}
-                            style={{ textAlign: "right", width: "170px" }}
+                            style={{ textAlign: "right", width: "200px" }}
                             onChange={this.onHistoryChange.bind(this)}
                         >
                             {this.state.historyList &&
@@ -183,7 +190,7 @@ class Flow extends React.PureComponent {
                                         </Option>
                                     )
                                 })}
-                        </Select>
+                        </ZSSelectStyle>
                     </div>
                 </div>
                 <div className="operation">
@@ -630,8 +637,6 @@ class Flow extends React.PureComponent {
 
         data.action = action
         data.condition = condition
-        console.log(data)
-
         this.setState({
             expGraphData: data,
         })

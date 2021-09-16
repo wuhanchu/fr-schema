@@ -1,4 +1,7 @@
 import { Addon, FunctionExt, Graph, Shape } from "@antv/x6"
+import frSchema from "@/outter/fr-schema/src"
+
+const { decorateList } = frSchema
 // 拖拽生成四边形或者圆形
 export const startDragToGraph = (graph, type, e, callback) => {
     const node =
@@ -452,4 +455,63 @@ export function handleCFmName(rules, value, callback, type, graph) {
             }
         }
     }
+}
+
+function sortUp(a, b) {
+    return b.tier - a.tier
+}
+
+export function getTree(args) {
+    let res =
+        args &&
+        args.map((item) => {
+            return { ...item, value: item.key, title: item.name }
+        })
+    let record = []
+    res &&
+        res
+            .filter((item) => {
+                if (item.logical_path && item.logical_path.indexOf(".") < 0) {
+                    record.push(item)
+                    return true
+                }
+                return false
+            })
+            .map((item) => {
+                let data = res.filter(
+                    (one) =>
+                        one.logical_path &&
+                        one.logical_path.indexOf(item.logical_path) > -1
+                )
+                let list = decorateList(data, {})
+                list = list.sort(sortUp)
+                let result = []
+                let arr = []
+                for (let i = 0; i < list.length; i++) {
+                    // 获取当前意图的所有上层意图
+                    arr = list.filter((value) => {
+                        return (
+                            value.logical_path !== list[i].logical_path &&
+                            list[i].logical_path.includes(value.logical_path)
+                        )
+                    })
+                    // 存在上层意图则标明当前遍历意图为其他意图的子意图
+                    if (arr.length) {
+                        // 获取当前遍历意图的父意图 并加入其父意图的子集中
+                        arr = arr.sort(sortUp)
+                        let index = list.findIndex((value) => {
+                            return value.id === arr[0].id
+                        })
+                        list[index].children.push(list[i])
+                    } else {
+                        // 不存在上层意图表示当前遍历意图为最高子意图
+                        result.push(list[i])
+                    }
+                }
+                console.log(result)
+                // record.push(result)
+                // record.children = [...result]
+            })
+    console.log(record)
+    return record
 }

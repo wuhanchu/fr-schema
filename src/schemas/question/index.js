@@ -61,6 +61,9 @@ const schema = {
         title: "全局变量",
         extra: "作为对话机器人的匹配主键",
         editable: true,
+        render: (item) => {
+            return <div style={{ minWidth: "60px" }}>{item}</div>
+        },
     },
     answer: {
         title: "答案",
@@ -125,6 +128,9 @@ const schema = {
         title: "外部编号",
         addHide: true,
         editHide: true,
+        render: (item) => {
+            return <div style={{ minWidth: "60px" }}>{item}</div>
+        },
     },
 }
 

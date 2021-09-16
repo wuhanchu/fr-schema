@@ -55,6 +55,7 @@ class List extends ListPage {
                     title={"流程编辑"}
                     visible={visibleFlow}
                     width={"90%"}
+                    keyboard={false}
                     style={{ top: 20, bottom: 20 }}
                     footer={null}
                     destroyOnClose={true}

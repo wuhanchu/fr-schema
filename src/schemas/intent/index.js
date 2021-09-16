@@ -2,22 +2,23 @@ import { createApi, createBasicApi } from "@/outter/fr-schema/src/service"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 
 const schema = {
-    domain_key: {
-        title: "域",
-        sorter: true,
-        required: true,
-        type: schemaFieldType.Select,
-    },
-    key: {
-        required: true,
-
-        title: "编码",
-    },
     name: {
         title: "名称",
         searchPrefix: "like",
         sorter: true,
         required: true,
+    },
+
+    key: {
+        required: true,
+
+        title: "编码",
+    },
+    domain_key: {
+        title: "域",
+        sorter: true,
+        required: true,
+        type: schemaFieldType.Select,
     },
     logical_path: {
         title: "意图路径",

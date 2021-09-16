@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { Input, Form, Button, Select, Divider } from "antd"
+import { Input, Form, Button, Select, Divider, TreeSelect } from "antd"
 import "antd/lib/style/index.css"
 import Modal from "antd/lib/modal/Modal"
 import clone from "clone"
@@ -81,13 +81,6 @@ export const ConditionModal = ({
 
     let formRef = React.createRef()
 
-    let options = []
-    intenList &&
-        intenList.map((item) => {
-            options.push(
-                <Select.Option value={item.key}>{item.name}</Select.Option>
-            )
-        })
     const onValuesChange = (value) => {
         if (value.type) {
             formRef.current.setFieldsValue({ name: dict[value.type].remark })
@@ -130,20 +123,14 @@ export const ConditionModal = ({
                 </Form.Item>
 
                 <Form.Item label="意图" name="intent">
-                    <Select
+                    <TreeSelect
                         showSearch
+                        style={{ width: "100%" }}
                         placeholder={"请选择意图"}
-                        defaultActiveFirstOption={false}
-                        // showArrow={false}
-                        filterOption={(input, option) =>
-                            option.children
-                                .toLowerCase()
-                                .indexOf(input.toLowerCase()) >= 0
-                        }
-                        notFoundContent={null}
-                    >
-                        {options}
-                    </Select>
+                        dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
+                        treeData={intenList}
+                        treeDefaultExpandAll
+                    />
                 </Form.Item>
                 <Form.Item label="槽位" name={"slot"}>
                     <div style={{ width: "489px" }}>
