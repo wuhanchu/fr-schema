@@ -254,7 +254,7 @@ class EditableTable extends StandardTable {
                     onChange={this.handleTableChange}
                     size={"middle"}
                     {...otherProps}
-                    scroll={{ x: "max-content", y: 500 }}
+                    scroll={{ x: "max-content", y: "50vh" }}
                 />
             </div>
         )
