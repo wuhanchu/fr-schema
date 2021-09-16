@@ -1,14 +1,14 @@
 import React, { useState } from "react"
-import { Input, Form, Button, Space, Row, Col, Select, Divider } from "antd"
+import { Input, Form, Button, Select, Divider } from "antd"
 import "antd/lib/style/index.css"
 import Modal from "antd/lib/modal/Modal"
 import clone from "clone"
 import AceEditor from "react-ace"
 import "ace-builds/src-noconflict/mode-json"
+import { v4 as uuidv4 } from "uuid"
 
 import "ace-builds/src-noconflict/theme-github"
 import "ace-builds/src-noconflict/ext-language_tools"
-import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons"
 
 export const ConditionModal = ({
     visible,
@@ -28,7 +28,6 @@ export const ConditionModal = ({
         condition = expGraph.condition
     }
     let initialValues = clone(defaultValue)
-    // let slot = []
 
     let conditionList = []
     if (cell && cell.getData && cell.getData().condition) {
@@ -36,15 +35,9 @@ export const ConditionModal = ({
     }
 
     const onFinish = (values) => {
-        // let slot = {}
         let myConditions = clone(conditions)
-
-        // values.slot &&
-        //     values.slot.map((item) => {
-        //         slot[item.first] = item.last || null
-        //     })
         if (conditionType === "add") {
-            let conditionKey = cell.id + `${Date.now()}`
+            let conditionKey = uuidv4()
             myConditions.push({
                 ...values,
                 key: conditionKey,

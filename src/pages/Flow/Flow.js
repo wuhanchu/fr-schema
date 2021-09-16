@@ -5,6 +5,8 @@ import insertCss from "insert-css"
 import "./iconfont.css"
 import { startDragToGraph } from "./methods"
 import schema from "@/schemas/intent"
+import { v4 as uuidv4 } from "uuid"
+
 import {
     ports,
     createEdgeFunc,
@@ -288,7 +290,7 @@ class Flow extends React.PureComponent {
                     node: [
                         {
                             name: "开始节点",
-                            key: `${Date.now()}`,
+                            key: uuidv4(),
                             allow_repeat_time: 2,
                             type: "begin",
                             position: {
@@ -307,7 +309,7 @@ class Flow extends React.PureComponent {
                 data.node = [
                     {
                         name: "开始节点",
-                        key: `${Date.now()}`,
+                        key: uuidv4(),
                         allow_repeat_time: 2,
                         type: "begin",
                         position: {
@@ -414,7 +416,7 @@ class Flow extends React.PureComponent {
             this.graph.addEdge(edge)
         } else {
             let endNode = this.graph.getCellById(args.end)
-            let key = `${Date.now()}`
+            let key = uuidv4()
             this.addNodes({
                 key,
                 name: "全局节点",
@@ -499,7 +501,7 @@ class Flow extends React.PureComponent {
         })
         this.graph.on("edge:mouseup", (args) => {
             if (!args.view.targetView) {
-                const id = `${Date.now()}`
+                const id = uuidv4()
                 this.graph.addNode({
                     id,
                     width: 110,

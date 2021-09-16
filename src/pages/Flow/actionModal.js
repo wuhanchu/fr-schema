@@ -4,10 +4,13 @@ import "antd/lib/style/index.css"
 import Modal from "antd/lib/modal/Modal"
 import clone from "clone"
 import AceEditor from "react-ace"
+import { v4 as uuidv4 } from "uuid"
+
 import "ace-builds/src-noconflict/mode-json"
 
 import "ace-builds/src-noconflict/theme-github"
 import "ace-builds/src-noconflict/ext-language_tools"
+import { uuid } from "@antv/x6/lib/util/string/uuid"
 
 export const ActionModal = ({
     visible,
@@ -40,7 +43,7 @@ export const ActionModal = ({
     const onFinish = (values) => {
         let myActions = clone(actions)
         if (actionType === "add") {
-            let actionKey = cell.id + `${Date.now()}`
+            let actionKey = uuidv4()
             myActions.push({
                 ...values,
                 key: actionKey,
@@ -344,7 +347,7 @@ export const ActionModal = ({
                                 let key = defaultValue.key || isImport
                                 let myActions = clone(actions)
                                 let values = formRef.current.getFieldsValue()
-                                let actionKey = cell.id + `${Date.now()}`
+                                let actionKey = uuidv4()
                                 myActions.push({
                                     ...values,
                                     key: actionKey,
