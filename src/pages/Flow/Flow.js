@@ -49,8 +49,8 @@ class Flow extends React.PureComponent {
             key: "not.eq.null",
             domain_key: record.domain_key,
         })
-        getTree(res.list)
-        this.setState({ intenList: res.list })
+        let list = getTree(res.list)
+        this.setState({ intenList: list })
     }
     getHistory = async () => {
         const { record } = this.props
