@@ -13,6 +13,7 @@ import {
     initGraph,
     isError,
     handleCFmName,
+    getTree,
 } from "./methods"
 import clone from "clone"
 import Ellipse from "./ellipse.svg"
@@ -48,6 +49,7 @@ class Flow extends React.PureComponent {
             key: "not.eq.null",
             domain_key: record.domain_key,
         })
+        getTree(res.list)
         this.setState({ intenList: res.list })
     }
     getHistory = async () => {
@@ -635,8 +637,6 @@ class Flow extends React.PureComponent {
 
         data.action = action
         data.condition = condition
-        console.log(data)
-
         this.setState({
             expGraphData: data,
         })

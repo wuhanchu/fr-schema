@@ -34,7 +34,7 @@ class List extends ListPage {
         this.schema.domain_key.dict = this.props.dict.domain
         this.state = {
             ...this.state,
-            searchValues: {logical_path: "."},
+            searchValues: { logical_path: "." },
             expandedRowKeys: [],
         }
     }
@@ -303,11 +303,11 @@ class List extends ListPage {
     }
 
     renderList(inProps = {}) {
-        let {expandedRowKeys} = this.state
+        let { expandedRowKeys } = this.state
         inProps = {
             expandable: {
                 onExpand: (expanded, record) => this.onExpand(expanded, record),
-                expandedRowKeys
+                expandedRowKeys,
             },
         }
         return super.renderList(inProps)
@@ -315,13 +315,13 @@ class List extends ListPage {
 
     // 展开
     async onExpand(expanded, record) {
-        let {expandedRowKeys} = this.state;
-        let flag = expandedRowKeys.includes(record.id); // 是否已经展开过
+        let { expandedRowKeys } = this.state
+        let flag = expandedRowKeys.includes(record.id) // 是否已经展开过
         // 展开
         if (expanded) {
             // 新数据添加
             if (!flag) {
-                expandedRowKeys.push(record.id);
+                expandedRowKeys.push(record.id)
             }
         } else {
             // 收起则把数据去除
@@ -331,13 +331,13 @@ class List extends ListPage {
                 })
             }
         }
-        this.setState({expandedRowKeys: [...expandedRowKeys]})
+        this.setState({ expandedRowKeys: [...expandedRowKeys] })
         // 如果已经获取过,不在重复调用接口
         if (record.children.length) {
             return
         }
         // 加载
-        this.setState({listLoading: true})
+        this.setState({ listLoading: true })
         // 获取子意图
         let res = await super.requestList({
             logical_path: "like." + record.logical_path + ".*",
@@ -377,6 +377,7 @@ class List extends ListPage {
             // 没有子意图时提示,并取消 + 按钮
             record.children = null
         }
+        console.log("record", record)
         this.setState({ listLoading: false })
     }
 
@@ -402,8 +403,11 @@ class List extends ListPage {
         this.setState(
             {
                 pagination: { ...this.state.pagination, currentPage: 1 },
-                searchValues: {...searchValues, logical_path: searchValues.name ? null : '.'},
-                expandedRowKeys: []
+                searchValues: {
+                    ...searchValues,
+                    logical_path: searchValues.name ? null : ".",
+                },
+                expandedRowKeys: [],
             },
             async () => {
                 this.refreshList()
@@ -420,8 +424,8 @@ class List extends ListPage {
         this.formRef.current.resetFields()
         this.setState(
             {
-                pagination: {...this.state.pagination, currentPage: 1},
-                searchValues: {order, logical_path: "."},
+                pagination: { ...this.state.pagination, currentPage: 1 },
+                searchValues: { order, logical_path: "." },
                 expandedRowKeys: [],
             },
             () => {

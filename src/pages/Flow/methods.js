@@ -453,3 +453,44 @@ export function handleCFmName(rules, value, callback, type, graph) {
         }
     }
 }
+
+export function getTree(res) {
+    console.log(res)
+    res &&
+        res
+            .filter((item) => {
+                return item.logical_path && item.logical_path.indexOf(".") < 0
+            })
+            .map((item) => {
+                console.log(item)
+            })
+    // if (res.list.length) {
+    //     // 子意图排序 层级最深在最上面
+    //     let list = decorateList(res.list, this.schema)
+    //     list = list.sort(this.sortUp)
+    //     let result = []
+    //     let arr = []
+    //     for (let i = 0; i < list.length; i++) {
+    //         // 获取当前意图的所有上层意图
+    //         arr = list.filter((value) => {
+    //             return (
+    //                 value.logical_path !== list[i].logical_path &&
+    //                 list[i].logical_path.includes(value.logical_path)
+    //             )
+    //         })
+    //         // 存在上层意图则标明当前遍历意图为其他意图的子意图
+    //         if (arr.length) {
+    //             // 获取当前遍历意图的父意图 并加入其父意图的子集中
+    //             arr = arr.sort(this.sortUp)
+    //             let index = list.findIndex((value) => {
+    //                 return value.id === arr[0].id
+    //             })
+    //             list[index].children.push(list[i])
+    //         } else {
+    //             // 不存在上层意图表示当前遍历意图为最高子意图
+    //             result.push(list[i])
+    //         }
+    //     }
+    //     record.children = [...result]
+    // }
+}
