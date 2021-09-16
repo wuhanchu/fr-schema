@@ -108,7 +108,6 @@ function SearchPage(props) {
         try {
             const response = await schemas.question.service.search({
                 search: value,
-                engine_type: "es",
                 ...args,
             })
             setState({
@@ -183,7 +182,7 @@ function SearchPage(props) {
                                                 {item.label &&
                                                     item.label.length !== 0 && (
                                                         <span>
-                                                            (标签:
+                                                            标签:
                                                             {item.label.map(
                                                                 (item) => {
                                                                     return (
@@ -193,7 +192,6 @@ function SearchPage(props) {
                                                                     )
                                                                 }
                                                             )}
-                                                            )
                                                         </span>
                                                     )}
                                             </div>
