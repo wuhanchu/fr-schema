@@ -42,7 +42,6 @@ const Minio = require("minio")
 @Form.create()
 class BaseList extends EditPage {
     constructor(props) {
-        console.log(props)
         const importTemplateUrl = (
             BASE_PATH + "/import/掌数_知料_知识库信息导入.xlsx"
         ).replace("//", "/")
@@ -108,14 +107,12 @@ class BaseList extends EditPage {
                     (res) => {
                         // 输出url
                         message.success(`文件上传成功`)
-                        console.log("文件上传成功", param)
                         param.success({
                             url: res.url,
                             meta: {
                                 loop: true, // 指定音视频是否循环播放
                                 autoPlay: false, // 指定音视频是否自动播放
                                 controls: false, // 指定音视频是否显示控制栏
-                                //   poster: 'http://xxx/xx.png', // 指定视频播放器的封面
                             },
                         })
                     },
