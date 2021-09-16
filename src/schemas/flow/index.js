@@ -8,14 +8,15 @@ const schema = {
         required: true,
         type: schemaFieldType.Select,
     },
-    key: {
-        required: true,
-        title: "编码",
-    },
     name: {
         required: true,
         title: "名称",
     },
+    key: {
+        required: true,
+        title: "编码",
+    },
+
     create_time: {
         title: "创建时间",
         // required: true,
