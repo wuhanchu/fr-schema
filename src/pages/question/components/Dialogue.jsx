@@ -430,7 +430,6 @@ class Dialogue extends Chat {
     async onSendMessage(value) {
         let {
             inputValue,
-            messageList,
             serviceId,
             conversationId,
             isSpin,

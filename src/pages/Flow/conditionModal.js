@@ -152,10 +152,10 @@ export const ConditionModal = ({
                         {options}
                     </Select>
                 </Form.Item>
-                <Form.Item label="插槽" name={"slot"}>
+                <Form.Item label="槽位" name={"slot"}>
                     <div style={{ width: "489px" }}>
                         <AceEditor
-                            placeholder={`请输入${"参数"}`}
+                            placeholder={`请输入${"槽位"}`}
                             mode="json"
                             // theme="tomorrow"
                             name="blah2"
