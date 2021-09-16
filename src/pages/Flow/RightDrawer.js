@@ -445,6 +445,9 @@ class RightDrawer extends React.PureComponent {
                                             fill: "#00000000",
                                         },
                                     },
+                                    position: {
+                                        distance: -70,
+                                    },
                                 })
                             }}
                         >
