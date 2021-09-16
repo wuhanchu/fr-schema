@@ -263,6 +263,7 @@ class Dialogue extends Chat {
             }
         } catch (error) {
             message.error(error.message)
+            this.setState({ isSpin: false })
         }
     }
 
@@ -478,6 +479,7 @@ class Dialogue extends Chat {
                     }
                 } catch (error) {
                     message.error(error.message)
+                    this.setState({ isSpin: false })
                 }
             }
             // 消息推进list 清空当前消息
