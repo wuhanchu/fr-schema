@@ -243,11 +243,13 @@ class IntentIdentify extends React.Component {
             }
         })
         try {
+            this.setState({ isSpin: true })
             await IntentService.service.submit(data)
-            message.success("成功")
+            message.success("提交成功")
             this.props.onCancel(false)
         } catch (error) {
             message.error(error.message)
+            this.setState({ isSpin: false })
         }
     }
 
