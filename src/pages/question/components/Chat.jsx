@@ -1,8 +1,9 @@
 import React from "react"
-import { autobind } from "core-decorators"
-import { Button, Input } from "antd"
+import {autobind} from "core-decorators"
+import {Button, Input, Timeline, Tag} from "antd"
 import robotSvg from "@/assets/rebot.svg"
 import mySvg from "@/outter/fr-schema-antd-utils/src/components/GlobalHeader/my.svg"
+import ChatFlowTable from '@/pages/question/components/ChatFlowTable';
 
 /**
  * 聊天窗口
@@ -14,32 +15,42 @@ class Chat extends React.PureComponent {
     constructor(props) {
         super(props)
         this.state = {
-            messageList: [],
-            isSpin: false,
-            inputValue: "",
-            showInput: true,
-            roomHeight: "500px",
+            messageList: [],  // 消息数据
+            isSpin: false,   // 加载
+            inputValue: "",  // 输入框值
+            showInput: true,  // 是否显示输入框
+            roomHeight: "500px",  // 界面高度
+            showIntentFlow: false, // 显示聊天流程
+            showIntent: false, // 显示意图弹窗
+            intentMessage: [], // 流程数据
+            conversationId: "",
+            domain_key: '',
+            flow_key: "",
         }
         this.chatRef = React.createRef()
         this.inputRef = React.createRef()
+        this.tableRef = React.createRef();
     }
 
     render() {
-        let { showInput } = this.state
+        let {showInput, showIntentFlow} = this.state
         return (
-            <div style={{ ...styles.contentSt }}>
-                {this.renderChatView()}
-                {showInput && this.renderInput()}
+            <div style={styles.contentSt}>
+                <div style={styles.chatView}>
+                    {this.renderChatView()}
+                    {showInput && this.renderInput()}
+                </div>
+                {showIntentFlow && this.renderChatIntentFlow()}
             </div>
         )
     }
 
     // 聊天内容展示
     renderChatView() {
-        let { messageList, roomHeight } = this.state
+        let {messageList, roomHeight} = this.state
         return (
             <div
-                style={{ ...styles.leaveView, height: roomHeight }}
+                style={{...styles.leaveView, height: roomHeight}}
                 ref={this.chatRef}
             >
                 {messageList.map((item, index) =>
@@ -56,8 +67,8 @@ class Chat extends React.PureComponent {
     renderService(item, index) {
         return (
             <div style={styles.leaveItem} key={`leave${index}`}>
-                <img src={robotSvg} alt="" style={styles.avatar} />
-                <div style={{ marginTop: "8px" }}>
+                <img src={robotSvg} alt="" style={styles.avatar}/>
+                <div style={{marginTop: "8px"}}>
                     {/*<div style={{ display: 'flex', alignItems: 'center' }}>*/}
                     {/*    <span>*/}
                     {/*        {item.name}{' '}*/}
@@ -80,7 +91,7 @@ class Chat extends React.PureComponent {
         return (
             <div
                 style={styles.leaveMsgView}
-                dangerouslySetInnerHTML={{ __html: item.content }}
+                dangerouslySetInnerHTML={{__html: item.content}}
             />
         )
     }
@@ -92,17 +103,17 @@ class Chat extends React.PureComponent {
                 <div style={styles.chatRightMsgItem}>
                     <div
                         style={styles.chatRightMsgView}
-                        dangerouslySetInnerHTML={{ __html: item.content }}
+                        dangerouslySetInnerHTML={{__html: item.content}}
                     />
                 </div>
-                <img src={mySvg} alt="" style={styles.chatRightAvatar} />
+                <img src={mySvg} alt="" style={styles.chatRightAvatar}/>
             </div>
         )
     }
 
     // 渲染输入框
     renderInput() {
-        let { inputValue, isSpin } = this.state
+        let {inputValue, isSpin} = this.state
         return (
             <div
                 style={{
@@ -113,12 +124,12 @@ class Chat extends React.PureComponent {
             >
                 <div
                     onClick={(_) => this.inputRef.current.focus()}
-                    style={{ width: "100%", marginTop: "15px" }}
+                    style={{width: "100%", marginTop: "15px"}}
                 >
                     <Input
                         value={inputValue}
                         onChange={(e) =>
-                            this.setState({ inputValue: e.target.value })
+                            this.setState({inputValue: e.target.value})
                         }
                         onKeyPress={this.onInputEnter}
                         placeholder="请输入内容"
@@ -130,12 +141,35 @@ class Chat extends React.PureComponent {
                     type="primary"
                     disabled={isSpin}
                     style={styles.sendButton}
-                    onClick={(_) => this.onSendMessage()}
+                    onClick={(_) => this.onSendMsg()}
                 >
                     发送
                 </Button>
             </div>
         )
+    }
+
+    // 聊天过程流程展现
+    renderChatIntentFlow() {
+        let {roomHeight, conversationId, domain_key, flow_key} = this.state;
+        return (
+            <div style={{width: '45%', height: roomHeight}}>
+                <div style={styles.refreshButton}>
+                    <div style={{flex: 1}}/>
+                    <Button type="primary" onClick={this.onRefresh} style={{zIndex: 9999}}>刷新</Button>
+                </div>
+                <ChatFlowTable conversationId={conversationId} domainKey={domain_key} flowKey={flow_key}
+                               onRef={this.getRef}/>
+            </div>
+        )
+    }
+
+    getRef(ref) {
+        this.tableRef = ref
+    }
+
+    onRefresh() {
+        this.tableRef.refreshList()
     }
 
     //聊天扩展
@@ -156,12 +190,27 @@ class Chat extends React.PureComponent {
     // 输入框点击回车
     onInputEnter = async (event) => {
         if (event.which === 13) {
-            await this.onSendMessage()
+            await this.onSendMsg()
         }
     }
 
     // 发送消息
-    onSendMessage() {}
+    async onSendMsg(value) {
+        await this.onSendMessage(value)
+        this.onSendMessageAfter(value)
+    }
+
+    // 发送消息
+    onSendMessage(value) {
+    }
+
+    // 发送之后
+    async onSendMessageAfter(value) {
+        if (this.state.showIntentFlow) {
+            await this.tableRef.findIntentList()
+            await this.tableRef.refreshList()
+        }
+    }
 
     // 聊天窗口默认显示 最后聊天记录
     scrollToBottom() {
@@ -173,9 +222,13 @@ const styles = {
     contentSt: {
         display: "flex",
         flex: 1,
-        flexDirection: "column",
         height: "100%",
         width: "100%",
+    },
+    chatView: {
+        display: "flex",
+        flexDirection: "column",
+        flex: 1,
     },
     msgView: {
         backgroundColor: "#ffffff",
@@ -245,6 +298,12 @@ const styles = {
         flexDirection: "column",
         alignItems: "flex-end",
     },
+    refreshButton: {
+        display: 'flex',
+        justifyContent: 'space-end',
+        marginBottom: '-25px',
+        marginRight: '23px'
+    }
 }
 
 export default Chat

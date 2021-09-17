@@ -14,6 +14,9 @@ export default {
     "menu.domain.story": "故事",
     "menu.domain.flow": "话术流程",
 
+    "menu.conversation": "会话",
+    "menu.conversation.conversationList": "会话列表",
+
     "menu.entity": "实体",
     "menu.entity.relation": "实体关系",
     "menu.entity.relationType": "实体关系类型",

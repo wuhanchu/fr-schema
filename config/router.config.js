@@ -78,7 +78,6 @@ export default [
                         redirect: "/domain/list",
                         title: "域列表",
                     },
-
                     {
                         path: "/domain",
                         name: "domain",
@@ -113,6 +112,18 @@ export default [
                                 name: "story",
                                 component: "./story/List",
                                 title: "故事",
+                            },
+                        ],
+                    },
+                    {
+                        path: "/conversation",
+                        name: "conversation",
+                        routes: [
+                            {
+                                path: "/conversation/list",
+                                name: "conversationList",
+                                component: "./conversation/list/Conversation",
+                                title: "会话列表",
                             },
                         ],
                     },

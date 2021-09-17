@@ -1,7 +1,7 @@
 import React from "react"
 import { autobind } from "core-decorators"
 import Chat from "@/pages/question/components/Chat"
-import schema from "@/schemas/conversation/index"
+import schema from "@/schemas/conversation/detail"
 @autobind
 class WorkDetail extends Chat {
     constructor(props) {
@@ -9,17 +9,17 @@ class WorkDetail extends Chat {
         this.state = {
             ...this.state,
             showInput: false,
-            roomHeight: "100vh",
+            roomHeight: this.props.roomHeight || "100vh",
         }
-        this.editRef = React.createRef()
     }
 
     async componentDidMount() {
+        let conversation_id = this.props.conversation_id || this.props.location.query.conversation_id
         let list = []
-        if (this.props.location.query.conversation_id) {
+        if (conversation_id) {
             let res = await schema.service.get({
                 limit: 10000,
-                conversation_id: this.props.location.query.conversation_id,
+                conversation_id: conversation_id,
                 order: "create_time",
             })
             res.list.map((item) => {
