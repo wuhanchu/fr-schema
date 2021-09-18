@@ -153,13 +153,16 @@ class Chat extends React.PureComponent {
     renderChatIntentFlow() {
         let {roomHeight, conversationId, domain_key, flow_key} = this.state;
         return (
-            <div style={{width: '45%', height: roomHeight}}>
+            <div style={{width: '45%', height: roomHeight + 20, display: 'flex', flexDirection: 'column'}}>
+                <div style={styles.tableStyle}>
+                    <ChatFlowTable conversationId={conversationId} domainKey={domain_key} flowKey={flow_key}
+                                   onRef={this.getRef} roomHeight={roomHeight} />
+                </div>
+
                 <div style={styles.refreshButton}>
                     <div style={{flex: 1}}/>
                     <Button type="primary" onClick={this.onRefresh} style={{zIndex: 9999}}>刷新</Button>
                 </div>
-                <ChatFlowTable conversationId={conversationId} domainKey={domain_key} flowKey={flow_key}
-                               onRef={this.getRef}/>
             </div>
         )
     }
@@ -301,8 +304,12 @@ const styles = {
     refreshButton: {
         display: 'flex',
         justifyContent: 'space-end',
-        marginBottom: '-25px',
+        marginTop: '-15px',
         marginRight: '23px'
+    },
+    tableStyle:{
+        marginTop: '-40px',
+        flex: 1,
     }
 }
 
