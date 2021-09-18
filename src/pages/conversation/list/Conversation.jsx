@@ -22,6 +22,7 @@ class Conversation extends ListPage {
             operateWidth: "170px",
             showEdit: false,
             showDelete: false,
+            addHide: true,
         })
         this.state = {
             ...this.state,
@@ -31,9 +32,24 @@ class Conversation extends ListPage {
     }
 
     async componentDidMount() {
-        super.componentDidMount()
         this.schema.domain_key.dict = this.props.dict.domain
-        this.findFlowList()
+        await this.findFlowList()
+        super.componentDidMount()
+
+    }
+
+    // 搜索
+    renderSearchBar() {
+        const { domain_key, flow_key, status } = this.schema
+        const filters = this.createFilters(
+            {
+                domain_key,
+                flow_key,
+                status,
+            },
+            5
+        )
+        return this.createSearchBar(filters)
     }
 
     /**

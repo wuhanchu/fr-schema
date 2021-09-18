@@ -18,7 +18,12 @@ const schema = {
     status: {
         title: "状态",
         sorter: true,
+        type: schemaFieldType.Select,
         dict: {
+            running: {
+                value: "running",
+                remark: "会话中",
+            },
             end: {
                 value: "end",
                 remark: "结束",

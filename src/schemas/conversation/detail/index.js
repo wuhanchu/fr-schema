@@ -28,20 +28,22 @@ const schema = {
             }
         }
     },
+    intent_history_id: {
+        title: '意图',
+        type: schemaFieldType.Select,
+        width: 100
+    },
     text: {
-        title: '文本'
+        title: '文本',
+        width: 400
     },
     action_type: {
         title: '行为',
         type: schemaFieldType.Select,
     },
-    intent_history_id: {
-        title: '意图',
-        type: schemaFieldType.Select,
-        width: 110
-    },
     slot: {
         title: '槽位',
+        width: 400,
         render: (item, record) => <span>{JSON.stringify(item)}</span>
     },
 }
