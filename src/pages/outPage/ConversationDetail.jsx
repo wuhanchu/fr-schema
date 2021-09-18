@@ -3,7 +3,7 @@ import { autobind } from "core-decorators"
 import Chat from "@/pages/question/components/Chat"
 import schema from "@/schemas/conversation/detail"
 @autobind
-class WorkDetail extends Chat {
+class ConversationDetail extends Chat {
     constructor(props) {
         super(props)
         this.state = {
@@ -50,4 +50,4 @@ class WorkDetail extends Chat {
     }
 }
 
-export default WorkDetail
+export default ConversationDetail

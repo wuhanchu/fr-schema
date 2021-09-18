@@ -9,7 +9,7 @@ const schema = {
         type: schemaFieldType.Select,
     },
     user_id: {
-        title: "用户编号",
+        title: "用户",
     },
     flow_key: {
         title: "流程",

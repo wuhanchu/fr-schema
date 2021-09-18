@@ -6,8 +6,9 @@ import "@ant-design/compatible/assets/index.css"
 import {
     Modal,
 } from 'antd';
-import WorkDetail from "@/pages/outPage/WorkDetail";
+import ConversationDetail from "@/pages/outPage/ConversationDetail";
 import flowSchemas from '@/schemas/flow/index';
+import userService from '@/pages/authority/user/service';
 import frSchema from "@/outter/fr-schema/src";
 const { utils } = frSchema
 
@@ -34,6 +35,7 @@ class Conversation extends ListPage {
     async componentDidMount() {
         this.schema.domain_key.dict = this.props.dict.domain
         await this.findFlowList()
+        await this.findUserList()
         super.componentDidMount()
 
     }
@@ -88,7 +90,7 @@ class Conversation extends ListPage {
                 width="50%"
                 destroyOnClose
             >
-                <WorkDetail conversation_id={detail.id} roomHeight="60vh"/>
+                <ConversationDetail conversation_id={detail.id} roomHeight="60vh"/>
             </Modal>
         )
     }
@@ -105,6 +107,17 @@ class Conversation extends ListPage {
             res.list,
             null,
             "key",
+            "name"
+        )
+    }
+
+    // 流程列表-> 列表枚举展示
+    async findUserList() {
+        let res = await userService.get({pageSize: 10000})
+        this.schema.user_id.dict = utils.dict.listToDict(
+            res.list,
+            null,
+            "id",
             "name"
         )
     }
