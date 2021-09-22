@@ -6,7 +6,8 @@ import "@ant-design/compatible/assets/index.css"
 import frSchema from "@/outter/fr-schema/src";
 import {createApi} from "@/outter/fr-schema/src/service";
 import schema from "@/schemas/intent";
-const { utils } = frSchema
+
+const {utils} = frSchema
 
 
 @connect(({global}) => ({
@@ -22,7 +23,7 @@ class ChatFlowTable extends DataList {
             addHide: true,
             mini: true,
             readOnly: true,
-            scroll: {y:  '459px', x: 'max-content'}
+            scroll: {y: '459px', x: 'max-content'}
         })
     }
 
@@ -36,11 +37,15 @@ class ChatFlowTable extends DataList {
     // 意图列表-> 列表枚举展示
     async findIntentList() {
         let res = await createApi("intent_history", this.schema, null, "eq.").get({pageSize: 10000})
+        res.list = res.list.map((item) => ({
+            ...item,
+            intentName: item.intent_rank ? item.intent_rank[0].name : ''
+        }));
         this.schema.intent_history_id.dict = utils.dict.listToDict(
             res.list,
             null,
             "id",
-            "text"
+            "intentName"
         )
     }
 

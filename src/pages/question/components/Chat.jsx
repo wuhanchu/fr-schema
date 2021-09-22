@@ -153,7 +153,7 @@ class Chat extends React.PureComponent {
     renderChatIntentFlow() {
         let {roomHeight, conversationId, domain_key, flow_key} = this.state;
         return (
-            <div style={{width: '45%', height: roomHeight + 20, display: 'flex', flexDirection: 'column'}}>
+            <div style={{width: '50%', height: roomHeight + 20, display: 'flex', flexDirection: 'column'}}>
                 <div style={styles.tableStyle}>
                     <ChatFlowTable conversationId={conversationId} domainKey={domain_key} flowKey={flow_key}
                                    onRef={this.getRef} roomHeight={roomHeight} />

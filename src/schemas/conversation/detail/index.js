@@ -16,7 +16,7 @@ const schema = {
         dict: {
             receive: {
                 value: 'receive',
-                remark: '接受'
+                remark: '接收'
             },
             reply: {
                 value: 'reply',
@@ -31,11 +31,11 @@ const schema = {
     intent_history_id: {
         title: '意图',
         type: schemaFieldType.Select,
-        width: 100
+        width: 80
     },
     text: {
         title: '文本',
-        width: 400
+        width: 350
     },
     action_type: {
         title: '行为',
@@ -43,7 +43,7 @@ const schema = {
     },
     slot: {
         title: '槽位',
-        width: 400,
+        width: 350,
         render: (item, record) => <span>{JSON.stringify(item)}</span>
     },
 }
