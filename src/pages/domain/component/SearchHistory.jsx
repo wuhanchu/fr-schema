@@ -104,6 +104,16 @@ class MyList extends DataList {
                             size="large"
                             style={{ maxHeight: "60vh", overflowY: "auto" }}
                             bordered
+                            header={
+                                <List.Item
+                                    style={{ margin: "-24px" }}
+                                    actions={[<a>匹配度</a>]}
+                                >
+                                    <List.Item.Meta
+                                        title={<div>匹配问题</div>}
+                                    />
+                                </List.Item>
+                            }
                             dataSource={record.return_question || []}
                             renderItem={(item) => (
                                 <List.Item
