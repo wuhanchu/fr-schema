@@ -36,6 +36,12 @@ class IntentIdentify extends React.Component {
         isSpin: false,
     }
 
+    componentDidMount() {
+        if (this.props.text) {
+            this.onFinish({ text: this.props.text })
+        }
+    }
+
     getRow() {
         const { list } = this.state
         let changeRow =
@@ -47,25 +53,25 @@ class IntentIdentify extends React.Component {
         this.setState({ changeRow })
     }
 
+    onFinish = async (values) => {
+        this.setState({ isSpin: true })
+        let response = await service.service.intentIdentify({
+            domain_key: this.props.record.key,
+            text: values.text,
+        })
+        let list = response.data.intent_ranking.map((item, index) => {
+            return { ...item, isTrue: false, isDel: false, addTxt: "" }
+        })
+        this.setState({
+            data: response.data,
+            isSpin: false,
+            list: response.data.intent_ranking,
+        })
+
+        console.log(response.data)
+    }
+
     renderContent() {
-        const onFinish = async (values) => {
-            this.setState({ isSpin: true })
-            let response = await service.service.intentIdentify({
-                domain_key: this.props.record.key,
-                text: values.text,
-            })
-            let list = response.data.intent_ranking.map((item, index) => {
-                return { ...item, isTrue: false, isDel: false, addTxt: "" }
-            })
-            this.setState({
-                data: response.data,
-                isSpin: false,
-                list: response.data.intent_ranking,
-            })
-
-            console.log(response.data)
-        }
-
         const onFinishFailed = (errorInfo) => {
             console.log("Failed:", errorInfo)
         }
@@ -78,8 +84,11 @@ class IntentIdentify extends React.Component {
                         layout={"inline"}
                         labelCol={{ span: 8 }}
                         wrapperCol={{ span: 16 }}
-                        initialValues={{ remember: true }}
-                        onFinish={onFinish}
+                        initialValues={{
+                            remember: true,
+                            text: this.props.text,
+                        }}
+                        onFinish={this.onFinish}
                         onFinishFailed={onFinishFailed}
                     >
                         <Form.Item
