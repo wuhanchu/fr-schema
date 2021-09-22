@@ -1,50 +1,50 @@
-import {createApi} from "@/outter/fr-schema/src/service"
-import {schemaFieldType} from "@/outter/fr-schema/src/schema";
+import { createApi } from "@/outter/fr-schema/src/service"
+import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 
 const schema = {
     id: {
-        title: '编号',
+        title: "编号",
         listHide: true,
     },
     node_key: {
-        title: '节点',
+        title: "节点",
         type: schemaFieldType.Select,
     },
     type: {
-        title: '类型',
+        title: "类型",
         type: schemaFieldType.Select,
         dict: {
             receive: {
-                value: 'receive',
-                remark: '接受'
+                value: "receive",
+                remark: "接收",
             },
             reply: {
-                value: 'reply',
-                remark: '回复'
+                value: "reply",
+                remark: "回复",
             },
             action: {
-                value: 'action',
-                remark: '行为'
-            }
-        }
+                value: "action",
+                remark: "行为",
+            },
+        },
     },
     intent_history_id: {
-        title: '意图',
+        title: "意图",
         type: schemaFieldType.Select,
-        width: 100
+        width: 80,
     },
     text: {
-        title: '文本',
-        width: 400
+        title: "文本",
+        width: 350,
     },
     action_type: {
-        title: '行为',
+        title: "行为",
         type: schemaFieldType.Select,
     },
     slot: {
-        title: '槽位',
-        width: 400,
-        render: (item, record) => <span>{JSON.stringify(item)}</span>
+        title: "槽位",
+        width: 350,
+        render: (item, record) => <span>{JSON.stringify(item)}</span>,
     },
 }
 

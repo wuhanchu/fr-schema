@@ -11,7 +11,7 @@ export default function DialogueModal(props) {
             }}
             style={{ height: "700px" }}
             title={"对话"}
-            width="80%"
+            width="90%"
             footer={null}
             {...props}
         >

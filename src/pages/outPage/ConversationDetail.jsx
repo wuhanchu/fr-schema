@@ -3,7 +3,7 @@ import { autobind } from "core-decorators"
 import Chat from "@/pages/question/components/Chat"
 import schema from "@/schemas/conversation/detail"
 @autobind
-class WorkDetail extends Chat {
+class ConversationDetail extends Chat {
     constructor(props) {
         super(props)
         this.state = {
@@ -14,7 +14,9 @@ class WorkDetail extends Chat {
     }
 
     async componentDidMount() {
-        let conversation_id = this.props.conversation_id || this.props.location.query.conversation_id
+        let conversation_id =
+            this.props.conversation_id ||
+            this.props.location.query.conversation_id
         let list = []
         if (conversation_id) {
             let res = await schema.service.get({
@@ -50,4 +52,4 @@ class WorkDetail extends Chat {
     }
 }
 
-export default WorkDetail
+export default ConversationDetail

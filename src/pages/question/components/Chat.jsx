@@ -1,9 +1,9 @@
 import React from "react"
-import {autobind} from "core-decorators"
-import {Button, Input, Timeline, Tag} from "antd"
+import { autobind } from "core-decorators"
+import { Button, Input, Timeline, Tag } from "antd"
 import robotSvg from "@/assets/rebot.svg"
 import mySvg from "@/outter/fr-schema-antd-utils/src/components/GlobalHeader/my.svg"
-import ChatFlowTable from '@/pages/question/components/ChatFlowTable';
+import ChatFlowTable from "@/pages/question/components/ChatFlowTable"
 
 /**
  * 聊天窗口
@@ -15,25 +15,25 @@ class Chat extends React.PureComponent {
     constructor(props) {
         super(props)
         this.state = {
-            messageList: [],  // 消息数据
-            isSpin: false,   // 加载
-            inputValue: "",  // 输入框值
-            showInput: true,  // 是否显示输入框
-            roomHeight: "500px",  // 界面高度
+            messageList: [], // 消息数据
+            isSpin: false, // 加载
+            inputValue: "", // 输入框值
+            showInput: true, // 是否显示输入框
+            roomHeight: "500px", // 界面高度
             showIntentFlow: false, // 显示聊天流程
             showIntent: false, // 显示意图弹窗
             intentMessage: [], // 流程数据
             conversationId: "",
-            domain_key: '',
+            domain_key: "",
             flow_key: "",
         }
         this.chatRef = React.createRef()
         this.inputRef = React.createRef()
-        this.tableRef = React.createRef();
+        this.tableRef = React.createRef()
     }
 
     render() {
-        let {showInput, showIntentFlow} = this.state
+        let { showInput, showIntentFlow } = this.state
         return (
             <div style={styles.contentSt}>
                 <div style={styles.chatView}>
@@ -47,10 +47,10 @@ class Chat extends React.PureComponent {
 
     // 聊天内容展示
     renderChatView() {
-        let {messageList, roomHeight} = this.state
+        let { messageList, roomHeight } = this.state
         return (
             <div
-                style={{...styles.leaveView, height: roomHeight}}
+                style={{ ...styles.leaveView, height: roomHeight }}
                 ref={this.chatRef}
             >
                 {messageList.map((item, index) =>
@@ -67,8 +67,8 @@ class Chat extends React.PureComponent {
     renderService(item, index) {
         return (
             <div style={styles.leaveItem} key={`leave${index}`}>
-                <img src={robotSvg} alt="" style={styles.avatar}/>
-                <div style={{marginTop: "8px"}}>
+                <img src={robotSvg} alt="" style={styles.avatar} />
+                <div style={{ marginTop: "8px" }}>
                     {/*<div style={{ display: 'flex', alignItems: 'center' }}>*/}
                     {/*    <span>*/}
                     {/*        {item.name}{' '}*/}
@@ -91,7 +91,7 @@ class Chat extends React.PureComponent {
         return (
             <div
                 style={styles.leaveMsgView}
-                dangerouslySetInnerHTML={{__html: item.content}}
+                dangerouslySetInnerHTML={{ __html: item.content }}
             />
         )
     }
@@ -103,17 +103,17 @@ class Chat extends React.PureComponent {
                 <div style={styles.chatRightMsgItem}>
                     <div
                         style={styles.chatRightMsgView}
-                        dangerouslySetInnerHTML={{__html: item.content}}
+                        dangerouslySetInnerHTML={{ __html: item.content }}
                     />
                 </div>
-                <img src={mySvg} alt="" style={styles.chatRightAvatar}/>
+                <img src={mySvg} alt="" style={styles.chatRightAvatar} />
             </div>
         )
     }
 
     // 渲染输入框
     renderInput() {
-        let {inputValue, isSpin} = this.state
+        let { inputValue, isSpin } = this.state
         return (
             <div
                 style={{
@@ -124,12 +124,12 @@ class Chat extends React.PureComponent {
             >
                 <div
                     onClick={(_) => this.inputRef.current.focus()}
-                    style={{width: "100%", marginTop: "15px"}}
+                    style={{ width: "100%", marginTop: "15px" }}
                 >
                     <Input
                         value={inputValue}
                         onChange={(e) =>
-                            this.setState({inputValue: e.target.value})
+                            this.setState({ inputValue: e.target.value })
                         }
                         onKeyPress={this.onInputEnter}
                         placeholder="请输入内容"
@@ -151,17 +151,35 @@ class Chat extends React.PureComponent {
 
     // 聊天过程流程展现
     renderChatIntentFlow() {
-        let {roomHeight, conversationId, domain_key, flow_key} = this.state;
+        let { roomHeight, conversationId, domain_key, flow_key } = this.state
         return (
-            <div style={{width: '45%', height: roomHeight + 20, display: 'flex', flexDirection: 'column'}}>
+            <div
+                style={{
+                    width: "50%",
+                    height: roomHeight + 20,
+                    display: "flex",
+                    flexDirection: "column",
+                }}
+            >
                 <div style={styles.tableStyle}>
-                    <ChatFlowTable conversationId={conversationId} domainKey={domain_key} flowKey={flow_key}
-                                   onRef={this.getRef} roomHeight={roomHeight} />
+                    <ChatFlowTable
+                        conversationId={conversationId}
+                        domainKey={domain_key}
+                        flowKey={flow_key}
+                        onRef={this.getRef}
+                        roomHeight={roomHeight}
+                    />
                 </div>
 
                 <div style={styles.refreshButton}>
-                    <div style={{flex: 1}}/>
-                    <Button type="primary" onClick={this.onRefresh} style={{zIndex: 9999}}>刷新</Button>
+                    <div style={{ flex: 1 }} />
+                    <Button
+                        type="primary"
+                        onClick={this.onRefresh}
+                        style={{ zIndex: 9999 }}
+                    >
+                        刷新
+                    </Button>
                 </div>
             </div>
         )
@@ -204,8 +222,7 @@ class Chat extends React.PureComponent {
     }
 
     // 发送消息
-    onSendMessage(value) {
-    }
+    onSendMessage(value) {}
 
     // 发送之后
     async onSendMessageAfter(value) {
@@ -302,15 +319,15 @@ const styles = {
         alignItems: "flex-end",
     },
     refreshButton: {
-        display: 'flex',
-        justifyContent: 'space-end',
-        marginTop: '-15px',
-        marginRight: '23px'
+        display: "flex",
+        justifyContent: "space-end",
+        marginTop: "-15px",
+        marginRight: "23px",
     },
-    tableStyle:{
-        marginTop: '-40px',
+    tableStyle: {
+        marginTop: "-40px",
         flex: 1,
-    }
+    },
 }
 
 export default Chat

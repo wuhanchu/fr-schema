@@ -1,5 +1,5 @@
 import { createApi } from "@/outter/fr-schema/src/service"
-import {schemaFieldType} from "@/outter/fr-schema/src/schema";
+import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 
 const schema = {
     domain_key: {
@@ -9,7 +9,7 @@ const schema = {
         type: schemaFieldType.Select,
     },
     user_id: {
-        title: "用户编号",
+        title: "用户",
     },
     flow_key: {
         title: "流程",
@@ -27,8 +27,8 @@ const schema = {
             end: {
                 value: "end",
                 remark: "结束",
-            }
-        }
+            },
+        },
     },
     create_time: {
         title: "创建时间",

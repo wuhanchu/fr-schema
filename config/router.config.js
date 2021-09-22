@@ -45,9 +45,14 @@ export default [
                 component: "./question/components/Dialogue",
             },
             {
-                path: "/outter/workDetail",
-                name: "workDetail",
-                component: "./outPage/WorkDetail",
+                path: "/outter/conversation",
+                name: "conversation",
+                component: "./conversation/list/Conversation",
+            },
+            {
+                path: "/outter/conversation_detail",
+                name: "conversationDetail",
+                component: "./outPage/ConversationDetail",
             },
         ],
     },
