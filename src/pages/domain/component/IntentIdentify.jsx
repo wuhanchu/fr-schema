@@ -101,6 +101,7 @@ class IntentIdentify extends React.Component {
                             <Input
                                 placeholder={"请输入对话文本"}
                                 style={{ width: "400px" }}
+                                disabled={this.props.text}
                             />
                         </Form.Item>
 
@@ -113,10 +114,12 @@ class IntentIdentify extends React.Component {
                                     }}
                                     type="primary"
                                     htmlType="submit"
+                                    disabled={this.props.text}
                                 >
                                     查询
                                 </Button>
                                 <Button
+                                    disabled={this.props.text}
                                     onClick={() => {
                                         this.setState({
                                             result: [],
@@ -141,12 +144,13 @@ class IntentIdentify extends React.Component {
 
     renderTable() {
         const columns = [
-            // {
-            //     title: '名称',
-            //     dataIndex: 'name',
-            //     key: 'name',
-            //     render: text => <span>{text}</span>,
-            // },
+            {
+                title: "名称",
+                fixed: "left",
+                dataIndex: "name",
+                key: "name",
+                render: (text) => <span>{text}</span>,
+            },
             {
                 title: "匹配类型",
                 dataIndex: "type",
@@ -172,6 +176,7 @@ class IntentIdentify extends React.Component {
                 title: "匹配度",
                 dataIndex: "compatibility",
                 key: "compatibility",
+                fixed: "right",
                 render: (text) => <span>{formatData(text, 5)}</span>,
             },
             {
@@ -279,7 +284,7 @@ class IntentIdentify extends React.Component {
                                 success: false,
                             })
                         }}
-                        width={"900px"}
+                        width={"1100px"}
                         maskClosable
                     >
                         <Card

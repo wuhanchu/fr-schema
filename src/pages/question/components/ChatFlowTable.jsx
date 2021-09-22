@@ -4,6 +4,8 @@ import schemas from "@/schemas/conversation/detail/index"
 import React from "react"
 import "@ant-design/compatible/assets/index.css"
 import frSchema from "@/outter/fr-schema/src"
+import IntentIdentify from "@/pages/domain/component/IntentIdentify"
+
 import { createApi } from "@/outter/fr-schema/src/service"
 import schema from "@/schemas/intent"
 
@@ -55,6 +57,40 @@ class ChatFlowTable extends DataList {
             null,
             "id",
             "intentName"
+        )
+        this.schema.intent_history_id.render = (item, data) => {
+            return (
+                <a
+                    onClick={() => {
+                        console.log(this.props, data.text)
+                        this.setState({
+                            visibleIntentIdentify: true,
+                            record: data,
+                        })
+                    }}
+                >
+                    {item}
+                </a>
+            )
+        }
+    }
+
+    renderExtend() {
+        const { visibleIntentIdentify, record } = this.state
+        const { domainKey } = this.props
+        return (
+            <>
+                {visibleIntentIdentify && (
+                    <IntentIdentify
+                        onCancel={() => {
+                            this.setState({ visibleIntentIdentify: false })
+                        }}
+                        text={record.text}
+                        style={{ height: "900px" }}
+                        record={{ key: domainKey }}
+                    />
+                )}
+            </>
         )
     }
 
