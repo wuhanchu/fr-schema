@@ -22,7 +22,7 @@ const schema = {
         searchPrefix: "like",
     },
     match: {
-        title: "是否匹配",
+        title: "标注结果",
         // listHide: true,
         width: "170px",
         type: schemaFieldType.Select,
