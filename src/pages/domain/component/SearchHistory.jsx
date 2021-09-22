@@ -63,8 +63,8 @@ class MyList extends DataList {
                         }}
                         value={data.match}
                     >
-                        <Radio value={true}>匹配</Radio>
-                        <Radio value={false}>不匹配</Radio>
+                        <Radio value={true}>准确</Radio>
+                        <Radio value={false}>不准确</Radio>
                     </Radio.Group>
                 </>
             )

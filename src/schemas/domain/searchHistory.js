@@ -22,18 +22,18 @@ const schema = {
         searchPrefix: "like",
     },
     match: {
-        title: "标注结果",
+        title: "匹配是否准确",
         // listHide: true,
         width: "170px",
         type: schemaFieldType.Select,
         dict: {
             true: {
                 value: "true",
-                remark: "匹配",
+                remark: "准确",
             },
             false: {
                 value: "false",
-                remark: "不匹配",
+                remark: "不准确",
             },
         },
     },
