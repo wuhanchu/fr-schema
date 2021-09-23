@@ -35,6 +35,7 @@ class IntentIdentify extends React.Component {
         success: false,
         isSpin: false,
     }
+    formRef = React.createRef()
 
     componentDidMount() {
         if (this.props.text) {
@@ -55,20 +56,27 @@ class IntentIdentify extends React.Component {
 
     onFinish = async (values) => {
         this.setState({ isSpin: true })
-        let response = await service.service.intentIdentify({
-            domain_key: this.props.record.key,
-            text: values.text,
-        })
-        let list = response.data.intent_ranking.map((item, index) => {
-            return { ...item, isTrue: false, isDel: false, addTxt: "" }
-        })
-        this.setState({
-            data: response.data,
-            isSpin: false,
-            list: response.data.intent_ranking,
-        })
-
-        console.log(response.data)
+        if (values.text) {
+            let response = await service.service.intentIdentify({
+                domain_key: this.props.record.key,
+                text: values.text,
+            })
+            let list = response.data.intent_ranking.map((item, index) => {
+                return { ...item, isTrue: false, isDel: false, addTxt: "" }
+            })
+            this.setState({
+                data: response.data,
+                isSpin: false,
+                list: response.data.intent_ranking,
+            })
+        } else {
+            this.setState({
+                data: {},
+                isSpin: false,
+                list: [],
+                result: [],
+            })
+        }
     }
 
     renderContent() {
@@ -84,6 +92,7 @@ class IntentIdentify extends React.Component {
                         layout={"inline"}
                         labelCol={{ span: 8 }}
                         wrapperCol={{ span: 16 }}
+                        ref={this.formRef}
                         initialValues={{
                             remember: true,
                             text: this.props.text,
@@ -94,9 +103,9 @@ class IntentIdentify extends React.Component {
                         <Form.Item
                             label="解析文本"
                             name="text"
-                            rules={[
-                                { required: true, message: "请输入对话文本" },
-                            ]}
+                            // rules={[
+                            //     { required: true, message: "请输入对话文本" },
+                            // ]}
                         >
                             <Input
                                 placeholder={"请输入对话文本"}
@@ -129,6 +138,7 @@ class IntentIdentify extends React.Component {
                                             isSpin: false,
                                             list: [],
                                         })
+                                        this.formRef.current.resetFields()
                                     }}
                                 >
                                     重置
