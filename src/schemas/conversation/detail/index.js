@@ -37,7 +37,7 @@ const schema = {
         title: "文本",
         width: 350,
     },
-    action_type: {
+    action_key: {
         title: "行为",
         type: schemaFieldType.Select,
     },

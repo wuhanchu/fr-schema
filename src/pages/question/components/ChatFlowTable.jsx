@@ -104,10 +104,10 @@ class ChatFlowTable extends DataList {
         })
         if (res.list.length) {
             let result = res.list[0].config
-            this.schema.action_type.dict = utils.dict.listToDict(
+            this.schema.action_key.dict = utils.dict.listToDict(
                 result.action,
                 null,
-                "type",
+                "key",
                 "name"
             )
             this.schema.node_key.dict = utils.dict.listToDict(
