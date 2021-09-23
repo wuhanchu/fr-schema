@@ -281,7 +281,7 @@ class Dialogue extends Chat {
                     {item.buttons.map((data, indexs) => {
                         return (
                             <a
-                                key={`extra${index}`}
+                                key={`extraButton${index}`}
                                 onClick={this.operaClick.bind(
                                     this,
                                     data,
