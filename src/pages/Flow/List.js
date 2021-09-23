@@ -75,6 +75,7 @@ class List extends ListPage {
                             this.setState({ visibleFlow: args })
                             this.refreshList()
                         }}
+                        other={{ data: this.props.data, dict: this.props.dict }}
                         dict={this.props.data}
                         schemas={schemas.flow}
                         service={this.service}

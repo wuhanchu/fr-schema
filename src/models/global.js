@@ -3,6 +3,7 @@ import question from "@/schemas/question/index"
 
 import domain from "@/schemas/domain/index"
 import configService from "@/schemas/config/service"
+import dictService from "@/schemas/dict/index"
 
 import { useState } from "react"
 
@@ -125,10 +126,26 @@ const GlobalModel = {
             const res = yield all({
                 domain: call(domain.service.get, { pageSize: 10000 }),
                 config: call(configService.get, { pageSize: 10000 }),
+                dict: call(dictService.get, { pageSize: 10000 }),
             })
 
             Object.keys(res).forEach((key) => (data[key] = res[key].list))
+            let dictMap = {}
+            data.dict.forEach((item) => {
+                if (!dictMap[item.key]) {
+                    dictMap[item.key] = []
+                }
+                dictMap[item.key].push(item)
+            })
 
+            Object.keys(dictMap).forEach((key) => {
+                dict[key] = utils.dict.listToDict(
+                    dictMap[key],
+                    null,
+                    "value",
+                    "name"
+                )
+            })
             dict.domain = utils.dict.listToDict(
                 data.domain,
                 null,
@@ -141,6 +158,7 @@ const GlobalModel = {
                 "key",
                 "value"
             )
+
             // update current dict
             yield put({
                 type: "save",

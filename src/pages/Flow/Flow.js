@@ -80,7 +80,7 @@ class Flow extends React.PureComponent {
 
     render() {
         let { chooseType, cell, intenList, expGraphData } = this.state
-        const { service, record, dict } = this.props
+        const { service, record, dict, other } = this.props
         let haveEnd = false
         expGraphData &&
             expGraphData.node &&
@@ -98,6 +98,7 @@ class Flow extends React.PureComponent {
                             service={service}
                             record={record}
                             intenList={intenList}
+                            other={other}
                             dict={dict}
                             graphChange={() => {
                                 return this.graphChange()

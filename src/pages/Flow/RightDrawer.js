@@ -40,7 +40,14 @@ class RightDrawer extends React.PureComponent {
             showCondition,
             conditionVisible,
         } = this.state
-        const { graph, cell, intenList, expGraphData, graphChange } = this.props
+        const {
+            graph,
+            cell,
+            intenList,
+            expGraphData,
+            graphChange,
+            other,
+        } = this.props
         return (
             <div className="drawer_container">
                 {this.renderGrid()}
@@ -52,6 +59,7 @@ class RightDrawer extends React.PureComponent {
                         graphChange={() => {
                             graphChange()
                         }}
+                        other={other}
                         handleChangeShowAction={() => {
                             this.handleChangeShowAction()
                         }}
