@@ -24,17 +24,6 @@ const schema = {
         title: "意图路径",
         searchPrefix: "not.like",
     },
-    example: {
-        title: "例子",
-        type: schemaFieldType.TextArea,
-        props: {
-            autoSize: { minRows: 2, maxRows: 6 },
-        },
-        listHide: true,
-        exportConcat: true,
-        extra: "每行表示一个例子",
-    },
-
     regex: {
         title: "正则表达式",
         type: schemaFieldType.Select,
@@ -55,6 +44,16 @@ const schema = {
         // listHide: true,
         exportConcat: true,
         extra: "每行表示一个话术",
+    },
+    example: {
+        title: "例子",
+        type: schemaFieldType.TextArea,
+        props: {
+            autoSize: { minRows: 2, maxRows: 6 },
+        },
+        listHide: true,
+        exportConcat: true,
+        extra: "每行表示一个例子",
     },
     create_time: {
         title: "创建时间",
