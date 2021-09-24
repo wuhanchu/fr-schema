@@ -65,6 +65,16 @@ const schema = {
             return <div style={{ minWidth: "60px" }}>{item}</div>
         },
     },
+    answer_text: {
+        title: "摘要",
+        required: true,
+        type: schemaFieldType.TextArea,
+        props: {
+            // 最小高度
+            autoSize: { minRows: 2, maxRows: 6 },
+        },
+        editable: true,
+    },
     answer: {
         title: "答案",
         required: true,

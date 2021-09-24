@@ -3,7 +3,7 @@ import question from "@/schemas/question/index"
 
 import domain from "@/schemas/domain/index"
 import configService from "@/schemas/config/service"
-import dictService from "@/schemas/dict/index"
+import dictService from "@/schemas/dict/service"
 
 import { useState } from "react"
 

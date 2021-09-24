@@ -61,9 +61,15 @@ class List extends ListPage {
     handleUpdate = async (data, schema, method = "patch") => {
         // 更新
         if (this.state.infoData.key === data.key) {
-            let response = await this.service[method](data, schema)
-            this.refreshList()
-            message.success("修改成功")
+            let response
+            try {
+                response = await this.service[method](data, schema)
+                this.refreshList()
+                message.success("修改成功")
+            } catch (error) {
+                message.error(error.message)
+            }
+
             this.handleVisibleModal()
             return response
         } else {
@@ -78,9 +84,15 @@ class List extends ListPage {
                 },
                 cancelText: "取消",
                 onOk: async () => {
-                    let response = await this.service[method](data, schema)
-                    this.refreshList()
-                    message.success("修改成功")
+                    let response
+                    try {
+                        response = await this.service[method](data, schema)
+                        this.refreshList()
+                        message.success("修改成功")
+                    } catch (error) {
+                        message.error(error.message)
+                    }
+
                     this.handleVisibleModal()
                     return response
                 },
@@ -89,16 +101,22 @@ class List extends ListPage {
     }
 
     async handleAdd(data, schema) {
-        let response = await this.service.post(data, schema)
-        response = await this.service.setUser(
-            {
-                users_id: [parseInt(this.props.user.currentUser.id)],
-                domain_key: data.key,
-            },
-            schema
-        )
-        message.success("添加成功")
-        this.refreshList()
+        let response
+        try {
+            response = await this.service.post(data, schema)
+            response = await this.service.setUser(
+                {
+                    users_id: [parseInt(this.props.user.currentUser.id)],
+                    domain_key: data.key,
+                },
+                schema
+            )
+            message.success("添加成功")
+            this.refreshList()
+        } catch (error) {
+            message.error(error.message)
+        }
+
         this.handleVisibleModal()
         this.handleChangeCallback && this.handleChangeCallback()
         this.props.handleChangeCallback && this.props.handleChangeCallback()
@@ -108,12 +126,18 @@ class List extends ListPage {
 
     handleUpdates = async (data, schemas, method = "patch") => {
         // 更新
-        let response = await this.service.setUser(
-            { ...data, domain_key: this.state.record.key },
-            schemas
-        )
-        this.refreshList()
-        message.success("操作成功")
+        let response
+        try {
+            response = await this.service.setUser(
+                { ...data, domain_key: this.state.record.key },
+                schemas
+            )
+            this.refreshList()
+            message.success("操作成功")
+        } catch (error) {
+            message.error(error.message)
+        }
+
         this.handleVisibleModal()
         if (this.handleChangeCallback) {
             this.handleChangeCallback()

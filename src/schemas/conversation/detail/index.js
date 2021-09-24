@@ -24,7 +24,7 @@ const schema = {
             },
             action: {
                 value: "action",
-                remark: "行为",
+                remark: "操作",
             },
         },
     },
@@ -38,7 +38,7 @@ const schema = {
         width: 350,
     },
     action_key: {
-        title: "行为",
+        title: "操作",
         type: schemaFieldType.Select,
     },
     slot: {

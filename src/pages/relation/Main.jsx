@@ -7,8 +7,8 @@ import RelationType from "../relationType/List"
 
 // 微信信息类型
 export const infoType = {
-    relation: "实体关系",
-    relationType: "实体关系类型",
+    relation: "关系",
+    relationType: "类型",
 }
 
 /**

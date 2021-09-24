@@ -12,10 +12,11 @@ export default {
     "menu.domain": "域",
     "menu.domain.domainList": "域信息",
     "menu.domain.story": "故事",
-    "menu.domain.flow": "话术流程",
+    "menu.domain.flow": "话术",
+    "menu.domain.response": "回应",
 
     "menu.conversation": "会话",
-    "menu.conversation.conversationList": "会话列表",
+    "menu.conversation.conversationList": "会话信息",
 
     "menu.entity": "实体",
     "menu.entity.relation": "实体关系",
@@ -27,6 +28,8 @@ export default {
     "menu.domain.synonym": "近似词",
     "menu.system": "系统管理",
     "menu.system.user": "用户管理",
+    "menu.system.setting": "字典配置",
+
     "menu.system.role": "角色管理",
     "menu.system.config": "系统配置",
     "menu.system.client": "客户端管理",

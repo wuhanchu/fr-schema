@@ -1,14 +1,13 @@
-import ListPage from "@/outter/fr-schema-antd-utils/src/components/Page/ListPage"
 import React from "react"
 import { PageHeaderWrapper } from "@ant-design/pro-layout"
 import { connect } from "dva"
-import Entity from "./List"
-import EntityType from "../entityType/List"
+import DictType from "./components/DictType"
+import Dict from "./components/Dict"
 
 // 微信信息类型
 export const infoType = {
-    entity: "信息",
-    entityType: "类型",
+    Dict: "字典",
+    DictType: "字典类型",
 }
 
 /**
@@ -23,7 +22,7 @@ class Main extends React.PureComponent {
     constructor(props) {
         super(props)
         const { query } = this.props.location
-        const tabActiveKey = query && query.type ? query.type : infoType.entity
+        const tabActiveKey = query && query.type ? query.type : infoType.Dict
         this.state = {
             tabActiveKey,
         }
@@ -34,7 +33,7 @@ class Main extends React.PureComponent {
 
         return (
             <PageHeaderWrapper
-                title="实体信息"
+                title="字典设置"
                 tabList={Object.keys(infoType).map((key) => ({
                     key: infoType[key],
                     tab: infoType[key],
@@ -44,8 +43,8 @@ class Main extends React.PureComponent {
                 }
                 tabActiveKey={tabActiveKey}
             >
-                {tabActiveKey === infoType.entity && <Entity />}
-                {tabActiveKey === infoType.entityType && <EntityType />}
+                {tabActiveKey === infoType.Dict && <Dict />}
+                {tabActiveKey === infoType.DictType && <DictType />}
             </PageHeaderWrapper>
         )
     }
