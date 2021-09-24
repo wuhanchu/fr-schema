@@ -33,19 +33,21 @@ const schema = {
         searchPrefix: "like",
         required: true,
     },
-
-    create_time: {
-        title: "创建时间",
-        required: true,
-        sorter: true,
-        addHide: true,
-        editHide: true,
-        props: {
-            showTime: true,
-        },
-        type: schemaFieldType.DatePicker,
+    intent_key: {
+        title: '意图',
+        type: schemaFieldType.MultiSelect,
+        style: { width: "500px" },
+        render: (text) => <span>{text && text.toString()}</span>
     },
-
+    template_text: {
+        title: '回复文本',
+        type: schemaFieldType.TextArea,
+        style: { width: "500px" },
+        props: {
+            autoSize: { minRows: 3, maxRows: 6 },
+        },
+        render: (item) => <span>{item && (item.toString().length > 20 ? item.toString().substr(0, 20) : item.toString())}</span>
+    },
     template: {
         title: "模板",
         listHide: true,
@@ -56,6 +58,17 @@ const schema = {
         // // required: true,
         type: schemaFieldType.AceEditor,
         decoratorProps: { rules: verifyJson },
+    },
+    create_time: {
+        title: "创建时间",
+        required: true,
+        sorter: true,
+        addHide: true,
+        editHide: true,
+        props: {
+            showTime: true,
+        },
+        type: schemaFieldType.DatePicker,
     },
 }
 
