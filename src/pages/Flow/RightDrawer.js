@@ -351,8 +351,8 @@ class RightDrawer extends React.PureComponent {
                             <FormItem
                                 label={
                                     <div>
-                                        行为定义
-                                        <Tooltip title="行为之间顺序执行，可以拖动进行排序">
+                                        操作定义
+                                        <Tooltip title="操作之间顺序执行，可以拖动进行排序">
                                             <QuestionCircleOutlined
                                                 style={{ marginLeft: "5px" }}
                                             />
@@ -389,7 +389,7 @@ class RightDrawer extends React.PureComponent {
                                                             {item.name}
                                                         </span>
                                                         <Popconfirm
-                                                            title="是否删除此行为?"
+                                                            title="是否删除此操作?"
                                                             onConfirm={this.onDelete.bind(
                                                                 this,
                                                                 item,

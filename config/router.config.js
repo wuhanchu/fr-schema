@@ -95,12 +95,6 @@ export default [
                                 title: "域列表",
                             },
                             {
-                                path: "/domain/flow",
-                                name: "flow",
-                                title: "流程图",
-                                component: "./Flow/List",
-                            },
-                            {
                                 path: "/domain/synonym",
                                 name: "synonym",
                                 component: "./synonym/List",
@@ -112,6 +106,20 @@ export default [
                                 component: "./intent/List",
                                 title: "意图",
                             },
+                            // response
+                            {
+                                path: "/domain/response",
+                                name: "response",
+                                component: "./response/List",
+                                title: "回应",
+                            },
+                            {
+                                path: "/domain/flow",
+                                name: "flow",
+                                title: "话术",
+                                component: "./Flow/List",
+                            },
+
                             {
                                 path: "/domain/story",
                                 name: "story",
@@ -128,7 +136,7 @@ export default [
                                 path: "/conversation/list",
                                 name: "conversationList",
                                 component: "./conversation/list/Conversation",
-                                title: "会话列表",
+                                title: "会话信息",
                             },
                         ],
                     },
@@ -191,9 +199,14 @@ export default [
                                 path: "/system/license",
                                 name: "license",
                                 title: "证书管理",
-
                                 component:
                                     "./authority/permission/license/License",
+                            },
+                            {
+                                path: "/system/setting",
+                                name: "setting",
+                                title: "设置",
+                                component: "./system/Main",
                             },
                             {
                                 path: "/system/config",

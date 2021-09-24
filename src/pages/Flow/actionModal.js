@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { Input, Form, Button, Select, Divider } from "antd"
+import { Input, Form, Button, Select, Divider, Tooltip } from "antd"
 import "antd/lib/style/index.css"
 import Modal from "antd/lib/modal/Modal"
 import clone from "clone"
@@ -98,7 +98,11 @@ export const ActionModal = ({
     let options = []
     Object.keys(dict).forEach((key) => {
         options.push(
-            <Select.Option value={key}>{dict[key].remark}</Select.Option>
+            <Select.Option value={key}>
+                <Tooltip title={dict[key].remarks || ""}>
+                    {dict[key].remark}
+                </Tooltip>
+            </Select.Option>
         )
     })
     const onValuesChange = (value) => {
@@ -135,7 +139,7 @@ export const ActionModal = ({
 
     return (
         <Modal
-            title={"行为配置"}
+            title={"操作配置"}
             visible={visible}
             destroyOnClose={true}
             width={"700px"}

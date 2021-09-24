@@ -7,6 +7,8 @@ import intent from "./intent"
 import entity from "./entity"
 import entityType from "./entityType"
 import hotWord from "./domain/hotWord"
+import response from "./response"
+
 import searchHistory from "./domain/searchHistory"
 
 import relation from "./relation"
@@ -24,6 +26,7 @@ export default {
     entityType,
     hotWord,
     relation,
+    response,
     relationType,
     flow,
     searchHistory,

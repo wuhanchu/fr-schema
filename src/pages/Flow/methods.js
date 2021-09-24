@@ -332,6 +332,8 @@ export function initGraph(expGraphData, callback) {
             anchor: "top",
             connectionPoint: "anchor",
             allowBlank: true,
+            allowNode: false,
+
             snap: true,
             // 显示可用的链接桩
             validateConnection({
