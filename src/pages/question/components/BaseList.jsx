@@ -1,4 +1,4 @@
-import { Form } from "@ant-design/compatible"
+import {Form} from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
 import schemas from "@/schemas"
 import Authorized from "@/outter/fr-schema-antd-utils/src/components/Authorized/Authorized"
@@ -16,26 +16,23 @@ import {
     AutoComplete,
 } from "antd"
 import React from "react"
-import { schemaFieldType } from "@/outter/fr-schema/src/schema"
+import {schemaFieldType} from "@/outter/fr-schema/src/schema"
 import * as _ from "lodash"
 import clone from "clone"
-import { DeleteOutlined, UploadOutlined } from "@ant-design/icons"
-import { exportDataByTemplate } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
-import { checkedAndUpload } from "@/utils/minio"
+import {DeleteOutlined, UploadOutlined} from "@ant-design/icons"
+import {exportDataByTemplate} from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
+import {checkedAndUpload} from "@/utils/minio"
 import frSchema from "@/outter/fr-schema/src"
-import { v4 as uuidv4 } from "uuid"
-import { connect } from "dva"
+import {v4 as uuidv4} from "uuid"
+import {connect} from "dva"
 import EditPage from "@/components/editTable/EditPage"
-import projectService from "@/schemas/project"
-import configService from "@/schemas/config/service"
+const { actions} = frSchema
 
-import moment from "moment"
-
-const { decorateList } = frSchema
+const {decorateList} = frSchema
 const confirm = Modal.confirm
 const Minio = require("minio")
 
-@connect(({ global }) => ({
+@connect(({global}) => ({
     dict: global.dict,
     data: global.data,
 }))
@@ -55,11 +52,12 @@ class BaseList extends EditPage {
         })
         super(props, {
             operateWidth: 170,
-            schema: clone({ ...schemas.question.schema, ...config }),
+            schema: clone({...schemas.question.schema, ...config}),
             service: schemas.question.service,
             // showEdit: false,
             allowExport: true,
             showSelect: true,
+            showEdit: false,
             allowImport: true,
             infoProps: {
                 offline: true,
@@ -120,7 +118,7 @@ class BaseList extends EditPage {
                         message.error(`文件上传失败`)
                     },
                     this.props.dict.config.minio_pattern &&
-                        this.props.dict.config.minio_pattern.remark === "server"
+                    this.props.dict.config.minio_pattern.remark === "server"
                         ? "server"
                         : "sdk"
                 )
@@ -138,7 +136,7 @@ class BaseList extends EditPage {
      * @returns {Promise<*>}
      */
     async requestList(tempArgs = {}) {
-        const { queryArgs } = this.meta
+        const {queryArgs} = this.meta
 
         let searchParams = this.getSearchParam()
 
@@ -201,7 +199,7 @@ class BaseList extends EditPage {
         this.schema.group.renderInput = () => {
             return (
                 <AutoComplete
-                    style={{ width: "100%", maxWidth: "300px" }}
+                    style={{width: "100%", maxWidth: "300px"}}
                     placeholder="请输入分组"
                 >
                     {options}
@@ -212,7 +210,7 @@ class BaseList extends EditPage {
 
     // 搜索
     renderSearchBar() {
-        const { group, label, question_standard } = this.schema
+        const {group, label, question_standard} = this.schema
         const filters = this.createFilters(
             {
                 group: {
@@ -269,7 +267,7 @@ class BaseList extends EditPage {
                     >
                         <Button
                             onClick={() => {
-                                this.setState({ visibleImport: true })
+                                this.setState({visibleImport: true})
                             }}
                         >
                             导入
@@ -287,7 +285,7 @@ class BaseList extends EditPage {
                             loading={this.state.exportLoading}
                             onClick={async () => {
                                 this.setState(
-                                    { exportLoading: true },
+                                    {exportLoading: true},
                                     async () => {
                                         let columns
                                         let data = await this.requestList({
@@ -355,7 +353,7 @@ class BaseList extends EditPage {
                                             columns,
                                             this.meta.importTemplateUrl
                                         )
-                                        this.setState({ exportLoading: false })
+                                        this.setState({exportLoading: false})
                                     }
                                 )
                             }}
@@ -371,7 +369,19 @@ class BaseList extends EditPage {
     renderOperateColumnExtend(record) {
         return (
             <>
-                <Divider type="vertical" />
+                <Divider type="vertical"/>
+                <a
+                    onClick={() =>
+                        this.handleVisibleModal(
+                            true,
+                            record,
+                            actions.edit
+                        )
+                    }
+                >
+                    答案
+                </a>
+                <Divider type="vertical"/>
                 <a
                     onClick={() => {
                         this.setState({
@@ -398,13 +408,13 @@ class BaseList extends EditPage {
             return this.props.renderInfoModal()
         }
         const renderForm = this.props.renderForm || this.renderForm
-        const { resource, title, addArgs } = this.meta
-        const { visibleModal, infoData, action } = this.state
+        const {resource, title, addArgs} = this.meta
+        const {visibleModal, infoData, action} = this.state
         const updateMethods = {
             handleVisibleModal: this.handleVisibleModal.bind(this),
             handleUpdate: (args) => {
                 this.editData(args)
-                this.setState({ visibleModal: false })
+                this.setState({visibleModal: false})
             },
             handleAdd: this.handleAdd.bind(this),
         }
@@ -434,24 +444,24 @@ class BaseList extends EditPage {
                         action !== "edit"
                             ? this.schema
                             : {
-                                  answer: {
-                                      ...this.schema.answer,
-                                      isNoTitle: true,
-                                      props: {
-                                          ...this.schema.answer.props,
-                                          style: {
-                                              ...this.schema.answer.props.style,
-                                              width: "700px",
-                                              marginTop: "-24px",
-                                              marginLeft: "-24px",
-                                              height: "436px",
-                                              marginBottom: "-48px",
-                                              border: false,
-                                          },
-                                      },
-                                      span: 24,
-                                  },
-                              }
+                                answer: {
+                                    ...this.schema.answer,
+                                    isNoTitle: true,
+                                    props: {
+                                        ...this.schema.answer.props,
+                                        style: {
+                                            ...this.schema.answer.props.style,
+                                            width: "700px",
+                                            marginTop: "-24px",
+                                            marginLeft: "-24px",
+                                            height: "436px",
+                                            marginBottom: "-48px",
+                                            border: false,
+                                        },
+                                    },
+                                    span: 24,
+                                },
+                            }
                     }
                     {...customProps}
                     {...infoProps}
@@ -511,7 +521,7 @@ class BaseList extends EditPage {
                     })
                 },
                 this.props.dict.config.minio_pattern &&
-                    this.props.dict.config.minio_pattern.remark === "server"
+                this.props.dict.config.minio_pattern.remark === "server"
                     ? "server"
                     : "sdk"
             )
@@ -540,10 +550,10 @@ class BaseList extends EditPage {
 
         const footer = (
             <>
-                <Row style={{ height: "32px", overflow: "hidden" }} gutter={24}>
+                <Row style={{height: "32px", overflow: "hidden"}} gutter={24}>
                     <Col lg={16}>
                         <Upload {...props}>
-                            <Button icon={<UploadOutlined />}>上传附件</Button>
+                            <Button icon={<UploadOutlined/>}>上传附件</Button>
                         </Upload>
                     </Col>
                     <Col lg={8}>
@@ -611,10 +621,10 @@ class BaseList extends EditPage {
                                 okText: "关闭",
                                 cancelText: "取消",
                                 onOk: () => {
-                                    this.setState({ showAnnex: false })
+                                    this.setState({showAnnex: false})
                                 },
                                 onCancel: () => {
-                                    this.setState({ showAnnex: false })
+                                    this.setState({showAnnex: false})
                                 },
                             })
                         }}
@@ -633,22 +643,22 @@ class BaseList extends EditPage {
                                     }}
                                 >
                                     {this.state.attachment &&
-                                        this.state.attachment.map(
-                                            (item, index) => {
-                                                let itemObj = item
-                                                if (typeof item === "string")
-                                                    itemObj = JSON.parse(item)
-                                                return (
-                                                    <li
-                                                        key={itemObj.fileName}
-                                                        style={{
-                                                            display: "flex",
-                                                            alignItems:
-                                                                "center",
-                                                            marginTop: "16px",
-                                                            zoom: 1,
-                                                        }}
-                                                    >
+                                    this.state.attachment.map(
+                                        (item, index) => {
+                                            let itemObj = item
+                                            if (typeof item === "string")
+                                                itemObj = JSON.parse(item)
+                                            return (
+                                                <li
+                                                    key={itemObj.fileName}
+                                                    style={{
+                                                        display: "flex",
+                                                        alignItems:
+                                                            "center",
+                                                        marginTop: "16px",
+                                                        zoom: 1,
+                                                    }}
+                                                >
                                                         <span
                                                             style={{
                                                                 display:
@@ -677,46 +687,46 @@ class BaseList extends EditPage {
                                                         >
                                                             {index + 1}
                                                         </span>
-                                                        <span
-                                                            style={{
-                                                                flex: 1,
-                                                                marginRight:
-                                                                    "8px",
-                                                                overflow:
-                                                                    "hidden",
-                                                                whiteRpace:
-                                                                    "nowrap",
-                                                                textOverflow:
-                                                                    "ellipsis",
-                                                            }}
-                                                            title={
-                                                                itemObj.fileName
-                                                            }
-                                                        >
+                                                    <span
+                                                        style={{
+                                                            flex: 1,
+                                                            marginRight:
+                                                                "8px",
+                                                            overflow:
+                                                                "hidden",
+                                                            whiteRpace:
+                                                                "nowrap",
+                                                            textOverflow:
+                                                                "ellipsis",
+                                                        }}
+                                                        title={
+                                                            itemObj.fileName
+                                                        }
+                                                    >
                                                             {itemObj.fileName}
                                                         </span>
-                                                        <a
-                                                            onClick={() => {
-                                                                let attachment = this
-                                                                    .state
-                                                                    .attachment
-                                                                attachment.splice(
-                                                                    index,
-                                                                    1
-                                                                )
-                                                                this.setState({
-                                                                    attachment: clone(
-                                                                        attachment
-                                                                    ),
-                                                                })
-                                                            }}
-                                                        >
-                                                            <DeleteOutlined />
-                                                        </a>
-                                                    </li>
-                                                )
-                                            }
-                                        )}
+                                                    <a
+                                                        onClick={() => {
+                                                            let attachment = this
+                                                                .state
+                                                                .attachment
+                                                            attachment.splice(
+                                                                index,
+                                                                1
+                                                            )
+                                                            this.setState({
+                                                                attachment: clone(
+                                                                    attachment
+                                                                ),
+                                                            })
+                                                        }}
+                                                    >
+                                                        <DeleteOutlined/>
+                                                    </a>
+                                                </li>
+                                            )
+                                        }
+                                    )}
                                     {(!this.state.attachment ||
                                         !this.state.attachment.length) && (
                                         <Empty
@@ -753,10 +763,10 @@ class BaseList extends EditPage {
         if (this.props.renderInfoModal) {
             return this.props.renderInfoModal()
         }
-        const { form } = this.props
+        const {form} = this.props
         const renderForm = this.props.renderForm || this.renderForm
-        const { resource, title, addArgs } = this.meta
-        const { visibleImport, infoData, action } = this.state
+        const {resource, title, addArgs} = this.meta
+        const {visibleImport, infoData, action} = this.state
         const updateMethods = {
             handleVisibleModal: this.handleVisibleImportModal.bind(this),
             handleUpdate: this.handleUpdate.bind(this),
@@ -812,7 +822,7 @@ class BaseList extends EditPage {
         let response
         try {
             response = await this.service.uploadExcel(
-                { ...data, file: data.file.file },
+                {...data, file: data.file.file},
                 schema
             )
         } catch (error) {
