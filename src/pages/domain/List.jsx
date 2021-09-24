@@ -279,7 +279,7 @@ class List extends ListPage {
                 </Menu.Item>
                 <Menu.Item>
                     <Popconfirm
-                        title="是否将数据同步到引擎？"
+                        title="是否将数据同步到引擎？会影响查询性能！"
                         onConfirm={async (e) => {
                             await this.service.sync({ domain_key: record.key })
                             message.success("数据同步中！")
