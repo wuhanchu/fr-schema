@@ -15,7 +15,7 @@ import HotWord from "./component/HotWord"
 import SearchHistory from "./component/SearchHistory"
 
 import IntentIdentify from "./component/IntentIdentify"
-import { DownOutlined } from "@ant-design/icons"
+import { DownOutlined, LoadingOutlined } from "@ant-design/icons"
 
 const { schemaFieldType } = frSchema
 

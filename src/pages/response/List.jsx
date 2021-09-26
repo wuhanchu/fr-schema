@@ -119,7 +119,7 @@ class List extends ListPage {
                     </Form.Item>
                     <Form.Item
                         label="回复文本"
-                        name="templateText"
+                        name="template_text"
                     >
                         <Input.TextArea placeholder="请输入回复文本"/>
                     </Form.Item>
@@ -258,12 +258,14 @@ class List extends ListPage {
      */
     handleVisibleModal = async (flag, record, action) => {
         let {infoData} = this.state;
-        infoData = JSON.parse(JSON.stringify(record))
+        infoData = {}
         if (action === 'edit') {
+            infoData = JSON.parse(JSON.stringify(record))
+            infoData.intent_key = infoData.intent_key || undefined
             await this.findIntentList(record.domain_key);
             if (infoData.template_text && infoData.template_text.length > 1) {
                 infoData.texts = infoData.template_text.splice(1)
-                infoData.templateText = infoData.template_text.toString();
+                infoData.template_text = infoData.template_text.toString();
             }
         }
         this.setState({
@@ -277,8 +279,7 @@ class List extends ListPage {
      * 确认保存
      */
     handleSave = () => {
-        const {action, addArgs} = this.state
-        const {values, infoData} = this.state
+        const {values, infoData, action, addArgs} = this.state
 
         this.setState({loadingSubmit: true})
 
@@ -293,12 +294,14 @@ class List extends ListPage {
                     const idValue = values[idKey || "id"]
                     idValue && (param[idKey] = idValue)
                 }
-                let {texts, templateText, ...other} = fieldsValue;
+                let {texts, template_text, ...other} = fieldsValue;
+                // 新的回复文本
                 if (fieldsValue['texts']) {
-                    fieldsValue['texts'].unshift(fieldsValue['templateText'])
+                    // 判断是否需要插入
+                    fieldsValue['template_text'] && fieldsValue['texts'].unshift(fieldsValue['template_text'])
                     fieldsValue['template_text'] = fieldsValue['texts']
                 } else {
-                    fieldsValue['template_text'] = fieldsValue['templateText'] ? [fieldsValue['templateText']] : []
+                    fieldsValue['template_text'] = fieldsValue['template_text'] ? [fieldsValue['template_text']] : []
                 }
 
                 Object.keys(other).forEach(key => {
@@ -316,6 +319,7 @@ class List extends ListPage {
                 } else {
                     await this.handleAdd(param, this.schema)
                 }
+                this.setState({visibleModal: false})
             })
             .catch(err => {
                 console.log("err", err)
