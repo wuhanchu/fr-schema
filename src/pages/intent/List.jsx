@@ -141,11 +141,6 @@ class List extends ListPage {
                     key: "key",
                 },
                 {
-                    title: "例子",
-                    dataIndex: "example",
-                    key: "example",
-                },
-                {
                     title: "正则表达式",
                     dataIndex: "regex",
                     key: "regex",
@@ -154,6 +149,11 @@ class List extends ListPage {
                     title: "标准话术",
                     dataIndex: "standard_discourse",
                     key: "standard_discourse",
+                },
+                {
+                    title: "例子",
+                    dataIndex: "example",
+                    key: "example",
                 },
             ]
             let data = await this.requestList({
