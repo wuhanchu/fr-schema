@@ -2,31 +2,23 @@ import React from "react"
 import service from "@/schemas/domain/index"
 import IntentService from "@/schemas/intent/index"
 import {
-    Collapse,
     Spin,
-    Tooltip,
-    Empty,
     Modal,
     Button,
     Input,
     Card,
     Form,
-    Skeleton,
-    List,
     Checkbox,
-    Col,
-    Typography,
     Table,
-    Tag,
-    Space,
     message,
-    Row,
 } from "antd"
 import { formatData } from "@/utils/utils"
 import clone from "clone"
-import { async } from "@antv/x6/lib/registry/marker/async"
-const { Panel } = Collapse
+import {connect} from "dva";
 
+@connect(({ global, user }) => ({
+    dict: global.dict,
+}))
 class IntentIdentify extends React.Component {
     state = {
         result: [],
@@ -50,7 +42,6 @@ class IntentIdentify extends React.Component {
             list.filter((item) => {
                 return item.addTxt || item.isDel
             })
-        console.log(changeRow)
         this.setState({ changeRow })
     }
 
@@ -168,7 +159,7 @@ class IntentIdentify extends React.Component {
                 key: "type",
                 render: (text, item) => (
                     <span>
-                        {item.match_standard_discourse ? "标准话术" : "正则"}
+                        {this.props.dict.intent_from[item.from].name}
                     </span>
                 ),
             },
@@ -210,7 +201,7 @@ class IntentIdentify extends React.Component {
                             }}
                             value={addTxt}
                             placeholder={"输入文本"}
-                        ></Input>
+                        />
                     </>
                 ),
             },
@@ -235,7 +226,7 @@ class IntentIdentify extends React.Component {
                                     this.getRow()
                                 }}
                                 checked={isDel}
-                            ></Checkbox>
+                            />
                         </>
                     )
                 },
@@ -267,10 +258,11 @@ class IntentIdentify extends React.Component {
             }
         })
         try {
-            this.setState({ isSpin: true })
             await IntentService.service.submit(data)
+            let values = await this.formRef.current.validateFields();
             message.success("提交成功")
-            this.props.onCancel(false)
+            this.onFinish(values);
+            // this.props.onCancel(false)
         } catch (error) {
             message.error(error.message)
             this.setState({ isSpin: false })
@@ -324,7 +316,7 @@ class IntentIdentify extends React.Component {
                                         height: "32px",
                                         width: "100%",
                                     }}
-                                ></div>
+                                />
                             )}
                         </Card>
                     </Modal>
