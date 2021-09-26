@@ -54,6 +54,21 @@ export default [
                 name: "conversationDetail",
                 component: "./outPage/ConversationDetail",
             },
+            {
+                path: "/outter/domain/flow",
+                name: "flow",
+                component: "./Flow/List",
+            },
+            {
+                path: "/outter/domain/intent",
+                name: "intent",
+                component: "./intent/List",
+            },
+            {
+                path: "/outter/project",
+                name: "project",
+                component: "./project/List",
+            },
         ],
     },
 
