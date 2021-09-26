@@ -159,7 +159,7 @@ class IntentIdentify extends React.Component {
                 key: "type",
                 render: (text, item) => (
                     <span>
-                        {this.props.dict.intent_from[item.from].name}
+                        {this.props.dict.intent_from[item.from] && this.props.dict.intent_from[item.from].name}
                     </span>
                 ),
             },
