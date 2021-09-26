@@ -33,7 +33,7 @@ class List extends ListPage {
             infoProps: {
                 offline: true,
             },
-            operateWidth: "290px",
+            operateWidth: "340px",
         })
     }
 
@@ -263,18 +263,67 @@ class List extends ListPage {
         )
     }
 
+    renderOperateColumn(props = {}) {
+        const { scroll } = this.meta
+        const { inDel } = this.state
+        const { showEdit = true, showDelete = true } = {
+            ...this.meta,
+            ...props,
+        }
+        return (
+            !this.meta.readOnly &&
+            !this.props.readOnly && {
+                title: "操作",
+                width: this.meta.operateWidth,
+                fixed: "right",
+                render: (text, record) => (
+                    <>
+                        {showEdit && (
+                            <a
+                                onClick={() =>
+                                    this.handleVisibleModal(
+                                        true,
+                                        record,
+                                        actions.edit
+                                    )
+                                }
+                            >
+                                修改
+                            </a>
+                        )}
+                        {showDelete && record.key !== "default" && (
+                            <>
+                                {showEdit && <Divider type="vertical" />}
+                                <Popconfirm
+                                    title="是否要删除此行？"
+                                    onConfirm={async (e) => {
+                                        this.setState({ record })
+                                        await this.handleDelete(record)
+                                        e.stopPropagation()
+                                    }}
+                                >
+                                    <a>
+                                        {inDel &&
+                                            this.state.record.id &&
+                                            this.state.record.id ===
+                                                record.id && (
+                                                <LoadingOutlined />
+                                            )}
+                                        删除
+                                    </a>
+                                </Popconfirm>
+                            </>
+                        )}
+                        {this.renderOperateColumnExtend(record)}
+                    </>
+                ),
+            }
+        )
+    }
+
     renderOperateColumnExtend(record) {
         const menu = (
             <Menu>
-                <Menu.Item>
-                    <a
-                        onClick={() => {
-                            this.setState({ record, visibleSearch: true })
-                        }}
-                    >
-                        搜索
-                    </a>
-                </Menu.Item>
                 <Menu.Item>
                     <a
                         onClick={() => {
@@ -379,6 +428,15 @@ class List extends ListPage {
                     }}
                 >
                     对话
+                </a>
+                <Divider type="vertical" />
+
+                <a
+                    onClick={() => {
+                        this.setState({ record, visibleSearch: true })
+                    }}
+                >
+                    搜索
                 </a>
                 <Divider type="vertical" />
                 <a
