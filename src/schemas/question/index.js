@@ -40,13 +40,16 @@ const schema = {
         exportConcat: true,
         extra: "每行表示一个问题",
         editable: true,
-        render: (item, record) => (
-            <Tooltip title={item}>
-                {item && item.length > 20
-                    ? item.substring(0, 20) + "..."
-                    : item}
-            </Tooltip>
-        ),
+        render: (item, record) => {
+            let showContent = item ? item.replace(/\n/g, "<br/>") : null
+            return (
+                <Tooltip title={<div dangerouslySetInnerHTML={{__html: showContent}}/>}>
+                    {item && item.length > 20
+                        ? item.substring(0, 20) + "..."
+                        : item}
+                </Tooltip>
+            )
+        },
     },
     label: {
         title: "标签",

@@ -1,9 +1,10 @@
 import React from "react"
-import { autobind } from "core-decorators"
-import { Button, Input, Timeline, Tag } from "antd"
+import {autobind} from "core-decorators"
+import {Button, Input} from "antd"
 import robotSvg from "@/assets/rebot.svg"
 import mySvg from "@/outter/fr-schema-antd-utils/src/components/GlobalHeader/my.svg"
 import ChatFlowTable from "@/pages/question/components/ChatFlowTable"
+import {MenuUnfoldOutlined, MenuFoldOutlined} from '@ant-design/icons';
 
 /**
  * 聊天窗口
@@ -26,6 +27,7 @@ class Chat extends React.PureComponent {
             conversationId: "",
             domain_key: "",
             flow_key: "",
+            collapse: false,  // 是否收缩
         }
         this.chatRef = React.createRef()
         this.inputRef = React.createRef()
@@ -33,24 +35,36 @@ class Chat extends React.PureComponent {
     }
 
     render() {
-        let { showInput, showIntentFlow } = this.state
+        let {showInput, showIntentFlow, collapse} = this.state
         return (
             <div style={styles.contentSt}>
                 <div style={styles.chatView}>
+                    {showIntentFlow && (
+                        <div style={{
+                            display: 'flex',
+                            justifyContent: 'flex-end',
+                            width: '100%',
+                            fontSize: '21px',
+                            marginBottom: '10px'
+                        }}>
+                            {collapse ? <MenuFoldOutlined onClick={_ => this.setState({collapse: false})}/> :
+                                <MenuUnfoldOutlined onClick={_ => this.setState({collapse: true})}/>}
+                        </div>
+                    )}
                     {this.renderChatView()}
                     {showInput && this.renderInput()}
                 </div>
-                {showIntentFlow && this.renderChatIntentFlow()}
+                {collapse && showIntentFlow && this.renderChatIntentFlow()}
             </div>
         )
     }
 
     // 聊天内容展示
     renderChatView() {
-        let { messageList, roomHeight } = this.state
+        let {messageList, roomHeight} = this.state
         return (
             <div
-                style={{ ...styles.leaveView, height: roomHeight }}
+                style={{...styles.leaveView, height: roomHeight}}
                 ref={this.chatRef}
             >
                 {messageList.map((item, index) =>
@@ -67,8 +81,8 @@ class Chat extends React.PureComponent {
     renderService(item, index) {
         return (
             <div style={styles.leaveItem} key={`leave${index}`}>
-                <img src={robotSvg} alt="" style={styles.avatar} />
-                <div style={{ marginTop: "8px" }}>
+                <img src={robotSvg} alt="" style={styles.avatar}/>
+                <div style={{marginTop: "8px"}}>
                     {/*<div style={{ display: 'flex', alignItems: 'center' }}>*/}
                     {/*    <span>*/}
                     {/*        {item.name}{' '}*/}
@@ -91,7 +105,7 @@ class Chat extends React.PureComponent {
         return (
             <div
                 style={styles.leaveMsgView}
-                dangerouslySetInnerHTML={{ __html: item.content }}
+                dangerouslySetInnerHTML={{__html: item.content}}
             />
         )
     }
@@ -103,17 +117,17 @@ class Chat extends React.PureComponent {
                 <div style={styles.chatRightMsgItem}>
                     <div
                         style={styles.chatRightMsgView}
-                        dangerouslySetInnerHTML={{ __html: item.content }}
+                        dangerouslySetInnerHTML={{__html: item.content}}
                     />
                 </div>
-                <img src={mySvg} alt="" style={styles.chatRightAvatar} />
+                <img src={mySvg} alt="" style={styles.chatRightAvatar}/>
             </div>
         )
     }
 
     // 渲染输入框
     renderInput() {
-        let { inputValue, isSpin } = this.state
+        let {inputValue, isSpin} = this.state
         return (
             <div
                 style={{
@@ -124,12 +138,12 @@ class Chat extends React.PureComponent {
             >
                 <div
                     onClick={(_) => this.inputRef.current.focus()}
-                    style={{ width: "100%", marginTop: "15px" }}
+                    style={{width: "100%", marginTop: "15px"}}
                 >
                     <Input
                         value={inputValue}
                         onChange={(e) =>
-                            this.setState({ inputValue: e.target.value })
+                            this.setState({inputValue: e.target.value})
                         }
                         onKeyPress={this.onInputEnter}
                         placeholder="请输入内容"
@@ -151,7 +165,7 @@ class Chat extends React.PureComponent {
 
     // 聊天过程流程展现
     renderChatIntentFlow() {
-        let { roomHeight, conversationId, domain_key, flow_key } = this.state
+        let {roomHeight, conversationId, domain_key, flow_key} = this.state
         return (
             <div
                 style={{
@@ -172,11 +186,11 @@ class Chat extends React.PureComponent {
                 </div>
 
                 <div style={styles.refreshButton}>
-                    <div style={{ flex: 1 }} />
+                    <div style={{flex: 1}}/>
                     <Button
                         type="primary"
                         onClick={this.onRefresh}
-                        style={{ zIndex: 9999 }}
+                        style={{zIndex: 9999}}
                     >
                         刷新
                     </Button>
@@ -222,11 +236,12 @@ class Chat extends React.PureComponent {
     }
 
     // 发送消息
-    onSendMessage(value) {}
+    onSendMessage(value) {
+    }
 
     // 发送之后
     async onSendMessageAfter(value) {
-        if (this.state.showIntentFlow) {
+        if (this.state.showIntentFlow && this.state.collapse) {
             await this.tableRef.findIntentList()
             await this.tableRef.refreshList()
         }

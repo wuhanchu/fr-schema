@@ -36,7 +36,7 @@ class ChatFlowTable extends DataList {
     async componentDidMount() {
         this.props.onRef(this)
         this.findIntentList()
-        this.findFlowList()
+        await this.findFlowList()
         super.componentDidMount()
     }
 

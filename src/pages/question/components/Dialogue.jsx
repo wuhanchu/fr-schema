@@ -29,6 +29,7 @@ class Dialogue extends Chat {
             historyId: "",
             resultFlowLength: 1,
             domain_key: record.key,
+            collapse: true,
         }
     }
 
@@ -372,7 +373,6 @@ class Dialogue extends Chat {
                 })
                 param.conversationId = res.data.id
                 param.isFlow = true;
-                param.showIntentFlow = true;
                 param.showIntentFlow = true;
                 this.setState({...param}, (_) => this.onSendMsg("/true"))
             }
