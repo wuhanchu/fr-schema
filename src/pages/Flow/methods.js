@@ -3,12 +3,13 @@ import frSchema from "@/outter/fr-schema/src"
 
 const { decorateList } = frSchema
 // 拖拽生成四边形或者圆形
-export const startDragToGraph = (graph, type, e, callback) => {
+export const startDragToGraph = async (graph, type, e, callback) => {
     const node =
         type === "Rect"
             ? graph.createNode({
                   width: 110,
                   height: 50,
+
                   data: {
                       name: "未命名",
                       allow_repeat_time: 2,
@@ -155,9 +156,24 @@ export const startDragToGraph = (graph, type, e, callback) => {
                       ],
                   },
               })
-    const dnd = new Addon.Dnd({ target: graph })
+    const dnd = new Addon.Dnd({
+        target: graph,
+        validateNode: (node, optioon) => {
+            console.log(node, optioon)
+            let data = node.store.data
+            console.log(graph)
+            console.log(data)
+            if (
+                data.position.y + graph.options.y < 60 &&
+                data.position.x + graph.options.x < 250
+            )
+                return false
+            callback()
+            return true
+        },
+    })
     dnd.start(node, e)
-    callback()
+    console.log(e)
 }
 export const ports = {
     groups: {

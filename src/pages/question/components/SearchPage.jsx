@@ -17,7 +17,7 @@ import { downloadFile } from "@/utils/minio"
 
 const { url } = utils.utils
 
-async function init(props, project_id, setState, state) {
+async function init(props, project_id, setState, state, callback) {
     if (props.type === "domain_id") {
         let project = await schemas.project.service.get({
             domain_key: props.record && props.record.key,
@@ -32,7 +32,7 @@ async function init(props, project_id, setState, state) {
         project_id = project_id + ")"
     }
 
-    schemas.question.service
+    await schemas.question.service
         .get({
             project_id:
                 props.type === "domain_id" ? project_id : "eq." + project_id,
@@ -48,6 +48,11 @@ async function init(props, project_id, setState, state) {
                 allData,
             })
         })
+    setState({
+        ...state,
+        loading: false,
+    })
+    console.log("成功")
 }
 
 function renderTitle(item) {
@@ -119,11 +124,11 @@ function SearchPage(props) {
     const [state, setState] = useState({
         data: null,
         allData: [],
-        loading: false,
+        loading: true,
         open: false,
     })
 
-    const { data, loading, open } = state
+    const { data, loading, open, allData } = state
 
     // 判断是否外嵌模式
     let project_id = url.getUrlParams("project_id")
@@ -139,7 +144,9 @@ function SearchPage(props) {
         }
     }
     useEffect(() => {
-        init(props, project_id, setState, state)
+        init(props, project_id, setState, state, () => {
+            console.log("成功")
+        })
     }, [])
 
     const handleChange = (value) => {
@@ -207,6 +214,7 @@ function SearchPage(props) {
                 onChange={handleChange}
                 backfill
                 open={open}
+                disabled={loading}
                 onSelect={handleSearch}
                 defaultOpen={false}
                 defaultValue={null}
@@ -225,7 +233,7 @@ function SearchPage(props) {
                     style={{ paddingBottom: 8 }}
                 />
             </AutoComplete>
-            <Spin tip="查询中" spinning={loading}>
+            <Spin tip={"加载中"} spinning={loading}>
                 <Card>
                     {data && data.length > 0 ? (
                         <List
