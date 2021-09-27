@@ -17,7 +17,7 @@ import SearchHistory from "./component/SearchHistory"
 import IntentIdentify from "./component/IntentIdentify"
 import { DownOutlined, LoadingOutlined } from "@ant-design/icons"
 
-const { schemaFieldType } = frSchema
+const { actions } = frSchema
 
 @connect(({ global, user }) => ({
     dict: global.dict,
@@ -322,7 +322,41 @@ class List extends ListPage {
     }
 
     renderOperateColumnExtend(record) {
-        const menu = (
+        const testMenu = (
+            <Menu>
+                <Menu.Item>
+                    <a
+                        onClick={() => {
+                            this.setState({ record, visibleDialogue: true })
+                        }}
+                    >
+                        对话
+                    </a>
+                </Menu.Item>
+                <Menu.Item>
+                    <a
+                        onClick={() => {
+                            this.setState({ record, visibleSearch: true })
+                        }}
+                    >
+                        搜索
+                    </a>
+                </Menu.Item>
+                <Menu.Item>
+                    <a
+                        onClick={async () => {
+                            this.setState({
+                                visibleIntentIdentify: true,
+                                record,
+                            })
+                        }}
+                    >
+                        意图识别
+                    </a>
+                </Menu.Item>
+            </Menu>
+        )
+        const rasaMenu = (
             <Menu>
                 <Menu.Item>
                     <a
@@ -350,6 +384,10 @@ class List extends ListPage {
                         配置
                     </a>
                 </Menu.Item>
+            </Menu>
+        )
+        const menu = (
+            <Menu>
                 <Menu.Item>
                     <Popconfirm
                         title="是否将数据同步到引擎？会影响查询性能！"
@@ -361,37 +399,6 @@ class List extends ListPage {
                     >
                         <a>同步</a>
                     </Popconfirm>
-                </Menu.Item>
-                <Menu.Item>
-                    <a
-                        onClick={async () => {
-                            const domainUser = await this.service.getDomainUser(
-                                {
-                                    domain_key: `eq.${record.key}`,
-                                }
-                            )
-                            const teamHaveUser = []
-                            if (domainUser) {
-                                domainUser.list.map((item) => {
-                                    teamHaveUser.push(item.user_id)
-                                    return item
-                                })
-                            }
-                            this.setState({
-                                record,
-                                visibleAssign: true,
-                                teamHaveUser: teamHaveUser,
-                            })
-                            this.setState({
-                                record,
-                                teamHaveUser,
-                                visibleAssign: true,
-                                domainUser: domainUser.list,
-                            })
-                        }}
-                    >
-                        人员分配
-                    </a>
                 </Menu.Item>
                 <Menu.Item>
                     <a
@@ -423,32 +430,54 @@ class List extends ListPage {
             <Fragment>
                 <Divider type="vertical" />
                 <a
-                    onClick={() => {
-                        this.setState({ record, visibleDialogue: true })
-                    }}
-                >
-                    对话
-                </a>
-                <Divider type="vertical" />
-
-                <a
-                    onClick={() => {
-                        this.setState({ record, visibleSearch: true })
-                    }}
-                >
-                    搜索
-                </a>
-                <Divider type="vertical" />
-                <a
                     onClick={async () => {
+                        const domainUser = await this.service.getDomainUser(
+                            {
+                                domain_key: `eq.${record.key}`,
+                            }
+                        )
+                        const teamHaveUser = []
+                        if (domainUser) {
+                            domainUser.list.map((item) => {
+                                teamHaveUser.push(item.user_id)
+                                return item
+                            })
+                        }
                         this.setState({
-                            visibleIntentIdentify: true,
                             record,
+                            visibleAssign: true,
+                            teamHaveUser: teamHaveUser,
+                        })
+                        this.setState({
+                            record,
+                            teamHaveUser,
+                            visibleAssign: true,
+                            domainUser: domainUser.list,
                         })
                     }}
                 >
-                    意图识别
+                    人员分配
                 </a>
+                <Divider type="vertical" />
+                <Dropdown overlay={testMenu}>
+                    <a
+                        className="ant-dropdown-link"
+                        onClick={(e) => e.preventDefault()}
+                    >
+                        测试
+                        <DownOutlined />
+                    </a>
+                </Dropdown>
+                <Divider type="vertical" />
+                <Dropdown overlay={rasaMenu}>
+                    <a
+                        className="ant-dropdown-link"
+                        onClick={(e) => e.preventDefault()}
+                    >
+                        RASA
+                        <DownOutlined />
+                    </a>
+                </Dropdown>
                 <Divider type="vertical" />
                 <Dropdown overlay={menu}>
                     <a
