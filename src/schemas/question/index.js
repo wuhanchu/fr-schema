@@ -6,6 +6,18 @@ import { Tooltip } from "antd"
 const Minio = require("minio")
 
 const schema = {
+    group: {
+        title: "分组",
+        type: schemaFieldType.Select,
+        searchPrefix: "like",
+        // required: true,
+        render: (data, item) => {
+            return item.group
+        },
+        sorter: true,
+        editable: true,
+        fixed: "left",
+    },
     question_standard: {
         title: "标准问",
         required: true,
@@ -16,15 +28,6 @@ const schema = {
             autoSize: { minRows: 2, maxRows: 6 },
         },
         sorter: true,
-        editable: true,
-        fixed: "left",
-    },
-    label: {
-        title: "标签",
-        type: schemaFieldType.Select,
-        props: {
-            mode: "tags",
-        },
         editable: true,
     },
     question_extend: {
@@ -45,16 +48,21 @@ const schema = {
             </Tooltip>
         ),
     },
-
-    group: {
-        title: "分组",
+    label: {
+        title: "标签",
         type: schemaFieldType.Select,
-        searchPrefix: "like",
-        // required: true,
-        render: (data, item) => {
-            return item.group
+        props: {
+            mode: "tags",
         },
-        sorter: true,
+        editable: true,
+    },
+    answer_text: {
+        title: "摘要",
+        type: schemaFieldType.TextArea,
+        props: {
+            // 最小高度
+            autoSize: { minRows: 2, maxRows: 6 },
+        },
         editable: true,
     },
     global_key: {
@@ -65,19 +73,9 @@ const schema = {
             return <div style={{ minWidth: "60px" }}>{item}</div>
         },
     },
-    answer_text: {
-        title: "摘要",
-        required: true,
-        type: schemaFieldType.TextArea,
-        props: {
-            // 最小高度
-            autoSize: { minRows: 2, maxRows: 6 },
-        },
-        editable: true,
-    },
     answer: {
         title: "答案",
-        required: true,
+        listHide: true,
         type: schemaFieldType.BraftEditor,
         // span: 24,
         position: "right",

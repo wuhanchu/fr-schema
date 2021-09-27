@@ -218,14 +218,14 @@ class BaseList extends EditPage {
                     type: schemaFieldType.Select,
                     renderInput: null,
                 },
+                question_standard: {
+                    ...question_standard,
+                    type: schemaFieldType.Input,
+                },
                 label: {
                     ...label,
                     type: schemaFieldType.Select,
                     props: null,
-                },
-                question_standard: {
-                    ...question_standard,
-                    type: schemaFieldType.Input,
                 },
             },
             5
