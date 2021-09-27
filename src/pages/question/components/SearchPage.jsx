@@ -1,5 +1,14 @@
 import React, { Fragment, useEffect, useState } from "react"
-import { Card, Empty, Input, List, Spin, AutoComplete, message } from "antd"
+import {
+    Card,
+    Empty,
+    Input,
+    List,
+    Spin,
+    AutoComplete,
+    message,
+    Tag,
+} from "antd"
 import schemas from "@/schemas"
 import { contentHeight } from "@/styles/global"
 import * as _ from "lodash"
@@ -55,7 +64,11 @@ function renderTitle(item) {
                 <span>
                     标签:
                     {item.label.map((item) => {
-                        return "<" + item + ">"
+                        return (
+                            <Tag style={{ marginLeft: "5px" }} color="#2db7f5">
+                                {item}
+                            </Tag>
+                        )
                     })}
                 </span>
             )}

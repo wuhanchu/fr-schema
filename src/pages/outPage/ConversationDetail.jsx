@@ -25,7 +25,7 @@ class ConversationDetail extends Chat {
                 order: "create_time",
             })
             res.list.map((item) => {
-                if (item.type === "reply") {
+                if (item.type === "reply" && item.text) {
                     list.push({
                         content: item.text,
                         onlyRead: true,
@@ -35,7 +35,7 @@ class ConversationDetail extends Chat {
                         type: "left",
                     })
                 }
-                if (item.type === "receive") {
+                if (item.type === "receive" && item.text) {
                     list.push({
                         content: item.text,
                         name: "我",
