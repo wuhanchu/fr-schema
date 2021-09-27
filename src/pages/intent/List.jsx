@@ -168,6 +168,10 @@ class List extends ListPage {
         this.handleVisibleExportModal()
     }
 
+    renderExtend() {
+        return <>{this.renderExportModal()}</>
+    }
+
     renderExportModal() {
         if (this.props.renderInfoModal) {
             return this.props.renderInfoModal()
