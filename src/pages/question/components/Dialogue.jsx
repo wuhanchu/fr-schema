@@ -34,7 +34,7 @@ class Dialogue extends Chat {
 
     async componentDidMount() {
         await this.getChatRecord()
-        this.scrollToBottom()
+        this.chatRef.current && this.scrollToBottom()
         this.getSettingData()
     }
 
