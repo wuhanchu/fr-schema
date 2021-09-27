@@ -66,11 +66,10 @@ function renderTitle(item) {
                 }}
             />
             {item.label && item.label.length !== 0 && (
-                <span>
-                    标签:
+                <span style={{ marginLeft: "10px" }}>
                     {item.label.map((item) => {
                         return (
-                            <Tag style={{ marginLeft: "5px" }} color="#2db7f5">
+                            <Tag style={{ marginLeft: "3px" }} color="#2db7f5">
                                 {item}
                             </Tag>
                         )

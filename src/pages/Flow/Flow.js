@@ -278,19 +278,35 @@ class Flow extends React.PureComponent {
     }
 
     getData = async (config) => {
-        let _this = this
         const { record, service } = this.props
+
+        let _this = this
+        let res = await service.getDetail({
+            id: record.id,
+        })
+        console.log(res)
         let data
+        let localFlowCreateTime = parseInt(
+            localStorage.getItem("flowCreate" + record.id)
+        )
         if (config) {
             data = clone(config)
         } else {
             data = localStorage.getItem("flow" + record.id)
             data = JSON.parse(data)
         }
-        if (!data) {
-            let res = await service.getDetail({
-                id: record.id,
-            })
+        if (
+            !data ||
+            localFlowCreateTime < (res.update_time && res.update_time.valueOf())
+        ) {
+            // let res = await service.getDetail({
+            //     id: record.id,
+            // })
+            localStorage.setItem(
+                "flowCreate" + this.props.record.id,
+                (res.update_time && res.update_time.valueOf()) ||
+                    res.create_time.valueOf()
+            )
             if (res.config && res.config.node && res.config.node.length) {
                 data = res.config
             } else {

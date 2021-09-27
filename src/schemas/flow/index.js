@@ -29,6 +29,18 @@ const schema = {
         },
         type: schemaFieldType.DatePicker,
     },
+    update_time: {
+        title: "更新时间",
+        // required: true,
+        sorter: true,
+        addHide: true,
+        editHide: true,
+        listHide: true,
+        props: {
+            showTime: true,
+        },
+        type: schemaFieldType.DatePicker,
+    },
 }
 
 const service = createApi("flow", schema, null, "eq.")

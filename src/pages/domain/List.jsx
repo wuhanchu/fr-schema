@@ -33,7 +33,7 @@ class List extends ListPage {
             infoProps: {
                 offline: true,
             },
-            operateWidth: "340px",
+            operateWidth: "360px",
         })
     }
 
@@ -431,11 +431,9 @@ class List extends ListPage {
                 <Divider type="vertical" />
                 <a
                     onClick={async () => {
-                        const domainUser = await this.service.getDomainUser(
-                            {
-                                domain_key: `eq.${record.key}`,
-                            }
-                        )
+                        const domainUser = await this.service.getDomainUser({
+                            domain_key: `eq.${record.key}`,
+                        })
                         const teamHaveUser = []
                         if (domainUser) {
                             domainUser.list.map((item) => {
@@ -484,7 +482,7 @@ class List extends ListPage {
                         className="ant-dropdown-link"
                         onClick={(e) => e.preventDefault()}
                     >
-                        更多
+                        {"更多 "}
                         <DownOutlined />
                     </a>
                 </Dropdown>

@@ -106,7 +106,7 @@ class List extends ListPage {
                 <Divider type="vertical" />
                 <Dropdown overlay={menu}>
                     <a href="#">
-                        更多 <DownOutlined />
+                        {"更多 "} <DownOutlined />
                     </a>
                 </Dropdown>
             </Fragment>
