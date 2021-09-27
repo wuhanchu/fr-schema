@@ -160,6 +160,7 @@ class List extends ListPage {
                 pageSize: 1000000,
                 offset: 0,
                 ...args,
+                logical_path: undefined,
             })
             data = decorateList(data.list, this.schema)
             await exportData("意图", data, columns)
