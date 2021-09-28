@@ -17,7 +17,7 @@ import { downloadFile } from "@/utils/minio"
 
 const { url } = utils.utils
 
-async function init(props, project_id, setState, state, callback) {
+async function init(props, project_id, setState, state) {
     if (props.type === "domain_id") {
         let project = await schemas.project.service.get({
             domain_key: props.record && props.record.key,
@@ -46,12 +46,13 @@ async function init(props, project_id, setState, state, callback) {
             setState({
                 ...state,
                 allData,
+                loading: false,
             })
+            console.log(allData)
         })
-    setState({
-        ...state,
-        loading: false,
-    })
+    // setState({
+    //     ...state,
+    // })
     console.log("成功")
 }
 
@@ -158,6 +159,8 @@ function SearchPage(props) {
                 state.allData &&
                 state.allData.filter((item) => item.indexOf(value) >= 0),
         })
+        console.log(state.allData)
+        console.log(state.dataSource)
     }
 
     const handleSearch = async (searchValue, event) => {
