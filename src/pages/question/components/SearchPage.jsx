@@ -50,9 +50,6 @@ async function init(props, project_id, setState, state) {
             })
             console.log(allData)
         })
-    // setState({
-    //     ...state,
-    // })
     console.log("成功")
 }
 
