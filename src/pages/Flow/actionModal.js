@@ -197,15 +197,16 @@ export const ActionModal = ({
                     name="type"
                     extra={
                         dict[type] && (
-                            <pre
-                                style={{
-                                    fontFamily:
-                                        'Avenir, "Helvetica Neue", Arial, Helvetica, sans-serif',
-                                    marginTop: "3px",
+                            <span
+                                dangerouslySetInnerHTML={{
+                                    __html:
+                                        dict[type].remarks &&
+                                        dict[type].remarks.replace(
+                                            /\n/g,
+                                            "<br/>"
+                                        ),
                                 }}
-                            >
-                                {dict[type].remarks}
-                            </pre>
+                            />
                         )
                     }
                     rules={[{ required: true, message: "请输入类型！" }]}
