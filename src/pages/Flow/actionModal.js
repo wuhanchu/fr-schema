@@ -195,7 +195,19 @@ export const ActionModal = ({
                 <Form.Item
                     label="类型"
                     name="type"
-                    extra={dict[type] && dict[type].remarks}
+                    extra={
+                        dict[type] && (
+                            <pre
+                                style={{
+                                    fontFamily:
+                                        'Avenir, "Helvetica Neue", Arial, Helvetica, sans-serif',
+                                    marginTop: "3px",
+                                }}
+                            >
+                                {dict[type].remarks}
+                            </pre>
+                        )
+                    }
                     rules={[{ required: true, message: "请输入类型！" }]}
                 >
                     <Select placeholder="请选择类型" style={{ width: "100%" }}>
