@@ -108,7 +108,7 @@ class Dialogue extends Chat {
             wrapperCol: { span: 18 },
         }
         return (
-            <div style={{ width: "750px" }}>
+            <div style={{ width: "650px" }}>
                 {/* 设置
                 <br/> */}
                 <div
@@ -177,7 +177,7 @@ class Dialogue extends Chat {
                     )}
                     {type === "flow" && (
                         <Form.Item label="槽位">
-                            <div style={{ width: "562px" }}>
+                            <div style={{ width: "462px" }}>
                                 <AceEditor
                                     placeholder={`请输入${"槽位"}`}
                                     mode="json"
@@ -196,7 +196,7 @@ class Dialogue extends Chat {
                                     fontSize={14}
                                     showPrintMargin
                                     showGutter
-                                    width={"562px"}
+                                    width={"462px"}
                                     // style={props.style}
                                     height={"220px"}
                                     highlightActiveLine
@@ -333,7 +333,7 @@ class Dialogue extends Chat {
                 cancelText={"取消"}
                 visible={true}
                 title={"设置"}
-                width={900}
+                width={800}
                 onOk={() => this.onChatTypeConfirm()}
                 onCancel={() => {
                     this.setState({
