@@ -36,7 +36,7 @@ async function init(props, project_id, setState, state, callback) {
         .get({
             project_id:
                 props.type === "domain_id" ? project_id : "eq." + project_id,
-            limit: 9999,
+            limit: 500,
         })
         .then((response) => {
             let allData = []

@@ -1,5 +1,6 @@
 import React from "react"
-import {autobind} from "core-decorators"
+import { autobind } from "core-decorators"
+import AceEditor from "react-ace"
 import {
     Button,
     Radio,
@@ -8,16 +9,18 @@ import {
     Checkbox,
     Divider,
     message,
+    Spin,
 } from "antd"
 import schemas from "@/schemas"
-import {SettingOutlined, LoadingOutlined} from "@ant-design/icons"
+import { SettingOutlined, LoadingOutlined } from "@ant-design/icons"
 import Chat from "@/pages/question/components/Chat"
+import Modal from "antd/lib/modal/Modal"
 
 @autobind
 class Dialogue extends Chat {
     constructor(props) {
         super(props)
-        const {record} = props
+        const { record } = props
         this.state = {
             ...this.state,
             conversationId: "",
@@ -28,6 +31,8 @@ class Dialogue extends Chat {
             flow_key: "",
             historyId: "",
             resultFlowLength: 1,
+            showSetting: false,
+            settingSpin: true,
             domain_key: record.key,
         }
     }
@@ -39,36 +44,40 @@ class Dialogue extends Chat {
     }
 
     renderService(item, index) {
-        let {historyId} = this.state
+        let { historyId } = this.state
         return (
             <div>
                 {super.renderService(item, index)}
                 {index === historyId &&
-                this.renderDivider({content: "以上为历史消息"})}
+                    this.renderDivider({ content: "以上为历史消息" })}
             </div>
         )
     }
 
     // 输入框扩展
     inputExtra() {
-        let {defaultProject, isSpin, isFlow} = this.state
+        let { defaultProject, isSpin, isFlow, slot, showSetting } = this.state
+        let canSend = true
+        if (slot) {
+            try {
+                JSON.parse(slot)
+            } catch (error) {
+                canSend = false
+            }
+        }
         return (
             <>
-                <Popconfirm
-                    disabled={isSpin}
-                    title={() => this.renderSetting()}
-                    onConfirm={async () => this.onChatTypeConfirm()}
-                    onCancel={() => {
+                <Button
+                    onClick={() => {
                         this.setState({
-                            checkboxValue: defaultProject,
+                            showSetting: true,
                         })
                     }}
-                    okText="确定"
+                    style={styles.sendButton}
+                    disabled={isSpin}
                 >
-                    <Button style={styles.sendButton} disabled={isSpin}>
-                        <SettingOutlined/>
-                    </Button>
-                </Popconfirm>
+                    <SettingOutlined />
+                </Button>
                 {isFlow && (
                     <Button
                         disabled={isSpin}
@@ -78,6 +87,7 @@ class Dialogue extends Chat {
                         重置
                     </Button>
                 )}
+                {showSetting && this.renderMoreSetting()}
             </>
         )
     }
@@ -93,13 +103,13 @@ class Dialogue extends Chat {
             flow_key,
         } = this.state
         const formItemLayout = {
-            labelCol: {span: 5},
-            wrapperCol: {span: 18},
+            labelCol: { span: 5 },
+            wrapperCol: { span: 18 },
         }
         return (
-            <div style={{width: "400px"}}>
-                设置
-                <br/>
+            <div style={{ width: "750px" }}>
+                {/* 设置
+                <br/> */}
                 <div
                     style={{
                         height: "30px",
@@ -125,7 +135,7 @@ class Dialogue extends Chat {
                     >
                         <Radio.Group
                             onChange={(props) => {
-                                this.setState({type: props.target.value})
+                                this.setState({ type: props.target.value })
                             }}
                         >
                             <Radio.Button value="chat">闲聊</Radio.Button>
@@ -164,6 +174,53 @@ class Dialogue extends Chat {
                             )}
                         </Form.Item>
                     )}
+                    {type === "flow" && (
+                        <Form.Item label="槽位">
+                            <div style={{ width: "562px" }}>
+                                <AceEditor
+                                    placeholder={`请输入${"槽位"}`}
+                                    mode="json"
+                                    // theme="tomorrow"
+                                    name="blah2"
+                                    wrapEnabled={true}
+                                    onChange={(res) => {
+                                        try {
+                                            this.setState({
+                                                slot: res,
+                                            })
+                                        } catch (error) {
+                                            console.log(error)
+                                        }
+                                    }}
+                                    fontSize={14}
+                                    showPrintMargin
+                                    showGutter
+                                    width={"562px"}
+                                    // style={props.style}
+                                    height={"220px"}
+                                    highlightActiveLine
+                                    value={this.state.slot}
+                                    markers={[
+                                        {
+                                            startRow: 0,
+                                            startCol: 2,
+                                            endRow: 1,
+                                            endCol: 20,
+                                            className: "error-marker",
+                                            type: "background",
+                                        },
+                                    ]}
+                                    setOptions={{
+                                        enableBasicAutocompletion: true,
+                                        enableLiveAutocompletion: true,
+                                        enableSnippets: true,
+                                        showLineNumbers: true,
+                                        tabSize: 2,
+                                    }}
+                                />
+                            </div>
+                        </Form.Item>
+                    )}
                 </Form>
             </div>
         )
@@ -171,7 +228,7 @@ class Dialogue extends Chat {
 
     arrPush(messages, type) {
         let list = []
-        let {messageList} = this.state
+        let { messageList } = this.state
         if (type === "left") {
             messages.map((data) =>
                 list.push({
@@ -183,7 +240,7 @@ class Dialogue extends Chat {
                     type: "left",
                 })
             )
-            this.setState({isSpin: false})
+            this.setState({ isSpin: false })
         } else {
             list.push({
                 content: messages.content,
@@ -217,7 +274,7 @@ class Dialogue extends Chat {
         if (index + resultFlowLength < messageList.length && type === "flow") {
             return
         }
-        this.setState({isSpin: true})
+        this.setState({ isSpin: true })
         messageList[index].buttons = messageList[index].buttons.map(
             (item, ind) => {
                 if (ind === buttonIndex) {
@@ -235,7 +292,7 @@ class Dialogue extends Chat {
         )
 
         if (data.payload[0] !== "/") {
-            this.arrPush({content: data.payload}, "right")
+            this.arrPush({ content: data.payload }, "right")
         }
         let res
         try {
@@ -263,13 +320,36 @@ class Dialogue extends Chat {
             }
         } catch (error) {
             message.error(error.message)
-            this.setState({isSpin: false})
+            this.setState({ isSpin: false })
         }
+    }
+
+    // 设置
+    renderMoreSetting() {
+        return (
+            <Modal
+                okText={"确定"}
+                cancelText={"取消"}
+                visible={true}
+                title={"设置"}
+                width={900}
+                onOk={() => this.onChatTypeConfirm()}
+                onCancel={() => {
+                    this.setState({
+                        showSetting: false,
+                    })
+                }}
+            >
+                <Spin tip="加载中" spinning={this.state.settingSpin}>
+                    {this.renderSetting()}
+                </Spin>
+            </Modal>
+        )
     }
 
     // 机器人回复扩展
     renderLeftExtra(item, index) {
-        let {messageList, resultFlowLength} = this.state
+        let { messageList, resultFlowLength } = this.state
         return (
             item.buttons && (
                 <div
@@ -323,20 +403,20 @@ class Dialogue extends Chat {
     renderDivider(item) {
         return (
             <div>
-                <Divider style={{fontSize: "14px"}}>{item.content}</Divider>
+                <Divider style={{ fontSize: "14px" }}>{item.content}</Divider>
             </div>
         )
     }
 
     renderChatExtra() {
-        let {isSpin} = this.state
+        let { isSpin } = this.state
         return (
             isSpin &&
             this.renderService(
                 {
                     content: (
                         <>
-                            <LoadingOutlined/>
+                            <LoadingOutlined />
                         </>
                     ),
                     messageType: "load",
@@ -359,22 +439,32 @@ class Dialogue extends Chat {
             messageList,
             serviceId,
             domain_key,
+            slot,
         } = this.state
-        this.setState({defaultProject: checkboxValue, isSpin: true})
-        let param = {historyId: messageList.length - 1}
+        this.setState({ defaultProject: checkboxValue, isSpin: true })
+        let param = { historyId: messageList.length - 1 }
         let res
         if (type === "flow") {
+            let slotObj
+            try {
+                slotObj = slot ? JSON.parse(slot) : undefined
+            } catch (error) {
+                message.error("槽位输入不正确！")
+                this.setState({ isSpin: false })
+                return
+            }
             if (flow_key) {
                 res = await schemas.domain.service.flowConversation({
                     type: "flow",
                     domain_key,
                     flow_key,
+                    slot: slotObj,
                 })
                 param.conversationId = res.data.id
-                param.isFlow = true;
-                param.showIntentFlow = true;
-                param.showIntentFlow = true;
-                this.setState({...param}, (_) => this.onSendMsg("/true"))
+                param.isFlow = true
+                param.showIntentFlow = true
+                param.showIntentFlow = true
+                this.setState({ ...param }, (_) => this.onSendMsg("/true"))
             }
         } else {
             if (checkboxValue && checkboxValue.length) {
@@ -394,11 +484,11 @@ class Dialogue extends Chat {
                 })
                 param.conversationId = res.data.id
                 param.isFlow = false
-                param.showIntentFlow = false;
+                param.showIntentFlow = false
             }
-            this.setState({isSpin: false})
+            this.setState({ isSpin: false })
         }
-        this.setState({...param, resultFlowLength: 1})
+        this.setState({ ...param, resultFlowLength: 1, showSetting: false })
     }
 
     // 重置
@@ -409,25 +499,36 @@ class Dialogue extends Chat {
             conversationId,
             flow_key,
             domain_key,
+            slot,
         } = this.state
         if (type === "flow") {
-            this.setState({isSpin: true, historyId: messageList.length - 1})
+            this.setState({ isSpin: true, historyId: messageList.length - 1 })
             await schemas.domain.service.closeConversation({
                 domain_key,
                 conversation_id: conversationId,
             })
+            let slotObj
+            try {
+                slotObj = slot ? JSON.parse(slot) : undefined
+            } catch (error) {
+                message.error("槽位输入不正确！")
+                return
+                // slotObj = undefined
+            }
             let res = await schemas.domain.service.flowConversation({
                 type: "flow",
                 domain_key,
                 flow_key,
+                slot: slotObj,
             })
-            this.setState(
-                {
-                    conversationId: res.data.id,
-                    isSpin: false,
-                    showIntentFlow: false,
-                },)
-            this.setState({showIntentFlow: true}, _ => this.onSendMsg("/true"))
+            this.setState({
+                conversationId: res.data.id,
+                isSpin: false,
+                showIntentFlow: false,
+            })
+            this.setState({ showIntentFlow: true }, (_) =>
+                this.onSendMsg("/true")
+            )
         }
     }
 
@@ -452,10 +553,10 @@ class Dialogue extends Chat {
         ) {
             return
         }
-        this.setState({isSpin: true})
+        this.setState({ isSpin: true })
         try {
             if (!value) {
-                this.arrPush({content: inputValue}, "right")
+                this.arrPush({ content: inputValue }, "right")
             }
             let res
 
@@ -483,23 +584,23 @@ class Dialogue extends Chat {
                     }
                 } catch (error) {
                     message.error(error.message)
-                    this.setState({isSpin: false})
+                    this.setState({ isSpin: false })
                 }
             }
         } catch (error) {
-            this.setState({isSpin: false})
+            this.setState({ isSpin: false })
         }
     }
 
     // 创建会话 获取会话id
     async getChatRecord() {
-        let {serviceId, messageList, domain_key} = this.state
+        let { serviceId, messageList, domain_key } = this.state
         this.setState({
             isSpin: true,
         })
         let res = await schemas.domain.service.conversation({
             service_id: serviceId,
-            slot: {domain_key},
+            slot: { domain_key },
         })
 
         messageList.push({
@@ -516,7 +617,7 @@ class Dialogue extends Chat {
     }
 
     async getSettingData() {
-        let {domain_key} = this.state
+        let { domain_key } = this.state
         let project = await schemas.project.service.get({
             limit: 10000,
             domain_key: domain_key,
@@ -533,23 +634,24 @@ class Dialogue extends Chat {
         let options = []
         let flowOption = []
         project.list &&
-        project.list.map((item) => {
-            options.push({
-                label: item.name,
-                value: item.id,
-                defaultChecked: true,
+            project.list.map((item) => {
+                options.push({
+                    label: item.name,
+                    value: item.id,
+                    defaultChecked: true,
+                })
             })
-        })
         flow.list &&
-        flow.list.map((item) => {
-            flowOption.push({
-                label: item.name,
-                value: item.key,
-                defaultChecked: true,
+            flow.list.map((item) => {
+                flowOption.push({
+                    label: item.name,
+                    value: item.key,
+                    defaultChecked: true,
+                })
             })
-        })
         this.setState({
             projectList: project.list,
+            settingSpin: false,
             flowList: flow.list,
             flow_key: flow && flow.list.length ? flow.list[0].key : undefined,
             defaultProject,
