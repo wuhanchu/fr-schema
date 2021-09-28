@@ -91,7 +91,6 @@ export const ActionModal = ({
         console.log("Failed:", errorInfo)
     }
 
-    console.log(other)
     const dict = other.dict.action_type || {}
     let formRef = React.createRef()
 
@@ -100,17 +99,23 @@ export const ActionModal = ({
         options.push(
             <Select.Option value={key}>
                 <Tooltip title={dict[key].remarks || ""}>
-                    {dict[key].remark}
+                    <div style={{ width: "100%" }}>{dict[key].remark}</div>
                 </Tooltip>
             </Select.Option>
         )
     })
+    var [type, setType] = useState(initialValues.type)
+
     const onValuesChange = (value) => {
         if (value.type) {
             formRef.current.setFieldsValue({ name: dict[value.type].remark })
+            setType(value.type)
+            console.log(type)
         }
     }
 
+    console.log(dict["self_income_expenses_search_entity"])
+    console.log(type)
     let importDict = []
 
     expGraphData.node &&
@@ -190,6 +195,7 @@ export const ActionModal = ({
                 <Form.Item
                     label="类型"
                     name="type"
+                    extra={dict[type] && dict[type].remarks}
                     rules={[{ required: true, message: "请输入类型！" }]}
                 >
                     <Select placeholder="请选择类型" style={{ width: "100%" }}>
