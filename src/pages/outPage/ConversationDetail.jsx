@@ -2,6 +2,7 @@ import React from "react"
 import { autobind } from "core-decorators"
 import Chat from "@/pages/question/components/Chat"
 import schema from "@/schemas/conversation/detail"
+
 @autobind
 class ConversationDetail extends Chat {
     constructor(props) {
@@ -10,10 +11,24 @@ class ConversationDetail extends Chat {
             ...this.state,
             showInput: false,
             roomHeight: this.props.roomHeight || "100vh",
+            collapse: true,
         }
     }
 
     async componentDidMount() {
+        this.init()
+    }
+
+    async init() {
+        let { location } = this.props
+        let showIntentFlow = this.props.showIntentFlow
+        // 外链
+        if (location && location.pathname.startsWith("/outter")) {
+            showIntentFlow =
+                location.query &&
+                location.query.showIntentFlow &&
+                location.query.showIntentFlow === "true"
+        }
         let conversation_id =
             this.props.conversation_id ||
             this.props.location.query.conversation_id
@@ -47,6 +62,10 @@ class ConversationDetail extends Chat {
             })
             this.setState({
                 messageList: list,
+                flow_key: this.props.flow_key,
+                domain_key: this.props.domain_key,
+                conversationId: this.props.conversation_id,
+                showIntentFlow,
             })
         }
     }

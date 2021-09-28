@@ -22,15 +22,28 @@ class Conversation extends ListPage {
             showEdit: false,
             showDelete: false,
             addHide: true,
+            queryArgs: {
+                order: "create_time.desc",
+            },
         })
         this.state = {
             ...this.state,
             showDetail: false,
             detail: {},
+            showIntentFlow: true,
         }
     }
 
     async componentDidMount() {
+        let { location } = this.props
+        // 外链
+        if (location.pathname.startsWith("/outter")) {
+            let showIntentFlow =
+                location.query &&
+                location.query.showIntentFlow &&
+                location.query.showIntentFlow === "true"
+            this.setState({ showIntentFlow })
+        }
         this.schema.domain_key.dict = this.props.dict.domain
         await this.findFlowList()
         await this.findUserList()
@@ -71,19 +84,22 @@ class Conversation extends ListPage {
 
     // 详情弹窗
     renderDetailModal() {
-        let { showDetail, detail } = this.state
+        let { showDetail, detail, showIntentFlow } = this.state
         return (
             <Modal
                 visible={showDetail}
                 title="会话详情"
                 onCancel={(_) => this.setState({ showDetail: false })}
                 footer={null}
-                width="50%"
+                width="90%"
                 destroyOnClose
             >
                 <ConversationDetail
                     conversation_id={detail.id}
+                    flow_key={detail.flow_key}
+                    domain_key={detail.domain_key}
                     roomHeight="60vh"
+                    showIntentFlow={showIntentFlow}
                 />
             </Modal>
         )

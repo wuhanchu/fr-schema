@@ -1,9 +1,10 @@
 import React from "react"
 import { autobind } from "core-decorators"
-import { Button, Input, Timeline, Tag } from "antd"
+import { Button, Input } from "antd"
 import robotSvg from "@/assets/rebot.svg"
 import mySvg from "@/outter/fr-schema-antd-utils/src/components/GlobalHeader/my.svg"
 import ChatFlowTable from "@/pages/question/components/ChatFlowTable"
+import { MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons"
 
 /**
  * 聊天窗口
@@ -26,6 +27,7 @@ class Chat extends React.PureComponent {
             conversationId: "",
             domain_key: "",
             flow_key: "",
+            collapse: false, // 是否收缩
         }
         this.chatRef = React.createRef()
         this.inputRef = React.createRef()
@@ -33,14 +35,39 @@ class Chat extends React.PureComponent {
     }
 
     render() {
-        let { showInput, showIntentFlow } = this.state
+        let { showInput, showIntentFlow, collapse } = this.state
         return (
             <div style={styles.contentSt}>
                 <div style={styles.chatView}>
+                    {showIntentFlow && (
+                        <div
+                            style={{
+                                display: "flex",
+                                justifyContent: "flex-end",
+                                width: "100%",
+                                fontSize: "21px",
+                                marginBottom: "10px",
+                            }}
+                        >
+                            {collapse ? (
+                                <MenuFoldOutlined
+                                    onClick={(_) =>
+                                        this.setState({ collapse: false })
+                                    }
+                                />
+                            ) : (
+                                <MenuUnfoldOutlined
+                                    onClick={(_) =>
+                                        this.setState({ collapse: true })
+                                    }
+                                />
+                            )}
+                        </div>
+                    )}
                     {this.renderChatView()}
                     {showInput && this.renderInput()}
                 </div>
-                {showIntentFlow && this.renderChatIntentFlow()}
+                {collapse && showIntentFlow && this.renderChatIntentFlow()}
             </div>
         )
     }
@@ -226,7 +253,7 @@ class Chat extends React.PureComponent {
 
     // 发送之后
     async onSendMessageAfter(value) {
-        if (this.state.showIntentFlow) {
+        if (this.state.showIntentFlow && this.state.collapse) {
             await this.tableRef.findIntentList()
             await this.tableRef.refreshList()
         }
