@@ -12,7 +12,6 @@ import {
     createEdgeFunc,
     initGraph,
     isError,
-    handleCFmName,
     getTree,
 } from "./methods"
 import clone from "clone"
@@ -79,7 +78,7 @@ class Flow extends React.PureComponent {
     }
 
     render() {
-        let { chooseType, cell, intenList, expGraphData } = this.state
+        let { chooseType, cell, intenList, expGraphData, spinning } = this.state
         const { service, record, dict, other } = this.props
         let haveEnd = false
         expGraphData &&
@@ -90,7 +89,7 @@ class Flow extends React.PureComponent {
                 }
             })
         return (
-            <Spin tip="加载中..." spinning={this.state.spinning}>
+            <Spin tip="加载中..." spinning={spinning}>
                 <div className="container_warp">
                     <div id="containerChart" />
                     {chooseType && (
@@ -207,13 +206,14 @@ class Flow extends React.PureComponent {
                         }
                         onConfirm={async () => {
                             let data = this.graphChange()
-
                             if (isError(data, this.graph)) {
+                                this.setState({spinning: true})
                                 await service.patch({
                                     ...data,
                                     id: record.id,
                                 })
                                 localStorage.removeItem("flow" + record.id)
+                                this.setState({spinning: false})
                                 this.props.handleSetVisibleFlow(false)
                             }
                         }}
@@ -284,7 +284,6 @@ class Flow extends React.PureComponent {
         let res = await service.getDetail({
             id: record.id,
         })
-        console.log(res)
         let data
         let localFlowCreateTime = parseInt(
             localStorage.getItem("flowCreate" + record.id)

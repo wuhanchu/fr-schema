@@ -1,6 +1,6 @@
-import React, { Component } from "react"
+import React, {Component} from "react"
 import CodeMirror from "react-codemirror"
-import { message, Modal } from "antd"
+import {message, Modal, Spin} from "antd"
 import "codemirror/lib/codemirror.css"
 import "codemirror/mode/yaml/yaml"
 import "codemirror/theme/neat.css"
@@ -20,12 +20,13 @@ class yamlEdiit extends Component {
         super(props)
         this.state = {
             value: props.record && props.record[props.schemasName],
+            loading: false,
         }
         this.handleChange = this.handleChange.bind(this)
     }
 
     handleChange(value) {
-        this.setState({ value: value })
+        this.setState({value: value})
     }
 
     render() {
@@ -38,7 +39,7 @@ class yamlEdiit extends Component {
             lineNumbers: true,
             lineWrapping: true,
         }
-        const { value } = this.state
+        const {value, loading} = this.state
 
         return (
             <Modal
@@ -48,10 +49,6 @@ class yamlEdiit extends Component {
                 okText={"确定"}
                 cancelText={"取消"}
                 onCancel={() => {
-                    console.log(this.props.record)
-                    console.log(
-                        value === this.props.record[this.props.schemasName]
-                    )
                     if (value === this.props.record[this.props.schemasName]) {
                         this.props.handleSetYamlEditVisible(false)
                         return
@@ -73,6 +70,7 @@ class yamlEdiit extends Component {
                     let isYaml = false
                     let errorMessage = ""
                     try {
+                        this.setState({loading: true})
                         isYaml = !!jsyaml.load(this.state.value)
                         let record = {
                             id: this.props.record.id,
@@ -80,6 +78,7 @@ class yamlEdiit extends Component {
                         record[this.props.schemasName] = this.state.value
                         await this.props.service.patch(record)
                         message.success("修改成功")
+                        this.setState({loading: false})
                         this.props.refreshList()
                         this.props.handleSetYamlEditVisible(false)
                     } catch (e) {
@@ -93,13 +92,16 @@ class yamlEdiit extends Component {
                     }
                 }}
             >
-                <div style={{ height: "550px", position: "relative" }}>
-                    <CodeMirror
-                        value={value}
-                        options={options}
-                        onChange={this.handleChange}
-                    />
-                </div>
+                <Spin spinning={loading}>
+                    <div style={{height: "550px", position: "relative"}}>
+                        <CodeMirror
+                            value={value}
+                            options={options}
+                            onChange={this.handleChange}
+                        />
+                    </div>
+                </Spin>
+
             </Modal>
         )
     }

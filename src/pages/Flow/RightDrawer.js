@@ -9,12 +9,11 @@ import {
     Tooltip,
 } from "antd"
 import "./RightDrawer.less"
-import { isError, handleCFmName } from "./methods"
+import {  handleCFmName } from "./methods"
 import { CloseOutlined, QuestionCircleOutlined } from "@ant-design/icons"
 import { ActionModal } from "./actionModal"
 import { ConditionModal } from "./conditionModal"
 import Sortable from "sortablejs/modular/sortable.complete.esm.js"
-import clone from "clone"
 import node from "@/schemas/flow/node"
 
 let FormItem = Form.Item
@@ -158,7 +157,6 @@ class RightDrawer extends React.PureComponent {
                         let sortableData = []
                         if (nodes && nodes.length) {
                             for (let i = 0; i < nodes.length; i++) {
-                                console.log(nodes[i])
                                 let key = nodes[i].getAttribute("keys")
                                 key && sortableData.push(key)
                             }

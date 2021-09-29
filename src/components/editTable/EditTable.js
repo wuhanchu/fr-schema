@@ -111,7 +111,7 @@ const EditableCell = ({
                     { [dataIndex]: record[dataIndex] },
                     { onBlur: save, ref: inputRef, form },
                     "edit",
-                    "90%"
+                    "100%"
                 )}
             </Form.Item>
         )
