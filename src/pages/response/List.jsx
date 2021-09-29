@@ -3,7 +3,7 @@ import ListPage from "@/outter/fr-schema-antd-utils/src/components/Page/ListPage
 import schemas from "@/schemas"
 import React from "react"
 import "@ant-design/compatible/assets/index.css"
-import {Form, Select, Input, Modal, Button} from 'antd';
+import {Form, Select, Input, Modal, Button, Spin} from 'antd';
 import {autobind} from 'core-decorators';
 import {globalStyle} from "@/outter/fr-schema-antd-utils/src/styles/global";
 import AceEditor from 'react-ace';
@@ -34,6 +34,7 @@ class List extends ListPage {
             ...this.state,
             intentList: [],
             domainList: [],
+            modalLoading: false,
         }
 
     }
@@ -63,7 +64,7 @@ class List extends ListPage {
      * @returns {*}
      */
     renderInfoModal(customProps = {}) {
-        let {infoData, intentList, visibleModal, domainList} = this.state;
+        let {infoData, intentList, visibleModal, domainList, modalLoading} = this.state;
         return (
             <Modal
                 width={700}
@@ -73,117 +74,119 @@ class List extends ListPage {
                 onCancel={_ => this.setState({visibleModal: false})}
                 onOk={_ => this.handleSave()}
             >
-                <Form
-                    ref={this.formRef}
-                    labelCol={{
-                        sm: {span: 24},
-                        md: {span: 4}
-                    }}
-                    wrapperCol={globalStyle.form.wrapperCol}
-                    initialValues={infoData}
-                >
-                    <Form.Item
-                        label="域"
-                        name="domain_key"
-                        rules={[{required: true, message: '请选择域'}]}
+                <Spin spinning={modalLoading}>
+                    <Form
+                        ref={this.formRef}
+                        labelCol={{
+                            sm: {span: 24},
+                            md: {span: 4}
+                        }}
+                        wrapperCol={globalStyle.form.wrapperCol}
+                        initialValues={infoData}
                     >
-                        <Select onChange={(value) => this.findIntentList(value)} placeholder="请选择域">
-                            {domainList.map((item) => (
-                                <Select.Option value={item.value} key={item.value}>{item.label}</Select.Option>
-                            ))}
-                        </Select>
-                    </Form.Item>
-                    <Form.Item
-                        label="名称"
-                        name="name"
-                        rules={[{required: true, message: '请输入名称'}]}
-                    >
-                        <Input placeholder="请输入名称"/>
-                    </Form.Item>
-                    <Form.Item
-                        label="编码"
-                        name="key"
-                        rules={[{required: true, message: '请输入编码'}]}
-                    >
-                        <Input placeholder="请输入编码"/>
-                    </Form.Item>
-                    <Form.Item
-                        label="意图"
-                        name="intent_key"
-                    >
-                        <Select mode="tags" placeholder="请选择意图">
-                            {intentList.map((item) => (
-                                <Select.Option value={item.key} key={item.id}>{item.name}</Select.Option>
-                            ))}
-                        </Select>
-                    </Form.Item>
-                    <Form.Item
-                        label="回复文本"
-                        name="template_text"
-                    >
-                        <Input.TextArea placeholder="请输入回复文本"/>
-                    </Form.Item>
-                    <Form.List
-                        name="texts"
-                    >
-                        {(fields, {add, remove}, {errors}) => (
-                            <>
-                                {fields.map((field, index) => (
+                        <Form.Item
+                            label="域"
+                            name="domain_key"
+                            rules={[{required: true, message: '请选择域'}]}
+                        >
+                            <Select onChange={(value) => this.findIntentList(value)} placeholder="请选择域">
+                                {domainList.map((item) => (
+                                    <Select.Option value={item.value} key={item.value}>{item.label}</Select.Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                        <Form.Item
+                            label="名称"
+                            name="name"
+                            rules={[{required: true, message: '请输入名称'}]}
+                        >
+                            <Input placeholder="请输入名称"/>
+                        </Form.Item>
+                        <Form.Item
+                            label="编码"
+                            name="key"
+                            rules={[{required: true, message: '请输入编码'}]}
+                        >
+                            <Input placeholder="请输入编码"/>
+                        </Form.Item>
+                        <Form.Item
+                            label="意图"
+                            name="intent_key"
+                        >
+                            <Select mode="tags" placeholder="请选择意图">
+                                {intentList.map((item) => (
+                                    <Select.Option value={item.key} key={item.id}>{item.name}</Select.Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                        <Form.Item
+                            label="回复文本"
+                            name="template_text"
+                        >
+                            <Input.TextArea placeholder="请输入回复文本"/>
+                        </Form.Item>
+                        <Form.List
+                            name="texts"
+                        >
+                            {(fields, {add, remove}, {errors}) => (
+                                <>
+                                    {fields.map((field, index) => (
+                                        <Form.Item
+                                            wrapperCol={{
+                                                xs: {span: 24, offset: 0},
+                                                sm: {span: 20, offset: 4},
+                                            }}
+                                            required={false}
+                                            key={field.key}
+                                            label=""
+                                        >
+                                            <Form.Item
+                                                {...field}
+                                                validateTrigger={['onChange', 'onBlur']}
+                                                noStyle
+                                            >
+                                                <Input.TextArea placeholder="请输入回复文本" style={{width: '90%'}}/>
+                                            </Form.Item>
+                                            <MinusCircleOutlined
+                                                onClick={() => remove(field.name)}
+                                                style={{
+                                                    position: 'relative',
+                                                    top: '0',
+                                                    marginLeft: '8px',
+                                                    color: '#999',
+                                                    fontSize: '24px',
+                                                    cursor: 'pointer',
+                                                    transition: 'all 0.3s'
+                                                }}
+                                            />
+                                        </Form.Item>
+                                    ))}
                                     <Form.Item
                                         wrapperCol={{
                                             xs: {span: 24, offset: 0},
                                             sm: {span: 20, offset: 4},
                                         }}
-                                        required={false}
-                                        key={field.key}
-                                        label=""
                                     >
-                                        <Form.Item
-                                            {...field}
-                                            validateTrigger={['onChange', 'onBlur']}
-                                            noStyle
+                                        <Button
+                                            type="dashed"
+                                            onClick={() => add()}
+                                            style={{width: '60%'}}
+                                            icon={<PlusOutlined/>}
                                         >
-                                            <Input.TextArea placeholder="请输入回复文本" style={{width: '90%'}}/>
-                                        </Form.Item>
-                                        <MinusCircleOutlined
-                                            onClick={() => remove(field.name)}
-                                            style={{
-                                                position: 'relative',
-                                                top: '0',
-                                                marginLeft: '8px',
-                                                color: '#999',
-                                                fontSize: '24px',
-                                                cursor: 'pointer',
-                                                transition: 'all 0.3s'
-                                            }}
-                                        />
+                                            添加新的回复文本
+                                        </Button>
                                     </Form.Item>
-                                ))}
-                                <Form.Item
-                                    wrapperCol={{
-                                        xs: {span: 24, offset: 0},
-                                        sm: {span: 20, offset: 4},
-                                    }}
-                                >
-                                    <Button
-                                        type="dashed"
-                                        onClick={() => add()}
-                                        style={{width: '60%'}}
-                                        icon={<PlusOutlined/>}
-                                    >
-                                        添加新的回复文本
-                                    </Button>
-                                </Form.Item>
-                            </>
-                        )}
-                    </Form.List>
-                    <Form.Item
-                        label="模板"
-                        name="template"
-                    >
-                        {this.renderAce('template')}
-                    </Form.Item>
-                </Form>
+                                </>
+                            )}
+                        </Form.List>
+                        <Form.Item
+                            label="模板"
+                            name="template"
+                        >
+                            {this.renderAce('template')}
+                        </Form.Item>
+                    </Form>
+                </Spin>
             </Modal>
         )
     }
@@ -286,6 +289,7 @@ class List extends ListPage {
         this.formRef.current
             .validateFields()
             .then(async fieldsValue => {
+                this.setState({modalLoading: true})
                 let param = addArgs ? {...addArgs} : {}
                 const idKey = getPrimaryKey(this.schema)
 
@@ -312,7 +316,6 @@ class List extends ListPage {
                             : fieldsValue[key]
                 })
                 param['template_text'] = fieldsValue['template_text']
-
                 if (action === actions.edit) {
                     param.id = infoData.id;
                     await this.handleUpdate(param, this.schema)
@@ -324,7 +327,7 @@ class List extends ListPage {
             .catch(err => {
                 console.log("err", err)
             }).finally(_ => {
-            this.setState({loadingSubmit: false})
+            this.setState({loadingSubmit: false, modalLoading: false})
         })
     }
 
