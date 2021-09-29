@@ -15,6 +15,7 @@ import { ActionModal } from "./actionModal"
 import { ConditionModal } from "./conditionModal"
 import Sortable from "sortablejs/modular/sortable.complete.esm.js"
 import clone from "clone"
+import node from "@/schemas/flow/node"
 
 let FormItem = Form.Item
 
@@ -152,12 +153,16 @@ class RightDrawer extends React.PureComponent {
             var sortable =
                 el &&
                 new Sortable(el, {
-                    onChange: function (/**Event*/ evt) {
-                        let sortableData = clone(cell.getData().action)
-
-                        let temp = sortableData[evt.oldIndex]
-                        sortableData[evt.oldIndex] = sortableData[evt.newIndex]
-                        sortableData[evt.newIndex] = temp
+                    onEnd: function (/**Event*/ evt) {
+                        let nodes = evt.to.childNodes
+                        let sortableData = []
+                        if (nodes && nodes.length) {
+                            for (let i = 0; i < nodes.length; i++) {
+                                console.log(nodes[i])
+                                let key = nodes[i].getAttribute("keys")
+                                key && sortableData.push(key)
+                            }
+                        }
                         cell.setData({
                             action: [...sortableData],
                         })
@@ -373,6 +378,7 @@ class RightDrawer extends React.PureComponent {
                                                         marginBottom: "5px",
                                                         marginRight: "10px",
                                                     }}
+                                                    keys={item.key}
                                                     key={item.key}
                                                 >
                                                     <Tag>
