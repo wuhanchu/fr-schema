@@ -98,9 +98,10 @@ export const ActionModal = ({
     Object.keys(dict).forEach((key) => {
         options.push(
             <Select.Option value={key}>
-                <Tooltip title={dict[key].remarks || ""}>
+                {/* <Tooltip title={dict[key].remarks || ""}>
                     <div style={{ width: "100%" }}>{dict[key].remark}</div>
-                </Tooltip>
+                </Tooltip> */}
+                {dict[key].remark}
             </Select.Option>
         )
     })
@@ -211,7 +212,16 @@ export const ActionModal = ({
                     }
                     rules={[{ required: true, message: "请输入类型！" }]}
                 >
-                    <Select placeholder="请选择类型" style={{ width: "100%" }}>
+                    <Select
+                        showSearch
+                        placeholder="请选择类型"
+                        style={{ width: "100%" }}
+                        filterOption={(input, option) =>
+                            option.children
+                                .toLowerCase()
+                                .indexOf(input.toLowerCase()) >= 0
+                        }
+                    >
                         {options}
                     </Select>
                 </Form.Item>
