@@ -28,7 +28,7 @@ class Dialogue extends Chat {
             serviceId: record.talk_service_id,
             options: [],
             flowOption: [],
-            flow_key: "",
+            flow_key: undefined,
             historyId: "",
             resultFlowLength: 1,
             showSetting: false,
@@ -37,6 +37,8 @@ class Dialogue extends Chat {
             collapse: true,
         }
     }
+
+    formRef = React.createRef()
 
     async componentDidMount() {
         await this.getChatRecord()
@@ -119,9 +121,11 @@ class Dialogue extends Chat {
                 />
                 <Form
                     name="validate_other"
+                    ref={this.formRef}
                     {...formItemLayout}
                     initialValues={{
                         type: type,
+                        flow_key,
                     }}
                 >
                     <Form.Item
@@ -158,7 +162,16 @@ class Dialogue extends Chat {
                         </Form.Item>
                     )}
                     {type === "flow" && (
-                        <Form.Item label="流程">
+                        <Form.Item
+                            name="flow_key"
+                            label="流程"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: "请选择流程",
+                                },
+                            ]}
+                        >
                             {flowList.length ? (
                                 <Radio.Group
                                     value={flow_key}
@@ -442,6 +455,13 @@ class Dialogue extends Chat {
             domain_key,
             slot,
         } = this.state
+        // console.log(this.formRef.current)
+        this.formRef.current.validateFields()
+        console.log(type === "flow", flow_key)
+        if (type === "flow" && !flow_key) {
+            return
+        }
+
         this.setState({ defaultProject: checkboxValue, isSpin: true })
         let param = { historyId: messageList.length - 1 }
         let res
@@ -653,7 +673,6 @@ class Dialogue extends Chat {
             projectList: project.list,
             settingSpin: false,
             flowList: flow.list,
-            flow_key: flow && flow.list.length ? flow.list[0].key : undefined,
             defaultProject,
             checkboxValue: defaultProject,
             options: [...options],
