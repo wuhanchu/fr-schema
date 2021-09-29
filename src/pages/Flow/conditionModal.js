@@ -203,7 +203,7 @@ export const ConditionModal = ({
                         type="primary"
                         htmlType="submit"
                     >
-                        更新
+                        提交
                     </Button>
                 </Form.Item>
             </Form>

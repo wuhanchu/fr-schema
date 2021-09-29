@@ -32,15 +32,20 @@ export const ActionModal = ({
         actionList = cell.getData().action
     }
     let isMore = 0
-    expGraphData.node.map((item) => {
-        item.action &&
-            item.action.map((item) => {
+    let defaultImport
+
+    expGraphData.node.map((nodeItem) => {
+        nodeItem.action &&
+            nodeItem.action.map((item) => {
                 if (item === defaultValue.key) {
                     isMore = isMore + 1
+                    if (isMore > 1) {
+                        console.log(nodeItem.key, item)
+                        defaultImport = nodeItem.key + "nodeID_" + item
+                    }
                 }
             })
     })
-
     const onFinish = (values) => {
         let myActions = clone(actions)
         if (actionType === "add") {
@@ -77,7 +82,9 @@ export const ActionModal = ({
     }
 
     const [importData, setImportData] = useState([])
-    const [isImport, setIsImport] = useState(null)
+    const [isImport, setIsImport] = useState(
+        defaultImport && defaultImport.split("nodeID_")[1]
+    )
 
     if (initialValues["param"]) {
         var [AceEditorValue, setAceEditorValue] = useState(
@@ -115,8 +122,6 @@ export const ActionModal = ({
         }
     }
 
-    console.log(dict["self_income_expenses_search_entity"])
-    console.log(type)
     let importDict = []
 
     expGraphData.node &&
@@ -162,37 +167,51 @@ export const ActionModal = ({
                 onFinish={onFinish}
                 onFinishFailed={onFinishFailed}
             >
-                {actionType === "add" && (
-                    <Form.Item label="引用">
+                {
+                    <Form.Item
+                        label="引用"
+                        extra="复用已有的操作，数据会保持同步"
+                    >
                         <Select
                             showSearch
+                            defaultValue={defaultImport}
+                            allowClear
                             placeholder="请选择引用"
                             style={{ width: "100%" }}
                             onChange={(key) => {
-                                const importData = expGraph.action.filter(
-                                    (item) =>
-                                        item.key === key.split("nodeID_")[1]
-                                )[0]
-                                formRef.current.setFieldsValue(importData)
-                                setIsImport(key.split("nodeID_")[1])
-                                setImportData(importData)
-                                if (importData.param) {
-                                    setAceEditorValue(
-                                        JSON.stringify(
-                                            importData.param,
-                                            null,
-                                            "\t"
-                                        )
-                                    )
-                                } else {
+                                if (key) {
+                                    const importData = expGraph.action.filter(
+                                        (item) =>
+                                            item.key === key.split("nodeID_")[1]
+                                    )[0]
+                                    formRef.current.setFieldsValue({
+                                        param: undefined,
+                                    })
+                                    formRef.current.setFieldsValue(importData)
+                                    setIsImport(key.split("nodeID_")[1])
+                                    setImportData(importData)
                                     setAceEditorValue("")
+                                    if (importData.param) {
+                                        setAceEditorValue(
+                                            JSON.stringify(
+                                                importData.param,
+                                                null,
+                                                "\t"
+                                            )
+                                        )
+                                    } else {
+                                        setAceEditorValue("")
+                                    }
+                                } else {
+                                    setIsImport(null)
+                                    setImportData([])
                                 }
                             }}
                         >
                             {importDict}
                         </Select>
                     </Form.Item>
-                )}
+                }
                 <Form.Item
                     label="类型"
                     name="type"
@@ -306,10 +325,10 @@ export const ActionModal = ({
                             type="primary"
                             htmlType="submit"
                         >
-                            更新
+                            提交
                         </Button>
                     )}
-                    {(isMore > 1 || isImport) && (
+                    {isMore > 1 && !isImport && (
                         <Button
                             style={{
                                 float: "right",
@@ -349,19 +368,29 @@ export const ActionModal = ({
                                 handleChangeShowAction()
                             }}
                         >
-                            更新
+                            提交
                         </Button>
                     )}
-                    {(isMore > 1 || isImport) && (
+                    {((isMore > 1 && isImport) || isImport) && (
                         <Button
                             style={{
                                 float: "right",
-                                marginRight: "-51px",
                                 bottom: "-38px",
+                                right: "-61px",
                             }}
                             type="primary"
                             onClick={() => {
                                 let key = isImport || defaultValue.key
+
+                                if (actionType === "edit") {
+                                    actionList.splice(
+                                        actionList.findIndex((item) => {
+                                            return defaultValue.key === item
+                                        }),
+                                        1
+                                    )
+                                }
+
                                 if (isImport) {
                                     actionList.push(isImport)
                                     cell.setData({ action: actionList })
@@ -381,7 +410,7 @@ export const ActionModal = ({
                                 handleChangeShowAction()
                             }}
                         >
-                            更新并同步
+                            提交
                         </Button>
                     )}
                 </Form.Item>
