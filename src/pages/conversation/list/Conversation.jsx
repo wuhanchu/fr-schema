@@ -58,6 +58,7 @@ class Conversation extends ListPage {
         this.schema.intent_key.renderInput = () => (
             <TreeSelect
                 showSearch
+                allowClear
                 treeNodeFilterProp="name"
                 style={{ width: "100%" }}
                 placeholder={"请选择意图"}
