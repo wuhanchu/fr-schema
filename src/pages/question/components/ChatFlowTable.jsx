@@ -1,4 +1,4 @@
-import { connect } from "dva"
+import {connect} from "dva"
 import DataList from "@/outter/fr-schema-antd-utils/src/components/Page/DataList"
 import schemas from "@/schemas/conversation/detail/index"
 import React from "react"
@@ -6,12 +6,12 @@ import "@ant-design/compatible/assets/index.css"
 import frSchema from "@/outter/fr-schema/src"
 import IntentIdentify from "@/pages/domain/component/IntentIdentify"
 
-import { createApi } from "@/outter/fr-schema/src/service"
+import {createApi} from "@/outter/fr-schema/src/service"
 import schema from "@/schemas/intent"
 
-const { utils } = frSchema
+const {utils} = frSchema
 
-@connect(({ global }) => ({
+@connect(({global}) => ({
     dict: global.dict,
 }))
 class ChatFlowTable extends DataList {
@@ -29,13 +29,13 @@ class ChatFlowTable extends DataList {
             addHide: true,
             mini: true,
             readOnly: true,
-            scroll: { y: "459px", x: "max-content" },
+            scroll: {y: "459px", x: "max-content"},
         })
     }
 
     async componentDidMount() {
         this.props.onRef(this)
-        this.findIntentList()
+        await this.findIntentList()
         await this.findFlowList()
         super.componentDidMount()
     }
@@ -57,7 +57,7 @@ class ChatFlowTable extends DataList {
             this.schema,
             null,
             "eq."
-        ).get({ pageSize: 10000 })
+        ).get({pageSize: 10000})
         res.list = res.list.map((item) => ({
             ...item,
             intentName: item.intent_rank ? item.intent_rank[0].name : "",
@@ -86,18 +86,18 @@ class ChatFlowTable extends DataList {
     }
 
     renderExtend() {
-        const { visibleIntentIdentify, record } = this.state
-        const { domainKey } = this.props
+        const {visibleIntentIdentify, record} = this.state
+        const {domainKey} = this.props
         return (
             <>
                 {visibleIntentIdentify && (
                     <IntentIdentify
                         onCancel={() => {
-                            this.setState({ visibleIntentIdentify: false })
+                            this.setState({visibleIntentIdentify: false})
                         }}
                         text={record.text}
-                        style={{ height: "900px" }}
-                        record={{ key: domainKey }}
+                        style={{height: "900px"}}
+                        record={{key: domainKey}}
                     />
                 )}
             </>
@@ -105,7 +105,7 @@ class ChatFlowTable extends DataList {
     }
 
     async findFlowList() {
-        let { flowKey, domainKey } = this.props
+        let {flowKey, domainKey} = this.props
         const res = await schema.service.getFlowHistory({
             limit: 1000,
             flow_key: flowKey,
