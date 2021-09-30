@@ -125,6 +125,7 @@ export const ConditionModal = ({
                 <Form.Item label="意图" name="intent">
                     <TreeSelect
                         showSearch
+                        treeNodeFilterProp="name"
                         style={{ width: "100%" }}
                         placeholder={"请选择意图"}
                         dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
