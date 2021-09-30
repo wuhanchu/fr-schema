@@ -30,6 +30,13 @@ const schema = {
             },
         },
     },
+    intent_key: {
+        title: "意图",
+        listHide: true,
+        addHide: true,
+        editHide: true,
+        type: schemaFieldType.Select,
+    },
     create_time: {
         title: "创建时间",
         sorter: true,

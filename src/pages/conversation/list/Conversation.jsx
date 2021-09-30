@@ -3,11 +3,14 @@ import ListPage from "@/outter/fr-schema-antd-utils/src/components/Page/ListPage
 import schemas from "@/schemas/conversation/list"
 import React, { Fragment } from "react"
 import "@ant-design/compatible/assets/index.css"
-import { Modal } from "antd"
+import { Modal, TreeSelect } from "antd"
 import ConversationDetail from "@/pages/outPage/ConversationDetail"
 import flowSchemas from "@/schemas/flow/index"
 import userService from "@/pages/authority/user/service"
 import frSchema from "@/outter/fr-schema/src"
+import { getTree } from "@/pages/Flow/methods"
+import intentSchema from "@/schemas/intent"
+
 const { utils } = frSchema
 
 @connect(({ global }) => ({
@@ -47,17 +50,34 @@ class Conversation extends ListPage {
         this.schema.domain_key.dict = this.props.dict.domain
         await this.findFlowList()
         await this.findUserList()
+        const res = await intentSchema.service.get({
+            limit: 1000,
+            key: "not.eq.null",
+        })
+        let list = getTree(res.list)
+        this.schema.intent_key.renderInput = () => (
+            <TreeSelect
+                showSearch
+                treeNodeFilterProp="name"
+                style={{ width: "100%" }}
+                placeholder={"请选择意图"}
+                dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
+                treeData={list}
+                treeDefaultExpandAll
+            />
+        )
         super.componentDidMount()
     }
 
     // 搜索
     renderSearchBar() {
-        const { domain_key, flow_key, status } = this.schema
+        const { domain_key, flow_key, status, intent_key } = this.schema
         const filters = this.createFilters(
             {
                 domain_key,
                 flow_key,
                 status,
+                intent_key,
             },
             5
         )

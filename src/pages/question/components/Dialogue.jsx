@@ -455,9 +455,7 @@ class Dialogue extends Chat {
             domain_key,
             slot,
         } = this.state
-        // console.log(this.formRef.current)
         this.formRef.current.validateFields()
-        console.log(type === "flow", flow_key)
         if (type === "flow" && !flow_key) {
             return
         }
