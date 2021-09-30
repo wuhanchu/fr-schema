@@ -26,7 +26,6 @@ const schema = {
         title: "正则表达式",
         searchPrefix: "like",
         sorter: true,
-        required: true,
     },
     create_time: {
         title: "创建时间",

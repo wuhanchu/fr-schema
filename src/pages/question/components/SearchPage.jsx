@@ -14,6 +14,7 @@ import { contentHeight } from "@/styles/global"
 import * as _ from "lodash"
 import utils from "@/outter/fr-schema-antd-utils/src"
 import { downloadFile } from "@/utils/minio"
+import { formatData } from "@/utils/utils"
 
 const { url } = utils.utils
 
@@ -56,24 +57,39 @@ async function init(props, project_id, setState, state) {
 function renderTitle(item) {
     return (
         <div>
+            <span style={{ width: "80%" }}>
+                <span
+                    dangerouslySetInnerHTML={{
+                        __html: item.question_standard
+                            .replace(/<b>/g, "<b style='color:red;'>")
+                            .replace(/\n/g, "<br/>"),
+                    }}
+                />
+                {item.label && item.label.length !== 0 && (
+                    <span style={{ marginLeft: "10px" }}>
+                        {item.label.map((item) => {
+                            return (
+                                <Tag
+                                    style={{ marginLeft: "3px" }}
+                                    color="#2db7f5"
+                                >
+                                    {item}
+                                </Tag>
+                            )
+                        })}
+                    </span>
+                )}
+            </span>
             <span
-                dangerouslySetInnerHTML={{
-                    __html: item.question_standard
-                        .replace(/<b>/g, "<b style='color:red;'>")
-                        .replace(/\n/g, "<br/>"),
+                style={{
+                    float: "right",
+                    marginRight: "8px",
+                    width: "110px",
+                    insetBlock: "true",
                 }}
-            />
-            {item.label && item.label.length !== 0 && (
-                <span style={{ marginLeft: "10px" }}>
-                    {item.label.map((item) => {
-                        return (
-                            <Tag style={{ marginLeft: "3px" }} color="#2db7f5">
-                                {item}
-                            </Tag>
-                        )
-                    })}
-                </span>
-            )}
+            >
+                准确度：{formatData(item.compatibility || 0, 5)}
+            </span>
         </div>
     )
 }
