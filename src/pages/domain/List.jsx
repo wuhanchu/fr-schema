@@ -214,7 +214,7 @@ class List extends ListPage {
                             this.setState({ showHotWord: false })
                         }}
                     >
-                        <HotWord record={this.state.record} />
+                        <HotWord domain_key={this.state.record.key} />
                     </Modal>
                 )}
                 {visibleSearchHistory && (

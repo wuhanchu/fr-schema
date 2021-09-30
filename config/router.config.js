@@ -69,6 +69,11 @@ export default [
                 name: "project",
                 component: "./project/List",
             },
+            {
+                path: "/outter/hot_word",
+                name: "project",
+                component: "./domain/component/HotWord",
+            },
         ],
     },
 

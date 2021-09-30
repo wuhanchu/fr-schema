@@ -1,7 +1,9 @@
 import { createApi } from "@/outter/fr-schema/src/service"
-import { schemaFieldType } from "@/outter/fr-schema/src/schema"
-import { verifyJson } from "@/outter/fr-schema-antd-utils/src/utils/component"
+import {convertFromRemote, schemaFieldType} from "@/outter/fr-schema/src/schema"
 import moments from "moment"
+import {request} from "@/outter/fr-schema/src";
+import queryString from 'query-string';
+const config = SETTING;
 
 const schema = {
     id: {
@@ -56,22 +58,59 @@ const schema = {
 }
 
 const service = createApi("domain/match_question_count", schema, null, "")
-service.get = (args) => {
+service.get = async (args) => {
     let time = new Date(parseInt(args.begin_time))
-    let begin_time = args.begin_time
+    args.begin_time = args.begin_time
         ? moments(time).format("YYYY-MM-DD")
         : undefined
     time = new Date(parseInt(args.end_time))
-    let end_time = args.end_time
+    args.end_time = args.end_time
         ? moments(time).format("YYYY-MM-DD")
         : undefined
 
-    return createApi("domain/match_question_count", schema, null, "").get({
-        ...args,
-        order: "total",
-        begin_time,
-        end_time,
-    })
+    let { currentPage, pageSize, limit, ...otherParams } = args;
+
+    // convert moment
+    Object.keys(otherParams).forEach((key) => {
+        const item = args[key];
+        if (item === undefined) {
+            return;
+        }
+        otherParams[key] = item;
+    });
+    limit = pageSize || limit || 10;
+
+    const response = await request(
+        {
+            method: 'GET',
+            url: (
+                '/' +
+                config.apiVersion +
+                'domain/match_question_count' +
+                '?' +
+                queryString.stringify({
+                    offset: limit * ((currentPage || 1) - 1),
+                    limit,
+                    ...otherParams
+                })
+            ).replace('//', '/'),
+        },
+        {
+            headers: {
+                Prefer: 'count=exact',
+            },
+        },
+    );
+
+    if (!response) {
+        return;
+    }
+
+    const { total, list } = response || {};
+    return {
+        list,
+        pagination: { current: currentPage, pageSize, total },
+    };
 }
 
 export default {
