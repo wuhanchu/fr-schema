@@ -3,7 +3,6 @@ import { Tooltip, Select, Modal, Spin, Popconfirm, Button } from "antd"
 import "./Flow.less"
 import insertCss from "insert-css"
 import "./iconfont.css"
-import { startDragToGraph } from "./methods"
 import schema from "@/schemas/intent"
 import { v4 as uuidv4 } from "uuid"
 import styled from "styled-components"
@@ -13,6 +12,7 @@ import {
     initGraph,
     isError,
     getTree,
+    startDragToGraph,
 } from "./methods"
 import clone from "clone"
 import Ellipse from "./ellipse.svg"
@@ -207,13 +207,13 @@ class Flow extends React.PureComponent {
                         onConfirm={async () => {
                             let data = this.graphChange()
                             if (isError(data, this.graph)) {
-                                this.setState({spinning: true})
+                                this.setState({ spinning: true })
                                 await service.patch({
                                     ...data,
                                     id: record.id,
                                 })
                                 localStorage.removeItem("flow" + record.id)
-                                this.setState({spinning: false})
+                                this.setState({ spinning: false })
                                 this.props.handleSetVisibleFlow(false)
                             }
                         }}
@@ -490,7 +490,8 @@ class Flow extends React.PureComponent {
     initData() {
         this.graph = initGraph(
             this.state.expGraphData,
-            this.validateConnection.bind(this)
+            this.validateConnection.bind(this),
+            this.graphChange.bind(this)
         )
         insertCss(`
               @keyframes ant-line {
@@ -575,6 +576,10 @@ class Flow extends React.PureComponent {
     }
     // 得到数据
     graphChange(args) {
+        if (!this.graph) {
+            return
+        }
+        console.log("数据改变")
         const expGraph = this.graph
         let data = {
             node: [],
@@ -610,6 +615,7 @@ class Flow extends React.PureComponent {
                 key: item.id,
                 end: item.store.data.target.cell,
                 name: nodeData.name,
+                lablesPosition: item.store.data.labels[0].position,
                 condition: nodeData.condition,
             }
             data.connection.push(itemData)

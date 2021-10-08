@@ -9,7 +9,7 @@ import {
     Tooltip,
 } from "antd"
 import "./RightDrawer.less"
-import {  handleCFmName } from "./methods"
+import { handleCFmName } from "./methods"
 import { CloseOutlined, QuestionCircleOutlined } from "@ant-design/icons"
 import { ActionModal } from "./actionModal"
 import { ConditionModal } from "./conditionModal"
@@ -457,9 +457,8 @@ class RightDrawer extends React.PureComponent {
                                             fill: "#00000000",
                                         },
                                     },
-                                    position: {
-                                        distance: -70,
-                                    },
+                                    position:
+                                        cell.store.data.labels[0].position,
                                 })
                             }}
                         >

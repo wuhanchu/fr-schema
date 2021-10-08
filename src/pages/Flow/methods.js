@@ -274,7 +274,7 @@ export function createEdgeFunc(args) {
                         fill: "#00000000",
                     },
                 },
-                position: {
+                position: (args && args.data && args.data.lablesPosition) || {
                     distance: -70,
                 },
             },
@@ -313,7 +313,7 @@ export function createEdgeFunc(args) {
 }
 
 // 初始化图
-export function initGraph(expGraphData, callback) {
+export function initGraph(expGraphData, callback, graphChange) {
     let graph = new Graph({
         container: document.getElementById("containerChart"),
         history: true,
@@ -343,6 +343,17 @@ export function initGraph(expGraphData, callback) {
             orthogonal: false,
         },
         snapline: true,
+        // interacting: {
+        //     edgeLabelMovable: true,
+        // },
+        interacting: function (cellView) {
+            if (cellView.cell.getProp("customLinkInteractions")) {
+                return { vertexAdd: false }
+            }
+            console.log(cellView)
+            graphChange()
+            return true
+        },
         connecting: {
             // 节点连接
             anchor: "top",
