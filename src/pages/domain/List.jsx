@@ -462,7 +462,7 @@ class List extends ListPage {
                         className="ant-dropdown-link"
                         onClick={(e) => e.preventDefault()}
                     >
-                        测试
+                        {"测试 "}
                         <DownOutlined />
                     </a>
                 </Dropdown>
@@ -472,7 +472,7 @@ class List extends ListPage {
                         className="ant-dropdown-link"
                         onClick={(e) => e.preventDefault()}
                     >
-                        RASA
+                        {"RASA "}
                         <DownOutlined />
                     </a>
                 </Dropdown>
