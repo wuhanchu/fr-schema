@@ -56,8 +56,8 @@ async function init(props, project_id, setState, state) {
 
 function renderTitle(item) {
     return (
-        <div>
-            <span style={{ width: "80%" }}>
+        <div style={{width: '100%', display: 'flex'}}>
+            <span style={{ flex: 1 }}>
                 <span
                     dangerouslySetInnerHTML={{
                         __html: item.question_standard
@@ -82,10 +82,7 @@ function renderTitle(item) {
             </span>
             <span
                 style={{
-                    float: "right",
-                    marginRight: "8px",
-                    width: "110px",
-                    insetBlock: "true",
+                    width: '130px'
                 }}
             >
                 准确度：{formatData(item.compatibility || 0, 5)}
