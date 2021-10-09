@@ -39,6 +39,27 @@ class List extends ListPage {
         }
     }
 
+    async componentDidMount() {
+        super.componentDidMount()
+        this.schema.regex.props.onChange = (data) => {
+            this.setState({ regex: data })
+        }
+
+        this.schema.regex.props.onInputKeyDown = (e, data) => {
+            //回车键
+            const { regex } = this.state
+            if (e.keyCode === 13) {
+                if (regex) {
+                    const isRepeat = regex.indexOf(e.target.value)
+                    if (isRepeat > -1) {
+                        e.preventDefault()
+                        e.stopPropagation()
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * 操作栏按钮
      */
@@ -95,6 +116,14 @@ class List extends ListPage {
         })
     }
 
+    handleVisibleModal = (flag, record, action) => {
+        this.setState({
+            visibleModal: !!flag,
+            infoData: record,
+            action,
+            regex: record && record.regex,
+        })
+    }
     async handleUploadExcel(data, schema) {
         // 更新
         let response
