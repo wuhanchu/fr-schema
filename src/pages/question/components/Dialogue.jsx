@@ -310,27 +310,16 @@ class Dialogue extends Chat {
         }
         let res
         try {
-            if (type === "chat") {
-                res = await schemas.domain.service.message({
-                    service_id: serviceId,
-                    conversation_id: conversationId,
-                    text: data.payload,
+            res = await schemas.domain.service.message({
+                domain_key,
+                conversation_id: conversationId,
+                text: data.payload,
+            })
+            if (res.data && res.data.result) {
+                this.arrPush(res.data.result, "left")
+                this.setState({
+                    resultFlowLength: res.data.result.length,
                 })
-                if (res.data) {
-                    this.arrPush(res.data, "left")
-                }
-            } else {
-                res = await schemas.domain.service.flowMessage({
-                    domain_key,
-                    conversation_id: conversationId,
-                    text: data.payload,
-                })
-                if (res.data && res.data.result) {
-                    this.arrPush(res.data.result, "left")
-                    this.setState({
-                        resultFlowLength: res.data.result.length,
-                    })
-                }
             }
         } catch (error) {
             message.error(error.message)
@@ -473,7 +462,7 @@ class Dialogue extends Chat {
                 return
             }
             if (flow_key) {
-                res = await schemas.domain.service.flowConversation({
+                res = await schemas.domain.service.conversation({
                     type: "flow",
                     domain_key,
                     flow_key,
@@ -487,13 +476,14 @@ class Dialogue extends Chat {
         } else {
             if (checkboxValue && checkboxValue.length) {
                 res = await schemas.domain.service.conversation({
-                    service_id: serviceId,
+                    type: "chat",
+                    domain_key,
                     slot: {
-                        domain_key,
+                        domain_key: domain_key,
                     },
                 })
                 await schemas.domain.service.message({
-                    service_id: serviceId,
+                    domain_key,
                     conversation_id: res.data.id,
                     text:
                         `/slot{"project\_id":"` +
@@ -533,7 +523,7 @@ class Dialogue extends Chat {
                 return
                 // slotObj = undefined
             }
-            let res = await schemas.domain.service.flowConversation({
+            let res = await schemas.domain.service.conversation({
                 type: "flow",
                 domain_key,
                 flow_key,
@@ -578,32 +568,22 @@ class Dialogue extends Chat {
             }
             let res
 
-            if (type === "chat") {
+            try {
                 res = await schemas.domain.service.message({
-                    service_id: serviceId,
+                    domain_key,
+
                     conversation_id: conversationId,
-                    text: inputValue ? inputValue : "",
+                    text: inputValue,
                 })
-                if (res.data) {
-                    this.arrPush(res.data, "left")
-                }
-            } else {
-                try {
-                    res = await schemas.domain.service.flowMessage({
-                        domain_key,
-                        conversation_id: conversationId,
-                        text: inputValue,
+                if (res.data && res.data.result) {
+                    this.arrPush(res.data.result, "left")
+                    this.setState({
+                        resultFlowLength: res.data.result.length,
                     })
-                    if (res.data && res.data.result) {
-                        this.arrPush(res.data.result, "left")
-                        this.setState({
-                            resultFlowLength: res.data.result.length,
-                        })
-                    }
-                } catch (error) {
-                    message.error(error.message)
-                    this.setState({ isSpin: false })
                 }
+            } catch (error) {
+                message.error(error.message)
+                this.setState({ isSpin: false })
             }
         } catch (error) {
             this.setState({ isSpin: false })
@@ -617,8 +597,11 @@ class Dialogue extends Chat {
             isSpin: true,
         })
         let res = await schemas.domain.service.conversation({
-            service_id: serviceId,
-            slot: { domain_key },
+            domain_key,
+            type: "chat",
+            slot: {
+                domain_key: domain_key,
+            },
         })
 
         messageList.push({

@@ -41,19 +41,9 @@ const service = createApi("domain", schema, null, "eq.")
 // 得到服务列表
 service.getServices = createApi("z_ai_service/service", schema, null, "eq.").get
 // 创建会话
-service.conversation = createApi(
-    "z_ai_service/chat/conversation",
-    schema,
-    null,
-    "eq."
-).post
+service.conversation = createApi("chat/conversation", schema, null, "eq.").post
 // 发送消息
-service.message = createApi(
-    "z_ai_service/chat/message",
-    schema,
-    null,
-    "eq."
-).post
+service.message = createApi("chat/message", schema, null, "eq.").post
 
 // 创建会话
 service.flowConversation = createApi(
