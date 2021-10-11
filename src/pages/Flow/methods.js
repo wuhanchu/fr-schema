@@ -441,7 +441,7 @@ export function isError(data, graph) {
         return item.name
     })
     data.config.connection.map((item) => {
-        if (countName(nameArr, item.name) > 1) {
+        if (!item.name) {
             let cell = graph.getCellById(item.key)
             cell.attr("line/stroke", "#ff4d4f")
             isTrue = false
@@ -475,13 +475,14 @@ export function handleCFmName(rules, value, callback, type, graph) {
                 return true
             }
         } else {
-            let data = graph.getEdges().map((item) => {
-                return item.getData().name
-            })
-            if (countName(data, value) > 1) {
-                callback && callback(new Error("名称重复"))
-                return false
-            }
+            // let data = graph.getEdges().map((item) => {
+            //     return item.getData().name
+            // })
+            // if (countName(data, value) > 1) {
+            //     callback && callback(new Error("名称重复"))
+            //     return false
+            // }
+            return true
         }
     }
 }
