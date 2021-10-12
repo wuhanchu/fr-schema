@@ -1,107 +1,108 @@
 import { createApi } from "@/outter/fr-schema/src/service"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
+import moment from "moment"
+import { Tooltip } from "antd"
 
 const schema = {
-    id: {
-        title: "编号",
+    create_time: {
+        title: "查询时间",
         sorter: true,
+        type: schemaFieldType.DatePicker,
     },
     search: {
-        title: "搜索内容",
+        title: "查询文本",
+        render: (text) => {
+            return (
+                <Tooltip title={text}>
+                    <div
+                        style={{
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                            maxWidth: "400px",
+                        }}
+                    >
+                        {text}
+                    </div>
+                </Tooltip>
+            )
+        },
         searchPrefix: "like",
     },
-
-    match_project_id: {
-        title: "匹配问题库",
-        required: true,
-        type: schemaFieldType.Select,
-    },
-    show_question_txt: {
-        title: "匹配问题",
-        required: true,
-        searchPrefix: "like",
-    },
-    match: {
-        title: "匹配是否准确",
-        // listHide: true,
-        width: "170px",
+    user_confirm: {
+        title: "结果已确认",
         type: schemaFieldType.Select,
         dict: {
             true: {
-                value: "true",
-                remark: "准确",
+                value: true,
+                remark: "是",
             },
             false: {
-                value: "false",
-                remark: "不准确",
+                value: false,
+                remark: "否",
             },
         },
+    },
+    match_project_id: {
+        title: "匹配库",
+        required: true,
+        type: schemaFieldType.Select,
+    },
+    match_question_txt: {
+        title: "匹配问题",
+        render: (text) => {
+            return (
+                <Tooltip title={text}>
+                    <div
+                        style={{
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                            maxWidth: "400px",
+                        }}
+                    >
+                        {text}
+                    </div>
+                </Tooltip>
+            )
+        },
+        required: true,
+        searchPrefix: "like",
     },
 }
 
 const service = createApi("search_history", schema, null)
 
 service.get = async (args) => {
+    if (args.create_time) {
+        console.log(args.create_time.split(","))
+        let beginTime = moment(args.create_time.split(",")[0]).format(
+            "YYYY-MM-DD"
+        )
+        let endTime = moment(args.create_time.split(",")[1]).format(
+            "YYYY-MM-DD"
+        )
+        args.create_time = undefined
+        args.and = `(create_time.gte.${beginTime},create_time.lte.${endTime})`
+    }
+
     let data = await createApi("search_history", schema, null, "eq.").get(args)
-    let { list } = data
-    list = list.map((item, index) => {
-        if (item.match_question_id) {
-            return {
-                ...item,
-                show_question_txt: item.return_question
-                    ? item.return_question.filter(
-                          (returnQuestionList) =>
-                              returnQuestionList.id === item.match_question_id
-                      )[0].question
-                    : "",
-                match: item.user_confirm ? true : null,
-            }
-        } else {
-            return {
-                ...item,
-                show_question_txt:
-                    item.return_question &&
-                    item.return_question[0] &&
-                    item.return_question[0].question,
-                match: item.user_confirm ? false : null,
-                match_project_id:
-                    item.return_question &&
-                    item.return_question[0] &&
-                    item.return_question[0].project_id,
-            }
-        }
-    })
-    return { ...data, list }
+    return data
 }
 
 service.patch = async (args) => {
-    if (!args.match_question_id && args.match) {
-        args.match_project_id =
-            args.return_question &&
-            args.return_question[0] &&
-            args.return_question[0].project_id
-                ? args.return_question[0].project_id
-                : null
-        args.match_question_id =
-            args.return_question && args.return_question[0]
-                ? args.return_question[0].id
-                : null
-        args.match_question_txt =
-            args.return_question && args.return_question[0]
-                ? args.return_question[0].answer
-                : null
-    }
-    if (!args.match) {
+    if (!args.return_question) {
         args.match_question_id = null
         args.match_question_txt = null
         args.match_project_id = null
+        args.user_confirm = false
+    } else {
+        args.match_question_id = args.return_question.id
+        args.match_question_txt = args.return_question.question
+        args.match_project_id = args.return_question.project_id
+        args.user_confirm = true
     }
-
-    args.match = undefined
-    args.match_remark = undefined
-    args.show_question_txt = undefined
-    args.match_project_id_remark = undefined
-    args.user_confirm = true
+    args.return_question = undefined
     let data = await createApi("search_history", schema, null, "eq.").patch(
         args
     )

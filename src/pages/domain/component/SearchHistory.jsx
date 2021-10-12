@@ -6,11 +6,12 @@ import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
 import frSchema from "@/outter/fr-schema/src"
 import Modal from "antd/lib/modal/Modal"
-import { Radio, List, Tag } from "antd"
+import { Checkbox, Button, Table, Space, Card, message, DatePicker } from "antd"
 import { formatData } from "@/utils/utils"
 import projectService from "@/schemas/project"
 import { listToDict } from "@/outter/fr-schema/src/dict"
 
+const { RangePicker } = DatePicker
 const { utils } = frSchema
 
 @connect(({ global }) => ({
@@ -52,47 +53,84 @@ class MyList extends DataList {
                 match: e.target.value,
             })
         }
-        console.log("dict", this.props.dict)
+        this.setState({ projectDict: listToDict(res.list) })
         this.schema.match_project_id.dict = listToDict(res.list)
-        this.schema.match.render = (item, data) => {
-            return (
-                <>
-                    <Radio.Group
-                        onChange={(e) => {
-                            onChange(e, data)
-                        }}
-                        value={data.match}
-                    >
-                        <Radio value={true}>准确</Radio>
-                        <Radio value={false}>不准确</Radio>
-                    </Radio.Group>
-                </>
-            )
-        }
     }
+
     renderOperateColumnExtend(record) {
         return (
             <>
                 <a
                     onClick={() => {
-                        this.setState({ record, showAnswer: true })
+                        this.setState({
+                            record,
+                            showAnswer: true,
+                            matchQuestion: {
+                                id: record.match_question_id,
+                                question: record.match_question_txt,
+                                project_id: record.match_project_id,
+                            },
+                        })
                     }}
                 >
-                    匹配列表
+                    查询结果
                 </a>
             </>
         )
     }
 
     renderExtend() {
-        const { showAnswer, record } = this.state
+        const { showAnswer, record, projectDict } = this.state
+
+        const columns = [
+            {
+                title: "问题库",
+                dataIndex: "project_id",
+                key: "project_id",
+                render: (project_id) => <>{projectDict[project_id].name}</>,
+            },
+            {
+                title: "标准问",
+                dataIndex: "question",
+                key: "question",
+            },
+            {
+                title: "匹配率",
+                dataIndex: "compatibility",
+                key: "compatibility",
+                render: (compatibility) => <>{formatData(compatibility, 5)}</>,
+            },
+            {
+                title: "是否正确返回",
+                key: "action",
+                render: (text, record) => (
+                    <Space size="middle">
+                        <Checkbox
+                            checked={
+                                (this.state.matchQuestion &&
+                                    this.state.matchQuestion.id) === record.id
+                            }
+                            onChange={(e) => {
+                                this.setState({
+                                    matchQuestion: e.target.checked
+                                        ? record
+                                        : null,
+                                })
+                                console.log(e.target.checked, record)
+                            }}
+                        />
+                    </Space>
+                ),
+            },
+        ]
+
         return (
             <>
                 {showAnswer && (
                     <Modal
-                        title="匹配列表"
+                        title="查询结果"
                         footer={false}
-                        width={900}
+                        width={1100}
                         onCancel={() => {
                             this.setState({
                                 showAnswer: false,
@@ -100,65 +138,41 @@ class MyList extends DataList {
                         }}
                         visible={true}
                     >
-                        <List
-                            size="large"
-                            style={{ maxHeight: "60vh", overflowY: "auto" }}
-                            bordered
-                            header={
-                                <List.Item
-                                    style={{ margin: "-24px" }}
-                                    actions={[<a>匹配度</a>]}
-                                >
-                                    <List.Item.Meta
-                                        title={<div>匹配问题</div>}
-                                    />
-                                </List.Item>
-                            }
-                            dataSource={record.return_question || []}
-                            renderItem={(item) => (
-                                <List.Item
-                                    actions={[
-                                        <a key="list-loadmore-more">
-                                            {formatData(item.compatibility, 5)}
-                                        </a>,
-                                    ]}
-                                >
-                                    <List.Item.Meta
-                                        title={
-                                            <div>
-                                                {item.question}
-                                                {record.match_question_id ===
-                                                item.id ? (
-                                                    <Tag color="#108ee9">
-                                                        已匹配问题
-                                                    </Tag>
-                                                ) : (
-                                                    ""
-                                                )}
-                                            </div>
-                                        }
-                                        description={
-                                            <div
-                                                dangerouslySetInnerHTML={{
-                                                    __html:
-                                                        item.answer &&
-                                                        item.answer
-                                                            .trim()
-                                                            .replace(
-                                                                /<b>/g,
-                                                                "<b style='color:red;'>"
-                                                            )
-                                                            .replace(
-                                                                /\n/g,
-                                                                "<br/>"
-                                                            ),
-                                                }}
-                                            />
-                                        }
-                                    />
-                                </List.Item>
-                            )}
-                        />
+                        <Card bordered={false}>
+                            <Table
+                                style={{ marginBottom: "24px" }}
+                                bordered
+                                pagination={false}
+                                size={"middle"}
+                                columns={columns}
+                                dataSource={record.return_question}
+                            />
+                            <Button
+                                type="primary"
+                                style={{
+                                    float: "right",
+                                    right: "24px",
+                                    botton: "24px",
+                                    position: "absolute",
+                                }}
+                                onClick={async () => {
+                                    try {
+                                        await this.service.patch({
+                                            return_question: this.state
+                                                .matchQuestion,
+                                            id: record.id,
+                                        })
+                                        message.success("确认成功！")
+                                        this.setState({ showAnswer: false })
+                                        this.refreshList()
+                                    } catch (e) {
+                                        message.error(e.message)
+                                    }
+                                }}
+                            >
+                                确认
+                            </Button>
+                        </Card>
                     </Modal>
                 )}
             </>
@@ -166,10 +180,17 @@ class MyList extends DataList {
     }
 
     renderSearchBar() {
-        const { search, match } = this.schema
+        const { search, create_time } = this.schema
 
         const filters = this.createFilters(
             {
+                create_time: {
+                    ...create_time,
+                    style: { width: "100%" },
+                    renderInput: () => {
+                        return <RangePicker />
+                    },
+                },
                 search,
             },
             5
