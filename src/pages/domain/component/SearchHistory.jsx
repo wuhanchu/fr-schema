@@ -116,7 +116,6 @@ class MyList extends DataList {
                                         ? record
                                         : null,
                                 })
-                                console.log(e.target.checked, record)
                             }}
                         />
                     </Space>
@@ -180,7 +179,7 @@ class MyList extends DataList {
     }
 
     renderSearchBar() {
-        const { search, create_time } = this.schema
+        const { search, create_time, user_confirm } = this.schema
 
         const filters = this.createFilters(
             {
@@ -192,6 +191,19 @@ class MyList extends DataList {
                     },
                 },
                 search,
+                user_confirm: {
+                    ...user_confirm,
+                    dict: {
+                        true: {
+                            value: "true",
+                            remark: "是",
+                        },
+                        false: {
+                            value: "false",
+                            remark: "否",
+                        },
+                    },
+                },
             },
             5
         )
