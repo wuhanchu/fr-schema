@@ -142,7 +142,7 @@ class MyList extends DataList {
                                 style={{ marginBottom: "24px" }}
                                 bordered
                                 pagination={false}
-                                size={"middle"}
+                                size={"small"}
                                 columns={columns}
                                 dataSource={record.return_question}
                             />
