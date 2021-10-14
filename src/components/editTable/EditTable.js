@@ -53,8 +53,8 @@ const EditableCell = ({
     const toggleEdit = () => {
         if (item.type !== "BraftEditor") {
             setEditing(!editing)
-            form.setFieldsValue({
-                [dataIndex]: record[dataIndex],
+            record[dataIndex] && form.setFieldsValue({
+                [dataIndex]: record[dataIndex]
             })
         }
     }
@@ -109,7 +109,7 @@ const EditableCell = ({
                 {createComponent(
                     item,
                     { [dataIndex]: record[dataIndex] },
-                    { onBlur: save, ref: inputRef, form },
+                    { onBlur: save, ref: inputRef, form, editStatus: true },
                     "edit",
                     "100%"
                 )}

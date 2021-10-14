@@ -108,7 +108,10 @@ class EditPage extends DataList {
         const index = newData.findIndex((item) => record.id === item.id)
         const item = newData[index]
         newData.splice(index, 1, { ...item, ...record })
-        newData = decorateList(newData, this.schema) // 显示数据处理
+        for ( let i = 0; i < newData.length; i++) {
+            newData[i].label && ( newData[i].label_remark = newData[i].label.join("|"))
+        }
+        // newData = decorateList(newData, this.schema) // 显示数据处理
         this.setState({
             data: { ...this.state.data, list: [...newData] },
             editRow: [...this.state.editRow],
