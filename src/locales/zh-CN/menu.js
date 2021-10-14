@@ -20,6 +20,8 @@ export default {
 
     "menu.entity": "实体",
     "menu.entity.relation": "实体关系",
+    "menu.entity.mark": "标注",
+
     "menu.entity.relationType": "实体关系类型",
 
     "menu.entity.entityList": "实体信息",

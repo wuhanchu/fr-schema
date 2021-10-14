@@ -4,9 +4,12 @@ import schemas from "@/schemas"
 import React from "react"
 import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
-import { Divider, Modal } from "antd"
+import { Divider, Modal, Button, message } from "antd"
 import frSchema from "@/outter/fr-schema/src"
 import ChartModal from "./Flow"
+import { exportData } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
+import ImportModal from "@/outter/fr-schema-antd-utils/src/components/modal/ImportModal"
+import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 
 const { decorateList } = frSchema
 
@@ -17,7 +20,7 @@ const { decorateList } = frSchema
 @Form.create()
 class List extends ListPage {
     constructor(props) {
-        const importTemplateUrl = (BASE_PATH + "/import/意图.xlsx").replace(
+        const importTemplateUrl = (BASE_PATH + "/import/流程.xlsx").replace(
             "//",
             "/"
         )
@@ -84,6 +87,152 @@ class List extends ListPage {
             </>
         )
     }
+
+    /**
+     * 操作栏按钮
+     */
+    renderOperationButtons() {
+        if (this.props.renderOperationButtons) {
+            return this.props.renderOperationButtons()
+        }
+
+        return (
+            <>
+                {!this.props.readOnly && !this.meta.addHide && (
+                    <Button
+                        type="primary"
+                        onClick={() =>
+                            this.handleVisibleModal(true, null, "add")
+                        }
+                    >
+                        新增
+                    </Button>
+                )}
+                <Button
+                    onClick={() => {
+                        this.setState({ visibleImport: true })
+                    }}
+                >
+                    导入
+                </Button>
+
+                <Button
+                    loading={this.state.exportLoading}
+                    onClick={() => {
+                        // this.setState({ visibleExport: true })
+                        this.handleExport({}, {})
+                    }}
+                >
+                    导出
+                </Button>
+            </>
+        )
+    }
+
+    handleVisibleExportModal = (flag, record, action) => {
+        this.setState({
+            visibleExport: !!flag,
+            infoData: record,
+            action,
+        })
+    }
+
+    handleVisibleImportModal = (flag, record, action) => {
+        this.setState({
+            visibleImport: !!flag,
+            infoData: record,
+            action,
+        })
+    }
+
+    async handleExport(args, schema) {
+        this.setState({ exportLoading: true }, async () => {
+            let column = this.getColumns(false).filter((item) => {
+                return !item.isExpand && item.key !== "external_id"
+            })
+            let columns = [
+                {
+                    title: "编号",
+                    dataIndex: "id",
+                    key: "id",
+                },
+                column[0],
+                {
+                    title: "名称",
+                    dataIndex: "name",
+                    key: "name",
+                },
+                {
+                    title: "编码",
+                    dataIndex: "key",
+                    key: "key",
+                },
+                {
+                    title: "流程配置",
+                    dataIndex: "config",
+                    key: "config",
+                },
+                {
+                    title: "意图",
+                    dataIndex: "intent_key",
+                    key: "intent_key",
+                },
+            ]
+            let data = await this.requestList({
+                pageSize: 1000000,
+                offset: 0,
+                ...args,
+                logical_path: undefined,
+            })
+            const list =
+                data &&
+                data.list.map((item, index) => {
+                    return { ...item, config: JSON.stringify(item.config) }
+                })
+            data = decorateList(list, this.schema)
+            await exportData("意图", data, columns)
+            this.setState({ exportLoading: false })
+        })
+        // this.handleVisibleExportModal()
+    }
+    renderImportModal() {
+        return (
+            <ImportModal
+                importTemplateUrl={this.meta.importTemplateUrl}
+                schema={{
+                    ...this.schema,
+                    config: { title: "流程配置" },
+                    intent_key: { title: "意图" },
+                    id: { title: "编号" },
+                }}
+                errorKey={"question_standard"}
+                title={"导入"}
+                sliceNum={1}
+                onCancel={() => this.setState({ visibleImport: false })}
+                onChange={(data) => this.setState({ importData: data })}
+                onOk={async () => {
+                    try {
+                        const data = this.state.importData.map((item) => {
+                            return {
+                                ...item,
+                                id: item.id || undefined,
+                                config: JSON.parse(item.config),
+                                intent_key: [],
+                            }
+                        })
+                        console.log(data)
+                        await this.service.upInsert(data)
+                    } catch (e) {
+                        message.error(e.message)
+                    }
+
+                    this.setState({ visibleImport: false })
+                    this.refreshList()
+                }}
+            />
+        )
+    }
+
     // 搜索
     renderSearchBar() {
         const { name, domain_key } = this.schema
