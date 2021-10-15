@@ -17,6 +17,7 @@ const schema = {
         sorter: true,
         editable: true,
         fixed: "left",
+        width: '250px',
     },
     question_standard: {
         title: "标准问",
@@ -29,6 +30,7 @@ const schema = {
         },
         sorter: true,
         editable: true,
+        width: '260px',
     },
     question_extend: {
         title: "扩展问",
@@ -56,6 +58,7 @@ const schema = {
                 </Tooltip>
             )
         },
+        width: '260px',
     },
     label: {
         title: "标签",
@@ -64,6 +67,7 @@ const schema = {
             mode: "tags",
         },
         editable: true,
+        width: '120px',
     },
     answer_text: {
         title: "摘要",
@@ -73,6 +77,7 @@ const schema = {
             autoSize: { minRows: 2, maxRows: 6 },
         },
         editable: true,
+        width: '250px',
     },
     global_key: {
         title: "全局变量",
@@ -81,6 +86,7 @@ const schema = {
         render: (item) => {
             return <div style={{ minWidth: "60px" }}>{item}</div>
         },
+        width: '80px',
     },
     answer: {
         title: "答案",
@@ -148,6 +154,7 @@ const schema = {
         render: (item) => {
             return <div style={{ minWidth: "60px" }}>{item}</div>
         },
+        width: '120px',
     },
 }
 
