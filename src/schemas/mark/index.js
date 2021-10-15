@@ -49,7 +49,7 @@ const schema = {
     },
 }
 
-const service = createApi("entity", schema, null, "eq.")
+const service = createApi("question_mark_task", schema, null, "eq.")
 
 export default {
     schema,

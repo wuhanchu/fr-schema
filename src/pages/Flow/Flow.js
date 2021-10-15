@@ -64,7 +64,7 @@ class Flow extends React.PureComponent {
 
     async componentDidMount() {
         const { record } = this.props
-        this.initData()
+        await this.initData()
         this.getData()
         await this.getIntent()
         await this.getHistory()
@@ -349,11 +349,12 @@ class Flow extends React.PureComponent {
         data.connection.map((item) => {
             this.addEdges(item)
         })
+
+        this.graph.action = data.action
+        this.graph.condition = data.condition
         this.setState({
             expGraphData: data,
         })
-        this.graph.action = data.action
-        this.graph.condition = data.condition
     }
 
     addNodes(args) {
@@ -487,7 +488,7 @@ class Flow extends React.PureComponent {
         return isTrue
     }
 
-    initData() {
+    async initData() {
         this.graph = initGraph(
             this.state.expGraphData,
             this.validateConnection.bind(this),
