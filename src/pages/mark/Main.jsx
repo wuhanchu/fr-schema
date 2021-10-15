@@ -2,8 +2,10 @@ import ListPage from "@/outter/fr-schema-antd-utils/src/components/Page/ListPage
 import React from "react"
 import { PageHeaderWrapper } from "@ant-design/pro-layout"
 import { connect } from "dva"
+import { Button, Menu, Dropdown, message } from "antd"
 import Add from "./Add"
 import Complement from "./Complement"
+import schemas from "@/schemas"
 
 // 微信信息类型
 export const infoType = {
@@ -30,12 +32,46 @@ class Main extends React.PureComponent {
         }
     }
 
-    render() {
-        const { tabActiveKey } = this.state
+    async componentDidMount() {
+        let data = await schemas.domain.service.get({ limit: 10000 })
+        this.setState({ domian: data.list })
+    }
 
+    render() {
+        const { tabActiveKey, domian } = this.state
+        const menu = (
+            <Menu
+                onClick={async (item) => {
+                    console.log(item)
+                    try {
+                        await schemas.mark.service.mark_task({
+                            domain_key: item.key,
+                        })
+                        message.success("同步执行中!")
+                    } catch (error) {
+                        message.error(error.message)
+                    }
+                }}
+            >
+                {domian &&
+                    domian.map((item) => {
+                        return (
+                            <Menu.Item key={item.key}>
+                                <a>{item.name}</a>
+                            </Menu.Item>
+                        )
+                    })}
+            </Menu>
+        )
+        const operations = (
+            <Dropdown overlay={menu} placement="bottomLeft">
+                <Button>同步数据</Button>
+            </Dropdown>
+        )
         return (
             <PageHeaderWrapper
                 title="标注"
+                tabBarExtraContent={operations}
                 tabList={Object.keys(infoType).map((key) => ({
                     key: infoType[key],
                     tab: infoType[key],

@@ -177,12 +177,6 @@ export default [
                                 component: "./relation/Main",
                                 title: "实体关系",
                             },
-                            {
-                                path: "/entity/mark",
-                                name: "mark",
-                                component: "./mark/Main",
-                                title: "问题标注",
-                            },
                         ],
                     },
 
@@ -190,8 +184,23 @@ export default [
                         path: "/project",
                         name: "project",
                         title: "问题库",
-
                         component: "./project/List",
+
+                        // routes: [
+                        //     {
+                        //         path: "/project/list",
+                        //         name: "projectList",
+                        //         title: "问题库信息",
+                        //         component: "./project/List",
+                        //     },
+
+                        //     {
+                        //         path: "/project/mark",
+                        //         name: "mark",
+                        //         component: "./mark/Main",
+                        //         title: "问题库运维",
+                        //     },
+                        // ],
                     },
                     {
                         name: "system",
