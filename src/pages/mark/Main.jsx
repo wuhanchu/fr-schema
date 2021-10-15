@@ -7,8 +7,8 @@ import Complement from "./Complement"
 
 // 微信信息类型
 export const infoType = {
-    Add: "问题新增",
     Complement: "补充扩展问",
+    Add: "问题新增",
 }
 
 /**
@@ -45,8 +45,8 @@ class Main extends React.PureComponent {
                 }
                 tabActiveKey={tabActiveKey}
             >
-                {tabActiveKey === infoType.Add && <Add />}
                 {tabActiveKey === infoType.Complement && <Complement />}
+                {tabActiveKey === infoType.Add && <Add />}
             </PageHeaderWrapper>
         )
     }
