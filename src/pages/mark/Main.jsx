@@ -70,7 +70,7 @@ class Main extends React.PureComponent {
         const operations = (
             <Dropdown overlay={menu} placement="bottomLeft">
                 <Button>
-                    {this.state.isLoading && <LoadingOutlined />}同步数据
+                    {this.state.isLoading && <LoadingOutlined />}创建分析
                 </Button>
             </Dropdown>
         )
