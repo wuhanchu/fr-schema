@@ -61,7 +61,6 @@ const schema = {
                 </div>
             )
         },
-        sorter: true,
         type: schemaFieldType.TextArea,
     },
 }

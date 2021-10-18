@@ -51,7 +51,6 @@ const schema = {
     question_standard: {
         title: "标准问",
         searchPrefix: "like",
-        sorter: true,
         style: { width: "500px" },
         required: true,
     },
@@ -59,7 +58,6 @@ const schema = {
     text: {
         title: "补充扩展问",
         style: { width: "500px" },
-        sorter: true,
         type: schemaFieldType.TextArea,
     },
 }
@@ -110,7 +108,7 @@ service.append = async (args) => {
 
 service.mark_task = async (args) => {
     let data = await createApi("mark_task", schema, null, "eq.").post(args)
-    return { ...data, msg: "同步执行中!" }
+    return { ...data }
 }
 export default {
     schema,

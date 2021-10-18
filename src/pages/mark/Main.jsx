@@ -6,6 +6,7 @@ import { Button, Menu, Dropdown, message } from "antd"
 import Add from "./Add"
 import Complement from "./Complement"
 import schemas from "@/schemas"
+import { LoadingOutlined } from "@ant-design/icons"
 
 // 微信信息类型
 export const infoType = {
@@ -44,12 +45,15 @@ class Main extends React.PureComponent {
                 onClick={async (item) => {
                     console.log(item)
                     try {
-                        await schemas.mark.service.mark_task({
+                        this.setState({ isLoading: true })
+                        let data = await schemas.mark.service.mark_task({
                             domain_key: item.key,
                         })
-                        message.success("同步执行中!")
+                        this.setState({ isLoading: false })
+                        message.success(data.message)
                     } catch (error) {
                         message.error(error.message)
+                        this.setState({ isLoading: false })
                     }
                 }}
             >
@@ -65,7 +69,9 @@ class Main extends React.PureComponent {
         )
         const operations = (
             <Dropdown overlay={menu} placement="bottomLeft">
-                <Button>同步数据</Button>
+                <Button>
+                    {this.state.isLoading && <LoadingOutlined />}同步数据
+                </Button>
             </Dropdown>
         )
         return (

@@ -109,6 +109,7 @@ class List extends DataList {
                                             inAppend: true,
                                         })
                                         await this.handldAppend([record])
+                                        this.refreshList()
                                         this.setState({ inAppend: false })
                                         e.stopPropagation()
                                     }}
