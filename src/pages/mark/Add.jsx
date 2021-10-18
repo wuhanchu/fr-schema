@@ -27,6 +27,7 @@ class List extends DataList {
                 ...props.queryArgs,
                 type: "add_question",
             },
+            scroll: { x: "max-content", y: "50vh" },
             operateWidth: "120px",
             infoProps: {
                 offline: true,
