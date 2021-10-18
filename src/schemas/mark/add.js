@@ -40,7 +40,7 @@ const schema = {
             },
             deny: {
                 value: 2,
-                remark: "已放弃",
+                remark: "已丢弃",
             },
         },
         required: true,

@@ -99,7 +99,7 @@ class List extends DataList {
                 fixed: "right",
                 render: (text, record) => (
                     <>
-                        {showEdit && (
+                        {record.status !== 1 && (
                             <>
                                 <Popconfirm
                                     title="是否要补充此行？"
@@ -127,9 +127,9 @@ class List extends DataList {
                                 </Popconfirm>
                             </>
                         )}
-                        {showDelete && (
+                        {record.status === 0 && <Divider type="vertical" />}
+                        {record.status !== 2 && (
                             <>
-                                {showEdit && <Divider type="vertical" />}
                                 <Popconfirm
                                     title="是否要丢弃此行？"
                                     onConfirm={async (e) => {

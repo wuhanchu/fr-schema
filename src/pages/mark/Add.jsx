@@ -160,7 +160,7 @@ class List extends DataList {
                 fixed: "right",
                 render: (text, record) => (
                     <>
-                        {showEdit && (
+                        {record.status !== 1 && (
                             <>
                                 <a
                                     onClick={() =>
@@ -180,9 +180,9 @@ class List extends DataList {
                                 </a>
                             </>
                         )}
-                        {showDelete && (
+                        {record.status === 0 && <Divider type="vertical" />}
+                        {record.status !== 2 && (
                             <>
-                                {showEdit && <Divider type="vertical" />}
                                 <Popconfirm
                                     title="是否要丢弃此行？"
                                     onConfirm={async (e) => {

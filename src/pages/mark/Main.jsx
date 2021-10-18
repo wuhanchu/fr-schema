@@ -76,7 +76,7 @@ class Main extends React.PureComponent {
         )
         return (
             <PageHeaderWrapper
-                title="标注"
+                title="问题库运维"
                 tabBarExtraContent={operations}
                 tabList={Object.keys(infoType).map((key) => ({
                     key: infoType[key],

@@ -34,7 +34,7 @@ const schema = {
             },
             deny: {
                 value: 2,
-                remark: "已放弃",
+                remark: "已丢弃",
             },
         },
         required: true,
@@ -94,7 +94,7 @@ service.delete = async (args) => {
         id: "in.(" + args.id + ")",
         status: 2,
     })
-    return { ...data, msg: "放弃成功" }
+    return { ...data, msg: "丢弃成功" }
 }
 service.append = async (args) => {
     let data = await createApi(
