@@ -32,7 +32,7 @@ const schema = {
         dict: {
             ready: {
                 value: 0,
-                remark: "准备中",
+                remark: "未处理",
             },
             end: {
                 value: 1,

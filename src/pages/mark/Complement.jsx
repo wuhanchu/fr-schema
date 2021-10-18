@@ -43,30 +43,18 @@ class List extends DataList {
     renderOperationMulit() {
         return (
             <span>
-                <>
-                    {
-                        <Popconfirm
-                            title="是否要补充选中的数据？"
-                            onConfirm={(e) => {
-                                const { dispatch } = this.props
-                                const { selectedRows } = this.state
-                                console.log(selectedRows)
-                                this.handldAppend(selectedRows)
-                                this.refreshList()
-                            }}
-                        >
-                            <Button type="primary">补充</Button>
-                        </Popconfirm>
-                    }
-                </>
                 {
                     <Popconfirm
                         title="是否要删除选中的数据？"
                         onConfirm={(e) => {
                             const { dispatch } = this.props
                             const { selectedRows } = this.state
-                            let idArray = selectedRows.map((item) => {
-                                return item.id
+                            let idArray = []
+                            selectedRows.map((item) => {
+                                if (item.status !== 1) {
+                                    idArray.push(item.id)
+                                }
+                                return item
                             })
                             let ids = idArray.join(",")
                             console.log(ids)
@@ -128,7 +116,7 @@ class List extends DataList {
                             </>
                         )}
                         {record.status === 0 && <Divider type="vertical" />}
-                        {record.status !== 2 && (
+                        {record.status !== 2 && record.status !== 1 && (
                             <>
                                 <Popconfirm
                                     title="是否要丢弃此行？"

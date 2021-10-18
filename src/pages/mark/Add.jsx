@@ -58,8 +58,12 @@ class List extends DataList {
                         onConfirm={(e) => {
                             const { dispatch } = this.props
                             const { selectedRows } = this.state
-                            let idArray = selectedRows.map((item) => {
-                                return item.id
+                            let idArray = []
+                            selectedRows.map((item) => {
+                                if (item.status !== 1) {
+                                    idArray.push(item.id)
+                                }
+                                return item
                             })
                             let ids = idArray.join(",")
                             console.log(ids)
@@ -181,7 +185,7 @@ class List extends DataList {
                             </>
                         )}
                         {record.status === 0 && <Divider type="vertical" />}
-                        {record.status !== 2 && (
+                        {record.status !== 2 && record.status !== 1 && (
                             <>
                                 <Popconfirm
                                     title="是否要丢弃此行？"
