@@ -2,6 +2,7 @@ import { createApi } from "@/outter/fr-schema/src/service"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import moment from "moment"
 import { Tooltip } from "antd"
+import { isNull } from "lodash"
 
 const schema = {
     create_time: {
@@ -41,6 +42,50 @@ const schema = {
                 value: false,
                 remark: "否",
             },
+        },
+    },
+    have_match_project_id: {
+        title: "有无匹配",
+        type: schemaFieldType.Select,
+        dict: {
+            have: {
+                value: "have",
+                remark: "有匹配",
+            },
+            notHave: {
+                value: "notHave",
+                remark: "无匹配",
+            },
+        },
+        render: (item, data) => {
+            if (data.match_project_id) {
+                return "有处理"
+            } else {
+                return "无处理"
+            }
+        },
+    },
+    task_id: {
+        title: "有无处理",
+        type: schemaFieldType.Select,
+        dict: {
+            have: {
+                value: "have",
+                remark: "有处理",
+            },
+            notHave: {
+                value: "notHave",
+                remark: "无处理",
+            },
+        },
+        render: (item, data) => {
+            console.log(data)
+            console.log(typeof item)
+            if (data.task_id === null) {
+                return "无处理"
+            } else {
+                return "有处理"
+            }
         },
     },
     match_project_id: {
@@ -85,6 +130,23 @@ service.get = async (args) => {
         args.create_time = undefined
         args.and = `(create_time.gte.${beginTime},create_time.lte.${endTime})`
     }
+    if (args.have_match_project_id) {
+        if (args.have_match_project_id === "have") {
+            args.match_project_id = "not.is.null"
+        }
+        if (args.have_match_project_id === "notHave") {
+            args.match_project_id = "is.null"
+        }
+    }
+    if (args.task_id) {
+        if (args.task_id === "have") {
+            args.task_id = "not.is.null"
+        }
+        if (args.task_id === "notHave") {
+            args.task_id = "is.null"
+        }
+    }
+    args.have_match_project_id = undefined
 
     let data = await createApi("search_history", schema, null, "eq.").get(args)
     return data

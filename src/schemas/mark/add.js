@@ -1,6 +1,6 @@
 import { createApi } from "@/outter/fr-schema/src/service"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
-import { DatePicker } from "antd"
+import { DatePicker, Tooltip } from "antd"
 import moment from "moment"
 import { verifyJson } from "@/outter/fr-schema-antd-utils/src/utils/component"
 const { RangePicker } = DatePicker
@@ -51,14 +51,23 @@ const schema = {
         title: "文本列表",
         style: { width: "500px" },
         render: (data) => {
-            console.log(data)
             return (
-                <div>
-                    {data &&
-                        data.map((item) => {
-                            return <div>{item}</div>
-                        })}
-                </div>
+                <Tooltip title={data ? data.join(" | ") : ""}>
+                    <div
+                        style={{
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                            maxWidth: "400px",
+                        }}
+                    >
+                        {data && data.join(" | ")}
+                    </div>
+                </Tooltip>
+                // <div>
+                //     {data &&
+                //         data.join(" | ")}
+                // </div>
             )
         },
         type: schemaFieldType.TextArea,

@@ -179,7 +179,13 @@ class MyList extends DataList {
     }
 
     renderSearchBar() {
-        const { search, create_time, user_confirm } = this.schema
+        const {
+            search,
+            create_time,
+            user_confirm,
+            have_match_project_id,
+            task_id,
+        } = this.schema
 
         const filters = this.createFilters(
             {
@@ -204,6 +210,8 @@ class MyList extends DataList {
                         },
                     },
                 },
+                have_match_project_id,
+                task_id,
             },
             5
         )
