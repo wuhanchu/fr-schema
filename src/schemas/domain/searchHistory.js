@@ -45,7 +45,7 @@ const schema = {
         },
     },
     have_match_project_id: {
-        title: "有无匹配",
+        title: "匹配情况",
         type: schemaFieldType.Select,
         dict: {
             have: {
@@ -66,7 +66,7 @@ const schema = {
         },
     },
     task_id: {
-        title: "有无处理",
+        title: "处理状态",
         type: schemaFieldType.Select,
         dict: {
             have: {
