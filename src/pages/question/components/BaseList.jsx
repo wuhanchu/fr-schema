@@ -843,7 +843,7 @@ class BaseList extends EditPage {
     // 数据扩展
     dataExtra(item) {
         item.question_extend =
-            item.question_extend && item.question_extend.split("\n")
+            item.question_extend ? item.question_extend.split("\n") : []
     }
 }
 
