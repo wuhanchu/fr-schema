@@ -1,5 +1,7 @@
 import { connect } from "dva"
 import ListPage from "@/outter/fr-schema-antd-utils/src/components/Page/ListPage"
+import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
+
 import schemas from "@/schemas"
 import React from "react"
 import { Form } from "@ant-design/compatible"
@@ -10,6 +12,7 @@ import ChartModal from "./Flow"
 import { exportData } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
 import ImportModal from "@/outter/fr-schema-antd-utils/src/components/modal/ImportModal"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
+import { async } from "@antv/x6/lib/registry/marker/main"
 
 const { decorateList } = frSchema
 
@@ -28,10 +31,12 @@ class List extends ListPage {
             schema: schemas.flow.schema,
             service: schemas.flow.service,
             importTemplateUrl,
-            operateWidth: "190px",
+            operateWidth: "270px",
+            // infoProps: {
+            //     width: "900px",
+            // },
         })
         this.schema.domain_key.dict = this.props.dict.domain
-        console.log(props)
     }
 
     renderOperateColumnExtend(record) {
@@ -46,12 +51,24 @@ class List extends ListPage {
                 >
                     流程编辑
                 </a>
+                <Divider type="vertical" />
+                <a
+                    onClick={() => {
+                        this.setState({
+                            record,
+                            visibleCodeModal: true,
+                            infoData: record,
+                        })
+                    }}
+                >
+                    流程代码
+                </a>
             </>
         )
     }
 
     renderExtend() {
-        const { visibleFlow, record } = this.state
+        const { visibleFlow, record, visibleCodeModal } = this.state
         return (
             <>
                 <Modal
@@ -84,6 +101,7 @@ class List extends ListPage {
                         service={this.service}
                     />
                 </Modal>
+                {visibleCodeModal && this.renderCodeModal()}
             </>
         )
     }
@@ -129,6 +147,63 @@ class List extends ListPage {
         )
     }
 
+    handleCodeVisibleModal = (flag, record, action) => {
+        this.setState({
+            visibleCodeModal: !!flag,
+            infoData: record,
+            action,
+        })
+    }
+
+    renderCodeModal(customProps = {}) {
+        if (this.props.renderInfoModal) {
+            return this.props.renderInfoModal()
+        }
+        const { form } = this.props
+        const renderForm = this.props.renderForm || this.renderForm
+        const { resource, title, addArgs } = this.meta
+        const { visibleCodeModal, infoData, action } = this.state
+        const updateMethods = {
+            handleVisibleModal: this.handleCodeVisibleModal.bind(this),
+            handleUpdate: async (args) => {
+                await this.handleUpdate({
+                    ...args,
+                    domain_key: infoData.domain_key,
+                    key: infoData.key,
+                }),
+                    this.setState({ visibleCodeModal: false })
+            },
+            handleAdd: this.handleAdd.bind(this),
+        }
+        return (
+            visibleCodeModal && (
+                <InfoModal
+                    renderForm={renderForm}
+                    title={title}
+                    action={"edit"}
+                    resource={resource}
+                    {...updateMethods}
+                    visible={visibleCodeModal}
+                    values={infoData}
+                    addArgs={addArgs}
+                    meta={this.meta}
+                    service={this.service}
+                    schema={{
+                        config: {
+                            ...this.schema.config,
+                            isNoTitle: true,
+                            editHide: false,
+                            span: 24,
+                        },
+                    }}
+                    {...this.meta.infoProps}
+                    {...customProps}
+                    width={"952px"}
+                />
+            )
+        )
+    }
+
     handleVisibleExportModal = (flag, record, action) => {
         this.setState({
             visibleExport: !!flag,
@@ -151,11 +226,6 @@ class List extends ListPage {
                 return !item.isExpand && item.key !== "external_id"
             })
             let columns = [
-                {
-                    title: "编号",
-                    dataIndex: "id",
-                    key: "id",
-                },
                 column[0],
                 {
                     title: "名称",
@@ -203,7 +273,6 @@ class List extends ListPage {
                     ...this.schema,
                     config: { title: "流程配置" },
                     intent_key: { title: "意图" },
-                    id: { title: "编号" },
                 }}
                 errorKey={"question_standard"}
                 title={"导入"}
@@ -220,7 +289,6 @@ class List extends ListPage {
                                 intent_key: [],
                             }
                         })
-                        console.log(data)
                         await this.service.upInsert(data)
                     } catch (e) {
                         message.error(e.message)
