@@ -1,21 +1,21 @@
-import {connect} from "dva"
+import { connect } from "dva"
 import ListPage from "@/outter/fr-schema-antd-utils/src/components/Page/ListPage"
 import schemas from "@/schemas"
 import React from "react"
 import "@ant-design/compatible/assets/index.css"
-import {Form, Select, Input, Modal, Button, Spin} from 'antd';
-import {autobind} from 'core-decorators';
-import {globalStyle} from "@/outter/fr-schema-antd-utils/src/styles/global";
-import AceEditor from 'react-ace';
-import frSchema from "@/outter/fr-schema/src";
+import { Form, Select, Input, Modal, Button, Spin } from "antd"
+import { autobind } from "core-decorators"
+import { globalStyle } from "@/outter/fr-schema-antd-utils/src/styles/global"
+import AceEditor from "react-ace"
+import frSchema from "@/outter/fr-schema/src"
 
-const {actions, getPrimaryKey} = frSchema
-import 'ace-builds/src-noconflict/mode-json';
-import 'ace-builds/src-noconflict/theme-github';
-import 'ace-builds/src-noconflict/ext-language_tools';
-import {PlusOutlined, MinusCircleOutlined} from '@ant-design/icons';
+const { actions, getPrimaryKey } = frSchema
+import "ace-builds/src-noconflict/mode-json"
+import "ace-builds/src-noconflict/theme-github"
+import "ace-builds/src-noconflict/ext-language_tools"
+import { PlusOutlined, MinusCircleOutlined } from "@ant-design/icons"
 
-@connect(({global}) => ({
+@connect(({ global }) => ({
     dict: global.dict,
 }))
 @autobind
@@ -29,23 +29,22 @@ class List extends ListPage {
                 width: "900px",
             },
         })
-        this.schema.domain_key.dict = this.props.dict.domain;
+        this.schema.domain_key.dict = this.props.dict.domain
         this.state = {
             ...this.state,
             intentList: [],
             domainList: [],
             modalLoading: false,
         }
-
     }
 
     async componentDidMount() {
         this.domainDictToList()
-        super.componentDidMount();
+        super.componentDidMount()
     }
 
     renderSearchBar() {
-        const {name, key, domain_key} = this.schema
+        const { name, key, domain_key } = this.schema
         const filters = this.createFilters(
             {
                 domain_key,
@@ -64,22 +63,28 @@ class List extends ListPage {
      * @returns {*}
      */
     renderInfoModal(customProps = {}) {
-        let {infoData, intentList, visibleModal, domainList, modalLoading} = this.state;
+        let {
+            infoData,
+            intentList,
+            visibleModal,
+            domainList,
+            modalLoading,
+        } = this.state
         return (
             <Modal
                 width={700}
                 visible={visibleModal}
                 destroyOnClose
                 title={"回应信息"}
-                onCancel={_ => this.setState({visibleModal: false})}
-                onOk={_ => this.handleSave()}
+                onCancel={(_) => this.setState({ visibleModal: false })}
+                onOk={(_) => this.handleSave()}
             >
                 <Spin spinning={modalLoading}>
                     <Form
                         ref={this.formRef}
                         labelCol={{
-                            sm: {span: 24},
-                            md: {span: 4}
+                            sm: { span: 24 },
+                            md: { span: 4 },
                         }}
                         wrapperCol={globalStyle.form.wrapperCol}
                         initialValues={infoData}
@@ -87,54 +92,59 @@ class List extends ListPage {
                         <Form.Item
                             label="域"
                             name="domain_key"
-                            rules={[{required: true, message: '请选择域'}]}
+                            rules={[{ required: true, message: "请选择域" }]}
                         >
-                            <Select onChange={(value) => this.findIntentList(value)} placeholder="请选择域">
+                            <Select
+                                onChange={(value) => this.findIntentList(value)}
+                                placeholder="请选择域"
+                            >
                                 {domainList.map((item) => (
-                                    <Select.Option value={item.value} key={item.value}>{item.label}</Select.Option>
+                                    <Select.Option
+                                        value={item.value}
+                                        key={item.value}
+                                    >
+                                        {item.label}
+                                    </Select.Option>
                                 ))}
                             </Select>
                         </Form.Item>
                         <Form.Item
                             label="名称"
                             name="name"
-                            rules={[{required: true, message: '请输入名称'}]}
+                            rules={[{ required: true, message: "请输入名称" }]}
                         >
-                            <Input placeholder="请输入名称"/>
+                            <Input placeholder="请输入名称" />
                         </Form.Item>
                         <Form.Item
                             label="编码"
                             name="key"
-                            rules={[{required: true, message: '请输入编码'}]}
+                            rules={[{ required: true, message: "请输入编码" }]}
                         >
-                            <Input placeholder="请输入编码"/>
+                            <Input placeholder="请输入编码" />
                         </Form.Item>
-                        <Form.Item
-                            label="意图"
-                            name="intent_key"
-                        >
+                        <Form.Item label="意图" name="intent_key">
                             <Select mode="tags" placeholder="请选择意图">
                                 {intentList.map((item) => (
-                                    <Select.Option value={item.key} key={item.id}>{item.name}</Select.Option>
+                                    <Select.Option
+                                        value={item.key}
+                                        key={item.id}
+                                    >
+                                        {item.name}
+                                    </Select.Option>
                                 ))}
                             </Select>
                         </Form.Item>
-                        <Form.Item
-                            label="回复文本"
-                            name="template_text"
-                        >
-                            <Input.TextArea placeholder="请输入回复文本"/>
+                        <Form.Item label="回复文本" name="template_text">
+                            <Input.TextArea placeholder="请输入回复文本" />
                         </Form.Item>
-                        <Form.List
-                            name="texts"
-                        >
-                            {(fields, {add, remove}, {errors}) => (
+                        <Form.List name="texts">
+                            {(fields, { add, remove }, { errors }) => (
                                 <>
                                     {fields.map((field, index) => (
                                         <Form.Item
                                             wrapperCol={{
-                                                xs: {span: 24, offset: 0},
-                                                sm: {span: 20, offset: 4},
+                                                xs: { span: 24, offset: 0 },
+                                                sm: { span: 20, offset: 4 },
                                             }}
                                             required={false}
                                             key={field.key}
@@ -142,36 +152,44 @@ class List extends ListPage {
                                         >
                                             <Form.Item
                                                 {...field}
-                                                validateTrigger={['onChange', 'onBlur']}
+                                                validateTrigger={[
+                                                    "onChange",
+                                                    "onBlur",
+                                                ]}
                                                 noStyle
                                             >
-                                                <Input.TextArea placeholder="请输入回复文本" style={{width: '90%'}}/>
+                                                <Input.TextArea
+                                                    placeholder="请输入回复文本"
+                                                    style={{ width: "90%" }}
+                                                />
                                             </Form.Item>
                                             <MinusCircleOutlined
-                                                onClick={() => remove(field.name)}
+                                                onClick={() =>
+                                                    remove(field.name)
+                                                }
                                                 style={{
-                                                    position: 'relative',
-                                                    top: '0',
-                                                    marginLeft: '8px',
-                                                    color: '#999',
-                                                    fontSize: '24px',
-                                                    cursor: 'pointer',
-                                                    transition: 'all 0.3s'
+                                                    position: "relative",
+                                                    top: "0",
+                                                    marginLeft: "8px",
+                                                    color: "#999",
+                                                    fontSize: "24px",
+                                                    cursor: "pointer",
+                                                    transition: "all 0.3s",
                                                 }}
                                             />
                                         </Form.Item>
                                     ))}
                                     <Form.Item
                                         wrapperCol={{
-                                            xs: {span: 24, offset: 0},
-                                            sm: {span: 20, offset: 4},
+                                            xs: { span: 24, offset: 0 },
+                                            sm: { span: 20, offset: 4 },
                                         }}
                                     >
                                         <Button
                                             type="dashed"
                                             onClick={() => add()}
-                                            style={{width: '60%'}}
-                                            icon={<PlusOutlined/>}
+                                            style={{ width: "60%" }}
+                                            icon={<PlusOutlined />}
                                         >
                                             添加新的回复文本
                                         </Button>
@@ -179,11 +197,8 @@ class List extends ListPage {
                                 </>
                             )}
                         </Form.List>
-                        <Form.Item
-                            label="模板"
-                            name="template"
-                        >
-                            {this.renderAce('template')}
+                        <Form.Item label="回复模板" name="template">
+                            {this.renderAce("template")}
                         </Form.Item>
                     </Form>
                 </Spin>
@@ -191,20 +206,24 @@ class List extends ListPage {
         )
     }
 
-    renderAce(key = 'template') {
-        let {infoData, AceEditorValue} = this.state;
+    renderAce(key = "template") {
+        let { infoData, AceEditorValue } = this.state
         if (infoData[key]) {
-            AceEditorValue = JSON.stringify(infoData[key], null, '\t');
+            AceEditorValue = JSON.stringify(infoData[key], null, "\t")
         }
-        if (this.form && this.form.current && this.form.current.getFieldsValue()[key]) {
-            if (typeof this.form.current.getFieldsValue()[key] === 'object') {
+        if (
+            this.form &&
+            this.form.current &&
+            this.form.current.getFieldsValue()[key]
+        ) {
+            if (typeof this.form.current.getFieldsValue()[key] === "object") {
                 AceEditorValue = JSON.stringify(
                     this.form.current.getFieldsValue()[key],
                     null,
-                    '\t',
-                );
+                    "\t"
+                )
             } else {
-                AceEditorValue = this.form.current.getFieldsValue()[key];
+                AceEditorValue = this.form.current.getFieldsValue()[key]
             }
         }
         return (
@@ -216,19 +235,19 @@ class List extends ListPage {
                     name="blah2"
                     wrapEnabled={true}
                     onChange={(res) => {
-                        const obj = {};
-                        obj[key] = res;
+                        const obj = {}
+                        obj[key] = res
                         try {
-                            this.formRef.current.setFieldsValue(obj);
+                            this.formRef.current.setFieldsValue(obj)
                         } catch (error) {
-                            console.info('error', error)
+                            console.info("error", error)
                         }
                     }}
                     fontSize={14}
                     showPrintMargin
                     showGutter
-                    style={{width: '500px'}}
-                    height={'400px'}
+                    style={{ width: "500px" }}
+                    height={"400px"}
                     highlightActiveLine
                     value={AceEditorValue}
                     markers={[
@@ -237,8 +256,8 @@ class List extends ListPage {
                             startCol: 2,
                             endRow: 1,
                             endCol: 20,
-                            className: 'error-marker',
-                            type: 'background',
+                            className: "error-marker",
+                            type: "background",
                         },
                     ]}
                     setOptions={{
@@ -260,15 +279,15 @@ class List extends ListPage {
      * @param action
      */
     handleVisibleModal = async (flag, record, action) => {
-        let {infoData} = this.state;
+        let { infoData } = this.state
         infoData = {}
-        if (action === 'edit') {
+        if (action === "edit") {
             infoData = JSON.parse(JSON.stringify(record))
             infoData.intent_key = infoData.intent_key || undefined
-            await this.findIntentList(record.domain_key);
+            await this.findIntentList(record.domain_key)
             if (infoData.template_text && infoData.template_text.length > 1) {
                 infoData.texts = infoData.template_text.splice(1)
-                infoData.template_text = infoData.template_text.toString();
+                infoData.template_text = infoData.template_text.toString()
             }
         }
         this.setState({
@@ -282,15 +301,15 @@ class List extends ListPage {
      * 确认保存
      */
     handleSave = () => {
-        const {values, infoData, action, addArgs} = this.state
+        const { values, infoData, action, addArgs } = this.state
 
-        this.setState({loadingSubmit: true})
+        this.setState({ loadingSubmit: true })
 
         this.formRef.current
             .validateFields()
-            .then(async fieldsValue => {
-                this.setState({modalLoading: true})
-                let param = addArgs ? {...addArgs} : {}
+            .then(async (fieldsValue) => {
+                this.setState({ modalLoading: true })
+                let param = addArgs ? { ...addArgs } : {}
                 const idKey = getPrimaryKey(this.schema)
 
                 // set the id value
@@ -298,54 +317,63 @@ class List extends ListPage {
                     const idValue = values[idKey || "id"]
                     idValue && (param[idKey] = idValue)
                 }
-                let {texts, template_text, ...other} = fieldsValue;
+                let { texts, template_text, ...other } = fieldsValue
                 // 新的回复文本
-                if (fieldsValue['texts']) {
+                if (fieldsValue["texts"]) {
                     // 判断是否需要插入
-                    fieldsValue['template_text'] && fieldsValue['texts'].unshift(fieldsValue['template_text'])
-                    fieldsValue['template_text'] = fieldsValue['texts']
+                    fieldsValue["template_text"] &&
+                        fieldsValue["texts"].unshift(
+                            fieldsValue["template_text"]
+                        )
+                    fieldsValue["template_text"] = fieldsValue["texts"]
                 } else {
-                    fieldsValue['template_text'] = fieldsValue['template_text'] ? [fieldsValue['template_text']] : []
+                    fieldsValue["template_text"] = fieldsValue["template_text"]
+                        ? [fieldsValue["template_text"]]
+                        : []
                 }
 
-                Object.keys(other).forEach(key => {
+                Object.keys(other).forEach((key) => {
                     param[key] =
                         fieldsValue[key] instanceof Array &&
                         fieldsValue[key][0] instanceof String
                             ? fieldsValue[key].join(",")
                             : fieldsValue[key]
                 })
-                param['template_text'] = fieldsValue['template_text']
+                param["template_text"] = fieldsValue["template_text"]
                 if (action === actions.edit) {
-                    param.id = infoData.id;
+                    param.id = infoData.id
                     await this.handleUpdate(param, this.schema)
                 } else {
                     await this.handleAdd(param, this.schema)
                 }
-                this.setState({visibleModal: false})
+                this.setState({ visibleModal: false })
             })
-            .catch(err => {
+            .catch((err) => {
                 console.log("err", err)
-            }).finally(_ => {
-            this.setState({loadingSubmit: false, modalLoading: false})
-        })
+            })
+            .finally((_) => {
+                this.setState({ loadingSubmit: false, modalLoading: false })
+            })
     }
 
     // 获取意图列表
     async findIntentList(domainKey) {
-        this.formRef.current.setFieldsValue({intent_key: undefined})
-        let res = await schemas.intent.service.get({domain_key: domainKey, pageSize: 10000})
-        this.setState({intentList: res.list})
+        this.formRef.current.setFieldsValue({ intent_key: undefined })
+        let res = await schemas.intent.service.get({
+            domain_key: domainKey,
+            pageSize: 10000,
+        })
+        this.setState({ intentList: res.list })
     }
 
     // 域字典->列表
-    domainDictToList(key = 'key') {
+    domainDictToList(key = "key") {
         let dict = this.props.dict.domain
-        let list = [];
+        let list = []
         for (let item in dict) {
-            list.push({value: dict[item][key], label: dict[item].remark});
+            list.push({ value: dict[item][key], label: dict[item].remark })
         }
-        this.setState({domainList: [...list]})
+        this.setState({ domainList: [...list] })
     }
 }
 

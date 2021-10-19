@@ -15,6 +15,7 @@ import {
     startDragToGraph,
 } from "./methods"
 import clone from "clone"
+import keyboardJS from "keyboardjs"
 import Ellipse from "./ellipse.svg"
 import RightDrawer from "./RightDrawer"
 import { ExclamationCircleOutlined } from "@ant-design/icons"
@@ -28,6 +29,7 @@ const ZSSelectStyle = styled(Select)`
     }
 `
 class Flow extends React.PureComponent {
+    keyBindMethods = []
     constructor(props) {
         super(props)
         this.state = {
@@ -62,6 +64,48 @@ class Flow extends React.PureComponent {
         this.setState({ historyList: res.list })
     }
 
+    bindKey() {
+        let method = null
+        let key
+
+        key = "ctrl + z"
+        method = (e) => {
+            e.preventDefault()
+            this.undoOperate()
+        }
+        keyboardJS.bind(key, method)
+        this.keyBindMethods.push({
+            key,
+            method,
+        })
+
+        key = "delete"
+        method = (e) => {
+            e.preventDefault()
+            this.deleteNode()
+        }
+        keyboardJS.bind(key, method)
+        this.keyBindMethods.push({
+            key,
+            method,
+        })
+
+        key = "ctrl + shift + z"
+        method = (e) => {
+            e.preventDefault()
+            this.redoOperate()
+        }
+        keyboardJS.bind(key, method)
+        this.keyBindMethods.push({
+            key,
+            method,
+        })
+    }
+    componentWillUnmount = () => {
+        this.keyBindMethods.forEach(({ key, method }) => {
+            keyboardJS.unbind(key, method)
+        })
+    }
     async componentDidMount() {
         const { record } = this.props
         await this.initData()
@@ -75,6 +119,7 @@ class Flow extends React.PureComponent {
             key: record.key,
             domain_key: record.domain_key,
         }
+        this.bindKey()
     }
 
     render() {
@@ -178,7 +223,7 @@ class Flow extends React.PureComponent {
                             value={this.state.historyIndex}
                             placeholder={"选择历史版本"}
                             style={{ textAlign: "right", width: "200px" }}
-                            onChange={this.onHistoryChange.bind(this)}
+                            onSelect={this.onHistoryChange.bind(this)}
                         >
                             {this.state.historyList &&
                                 this.state.historyList.map((item, index) => {

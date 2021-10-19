@@ -350,7 +350,6 @@ export function initGraph(expGraphData, callback, graphChange) {
             if (cellView.cell.getProp("customLinkInteractions")) {
                 return { vertexAdd: false }
             }
-            console.log(cellView)
             graphChange()
             return true
         },
@@ -397,11 +396,12 @@ export function initGraph(expGraphData, callback, graphChange) {
     graph.history.undo()
     graph.on(
         "node:mouseenter",
-        FunctionExt.debounce(() => {
+        (item, data) => {
             const container = document.getElementById("containerChart")
             const ports = container.querySelectorAll(".x6-port-body")
             showPorts(ports, true)
-        }),
+            console.log(item, data)
+        },
         500
     )
     graph.on("node:mouseleave", () => {
