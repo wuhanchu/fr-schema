@@ -110,7 +110,14 @@ class EditPage extends DataList {
     // 修改数据
     editData(record) {
         let newData = [...this.state.data.list];
-        this.state.editRow.push(record);
+        let idx = this.state.editRow.findIndex((value) => {
+            return value.id === record.id
+        })
+        if (idx !== -1) {
+            this.state.editRow.splice(idx, 1, {...record});
+        } else {
+            this.state.editRow.push(record);
+        }
         const index = newData.findIndex((item) => record.id === item.id);
         const item = newData[index];
         newData.splice(index, 1, {...item, ...record});
@@ -157,12 +164,6 @@ class EditPage extends DataList {
             return
         }
         this.setState({listLoading: true})
-        let obj = {}
-        // 过滤重复数据
-        this.state.editRow = this.state.editRow.reduce(function (item, next) {
-            obj[next.id] ? "" : (obj[next.id] = true && item.push(next))
-            return item
-        }, [])
         // 获取所有编辑的字段
         for (let param in this.schema) {
             if (this.schema[param].editable) {
