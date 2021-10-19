@@ -289,7 +289,19 @@ export function createEdgeFunc(args) {
         zIndex: 0,
 
         tools: [
-            // { name: 'source-arrowhead' },
+            {
+                name: "source-arrowhead",
+                args: {
+                    tagName: "circle",
+                    attrs: {
+                        r: 4,
+                        fill: "#1890ff",
+                        stroke: "#1890ff",
+                        "stroke-width": 4,
+                        cursor: "move",
+                    },
+                },
+            },
             {
                 name: "target-arrowhead",
                 args: {
@@ -441,7 +453,7 @@ export function isError(data, graph) {
         return item.name
     })
     data.config.connection.map((item) => {
-        if (!item.name) {
+        if (!item.name || !item.begin) {
             let cell = graph.getCellById(item.key)
             cell.attr("line/stroke", "#ff4d4f")
             isTrue = false
