@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { Input, Form, Button, Select, Divider, Tooltip } from "antd"
+import { Input, Form, Button, Select, Divider, Tooltip, message } from "antd"
 import "antd/lib/style/index.css"
 import Modal from "antd/lib/modal/Modal"
 import clone from "clone"
@@ -48,8 +48,6 @@ export const ActionModal = ({
             })
     })
     const onFinish = (values) => {
-        console.log(values)
-        console.log(typeof values.param)
         if (values.param && typeof values.param !== "object") {
             try {
                 values.param = JSON.parse(values.param)
@@ -344,6 +342,17 @@ export const ActionModal = ({
                                 let key = defaultValue.key || isImport
                                 let myActions = clone(actions)
                                 let values = formRef.current.getFieldsValue()
+                                if (
+                                    values.param &&
+                                    typeof values.param !== "object"
+                                ) {
+                                    try {
+                                        values.param = JSON.parse(values.param)
+                                    } catch (error) {
+                                        message.error("json格式错误")
+                                        return
+                                    }
+                                }
                                 let actionKey = uuidv4()
                                 myActions.push({
                                     ...values,
@@ -401,6 +410,17 @@ export const ActionModal = ({
                                 }
 
                                 let values = formRef.current.getFieldsValue()
+                                if (
+                                    values.param &&
+                                    typeof values.param !== "object"
+                                ) {
+                                    try {
+                                        values.param = JSON.parse(values.param)
+                                    } catch (error) {
+                                        message.error("json格式错误")
+                                        return
+                                    }
+                                }
                                 let arr = expGraph.action.map((item) => {
                                     if (item.key === key) {
                                         return { ...values, key: key }
