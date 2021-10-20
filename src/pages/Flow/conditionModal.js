@@ -1,11 +1,12 @@
 import React, { useState } from "react"
-import { Input, Form, Button, Select, Divider, TreeSelect } from "antd"
+import { Input, Form, Button, Select, Divider, TreeSelect, message } from "antd"
 import "antd/lib/style/index.css"
 import Modal from "antd/lib/modal/Modal"
 import clone from "clone"
 import AceEditor from "react-ace"
 import "ace-builds/src-noconflict/mode-json"
 import { v4 as uuidv4 } from "uuid"
+import { verifyJson } from "@/outter/fr-schema-antd-utils/src/utils/component"
 
 import "ace-builds/src-noconflict/theme-github"
 import "ace-builds/src-noconflict/ext-language_tools"
@@ -35,6 +36,17 @@ export const ConditionModal = ({
     }
 
     const onFinish = (values) => {
+        console.log(values)
+        // return
+
+        if (values.slot) {
+            try {
+                values.slot = JSON.parse(values.slot)
+            } catch (error) {
+                message.error("json格式错误")
+                return
+            }
+        }
         let myConditions = clone(conditions)
         if (conditionType === "add") {
             let conditionKey = uuidv4()
@@ -134,7 +146,7 @@ export const ConditionModal = ({
                         treeDefaultExpandAll
                     />
                 </Form.Item>
-                <Form.Item label="槽位" name={"slot"}>
+                <Form.Item label="槽位" name={"slot"} rules={verifyJson}>
                     <div style={{ width: "489px" }}>
                         <AceEditor
                             placeholder={`请输入${"槽位"}`}
@@ -145,16 +157,10 @@ export const ConditionModal = ({
                             onChange={(res) => {
                                 const obj = {}
                                 obj["slot"] = res
-                                try {
-                                    formRef.current.setFieldsValue({
-                                        slot: undefined,
-                                    })
-                                    formRef.current.setFieldsValue({
-                                        slot: JSON.parse(res),
-                                    })
-                                } catch (error) {
-                                    console.log(error)
-                                }
+
+                                formRef.current.setFieldsValue({
+                                    slot: res,
+                                })
                             }}
                             fontSize={14}
                             showPrintMargin

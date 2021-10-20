@@ -179,7 +179,7 @@ class List extends ListPage {
             visibleCodeModal && (
                 <InfoModal
                     renderForm={renderForm}
-                    title={title}
+                    title={"流程代码"}
                     action={"edit"}
                     resource={resource}
                     {...updateMethods}
@@ -188,6 +188,8 @@ class List extends ListPage {
                     addArgs={addArgs}
                     meta={this.meta}
                     service={this.service}
+                    {...this.meta.infoProps}
+                    {...customProps}
                     schema={{
                         config: {
                             ...this.schema.config,
@@ -196,8 +198,7 @@ class List extends ListPage {
                             span: 24,
                         },
                     }}
-                    {...this.meta.infoProps}
-                    {...customProps}
+                    bodyStyle={{ paddingBottom: "0px" }}
                     width={"952px"}
                 />
             )

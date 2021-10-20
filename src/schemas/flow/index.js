@@ -49,7 +49,7 @@ const schema = {
         addHide: true,
         listHide: true,
         props: {
-            style: { width: "900px", marginBottom: "-24px" },
+            style: { width: "900px" },
             height: "500px",
         },
         type: schemaFieldType.AceEditor,

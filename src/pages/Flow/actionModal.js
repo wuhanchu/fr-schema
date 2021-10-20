@@ -5,6 +5,7 @@ import Modal from "antd/lib/modal/Modal"
 import clone from "clone"
 import AceEditor from "react-ace"
 import { v4 as uuidv4 } from "uuid"
+import { verifyJson } from "@/outter/fr-schema-antd-utils/src/utils/component"
 
 import "ace-builds/src-noconflict/mode-json"
 
@@ -47,6 +48,14 @@ export const ActionModal = ({
             })
     })
     const onFinish = (values) => {
+        if (values.param) {
+            try {
+                values.param = JSON.parse(values.param)
+            } catch (error) {
+                message.error("json格式错误")
+                return
+            }
+        }
         let myActions = clone(actions)
         if (actionType === "add") {
             let actionKey = uuidv4()
@@ -254,7 +263,7 @@ export const ActionModal = ({
                         defaultValue={initialValues.name}
                     />
                 </Form.Item>
-                <Form.Item label="参数" name={"param"}>
+                <Form.Item label="参数" name={"param"} rules={verifyJson}>
                     <div style={{ width: "489px" }}>
                         <AceEditor
                             placeholder={`请输入${"参数"}`}
@@ -265,16 +274,9 @@ export const ActionModal = ({
                             onChange={(res) => {
                                 const obj = {}
                                 obj["param"] = res
-                                try {
-                                    formRef.current.setFieldsValue({
-                                        param: undefined,
-                                    })
-                                    formRef.current.setFieldsValue({
-                                        param: JSON.parse(res),
-                                    })
-                                } catch (error) {
-                                    console.log(error)
-                                }
+                                formRef.current.setFieldsValue({
+                                    param: res,
+                                })
                             }}
                             fontSize={14}
                             showPrintMargin
