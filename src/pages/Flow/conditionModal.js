@@ -39,7 +39,7 @@ export const ConditionModal = ({
         console.log(values)
         // return
 
-        if (values.slot) {
+        if (values.slot && typeof values.slot !== "object") {
             try {
                 values.slot = JSON.parse(values.slot)
             } catch (error) {

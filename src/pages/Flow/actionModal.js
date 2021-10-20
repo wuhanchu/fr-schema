@@ -48,11 +48,11 @@ export const ActionModal = ({
             })
     })
     const onFinish = (values) => {
-        if (values.param) {
+        if (values.param && typeof values.param !== "object") {
             try {
                 values.param = JSON.parse(values.param)
             } catch (error) {
-                message.error("json格式错误")
+                // message.error("json格式错误")
                 return
             }
         }
