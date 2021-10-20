@@ -48,6 +48,8 @@ export const ActionModal = ({
             })
     })
     const onFinish = (values) => {
+        console.log(values)
+        console.log(typeof values.param)
         if (values.param && typeof values.param !== "object") {
             try {
                 values.param = JSON.parse(values.param)
