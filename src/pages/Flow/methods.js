@@ -380,6 +380,9 @@ export function initGraph(expGraphData, callback, graphChange) {
                 sourceMagnet,
                 targetMagnet,
             }) {
+                const container = document.getElementById("containerChart")
+                const ports = container.querySelectorAll(".x6-port-body")
+                showPorts(ports, true)
                 return callback(
                     sourceView,
                     targetView,
@@ -409,10 +412,14 @@ export function initGraph(expGraphData, callback, graphChange) {
     graph.on(
         "node:mouseenter",
         (item, data) => {
-            const container = document.getElementById("containerChart")
-            const ports = container.querySelectorAll(".x6-port-body")
+            let dom = getDom("g", "data-cell-id", item.cell.id)
+            console.log(dom[0])
+            // const container = document.getElementById("containerChart")
+            // const ports = container.querySelectorAll(".x6-port-body")
+            // const container = dom[0].getElementById("containerChart")
+            // console.log(container)
+            const ports = dom[0].querySelectorAll(".x6-port-body")
             showPorts(ports, true)
-            console.log(item, data)
         },
         500
     )
@@ -424,8 +431,18 @@ export function initGraph(expGraphData, callback, graphChange) {
 
     return graph
 }
+function getDom(tagName, name, value) {
+    var selectDom = []
+    var dom = document.getElementsByTagName(tagName)
+    for (var i = 0; i < dom.length; i++) {
+        if (value === dom[i].getAttribute(name)) {
+            selectDom.push(dom[i])
+        }
+    }
+    return selectDom
+}
 
-function showPorts(ports, show) {
+export function showPorts(ports, show) {
     for (let i = 0, len = ports.length; i < len; i = i + 1) {
         ports[i].style.visibility = show ? "visible" : "hidden"
     }

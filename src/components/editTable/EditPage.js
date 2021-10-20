@@ -1,14 +1,14 @@
-import React, {Fragment} from "react"
+import React, { Fragment } from "react"
 import frSchemaUtils from "@/outter/fr-schema-antd-utils/src"
-import {autobind} from "core-decorators"
+import { autobind } from "core-decorators"
 import frSchema from "@/outter/fr-schema/src"
 
-const {decorateList} = frSchema
-const {DataList} = frSchemaUtils.components
+const { decorateList } = frSchema
+const { DataList } = frSchemaUtils.components
 import EditTable from "@/components/editTable/EditTable"
-import {Button, message} from "antd"
-import * as _ from "lodash";
-import {schemaFieldType} from "@/outter/fr-schema/src/schema";
+import { Button, message } from "antd"
+import * as _ from "lodash"
+import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 
 @autobind
 class EditPage extends DataList {
@@ -25,7 +25,7 @@ class EditPage extends DataList {
             "project_id",
             "answer",
         ]
-        this.setState({editRow: [], commitParamStr: [...commitParamStr]})
+        this.setState({ editRow: [], commitParamStr: [...commitParamStr] })
     }
 
     componentWillUnmount() {
@@ -41,9 +41,9 @@ class EditPage extends DataList {
      * @returns {*}
      */
     renderList(inProps = {}) {
-        let {loading} = this.props
-        const {showSelect, scroll, mini, tableSelectAll} = this.meta
-        let {data, listLoading, selectedRows, tableFooter} = this.state
+        let { loading } = this.props
+        const { showSelect, scroll, mini, tableSelectAll } = this.meta
+        let { data, listLoading, selectedRows, tableFooter } = this.state
 
         // judge weather hide select
         let otherProps = {}
@@ -65,7 +65,7 @@ class EditPage extends DataList {
         let footer = ""
         // 列表底部 显示统计数据(如金额)
         tableFooter &&
-        tableFooter.map((item) => (footer += this.reduceTableTotal(item)))
+            tableFooter.map((item) => (footer += this.reduceTableTotal(item)))
         if (footer) {
             otherProps.footer = () => <div>{footer}</div>
         }
@@ -109,21 +109,21 @@ class EditPage extends DataList {
 
     // 修改数据
     editData(record) {
-        let newData = [...this.state.data.list];
+        let newData = [...this.state.data.list]
         let idx = this.state.editRow.findIndex((value) => {
             return value.id === record.id
         })
         if (idx !== -1) {
-            this.state.editRow.splice(idx, 1, {...record});
+            this.state.editRow.splice(idx, 1, { ...record })
         } else {
-            this.state.editRow.push(record);
+            this.state.editRow.push(record)
         }
-        const index = newData.findIndex((item) => record.id === item.id);
-        const item = newData[index];
-        newData.splice(index, 1, {...item, ...record});
-        newData = this.formatData(newData, this.schema);
+        const index = newData.findIndex((item) => record.id === item.id)
+        const item = newData[index]
+        newData.splice(index, 1, { ...item, ...record })
+        newData = this.formatData(newData, this.schema)
         this.setState({
-            data: {...this.state.data, list: [...newData]},
+            data: { ...this.state.data, list: [...newData] },
             editRow: [...this.state.editRow],
         })
     }
@@ -146,7 +146,7 @@ class EditPage extends DataList {
                     }
                     break
                 default:
-                    break;
+                    break
             }
         })
         return item
@@ -154,7 +154,10 @@ class EditPage extends DataList {
 
     // 重置修改数据
     resetEditData() {
-        this.setState({data: {...this.state.data, list: [...this.state.initList]}, editRow: []});
+        this.setState({
+            data: { ...this.state.data, list: [...this.state.initList] },
+            editRow: [],
+        })
     }
 
     // 点击保存修改
@@ -163,7 +166,7 @@ class EditPage extends DataList {
             message.info("您目前暂未修改任何数据")
             return
         }
-        this.setState({listLoading: true})
+        this.setState({ listLoading: true })
         // 获取所有编辑的字段
         for (let param in this.schema) {
             if (this.schema[param].editable) {
@@ -176,14 +179,14 @@ class EditPage extends DataList {
             for (let j = 0; j < this.state.commitParamStr.length; j++) {
                 item[this.state.commitParamStr[j]] = this.state.editRow[i][
                     this.state.commitParamStr[j]
-                    ]
+                ]
             }
             this.dataExtra(item)
-            this.state.editRow[i] = {...item}
+            this.state.editRow[i] = { ...item }
         }
         await this.updateService()
         message.success("保存成功")
-        this.setState({editRow: [], listLoading: false})
+        this.setState({ editRow: [], listLoading: false })
     }
 
     /**
@@ -192,16 +195,29 @@ class EditPage extends DataList {
      * @returns {*}
      */
     convertList(list) {
-        this.setState({initList: list})
+        this.setState({ initList: list })
         return list
     }
 
     // 数据扩展
-    dataExtra(item) {
-    }
+    dataExtra(item) {}
 
     // 修改接口
     async updateService() {
+        let expandSchema = Object.keys(this.schema).filter((item) => {
+            return this.schema[item].isExpand
+        })
+        let editRow = this.state.editRow
+        let expandKey = this.meta.expandKey
+        expandSchema.map((expandItem) => {
+            editRow = editRow.map((item, index) => {
+                item[expandKey] = { ...item[expandKey] }
+                if (item[expandItem])
+                    item[expandKey][expandItem] = item[expandItem]
+                item[expandItem] = undefined
+                return item
+            })
+        })
         await this.service.upInsert(this.state.editRow)
     }
 
@@ -209,13 +225,13 @@ class EditPage extends DataList {
      * 充值查询
      */
     handleFormReset = () => {
-        const {order} = this.props
+        const { order } = this.props
 
         this.formRef.current.resetFields()
         this.setState(
             {
-                pagination: {...this.state.pagination, currentPage: 1},
-                searchValues: {order},
+                pagination: { ...this.state.pagination, currentPage: 1 },
+                searchValues: { order },
                 editRow: [],
             },
             () => {

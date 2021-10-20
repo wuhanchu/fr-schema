@@ -13,6 +13,7 @@ import {
     isError,
     getTree,
     startDragToGraph,
+    showPorts,
 } from "./methods"
 import clone from "clone"
 import keyboardJS from "keyboardjs"
@@ -120,6 +121,9 @@ class Flow extends React.PureComponent {
             domain_key: record.domain_key,
         }
         this.bindKey()
+        const container = document.getElementById("containerChart")
+        const ports = container.querySelectorAll(".x6-port-body")
+        showPorts(ports, false)
     }
 
     render() {
