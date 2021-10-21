@@ -2,6 +2,13 @@ import { createApi } from "@/outter/fr-schema/src/service"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 
 const schema = {
+    id: {
+        title: "编号",
+        addHide: true,
+        editHide: true,
+        sorter: true,
+        width: "320px",
+    },
     domain_key: {
         title: "域",
         sorter: true,

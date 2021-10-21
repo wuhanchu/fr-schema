@@ -2,7 +2,7 @@ import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
 import schemas from "@/schemas"
 import Authorized from "@/outter/fr-schema-antd-utils/src/components/Authorized/Authorized"
-import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
+import InfoModal from "./InfoModal"
 import {
     Divider,
     Col,

@@ -7905,6 +7905,11 @@ cloneable-readable@^1.0.0:
     process-nextick-args "^2.0.0"
     readable-stream "^2.3.5"
 
+clsx@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.npm.taobao.org/clsx/download/clsx-1.1.1.tgz#98b3134f9abbdf23b2663491ace13c5c03a73188"
+  integrity sha1-mLMTT5q73yOyZjSRrOE8XAOnMYg=
+
 co@^4.6.0:
   version "4.6.0"
   resolved "https://registry.npm.taobao.org/co/download/co-4.6.0.tgz#6ea6bdf3d853ae54ccb8e47bfa0bf3f9031fb184"
@@ -9589,6 +9594,13 @@ draftjs-utils@^0.9.4:
   version "0.9.4"
   resolved "https://registry.npm.taobao.org/draftjs-utils/download/draftjs-utils-0.9.4.tgz#976c61aa133dbbbfedd65ae1dd6627d7b98c6f08"
   integrity sha1-l2xhqhM9u7/t1lrh3WYn17mMbwg=
+
+dragm@^0.0.5:
+  version "0.0.5"
+  resolved "https://registry.npm.taobao.org/dragm/download/dragm-0.0.5.tgz#2a0a60f93e849dd4ad9bbfe3c62071bceba6d090"
+  integrity sha1-Kgpg+T6EndStm7/jxiBxvOum0JA=
+  dependencies:
+    prop-types "^15.5.8"
 
 dumi-assets-types@^1.0.0-beta.0:
   version "1.0.0-beta.0"
@@ -17738,7 +17750,7 @@ prompts@^2.0.1:
     kleur "^3.0.3"
     sisteransi "^1.0.4"
 
-prop-types@15.x, prop-types@^15.5.10, prop-types@^15.5.4, prop-types@^15.5.6, prop-types@^15.5.7, prop-types@^15.5.8, prop-types@^15.6.1, prop-types@^15.6.2, prop-types@^15.7.2:
+prop-types@15.x, prop-types@^15.5.10, prop-types@^15.5.4, prop-types@^15.5.6, prop-types@^15.5.7, prop-types@^15.5.8, prop-types@^15.6.0, prop-types@^15.6.1, prop-types@^15.6.2, prop-types@^15.7.2:
   version "15.7.2"
   resolved "https://registry.npm.taobao.org/prop-types/download/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
   integrity sha1-UsQedbjIfnK52TYOAga5ncv/psU=
@@ -18884,6 +18896,14 @@ react-dom@^16.13.1:
     object-assign "^4.1.1"
     prop-types "^15.6.2"
     scheduler "^0.19.1"
+
+react-draggable@^4.4.4:
+  version "4.4.4"
+  resolved "https://registry.nlark.com/react-draggable/download/react-draggable-4.4.4.tgz#5b26d9996be63d32d285a426f41055de87e59b2f"
+  integrity sha1-WybZmWvmPTLShaQm9BBV3oflmy8=
+  dependencies:
+    clsx "^1.1.1"
+    prop-types "^15.6.0"
 
 react-error-overlay@6.0.8:
   version "6.0.8"
