@@ -204,11 +204,16 @@ class BaseList extends EditPage {
                 </AutoComplete.Option>
             )
         })
-        this.schema.group.renderInput = () => {
+        this.schema.group.renderInput = (item, data) => {
             return (
                 <AutoComplete
                     style={{ width: "100%", maxWidth: "300px" }}
                     placeholder="请输入分组"
+                    filterOption={(input, option) =>
+                        option.children
+                            .toLowerCase()
+                            .indexOf(input.toLowerCase()) >= 0
+                    }
                 >
                     {options}
                 </AutoComplete>
@@ -417,7 +422,15 @@ class BaseList extends EditPage {
         const updateMethods = {
             handleVisibleModal: this.handleVisibleModal.bind(this),
             handleUpdate: (args) => {
-                this.editData(args)
+                console.log(this.state)
+                let editData = this.state.editRow.filter((item) => {
+                    return item.id === args.id
+                })
+                let data =
+                    editData && editData[0]
+                        ? { ...editData[0], answer: args.answer }
+                        : args
+                this.editData(data)
                 this.setState({ visibleModal: false })
             },
             handleAdd: this.handleAdd.bind(this),

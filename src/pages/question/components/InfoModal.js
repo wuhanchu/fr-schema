@@ -5,7 +5,7 @@ import { message, Modal, Skeleton, Spin } from "antd"
 import InfoForm from "@/outter/fr-schema-antd-utils/src/components/Page/InfoForm"
 import frSchema from "@/outter/fr-schema/src"
 import DragModal from "@/components/Draggable/index"
-
+import AntdDraggableModal from "antd-draggable-modal"
 const { actions, getPrimaryKey } = frSchema
 const confirm = Modal.confirm
 
@@ -223,10 +223,12 @@ export class PureInfoModal extends PureComponent {
         }
 
         return (
-            <DragModal
+            <Modal
                 width={700}
                 destroyOnClose
                 title={title || "" + "信息"}
+                okText={"确定"}
+                cancelText={"取消"}
                 visible={true}
                 onOk={this.handleSave}
                 okButtonProps={{
@@ -245,7 +247,7 @@ export class PureInfoModal extends PureComponent {
                 ) : (
                     <Spin spinning={loadingSubmit}>{this.renderForm()}</Spin>
                 )}
-            </DragModal>
+            </Modal>
         )
     }
 }
