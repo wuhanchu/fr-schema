@@ -14,6 +14,7 @@ import {
     Spin,
     Empty,
     AutoComplete,
+    Input,
 } from "antd"
 import React from "react"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
@@ -196,12 +197,16 @@ class BaseList extends EditPage {
         let options = []
         Object.keys(groupDictList).forEach(function (key) {
             options.push(
-                <AutoComplete.Option
-                    key={groupDictList[key].value}
-                    value={groupDictList[key].value}
-                >
-                    {groupDictList[key].remark}
-                </AutoComplete.Option>
+                {
+                    key: groupDictList[key].value,
+                    value: groupDictList[key].value,
+                }
+                // <AutoComplete.Option
+                //     key={groupDictList[key].value}
+                //     value={groupDictList[key].value}
+                // >
+                //     {groupDictList[key].remark}
+                // </AutoComplete.Option>
             )
         })
         this.schema.group.renderInput = (item, data) => {
@@ -209,13 +214,15 @@ class BaseList extends EditPage {
                 <AutoComplete
                     style={{ width: "100%", maxWidth: "300px" }}
                     placeholder="请输入分组"
-                    filterOption={(input, option) =>
-                        option.children
-                            .toLowerCase()
-                            .indexOf(input.toLowerCase()) >= 0
+                    filterOption={(inputValue, option) =>
+                        option.value
+                            .toUpperCase()
+                            .indexOf(inputValue.toUpperCase()) !== -1
                     }
+                    options={options}
                 >
-                    {options}
+                    {/* {options} */}
+                    <Input placeholder="请输入分组"></Input>
                 </AutoComplete>
             )
         }
