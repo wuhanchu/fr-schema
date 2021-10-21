@@ -426,10 +426,12 @@ class BaseList extends EditPage {
                 let editData = this.state.editRow.filter((item) => {
                     return item.id === args.id
                 })
+
+                console.log(args)
                 let data =
                     editData && editData[0]
                         ? { ...editData[0], answer: args.answer }
-                        : args
+                        : { ...this.state.infoData, ...args }
                 this.editData(data)
                 this.setState({ visibleModal: false })
             },
