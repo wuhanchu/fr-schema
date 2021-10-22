@@ -223,7 +223,7 @@ export class PureInfoModal extends PureComponent {
         }
 
         return (
-            <Modal
+            <DragModal
                 width={700}
                 destroyOnClose
                 title={title || "" + "信息"}
@@ -247,7 +247,7 @@ export class PureInfoModal extends PureComponent {
                 ) : (
                     <Spin spinning={loadingSubmit}>{this.renderForm()}</Spin>
                 )}
-            </Modal>
+            </DragModal>
         )
     }
 }

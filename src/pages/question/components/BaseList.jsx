@@ -2,7 +2,9 @@ import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
 import schemas from "@/schemas"
 import Authorized from "@/outter/fr-schema-antd-utils/src/components/Authorized/Authorized"
-import InfoModal from "./InfoModal"
+import MyInfoModal from "./InfoModal"
+import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
+
 import {
     Divider,
     Col,
@@ -196,18 +198,10 @@ class BaseList extends EditPage {
         this.schema.group.dict = groupDictList
         let options = []
         Object.keys(groupDictList).forEach(function (key) {
-            options.push(
-                {
-                    key: groupDictList[key].value,
-                    value: groupDictList[key].value,
-                }
-                // <AutoComplete.Option
-                //     key={groupDictList[key].value}
-                //     value={groupDictList[key].value}
-                // >
-                //     {groupDictList[key].remark}
-                // </AutoComplete.Option>
-            )
+            options.push({
+                key: groupDictList[key].value,
+                value: groupDictList[key].value,
+            })
         })
         this.schema.group.renderInput = (item, data) => {
             return (
@@ -452,47 +446,93 @@ class BaseList extends EditPage {
                 offline: true,
             }
         }
-        return (
-            visibleModal && (
-                <InfoModal
-                    renderForm={renderForm}
-                    title={action !== "edit" ? title : "答案"}
-                    action={action}
-                    resource={resource}
-                    {...updateMethods}
-                    visible={visibleModal}
-                    values={infoData}
-                    addArgs={addArgs}
-                    meta={this.meta}
-                    service={this.service}
-                    schema={
-                        action !== "edit"
-                            ? this.schema
-                            : {
-                                  answer: {
-                                      ...this.schema.answer,
-                                      isNoTitle: true,
-                                      props: {
-                                          ...this.schema.answer.props,
-                                          style: {
-                                              ...this.schema.answer.props.style,
-                                              width: "700px",
-                                              marginTop: "-24px",
-                                              marginLeft: "-24px",
-                                              height: "436px",
-                                              marginBottom: "-48px",
-                                              border: false,
+        if (action !== "edit") {
+            return (
+                visibleModal && (
+                    <InfoModal
+                        renderForm={renderForm}
+                        title={action !== "edit" ? title : "答案"}
+                        action={action}
+                        resource={resource}
+                        {...updateMethods}
+                        visible={visibleModal}
+                        values={infoData}
+                        addArgs={addArgs}
+                        meta={this.meta}
+                        service={this.service}
+                        schema={
+                            action !== "edit"
+                                ? this.schema
+                                : {
+                                      answer: {
+                                          ...this.schema.answer,
+                                          isNoTitle: true,
+                                          props: {
+                                              ...this.schema.answer.props,
+                                              style: {
+                                                  ...this.schema.answer.props
+                                                      .style,
+                                                  width: "700px",
+                                                  marginTop: "-24px",
+                                                  marginLeft: "-24px",
+                                                  height: "436px",
+                                                  marginBottom: "-48px",
+                                                  border: false,
+                                              },
                                           },
+                                          span: 24,
                                       },
-                                      span: 24,
-                                  },
-                              }
-                    }
-                    {...customProps}
-                    {...infoProps}
-                />
+                                  }
+                        }
+                        {...customProps}
+                        {...infoProps}
+                    />
+                )
             )
-        )
+        } else {
+            return (
+                visibleModal && (
+                    <MyInfoModal
+                        renderForm={renderForm}
+                        title={action !== "edit" ? title : "答案"}
+                        action={action}
+                        resource={resource}
+                        {...updateMethods}
+                        visible={visibleModal}
+                        values={infoData}
+                        addArgs={addArgs}
+                        meta={this.meta}
+                        service={this.service}
+                        schema={
+                            action !== "edit"
+                                ? this.schema
+                                : {
+                                      answer: {
+                                          ...this.schema.answer,
+                                          isNoTitle: true,
+                                          props: {
+                                              ...this.schema.answer.props,
+                                              style: {
+                                                  ...this.schema.answer.props
+                                                      .style,
+                                                  width: "700px",
+                                                  marginTop: "-24px",
+                                                  marginLeft: "-24px",
+                                                  height: "436px",
+                                                  marginBottom: "-48px",
+                                                  border: false,
+                                              },
+                                          },
+                                          span: 24,
+                                      },
+                                  }
+                        }
+                        {...customProps}
+                        {...infoProps}
+                    />
+                )
+            )
+        }
     }
 
     handleUpload = async (file) => {
