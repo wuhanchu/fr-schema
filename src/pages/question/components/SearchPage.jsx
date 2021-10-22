@@ -38,6 +38,7 @@ async function init(props, project_id, setState, state) {
             // project_id:
             //     props.type === "domain_id" ? project_id : "eq." + project_id,
             domain_key: props.record && props.record.key,
+            project_id: props.record && props.record.project_id,
             limit: 500,
         })
         .then((response) => {
