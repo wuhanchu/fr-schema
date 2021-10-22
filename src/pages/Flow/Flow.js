@@ -520,9 +520,9 @@ class Flow extends React.PureComponent {
         ) {
             return false
         }
-        if (sourceView === targetView) {
-            return false
-        }
+        // if (sourceView === targetView) {
+        //     return false
+        // }
         let isTrue = true
         if (targetView && sourceView) {
             this.state.expGraphData.connection.map((item) => {
