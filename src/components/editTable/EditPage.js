@@ -90,6 +90,51 @@ class EditPage extends DataList {
         )
     }
 
+    async refreshList() {
+        if (!this.service || this.props.offline) {
+            this.setState({
+                data: {
+                    ...(this.state.data || {}),
+                    list:
+                        decorateList(
+                            this.state.data && this.state.data.list,
+                            this.schema
+                        ) || [],
+                },
+                listLoading: false,
+            })
+            return
+        }
+
+        this.setState({ listLoading: true }, async () => {
+            let data = await this.requestList()
+            let list = decorateList(data.list, this.schema)
+            this.convertList && (list = this.convertList(list))
+
+            this.setState({
+                selectedRows: [],
+                data: {
+                    ...data,
+                    list,
+                },
+                listLoading: false,
+            })
+            console.log("结果1")
+            // let { list } = this.state.data
+            this.state.editRow.map((item) => {
+                list.map((listItem, index) => {
+                    if (item.id === listItem.id) {
+                        list[index] = item
+                    }
+                })
+            })
+            console.log("data是", data)
+            console.log("list", list)
+            this.setState({
+                data: { ...this.state.data, list: [...list] },
+            })
+        })
+    }
     renderOperationExtend() {
         return (
             <>
@@ -158,6 +203,7 @@ class EditPage extends DataList {
             data: { ...this.state.data, list: [...this.state.initList] },
             editRow: [],
         })
+        this.refreshList()
     }
 
     // 点击保存修改
