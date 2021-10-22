@@ -18,6 +18,9 @@ const schema = {
         title: "对话服务",
         type: schemaFieldType.Select,
     },
+    nlu_server_url: {
+        title: "解析服务地址",
+    },
     create_time: {
         title: "创建时间",
         required: true,

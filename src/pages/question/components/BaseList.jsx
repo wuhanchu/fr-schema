@@ -213,7 +213,6 @@ class BaseList extends EditPage {
             return (
                 <AutoComplete
                     style={{ width: "100%", maxWidth: "300px" }}
-                    placeholder="请输入分组"
                     filterOption={(inputValue, option) =>
                         option.value
                             .toUpperCase()
