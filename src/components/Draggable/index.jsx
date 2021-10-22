@@ -31,7 +31,6 @@ class ModalWin extends React.Component {
 
     resize = () => {
         const { clientWidth, clientHeight } = document.documentElement
-        // console.log(`监听到窗口大小变化 宽：${clientWidth} 高：${clientHeight}`)
         const modal = document.getElementById("modal")
         if (modal) {
             const pageY = (clientHeight - modal.offsetHeight) / 3

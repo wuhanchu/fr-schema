@@ -16,6 +16,7 @@ import {
     Spin,
     Empty,
     AutoComplete,
+    DatePicker,
     Input,
 } from "antd"
 import React from "react"
@@ -31,6 +32,7 @@ import { connect } from "dva"
 import EditPage from "@/components/editTable/EditPage"
 const { actions } = frSchema
 
+const { RangePicker } = DatePicker
 const { decorateList } = frSchema
 const confirm = Modal.confirm
 const Minio = require("minio")
@@ -223,7 +225,13 @@ class BaseList extends EditPage {
 
     // 搜索
     renderSearchBar() {
-        const { group, label, question_standard } = this.schema
+        const {
+            group,
+            label,
+            question_standard,
+            create_time,
+            update_time,
+        } = this.schema
         const filters = this.createFilters(
             {
                 group: {
@@ -239,6 +247,20 @@ class BaseList extends EditPage {
                     ...label,
                     type: schemaFieldType.Select,
                     props: null,
+                },
+                create_time: {
+                    ...create_time,
+                    style: { width: "100%" },
+                    renderInput: () => {
+                        return <RangePicker />
+                    },
+                },
+                update_time: {
+                    ...update_time,
+                    style: { width: "100%" },
+                    renderInput: () => {
+                        return <RangePicker />
+                    },
                 },
             },
             5
