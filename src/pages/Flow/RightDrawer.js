@@ -15,6 +15,7 @@ import { ActionModal } from "./actionModal"
 import { ConditionModal } from "./conditionModal"
 import Sortable from "sortablejs/modular/sortable.complete.esm.js"
 import node from "@/schemas/flow/node"
+import { ItemName } from "@/components/item-name"
 
 let FormItem = Form.Item
 
@@ -78,6 +79,7 @@ class RightDrawer extends React.PureComponent {
                 {conditionVisible && (
                     <ConditionModal
                         conditionType={formType}
+                        expGraphData={expGraphData}
                         graphChange={() => {
                             graphChange()
                         }}
@@ -294,6 +296,13 @@ class RightDrawer extends React.PureComponent {
     renderNode() {
         let { chooseType, cell, graph } = this.props
         let { isShow, showAction } = this.state
+        let canEditType = false
+        graph &&
+            graph.getEdges().map((item) => {
+                if (cell && cell.id === item.getData().begin) {
+                    canEditType = true
+                }
+            })
         return (
             chooseType === "node" && (
                 <div>
@@ -311,6 +320,25 @@ class RightDrawer extends React.PureComponent {
                                 cell.setAttrs({
                                     label: { text: args.name },
                                 })
+                                if (args.types) {
+                                    if (args.types === "normal") {
+                                        graph.batchUpdate("changeType", () => {
+                                            cell.attr("body/rx", 0)
+                                            cell.addPort({
+                                                id: "port2",
+                                                group: "bottom",
+                                            })
+                                        })
+                                    } else {
+                                        graph.batchUpdate("changeType", () => {
+                                            cell.attr("body/rx", 20)
+                                            cell.removePort({
+                                                id: "port2",
+                                                group: "bottom",
+                                            })
+                                        })
+                                    }
+                                }
                             }}
                         >
                             <FormItem
@@ -350,6 +378,24 @@ class RightDrawer extends React.PureComponent {
                                     min="1"
                                     placeholder="请输入允许重复次数"
                                 />
+                            </FormItem>
+                            <FormItem
+                                name={"types"}
+                                label={"类型"}
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: "请输入类型！",
+                                    },
+                                ]}
+                            >
+                                <Select
+                                    disabled={canEditType}
+                                    options={[
+                                        { value: "end", label: "结束节点" },
+                                        { value: "normal", label: "普通节点" },
+                                    ]}
+                                ></Select>
                             </FormItem>
                             <FormItem
                                 label={

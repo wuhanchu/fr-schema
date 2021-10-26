@@ -6,12 +6,11 @@ import clone from "clone"
 import AceEditor from "react-ace"
 import { v4 as uuidv4 } from "uuid"
 import { verifyJson } from "@/outter/fr-schema-antd-utils/src/utils/component"
-
 import "ace-builds/src-noconflict/mode-json"
-
 import "ace-builds/src-noconflict/theme-github"
 import "ace-builds/src-noconflict/ext-language_tools"
 import { uuid } from "@antv/x6/lib/util/string/uuid"
+import { values } from "lodash"
 
 export const ActionModal = ({
     visible,
@@ -41,21 +40,35 @@ export const ActionModal = ({
                 if (item === defaultValue.key) {
                     isMore = isMore + 1
                     if (isMore > 1) {
-                        console.log(nodeItem.key, item)
                         defaultImport = nodeItem.key + "nodeID_" + item
                     }
                 }
             })
     })
+    const [isImport, setIsImport] = useState(
+        defaultImport && defaultImport.split("nodeID_")[1]
+    )
     const onFinish = (values) => {
         if (values.param && typeof values.param !== "object") {
             try {
                 values.param = JSON.parse(values.param)
             } catch (error) {
-                // message.error("json格式错误")
                 return
             }
         }
+        if (isMore <= 1 && !isImport) {
+            newAction(values)
+        }
+        if (isMore > 1 && !isImport) {
+            cloneAction(values)
+        }
+        if ((isMore > 1 && isImport) || isImport) {
+            importAction(values)
+        }
+        return values
+    }
+
+    const newAction = (values) => {
         let myActions = clone(actions)
         if (actionType === "add") {
             let actionKey = uuidv4()
@@ -90,10 +103,64 @@ export const ActionModal = ({
         handleChangeShowAction()
     }
 
+    const cloneAction = (values) => {
+        let key = defaultValue.key || isImport
+        let myActions = clone(actions)
+        let actionKey = uuidv4()
+        myActions.push({
+            ...values,
+            key: actionKey,
+        })
+        if (!isImport) {
+            actionList.splice(
+                actionList.findIndex((item) => {
+                    return key === item
+                }),
+                1
+            )
+        }
+        actionList.push(actionKey)
+        cell.setData({ action: actionList })
+        let expGraphAction = [...graph.action]
+        expGraphAction.push({
+            ...values,
+            key: actionKey,
+        })
+        graph.action = expGraphAction
+        graphChange()
+        handleVisible(false)
+        handleChangeShowAction()
+    }
+
+    const importAction = (values) => {
+        let key = isImport || defaultValue.key
+
+        if (actionType === "edit") {
+            actionList.splice(
+                actionList.findIndex((item) => {
+                    return defaultValue.key === item
+                }),
+                1
+            )
+        }
+        if (isImport) {
+            actionList.push(isImport)
+            cell.setData({ action: actionList })
+        }
+        let arr = expGraph.action.map((item) => {
+            if (item.key === key) {
+                return { ...values, key: key }
+            }
+            return item
+        })
+
+        expGraph.action = arr
+        graphChange()
+        handleVisible(false)
+        handleChangeShowAction()
+    }
+
     const [importData, setImportData] = useState([])
-    const [isImport, setIsImport] = useState(
-        defaultImport && defaultImport.split("nodeID_")[1]
-    )
 
     if (initialValues["param"]) {
         var [AceEditorValue, setAceEditorValue] = useState(
@@ -282,7 +349,6 @@ export const ActionModal = ({
                             showPrintMargin
                             showGutter
                             width={"489px"}
-                            // style={props.style}
                             height={"300px"}
                             highlightActiveLine
                             value={AceEditorValue}
@@ -317,126 +383,17 @@ export const ActionModal = ({
                     }}
                 />
                 <Form.Item wrapperCol={{ offset: 10, span: 12 }}>
-                    {isMore <= 1 && !isImport && (
-                        <Button
-                            style={{
-                                float: "right",
-                                bottom: "-38px",
-                                right: "-61px",
-                            }}
-                            type="primary"
-                            htmlType="submit"
-                        >
-                            提交
-                        </Button>
-                    )}
-                    {isMore > 1 && !isImport && (
-                        <Button
-                            style={{
-                                float: "right",
-                                bottom: "-38px",
-                                right: "-61px",
-                            }}
-                            type="primary"
-                            onClick={() => {
-                                let key = defaultValue.key || isImport
-                                let myActions = clone(actions)
-                                let values = formRef.current.getFieldsValue()
-                                if (
-                                    values.param &&
-                                    typeof values.param !== "object"
-                                ) {
-                                    try {
-                                        values.param = JSON.parse(values.param)
-                                    } catch (error) {
-                                        message.error("json格式错误")
-                                        return
-                                    }
-                                }
-                                let actionKey = uuidv4()
-                                myActions.push({
-                                    ...values,
-                                    key: actionKey,
-                                })
-                                if (!isImport) {
-                                    actionList.splice(
-                                        actionList.findIndex((item) => {
-                                            return key === item
-                                        }),
-                                        1
-                                    )
-                                }
-
-                                actionList.push(actionKey)
-
-                                cell.setData({ action: actionList })
-                                let expGraphAction = [...graph.action]
-                                expGraphAction.push({
-                                    ...values,
-                                    key: actionKey,
-                                })
-                                graph.action = expGraphAction
-                                graphChange()
-                                handleVisible(false)
-                                handleChangeShowAction()
-                            }}
-                        >
-                            提交
-                        </Button>
-                    )}
-                    {((isMore > 1 && isImport) || isImport) && (
-                        <Button
-                            style={{
-                                float: "right",
-                                bottom: "-38px",
-                                right: "-61px",
-                            }}
-                            type="primary"
-                            onClick={() => {
-                                let key = isImport || defaultValue.key
-
-                                if (actionType === "edit") {
-                                    actionList.splice(
-                                        actionList.findIndex((item) => {
-                                            return defaultValue.key === item
-                                        }),
-                                        1
-                                    )
-                                }
-
-                                if (isImport) {
-                                    actionList.push(isImport)
-                                    cell.setData({ action: actionList })
-                                }
-
-                                let values = formRef.current.getFieldsValue()
-                                if (
-                                    values.param &&
-                                    typeof values.param !== "object"
-                                ) {
-                                    try {
-                                        values.param = JSON.parse(values.param)
-                                    } catch (error) {
-                                        message.error("json格式错误")
-                                        return
-                                    }
-                                }
-                                let arr = expGraph.action.map((item) => {
-                                    if (item.key === key) {
-                                        return { ...values, key: key }
-                                    }
-                                    return item
-                                })
-
-                                expGraph.action = arr
-                                graphChange()
-                                handleVisible(false)
-                                handleChangeShowAction()
-                            }}
-                        >
-                            提交
-                        </Button>
-                    )}
+                    <Button
+                        style={{
+                            float: "right",
+                            bottom: "-38px",
+                            right: "-61px",
+                        }}
+                        type="primary"
+                        htmlType="submit"
+                    >
+                        提交
+                    </Button>
                 </Form.Item>
             </Form>
         </Modal>

@@ -153,6 +153,14 @@ export const startDragToGraph = async (graph, type, e, callback) => {
                               id: "port1",
                               group: "top",
                           },
+                          {
+                              id: "port3",
+                              group: "left",
+                          },
+                          {
+                              id: "port4",
+                              group: "right",
+                          },
                       ],
                   },
               })
@@ -328,7 +336,9 @@ export function createEdgeFunc(args) {
 export function initGraph(expGraphData, callback, graphChange) {
     let graph = new Graph({
         container: document.getElementById("containerChart"),
-        history: true,
+        history: {
+            enabled: true,
+        },
         panning: true,
         selecting: {
             enabled: true,
@@ -413,11 +423,6 @@ export function initGraph(expGraphData, callback, graphChange) {
         "node:mouseenter",
         (item, data) => {
             let dom = getDom("g", "data-cell-id", item.cell.id)
-            console.log(dom[0])
-            // const container = document.getElementById("containerChart")
-            // const ports = container.querySelectorAll(".x6-port-body")
-            // const container = dom[0].getElementById("containerChart")
-            // console.log(container)
             const ports = dom[0].querySelectorAll(".x6-port-body")
             showPorts(ports, true)
         },

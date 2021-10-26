@@ -19,7 +19,6 @@ export const ConditionModal = ({
     defaultValue,
     graph,
     cell,
-    expGraphData,
     intenList,
     handleChangeShowCondition,
     graphChange,
@@ -37,6 +36,9 @@ export const ConditionModal = ({
     }
 
     const onFinish = (values) => {
+        console.log(values)
+        // return
+
         if (values.slot && typeof values.slot !== "object") {
             try {
                 values.slot = JSON.parse(values.slot)
@@ -45,19 +47,6 @@ export const ConditionModal = ({
                 return
             }
         }
-        if (isMore <= 1 && !isImport) {
-            newAction(values)
-        }
-        if (isMore > 1 && !isImport) {
-            cloneAction(values)
-        }
-        console.log(isMore, isImport)
-        if ((isMore > 1 && isImport) || isImport) {
-            importAction(values)
-        }
-    }
-
-    const newAction = (values) => {
         let myConditions = clone(conditions)
         if (conditionType === "add") {
             let conditionKey = uuidv4()
@@ -98,64 +87,6 @@ export const ConditionModal = ({
         handleChangeShowCondition()
     }
 
-    const cloneAction = (values) => {
-        let key = defaultValue.key || isImport
-        let myConditions = clone(conditions)
-        let actionKey = uuidv4()
-        myConditions.push({
-            ...values,
-            key: actionKey,
-        })
-        if (!isImport) {
-            conditionList.splice(
-                conditionList.findIndex((item) => {
-                    return key === item
-                }),
-                1
-            )
-        }
-        conditionList.push(actionKey)
-        cell.setData({ condition: conditionList })
-        let expGraphAction = [...graph.condition]
-        expGraphAction.push({
-            ...values,
-            key: actionKey,
-        })
-        graph.condition = expGraphAction
-        graphChange()
-        handleVisible(false)
-        handleChangeShowCondition()
-    }
-
-    const importAction = (values) => {
-        let key = isImport || defaultValue.key
-
-        if (conditionType === "edit") {
-            conditionList.splice(
-                conditionList.findIndex((item) => {
-                    console.log("结果", defaultValue.key, item)
-                    return defaultValue.key === item
-                }),
-                1
-            )
-        }
-        if (isImport) {
-            conditionList.push(isImport)
-            cell.setData({ condition: conditionList })
-        }
-        let arr = expGraph.condition.map((item) => {
-            if (item.key === key) {
-                return { ...values, key: key }
-            }
-            return item
-        })
-
-        expGraph.condition = arr
-        graphChange()
-        handleVisible(false)
-        handleChangeShowCondition()
-    }
-
     const onFinishFailed = (errorInfo) => {
         console.log("Failed:", errorInfo)
     }
@@ -176,55 +107,6 @@ export const ConditionModal = ({
         var [AceEditorValue, setAceEditorValue] = useState("")
     }
 
-    let isMore = 0
-    let defaultImport
-
-    expGraphData.connection.map((nodeItem) => {
-        console.log("连线", nodeItem)
-        nodeItem.condition &&
-            nodeItem.condition.map((item) => {
-                console.log("意图", item)
-                if (item === defaultValue.key) {
-                    isMore = isMore + 1
-                    if (isMore > 1) {
-                        defaultImport = nodeItem.key + "nodeID_" + item
-                    }
-                }
-            })
-    })
-    console.log(isMore, defaultImport)
-    const [isImport, setIsImport] = useState(
-        defaultImport && defaultImport.split("nodeID_")[1]
-    )
-    const [importData, setImportData] = useState([])
-    let importDict = []
-
-    expGraphData.connection &&
-        expGraphData.connection.map((item) => {
-            console.log("线", item)
-            let nodeActionDict = []
-            item.condition &&
-                item.condition.map((key) => {
-                    let oneNodeAction = expGraph.condition.filter(
-                        (items) => items.key === key
-                    )[0]
-                    oneNodeAction &&
-                        nodeActionDict.push(
-                            <Select.Option
-                                value={item.key + "nodeID_" + oneNodeAction.key}
-                            >
-                                {oneNodeAction.name}
-                            </Select.Option>
-                        )
-                })
-            importDict.push(
-                <Select.OptGroup label={item.name}>
-                    {nodeActionDict}
-                </Select.OptGroup>
-            )
-        })
-
-    console.log(importDict)
     return (
         <Modal
             title={"条件配置"}
@@ -244,51 +126,6 @@ export const ConditionModal = ({
                 onFinish={onFinish}
                 onFinishFailed={onFinishFailed}
             >
-                {
-                    <Form.Item
-                        label="引用"
-                        extra="复用已有的操作，数据会保持同步"
-                    >
-                        <Select
-                            showSearch
-                            defaultValue={defaultImport}
-                            allowClear
-                            placeholder="请选择引用"
-                            style={{ width: "100%" }}
-                            onChange={(key) => {
-                                if (key) {
-                                    const importData = expGraph.condition.filter(
-                                        (item) =>
-                                            item.key === key.split("nodeID_")[1]
-                                    )[0]
-                                    formRef.current.setFieldsValue({
-                                        slot: undefined,
-                                    })
-                                    formRef.current.setFieldsValue(importData)
-                                    setIsImport(key.split("nodeID_")[1])
-                                    setImportData(importData)
-                                    setAceEditorValue("")
-                                    if (importData.slot) {
-                                        setAceEditorValue(
-                                            JSON.stringify(
-                                                importData.slot,
-                                                null,
-                                                "\t"
-                                            )
-                                        )
-                                    } else {
-                                        setAceEditorValue("")
-                                    }
-                                } else {
-                                    setIsImport(null)
-                                    setImportData([])
-                                }
-                            }}
-                        >
-                            {importDict}
-                        </Select>
-                    </Form.Item>
-                }
                 <Form.Item
                     label="名称"
                     name="name"

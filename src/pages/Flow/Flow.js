@@ -347,14 +347,12 @@ class Flow extends React.PureComponent {
             !data ||
             localFlowCreateTime < (res.update_time && res.update_time.valueOf())
         ) {
-            // let res = await service.getDetail({
-            //     id: record.id,
-            // })
             localStorage.setItem(
                 "flowCreate" + this.props.record.id,
                 (res.update_time && res.update_time.valueOf()) ||
                     res.create_time.valueOf()
             )
+
             if (res.config && res.config.node && res.config.node.length) {
                 data = res.config
             } else {
@@ -398,7 +396,6 @@ class Flow extends React.PureComponent {
         data.connection.map((item) => {
             this.addEdges(item)
         })
-
         this.graph.action = data.action
         this.graph.condition = data.condition
         this.setState({
@@ -452,6 +449,14 @@ class Flow extends React.PureComponent {
                               {
                                   id: "port1",
                                   group: "top",
+                              },
+                              {
+                                  id: "port3",
+                                  group: "left",
+                              },
+                              {
+                                  id: "port4",
+                                  group: "right",
                               },
                           ],
                       }
@@ -584,6 +589,7 @@ class Flow extends React.PureComponent {
                     data: {
                         name: "未命名",
                         allow_repeat_time: 2,
+                        types: "normal",
                     },
                     attrs: {
                         label: {
@@ -626,10 +632,9 @@ class Flow extends React.PureComponent {
     }
     // 得到数据
     graphChange(args) {
-        if (!this.graph) {
+        if (!this.graph || this.state.spinning) {
             return
         }
-        console.log("数据改变")
         const expGraph = this.graph
         let data = {
             node: [],

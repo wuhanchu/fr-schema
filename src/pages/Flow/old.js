@@ -1,47 +1,58 @@
 import React, { useState } from "react"
-import { Input, Form, Button, Select, Divider, TreeSelect, message } from "antd"
+import { Input, Form, Button, Select, Divider, Tooltip, message } from "antd"
 import "antd/lib/style/index.css"
 import Modal from "antd/lib/modal/Modal"
 import clone from "clone"
 import AceEditor from "react-ace"
-import "ace-builds/src-noconflict/mode-json"
 import { v4 as uuidv4 } from "uuid"
 import { verifyJson } from "@/outter/fr-schema-antd-utils/src/utils/component"
-
+import "ace-builds/src-noconflict/mode-json"
 import "ace-builds/src-noconflict/theme-github"
 import "ace-builds/src-noconflict/ext-language_tools"
+import { uuid } from "@antv/x6/lib/util/string/uuid"
+import { values } from "lodash"
 
-export const ConditionModal = ({
+export const ActionModal = ({
     visible,
     handleVisible,
-    conditionType,
-    conditions,
+    actionType,
+    actions,
     defaultValue,
     graph,
     cell,
-    expGraphData,
-    intenList,
-    handleChangeShowCondition,
+    handleChangeShowAction,
     graphChange,
+    expGraphData,
+    other,
 }) => {
     const expGraph = graph
-    let condition = []
-    if (graph) {
-        condition = expGraph.condition
-    }
     let initialValues = clone(defaultValue)
-
-    let conditionList = []
-    if (cell && cell.getData && cell.getData().condition) {
-        conditionList = cell.getData().condition
+    let actionList = []
+    if (cell.getData && cell.getData().action) {
+        actionList = cell.getData().action
     }
+    let isMore = 0
+    let defaultImport
 
+    expGraphData.node.map((nodeItem) => {
+        nodeItem.action &&
+            nodeItem.action.map((item) => {
+                if (item === defaultValue.key) {
+                    isMore = isMore + 1
+                    if (isMore > 1) {
+                        defaultImport = nodeItem.key + "nodeID_" + item
+                    }
+                }
+            })
+    })
+    const [isImport, setIsImport] = useState(
+        defaultImport && defaultImport.split("nodeID_")[1]
+    )
     const onFinish = (values) => {
-        if (values.slot && typeof values.slot !== "object") {
+        if (values.param && typeof values.param !== "object") {
             try {
-                values.slot = JSON.parse(values.slot)
+                values.param = JSON.parse(values.param)
             } catch (error) {
-                message.error("json格式错误")
                 return
             }
         }
@@ -51,161 +62,150 @@ export const ConditionModal = ({
         if (isMore > 1 && !isImport) {
             cloneAction(values)
         }
-        console.log(isMore, isImport)
         if ((isMore > 1 && isImport) || isImport) {
             importAction(values)
         }
+        return values
     }
 
     const newAction = (values) => {
-        let myConditions = clone(conditions)
-        if (conditionType === "add") {
-            let conditionKey = uuidv4()
-            myConditions.push({
+        let myActions = clone(actions)
+        if (actionType === "add") {
+            let actionKey = uuidv4()
+            myActions.push({
                 ...values,
-                key: conditionKey,
+                key: actionKey,
             })
-            conditionList.push(conditionKey)
-            cell.setData({ condition: conditionList })
-            let expGraphCondition = [...graph.condition]
-            expGraphCondition.push({
+            actionList.push(actionKey)
+            cell.setData({ action: actionList })
+            let expGraphAction = [...graph.action]
+            expGraphAction.push({
                 ...values,
-                key: conditionKey,
+                key: actionKey,
             })
-            graph.condition = null
-            graph.condition = expGraphCondition
+            graph.action = expGraphAction
             graphChange()
         } else {
-            if (expGraph.condition) {
-                let arr = expGraph.condition.map((item) => {
+            if (expGraph.action) {
+                let arr = expGraph.action.map((item) => {
                     if (item.key === defaultValue.key) {
                         return { ...values, key: defaultValue.key }
                     }
                     return item
                 })
-                myConditions = myConditions.map((item) => {
-                    if (item.key === defaultValue.key) {
-                        return { ...values, key: defaultValue.key }
-                    }
-                    return item
-                })
-                expGraph.condition = arr
+                expGraph.action = null
+
+                expGraph.action = arr
                 graphChange()
             }
         }
-
         handleVisible(false)
-        handleChangeShowCondition()
+        handleChangeShowAction()
     }
 
     const cloneAction = (values) => {
         let key = defaultValue.key || isImport
-        let myConditions = clone(conditions)
+        let myActions = clone(actions)
         let actionKey = uuidv4()
-        myConditions.push({
+        myActions.push({
             ...values,
             key: actionKey,
         })
         if (!isImport) {
-            conditionList.splice(
-                conditionList.findIndex((item) => {
+            actionList.splice(
+                actionList.findIndex((item) => {
                     return key === item
                 }),
                 1
             )
         }
-        conditionList.push(actionKey)
-        cell.setData({ condition: conditionList })
-        let expGraphAction = [...graph.condition]
+        actionList.push(actionKey)
+        cell.setData({ action: actionList })
+        let expGraphAction = [...graph.action]
         expGraphAction.push({
             ...values,
             key: actionKey,
         })
-        graph.condition = expGraphAction
+        graph.action = expGraphAction
         graphChange()
         handleVisible(false)
-        handleChangeShowCondition()
+        handleChangeShowAction()
     }
 
     const importAction = (values) => {
         let key = isImport || defaultValue.key
 
-        if (conditionType === "edit") {
-            conditionList.splice(
-                conditionList.findIndex((item) => {
-                    console.log("结果", defaultValue.key, item)
+        if (actionType === "edit") {
+            actionList.splice(
+                actionList.findIndex((item) => {
                     return defaultValue.key === item
                 }),
                 1
             )
         }
         if (isImport) {
-            conditionList.push(isImport)
-            cell.setData({ condition: conditionList })
+            actionList.push(isImport)
+            cell.setData({ action: actionList })
         }
-        let arr = expGraph.condition.map((item) => {
+        let arr = expGraph.action.map((item) => {
             if (item.key === key) {
                 return { ...values, key: key }
             }
             return item
         })
 
-        expGraph.condition = arr
+        expGraph.action = arr
         graphChange()
         handleVisible(false)
-        handleChangeShowCondition()
+        handleChangeShowAction()
+    }
+
+    const [importData, setImportData] = useState([])
+
+    if (initialValues["param"]) {
+        var [AceEditorValue, setAceEditorValue] = useState(
+            JSON.stringify(initialValues["param"], null, "\t")
+        )
+    } else {
+        var [AceEditorValue, setAceEditorValue] = useState("")
     }
 
     const onFinishFailed = (errorInfo) => {
         console.log("Failed:", errorInfo)
     }
 
+    const dict = other.dict.action_type || {}
     let formRef = React.createRef()
+
+    let options = []
+    Object.keys(dict).forEach((key) => {
+        options.push(
+            <Select.Option value={key}>
+                {/* <Tooltip title={dict[key].remarks || ""}>
+                    <div style={{ width: "100%" }}>{dict[key].remark}</div>
+                </Tooltip> */}
+                {dict[key].remark}
+            </Select.Option>
+        )
+    })
+    var [type, setType] = useState(initialValues.type)
 
     const onValuesChange = (value) => {
         if (value.type) {
             formRef.current.setFieldsValue({ name: dict[value.type].remark })
+            setType(value.type)
+            console.log(type)
         }
     }
 
-    if (initialValues["slot"]) {
-        var [AceEditorValue, setAceEditorValue] = useState(
-            JSON.stringify(initialValues["slot"], null, "\t")
-        )
-    } else {
-        var [AceEditorValue, setAceEditorValue] = useState("")
-    }
-
-    let isMore = 0
-    let defaultImport
-
-    expGraphData.connection.map((nodeItem) => {
-        console.log("连线", nodeItem)
-        nodeItem.condition &&
-            nodeItem.condition.map((item) => {
-                console.log("意图", item)
-                if (item === defaultValue.key) {
-                    isMore = isMore + 1
-                    if (isMore > 1) {
-                        defaultImport = nodeItem.key + "nodeID_" + item
-                    }
-                }
-            })
-    })
-    console.log(isMore, defaultImport)
-    const [isImport, setIsImport] = useState(
-        defaultImport && defaultImport.split("nodeID_")[1]
-    )
-    const [importData, setImportData] = useState([])
     let importDict = []
 
-    expGraphData.connection &&
-        expGraphData.connection.map((item) => {
-            console.log("线", item)
+    expGraphData.node &&
+        expGraphData.node.map((item) => {
             let nodeActionDict = []
-            item.condition &&
-                item.condition.map((key) => {
-                    let oneNodeAction = expGraph.condition.filter(
+            item.action &&
+                item.action.map((key) => {
+                    let oneNodeAction = expGraph.action.filter(
                         (items) => items.key === key
                     )[0]
                     oneNodeAction &&
@@ -224,10 +224,9 @@ export const ConditionModal = ({
             )
         })
 
-    console.log(importDict)
     return (
         <Modal
-            title={"条件配置"}
+            title={"操作配置"}
             visible={visible}
             destroyOnClose={true}
             width={"700px"}
@@ -257,21 +256,21 @@ export const ConditionModal = ({
                             style={{ width: "100%" }}
                             onChange={(key) => {
                                 if (key) {
-                                    const importData = expGraph.condition.filter(
+                                    const importData = expGraph.action.filter(
                                         (item) =>
                                             item.key === key.split("nodeID_")[1]
                                     )[0]
                                     formRef.current.setFieldsValue({
-                                        slot: undefined,
+                                        param: undefined,
                                     })
                                     formRef.current.setFieldsValue(importData)
                                     setIsImport(key.split("nodeID_")[1])
                                     setImportData(importData)
                                     setAceEditorValue("")
-                                    if (importData.slot) {
+                                    if (importData.param) {
                                         setAceEditorValue(
                                             JSON.stringify(
-                                                importData.slot,
+                                                importData.param,
                                                 null,
                                                 "\t"
                                             )
@@ -290,43 +289,67 @@ export const ConditionModal = ({
                     </Form.Item>
                 }
                 <Form.Item
+                    label="类型"
+                    name="type"
+                    extra={
+                        dict[type] && (
+                            <span
+                                dangerouslySetInnerHTML={{
+                                    __html:
+                                        dict[type].remarks &&
+                                        dict[type].remarks.replace(
+                                            /\n/g,
+                                            "<br/>"
+                                        ),
+                                }}
+                            />
+                        )
+                    }
+                    rules={[{ required: true, message: "请输入类型！" }]}
+                >
+                    <Select
+                        showSearch
+                        placeholder="请选择类型"
+                        style={{ width: "100%" }}
+                        filterOption={(input, option) =>
+                            option.children
+                                .toLowerCase()
+                                .indexOf(input.toLowerCase()) >= 0
+                        }
+                    >
+                        {options}
+                    </Select>
+                </Form.Item>
+                <Form.Item
                     label="名称"
                     name="name"
                     rules={[{ required: true, message: "请输入名称！" }]}
                 >
-                    <Input placeholder={"请输入名称"} />
-                </Form.Item>
-
-                <Form.Item label="意图" name="intent">
-                    <TreeSelect
-                        showSearch
-                        allowClear
-                        treeNodeFilterProp="name"
-                        style={{ width: "100%" }}
-                        placeholder={"请选择意图"}
-                        dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
-                        treeData={intenList}
-                        treeDefaultExpandAll
+                    <Input
+                        placeholder={"请输入名称"}
+                        defaultValue={initialValues.name}
                     />
                 </Form.Item>
-                <Form.Item label="槽位" name={"slot"} rules={verifyJson}>
+                <Form.Item label="参数" name={"param"} rules={verifyJson}>
                     <div style={{ width: "489px" }}>
                         <AceEditor
-                            placeholder={`请输入${"槽位"}`}
+                            placeholder={`请输入${"参数"}`}
                             mode="json"
+                            // theme="tomorrow"
                             name="blah2"
                             wrapEnabled={true}
                             onChange={(res) => {
                                 const obj = {}
-                                obj["slot"] = res
+                                obj["param"] = res
                                 formRef.current.setFieldsValue({
-                                    slot: res,
+                                    param: res,
                                 })
                             }}
                             fontSize={14}
                             showPrintMargin
                             showGutter
                             width={"489px"}
+                            // style={props.style}
                             height={"300px"}
                             highlightActiveLine
                             value={AceEditorValue}
@@ -360,7 +383,6 @@ export const ConditionModal = ({
                         marginLeft: "-24px",
                     }}
                 />
-
                 <Form.Item wrapperCol={{ offset: 10, span: 12 }}>
                     <Button
                         style={{
