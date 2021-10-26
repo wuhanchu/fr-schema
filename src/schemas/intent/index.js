@@ -76,7 +76,7 @@ service.get = async function (args) {
     let list = res.list.map((item) => {
         return {
             ...item,
-            tier: item.logical_path.split(".").length,
+            tier: item.logical_path ? item.logical_path.split(".").length : 0,
             children: [],
             example: item.example ? item.example.join("\n") : null,
             standard_discourse: item.standard_discourse

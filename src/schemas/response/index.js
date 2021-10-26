@@ -37,7 +37,6 @@ const schema = {
         title: "意图",
         type: schemaFieldType.MultiSelect,
         style: { width: "500px" },
-        render: (text) => <span>{text && text.toString()}</span>,
     },
     template_text: {
         title: "回复文本",

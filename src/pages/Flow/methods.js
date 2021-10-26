@@ -159,10 +159,7 @@ export const startDragToGraph = async (graph, type, e, callback) => {
     const dnd = new Addon.Dnd({
         target: graph,
         validateNode: (node, optioon) => {
-            console.log(node, optioon)
             let data = node.store.data
-            console.log(graph)
-            console.log(data)
             if (
                 data.position.y + graph.options.y < 60 &&
                 data.position.x + graph.options.x < 250
@@ -173,7 +170,6 @@ export const startDragToGraph = async (graph, type, e, callback) => {
         },
     })
     dnd.start(node, e)
-    console.log(e)
 }
 export const ports = {
     groups: {
@@ -413,11 +409,9 @@ export function initGraph(expGraphData, callback, graphChange) {
         "node:mouseenter",
         (item, data) => {
             let dom = getDom("g", "data-cell-id", item.cell.id)
-            console.log(dom[0])
             // const container = document.getElementById("containerChart")
             // const ports = container.querySelectorAll(".x6-port-body")
             // const container = dom[0].getElementById("containerChart")
-            // console.log(container)
             const ports = dom[0].querySelectorAll(".x6-port-body")
             showPorts(ports, true)
         },
@@ -567,10 +561,8 @@ export function getTree(args) {
                         result.push(list[i])
                     }
                 }
-                console.log(result)
                 // record.push(result)
                 // record.children = [...result]
             })
-    console.log(record)
     return record
 }
