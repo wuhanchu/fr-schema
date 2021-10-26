@@ -189,11 +189,7 @@ class Flow extends React.PureComponent {
                                         this.startDrag("end", e)
                                     }
                                 >
-                                    <img
-                                        style={{ marginTop: "-7px" }}
-                                        src={Ellipse}
-                                        alt=""
-                                    />
+                                    <i className="iconfont icon-circle" />
                                 </div>
                             </Tooltip>
                             <Tooltip title="全局节点" placement="bottom">
@@ -203,7 +199,11 @@ class Flow extends React.PureComponent {
                                         this.startDrag("Circle", e)
                                     }
                                 >
-                                    <i className="iconfont icon-circle" />
+                                    <img
+                                        style={{ marginTop: "-7px" }}
+                                        src={Ellipse}
+                                        alt=""
+                                    />
                                 </div>
                             </Tooltip>
                         </div>
