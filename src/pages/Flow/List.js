@@ -13,6 +13,7 @@ import { exportData } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
 import ImportModal from "@/outter/fr-schema-antd-utils/src/components/modal/ImportModal"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import { async } from "@antv/x6/lib/registry/marker/main"
+import { listToDict } from "@/outter/fr-schema/src/dict"
 
 const { decorateList } = frSchema
 
@@ -32,11 +33,14 @@ class List extends ListPage {
             service: schemas.flow.service,
             importTemplateUrl,
             operateWidth: "270px",
-            // infoProps: {
-            //     width: "900px",
-            // },
         })
         this.schema.domain_key.dict = this.props.dict.domain
+    }
+
+    async componentDidMount() {
+        let intent = await schemas.intent.service.get({ limit: 9999 })
+        this.schema.intent_key.dict = listToDict(intent.list, "", "key", "name")
+        super.componentDidMount()
     }
 
     renderOperateColumnExtend(record) {
@@ -258,7 +262,12 @@ class List extends ListPage {
             const list =
                 data &&
                 data.list.map((item, index) => {
-                    return { ...item, config: JSON.stringify(item.config) }
+                    return {
+                        ...item,
+                        config: JSON.stringify(item.config),
+                        intent_key:
+                            item.intent_key && item.intent_key.join("|"),
+                    }
                 })
             data = decorateList(list, this.schema)
             await exportData("意图", data, columns)
@@ -287,7 +296,9 @@ class List extends ListPage {
                                 ...item,
                                 id: item.id || undefined,
                                 config: JSON.parse(item.config),
-                                intent_key: [],
+                                intent_key:
+                                    item.intent_key &&
+                                    item.intent_key.split("|"),
                             }
                         })
                         await this.service.upInsert(data)

@@ -4,7 +4,7 @@ import schema from "./schema"
 
 const service = createApi("dict", schema, "", "eq.")
 service.get = async (args) => {
-    let res = await createApi("dict", schema, "", "eq.").get(args)
+    let res = await createApi("dict", schema, "", "eq.").get({ ...args })
     res.list = res.list.map((item) => {
         return { ...item, remarks: item.remark }
     })

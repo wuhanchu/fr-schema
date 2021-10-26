@@ -17,6 +17,14 @@ const schema = {
         required: true,
         title: "编码",
     },
+    intent_key: {
+        // required: true,
+        title: "意图",
+        type: schemaFieldType.Select,
+        props: {
+            mode: "tags",
+        },
+    },
 
     create_time: {
         title: "创建时间",

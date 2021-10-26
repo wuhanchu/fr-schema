@@ -247,7 +247,7 @@ export const ConditionModal = ({
                 {
                     <Form.Item
                         label="引用"
-                        extra="复用已有的操作，数据会保持同步"
+                        extra="复用已有的条件，数据会保持同步"
                     >
                         <Select
                             showSearch
