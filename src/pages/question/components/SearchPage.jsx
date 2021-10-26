@@ -33,10 +33,12 @@ async function init(props, project_id, setState, state) {
         project_id = project_id + ")"
     }
 
-    await schemas.question.service
+    await schemas.hotWord.service
         .get({
-            project_id:
-                props.type === "domain_id" ? project_id : "eq." + project_id,
+            // project_id:
+            //     props.type === "domain_id" ? project_id : "eq." + project_id,
+            domain_key: props.record && props.record.key,
+            project_id: props.record && props.record.project_id,
             limit: 500,
         })
         .then((response) => {
@@ -56,7 +58,7 @@ async function init(props, project_id, setState, state) {
 
 function renderTitle(item) {
     return (
-        <div style={{width: '100%', display: 'flex'}}>
+        <div style={{ width: "100%", display: "flex" }}>
             <span style={{ flex: 1 }}>
                 <span
                     dangerouslySetInnerHTML={{
@@ -82,7 +84,7 @@ function renderTitle(item) {
             </span>
             <span
                 style={{
-                    width: '130px'
+                    width: "130px",
                 }}
             >
                 准确度：{formatData(item.compatibility || 0, 5)}

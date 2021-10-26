@@ -3,7 +3,7 @@ import DataList from "@/outter/fr-schema-antd-utils/src/components/Page/DataList
 import schemas from "@/schemas"
 import schema from "@/schemas/mark/add"
 import React from "react"
-import { Button, Popconfirm, Divider, message } from "antd"
+import { Button, Popconfirm, Divider, message, AutoComplete, Input } from "antd"
 import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
 import frSchema from "@/outter/fr-schema/src"
@@ -46,6 +46,48 @@ class List extends DataList {
             limit: 10000,
         })
         this.schema.project_id.dict = listToDict(project.list)
+        const response = await schemas.question.service.get({
+            ...this.meta.queryArgs,
+            type: undefined,
+            select: "label,group",
+            limit: 9999,
+        })
+
+        let labelDictList = {}
+        let groupDictList = {}
+
+        response.list.forEach((item) => {
+            if (!_.isNil(item.label)) {
+                item.label.forEach((value) => {
+                    labelDictList[value] = {
+                        value: value,
+                        remark: value,
+                    }
+                })
+            }
+            if (!_.isNil(item.group)) {
+                groupDictList[item.group] = {
+                    value: item.group,
+                    remark: item.group,
+                }
+            }
+        })
+        // this.setState({
+        //     attachment: [],
+        //     loadingAnnex: false,
+        // })
+        // this.schema.label.dict = labelDictList
+        // this.schema.group.dict = groupDictList
+        let options = []
+        Object.keys(groupDictList).forEach(function (key) {
+            options.push({
+                key: groupDictList[key].value,
+                value: groupDictList[key].value,
+            })
+        })
+        console.log("数据是")
+        console.log(options)
+        this.setState({ options: options })
         super.componentDidMount()
     }
 
@@ -107,6 +149,30 @@ class List extends DataList {
                     schema={{
                         project_id: this.schema.project_id,
                         ...schemas.question.schema,
+                        group: {
+                            ...schemas.question.schema.group,
+                            renderInput: (item, data) => {
+                                return (
+                                    <AutoComplete
+                                        style={{
+                                            width: "100%",
+                                            maxWidth: "300px",
+                                        }}
+                                        filterOption={(inputValue, option) =>
+                                            option.value
+                                                .toUpperCase()
+                                                .indexOf(
+                                                    inputValue.toUpperCase()
+                                                ) !== -1
+                                        }
+                                        options={this.state.options}
+                                    >
+                                        {/* {options} */}
+                                        <Input placeholder="请输入分组"></Input>
+                                    </AutoComplete>
+                                )
+                            },
+                        },
                     }}
                     {...this.meta.infoProps}
                     {...customProps}

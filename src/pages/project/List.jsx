@@ -86,7 +86,14 @@ class List extends ListPage {
                 <Divider type="vertical" />
                 <a
                     onClick={() => {
-                        this.setState({ record, visibleSearch: true })
+                        this.setState({
+                            record: {
+                                ...record,
+                                key: record.domain_key,
+                                project_id: record.id,
+                            },
+                            visibleSearch: true,
+                        })
                     }}
                 >
                     搜索

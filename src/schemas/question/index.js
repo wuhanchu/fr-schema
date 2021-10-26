@@ -1,6 +1,7 @@
 import { createApi, createBasicApi } from "@/outter/fr-schema/src/service"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import projectService from "./../project"
+import moment from "moment"
 import { Tooltip } from "antd"
 
 const Minio = require("minio")
@@ -17,7 +18,7 @@ const schema = {
         sorter: true,
         editable: true,
         fixed: "left",
-        width: '250px',
+        width: "250px",
     },
     question_standard: {
         title: "标准问",
@@ -30,7 +31,7 @@ const schema = {
         },
         sorter: true,
         editable: true,
-        width: '260px',
+        width: "260px",
     },
     question_extend: {
         title: "扩展问",
@@ -58,7 +59,7 @@ const schema = {
                 </Tooltip>
             )
         },
-        width: '260px',
+        width: "260px",
     },
     label: {
         title: "标签",
@@ -67,7 +68,7 @@ const schema = {
             mode: "tags",
         },
         editable: true,
-        width: '120px',
+        width: "120px",
     },
     answer_text: {
         title: "摘要",
@@ -77,7 +78,7 @@ const schema = {
             autoSize: { minRows: 2, maxRows: 6 },
         },
         editable: true,
-        width: '250px',
+        width: "250px",
     },
     global_key: {
         title: "全局变量",
@@ -86,7 +87,7 @@ const schema = {
         render: (item) => {
             return <div style={{ minWidth: "60px" }}>{item}</div>
         },
-        width: '80px',
+        width: "80px",
     },
     answer: {
         title: "答案",
@@ -154,12 +155,70 @@ const schema = {
         render: (item) => {
             return <div style={{ minWidth: "60px" }}>{item}</div>
         },
-        width: '120px',
+        width: "120px",
+    },
+    create_time: {
+        title: "创建时间",
+        addHide: true,
+        editHide: true,
+        type: schemaFieldType.DatePicker,
+        render: (item) => {
+            return <div style={{ minWidth: "60px" }}>{item}</div>
+        },
+        width: "120px",
+    },
+    update_time: {
+        title: "更新时间",
+        addHide: true,
+        editHide: true,
+        type: schemaFieldType.DatePicker,
+        render: (item) => {
+            return <div style={{ minWidth: "60px" }}>{item}</div>
+        },
+        width: "120px",
     },
 }
 
 const service = createApi("question", schema, null, "eq.")
 service.get = async function (args) {
+    if (args.create_time && !args.update_time) {
+        let beginTime =
+            moment(args.create_time.split(",")[0]).format("YYYY-MM-DD") +
+            "T00:00:00"
+        let endTime =
+            moment(args.create_time.split(",")[1]).format("YYYY-MM-DD") +
+            "T23:59:59"
+        args.create_time = undefined
+        args.and = `(create_time.gte.${beginTime},create_time.lte.${endTime})`
+    }
+    if (args.update_time && !args.create_time) {
+        let beginTime =
+            moment(args.update_time.split(",")[0]).format("YYYY-MM-DD") +
+            "T00:00:00"
+        let endTime =
+            moment(args.update_time.split(",")[1]).format("YYYY-MM-DD") +
+            "T23:59:59"
+        args.update_time = undefined
+        args.and = `(update_time.gte.${beginTime},update_time.lte.${endTime})`
+    }
+    if (args.update_time && args.create_time) {
+        let updateBeginTime =
+            moment(args.update_time.split(",")[0]).format("YYYY-MM-DD") +
+            "T00:00:00"
+        let updateEndTime =
+            moment(args.update_time.split(",")[1]).format("YYYY-MM-DD") +
+            "T23:59:59"
+        args.update_time = undefined
+        let createBeginTime =
+            moment(args.create_time.split(",")[0]).format("YYYY-MM-DD") +
+            "T00:00:00"
+        let createEndTime =
+            moment(args.create_time.split(",")[1]).format("YYYY-MM-DD") +
+            "T23:59:59"
+        args.create_time = undefined
+        args.and = `(update_time.gte.${updateBeginTime},update_time.lte.${updateEndTime},create_time.gte.${createBeginTime},create_time.lte.${createEndTime})`
+    }
+
     const res = await createApi("question", schema, null, null).get(args)
     let list = res.list.map((item) => {
         return {
