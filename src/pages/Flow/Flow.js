@@ -29,8 +29,10 @@ const ZSSelectStyle = styled(Select)`
         color: #000;
     }
 `
+
 class Flow extends React.PureComponent {
     keyBindMethods = []
+
     constructor(props) {
         super(props)
         this.state = {
@@ -102,11 +104,13 @@ class Flow extends React.PureComponent {
             method,
         })
     }
+
     componentWillUnmount = () => {
         this.keyBindMethods.forEach(({ key, method }) => {
             keyboardJS.unbind(key, method)
         })
     }
+
     async componentDidMount() {
         const { record } = this.props
         await this.initData()
@@ -168,30 +172,40 @@ class Flow extends React.PureComponent {
                     )}
                     <div className="operating">
                         <div className="btn-group">
-                            <div
-                                className="btn"
-                                title="普通节点"
-                                onMouseDown={(e) => this.startDrag("Rect", e)}
-                            >
-                                <i className="iconfont icon-square" />
-                            </div>
-                            <div
-                                className="btn"
-                                title="全局节点"
-                                onMouseDown={(e) => this.startDrag("Circle", e)}
-                            >
-                                <i className="iconfont icon-circle" />
-                            </div>
-                            <div
-                                className="btn"
-                                title="结束节点"
-                                onMouseDown={(e) => this.startDrag("end", e)}
-                            >
-                                <img
-                                    style={{ marginTop: "-7px" }}
-                                    src={Ellipse}
-                                />
-                            </div>
+                            <Tooltip title="普通节点" placement="bottom">
+                                <div
+                                    className="btn"
+                                    onMouseDown={(e) =>
+                                        this.startDrag("Rect", e)
+                                    }
+                                >
+                                    <i className="iconfont icon-square" />
+                                </div>
+                            </Tooltip>
+                            <Tooltip title="结束节点" placement="bottom">
+                                <div
+                                    className="btn"
+                                    onMouseDown={(e) =>
+                                        this.startDrag("end", e)
+                                    }
+                                >
+                                    <img
+                                        style={{ marginTop: "-7px" }}
+                                        src={Ellipse}
+                                        alt=""
+                                    />
+                                </div>
+                            </Tooltip>
+                            <Tooltip title="全局节点" placement="bottom">
+                                <div
+                                    className="btn"
+                                    onMouseDown={(e) =>
+                                        this.startDrag("Circle", e)
+                                    }
+                                >
+                                    <i className="iconfont icon-circle" />
+                                </div>
+                            </Tooltip>
                         </div>
                         <div className="btn-group">
                             <Tooltip title="删除" placement="bottom">
@@ -630,6 +644,7 @@ class Flow extends React.PureComponent {
             this.graphChange(args)
         })
     }
+
     // 得到数据
     graphChange(args) {
         if (!this.graph || this.state.spinning) {
@@ -723,6 +738,7 @@ class Flow extends React.PureComponent {
         )
         return { config: data, ...expGraph.flowSetting }
     }
+
     // 链接节点
     async onConnectNode(args) {
         const { edge = {}, isNew } = args
@@ -741,16 +757,19 @@ class Flow extends React.PureComponent {
         }
         return { success: true }
     }
+
     // 是否显示 链接桩
     showPorts(ports, show) {
         for (let i = 0, len = ports.length; i < len; i = i + 1) {
             ports[i].style.visibility = show ? "visible" : "hidden"
         }
     }
+
     // 拖拽生成正方形或者圆形
     startDrag(type, e) {
         startDragToGraph(this.graph, type, e, this.graphChange.bind(this))
     }
+
     // 删除节点
     deleteNode() {
         const cell = this.graph.getSelectedCells()
@@ -760,11 +779,13 @@ class Flow extends React.PureComponent {
             this.graphChange()
         }
     }
+
     // 撤销
     undoOperate() {
         this.graph.history.undo()
         this.graphChange()
     }
+
     // 重做
     redoOperate() {
         this.graph.history.redo()

@@ -3,7 +3,7 @@ import ListPage from "@/outter/fr-schema-antd-utils/src/components/Page/ListPage
 import schemas from "@/schemas"
 import React from "react"
 import "@ant-design/compatible/assets/index.css"
-import { Form, Select, Input, Modal, Button, Spin } from "antd"
+import { Form, Select, Input, Modal, Button, Spin, TreeSelect } from "antd"
 import { autobind } from "core-decorators"
 import { globalStyle } from "@/outter/fr-schema-antd-utils/src/styles/global"
 import AceEditor from "react-ace"
@@ -14,6 +14,7 @@ import "ace-builds/src-noconflict/mode-json"
 import "ace-builds/src-noconflict/theme-github"
 import "ace-builds/src-noconflict/ext-language_tools"
 import { PlusOutlined, MinusCircleOutlined } from "@ant-design/icons"
+import { getTree } from "@/pages/Flow/methods"
 
 @connect(({ global }) => ({
     dict: global.dict,
@@ -33,17 +34,33 @@ class List extends ListPage {
         this.state = {
             ...this.state,
             intentList: [],
+            allIntentList: [],
             domainList: [],
             modalLoading: false,
         }
     }
 
     async componentDidMount() {
+        await this.findAllIntent()
         this.domainDictToList()
+        this.schema.intent_key.render = (text, record) => {
+            let str = ""
+            if (record.intent_key) {
+                let list = record.intent_key
+                for (let i = 0; i < list.length; i++) {
+                    let item = this.state.allIntentList.find((value) => {
+                        return value.key === list[i]
+                    })
+                    str += item.name + (i !== list.length - 1 ? "," : "")
+                }
+            }
+            return str
+        }
         super.componentDidMount()
     }
 
     renderSearchBar() {
+        ;``
         const { name, key, domain_key } = this.schema
         const filters = this.createFilters(
             {
@@ -95,7 +112,9 @@ class List extends ListPage {
                             rules={[{ required: true, message: "请选择域" }]}
                         >
                             <Select
-                                onChange={(value) => this.findIntentList(value)}
+                                onChange={(value) =>
+                                    this.findIntentByDomainKey(value)
+                                }
                                 placeholder="请选择域"
                             >
                                 {domainList.map((item) => (
@@ -123,16 +142,20 @@ class List extends ListPage {
                             <Input placeholder="请输入编码" />
                         </Form.Item>
                         <Form.Item label="意图" name="intent_key">
-                            <Select mode="tags" placeholder="请选择意图">
-                                {intentList.map((item) => (
-                                    <Select.Option
-                                        value={item.key}
-                                        key={item.id}
-                                    >
-                                        {item.name}
-                                    </Select.Option>
-                                ))}
-                            </Select>
+                            <TreeSelect
+                                showSearch
+                                allowClear
+                                multiple
+                                treeNodeFilterProp="name"
+                                style={{ width: "100%" }}
+                                placeholder={"请选择意图"}
+                                dropdownStyle={{
+                                    maxHeight: 400,
+                                    overflow: "auto",
+                                }}
+                                treeData={intentList}
+                                treeDefaultExpandAll
+                            />
                         </Form.Item>
                         <Form.Item label="回复文本" name="template_text">
                             <Input.TextArea placeholder="请输入回复文本" />
@@ -272,6 +295,14 @@ class List extends ListPage {
         )
     }
 
+    filterOption(value, option) {
+        let { intentList } = this.state
+        let list = intentList.filter((item) => {
+            return item.name.includes(value)
+        })
+        return list
+    }
+
     /**
      * 信息界面展示
      * @param flag
@@ -284,7 +315,7 @@ class List extends ListPage {
         if (action === "edit") {
             infoData = JSON.parse(JSON.stringify(record))
             infoData.intent_key = infoData.intent_key || undefined
-            await this.findIntentList(record.domain_key)
+            await this.findIntentByDomainKey(record.domain_key)
             if (infoData.template_text && infoData.template_text.length > 1) {
                 infoData.texts = infoData.template_text.splice(1)
                 infoData.template_text = infoData.template_text.toString()
@@ -346,7 +377,6 @@ class List extends ListPage {
                 } else {
                     await this.handleAdd(param, this.schema)
                 }
-                this.setState({ visibleModal: false })
             })
             .catch((err) => {
                 console.log("err", err)
@@ -358,12 +388,23 @@ class List extends ListPage {
 
     // 获取意图列表
     async findIntentList(domainKey) {
-        this.formRef.current.setFieldsValue({ intent_key: undefined })
         let res = await schemas.intent.service.get({
             domain_key: domainKey,
             pageSize: 10000,
         })
-        this.setState({ intentList: res.list })
+        return res.list
+    }
+
+    async findAllIntent() {
+        let list = await this.findIntentList()
+        this.setState({ allIntentList: list })
+    }
+
+    async findIntentByDomainKey(domainKey) {
+        this.formRef.current.setFieldsValue({ intent_key: undefined })
+        let list = await this.findIntentList(domainKey)
+        let treeList = getTree(list)
+        this.setState({ intentList: treeList })
     }
 
     // 域字典->列表

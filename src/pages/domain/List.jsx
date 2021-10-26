@@ -113,11 +113,11 @@ class List extends ListPage {
             )
             message.success("添加成功")
             this.refreshList()
+            this.handleVisibleModal()
         } catch (error) {
             message.error(error.message)
         }
 
-        this.handleVisibleModal()
         this.handleChangeCallback && this.handleChangeCallback()
         this.props.handleChangeCallback && this.props.handleChangeCallback()
 
@@ -134,11 +134,11 @@ class List extends ListPage {
             )
             this.refreshList()
             message.success("操作成功")
+            this.handleVisibleModal()
         } catch (error) {
             message.error(error.message)
         }
 
-        this.handleVisibleModal()
         if (this.handleChangeCallback) {
             this.handleChangeCallback()
         }
