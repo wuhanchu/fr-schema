@@ -157,7 +157,7 @@ class List extends ListPage {
                                 treeDefaultExpandAll
                             />
                         </Form.Item>
-                        <Form.Item label="回复文本" name="template_text">
+                        <Form.Item colon={false} label={<div><div>回复文本:</div><div style={{color: '#00000073'}}>话术引擎回复</div></div>} name="template_text">
                             <Input.TextArea placeholder="请输入回复文本" />
                         </Form.Item>
                         <Form.List name="texts">
@@ -220,7 +220,7 @@ class List extends ListPage {
                                 </>
                             )}
                         </Form.List>
-                        <Form.Item label="回复模板" name="template">
+                        <Form.Item  colon={false} label={<div><div>回复模板:</div><div style={{color: '#00000073'}}>机器闲聊回复</div></div>} name="template">
                             {this.renderAce("template")}
                         </Form.Item>
                     </Form>
