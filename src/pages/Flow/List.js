@@ -1,6 +1,6 @@
 import { connect } from "dva"
 import ListPage from "@/outter/fr-schema-antd-utils/src/components/Page/ListPage"
-import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
+import InfoModal from "./InfoModal"
 
 import schemas from "@/schemas"
 import React from "react"
