@@ -6,7 +6,7 @@ import schemas from "@/schemas"
 import React from "react"
 import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
-import { Divider, Modal, Button, message } from "antd"
+import { Divider, Modal, Button, message, Popconfirm, Select } from "antd"
 import frSchema from "@/outter/fr-schema/src"
 import ChartModal from "./Flow"
 import { exportData } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
@@ -33,14 +33,106 @@ class List extends ListPage {
             service: schemas.flow.service,
             importTemplateUrl,
             operateWidth: "270px",
+            infoProps: {
+                width: "900px",
+            },
         })
         this.schema.domain_key.dict = this.props.dict.domain
     }
 
     async componentDidMount() {
         let intent = await schemas.intent.service.get({ limit: 9999 })
+        let project = await schemas.project.service.get({ limit: 9999 })
+        this.schema.project_id.dict = listToDict(project.list, "", "id", "name")
+
+        this.schema.project_id.props.projectArry = project.list
+        this.schema.project_id.renderInput = (
+            item,
+            tempData,
+            props,
+            action,
+            form
+        ) => {
+            let options = []
+            if (
+                props.form &&
+                props.form.current &&
+                props.form.current.getFieldsValue().domain_key
+            ) {
+                options = props.projectArry
+                    .filter(
+                        (item) =>
+                            item.domain_key ===
+                            props.form.current.getFieldsValue().domain_key
+                    )
+                    .map((item, index) => {
+                        return { value: item.id, label: item.name }
+                    })
+            } else {
+                options = props.projectArry
+                    .filter((item) => {
+                        if (tempData.domain_key)
+                            return item.domain_key === tempData.domain_key
+                        else {
+                            return true
+                        }
+                    })
+                    .map((item, index) => {
+                        return { value: item.id, label: item.name }
+                    })
+            }
+            return <Select mode="tags" {...props} options={options}></Select>
+        }
         this.schema.intent_key.dict = listToDict(intent.list, "", "key", "name")
         super.componentDidMount()
+    }
+
+    renderOperateColumn(props = {}) {
+        const { scroll } = this.meta
+        const { inDel } = this.state
+        const { showEdit = true, showDelete = true } = {
+            ...this.meta,
+            ...props,
+        }
+        return (
+            !this.meta.readOnly &&
+            !this.props.readOnly && {
+                title: "操作",
+                width: this.meta.operateWidth,
+                fixed: "right",
+                render: (text, record) => (
+                    <>
+                        <a
+                            onClick={() => {
+                                this.handleVisibleModal(true, record, "edit")
+                                this.setState({ domain_key: record.domain_key })
+                            }}
+                        >
+                            修改
+                        </a>
+                        <Divider type="vertical" />
+                        <Popconfirm
+                            title="是否要删除此行？"
+                            onConfirm={async (e) => {
+                                this.setState({ record })
+                                await this.handleDelete(record)
+                                e.stopPropagation()
+                            }}
+                        >
+                            <a>
+                                {inDel &&
+                                    this.state.record.id &&
+                                    this.state.record.id === record.id && (
+                                        <LoadingOutlined />
+                                    )}
+                                删除
+                            </a>
+                        </Popconfirm>
+                        {this.renderOperateColumnExtend(record)}
+                    </>
+                ),
+            }
+        )
     }
 
     renderOperateColumnExtend(record) {

@@ -7,25 +7,49 @@ const schema = {
         title: "域",
         sorter: true,
         required: true,
+        style: { width: "500px" },
         type: schemaFieldType.Select,
     },
     name: {
         required: true,
+        style: { width: "500px" },
         title: "名称",
     },
     key: {
         required: true,
+        style: { width: "500px" },
+
         title: "编码",
     },
     intent_key: {
         // required: true,
+        style: { width: "500px" },
         title: "意图",
         type: schemaFieldType.Select,
         props: {
             mode: "tags",
         },
     },
-
+    project_id: {
+        // required: true,
+        style: { width: "500px" },
+        title: "相关问题库",
+        type: schemaFieldType.Select,
+        props: {
+            mode: "tags",
+        },
+    },
+    slot: {
+        title: "相关槽位",
+        listHide: true,
+        props: {
+            style: { width: "500px" },
+            height: "300px",
+        },
+        // // required: true,
+        type: schemaFieldType.AceEditor,
+        decoratorProps: { rules: verifyJson },
+    },
     create_time: {
         title: "创建时间",
         // required: true,
