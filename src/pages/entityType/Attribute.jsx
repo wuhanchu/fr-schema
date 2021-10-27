@@ -39,7 +39,11 @@ class List extends DataList {
         if (!this.props.offline) {
             try {
                 response = await this.service.post(
-                    { ...data, entity_type_key: this.props.record.key },
+                    {
+                        ...data,
+                        entity_type_key: this.props.record.key,
+                        alias: data.alias ? "true" : "false",
+                    },
                     schema
                 )
                 message.success("添加成功")
@@ -56,6 +60,31 @@ class List extends DataList {
 
         this.refreshList()
         this.handleVisibleModal()
+        this.handleChangeCallback && this.handleChangeCallback()
+        this.props.handleChangeCallback && this.props.handleChangeCallback()
+
+        return response
+    }
+
+    handleUpdate = async (data, schema, method = "patch") => {
+        // 更新
+        let response
+        try {
+            if (!this.props.offline) {
+                response = await this.service[method](
+                    { ...data, alias: data.alias ? "true" : "false" },
+                    schema
+                )
+            }
+
+            // 修改当前数据
+            this.refreshList()
+            message.success("修改成功")
+            this.handleVisibleModal()
+        } catch (error) {
+            message.error(error.message)
+        }
+
         this.handleChangeCallback && this.handleChangeCallback()
         this.props.handleChangeCallback && this.props.handleChangeCallback()
 

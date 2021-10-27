@@ -35,7 +35,7 @@ const schema = {
                 remark: "是",
             },
             false: {
-                value: 0,
+                value: false,
                 remark: "否",
             },
         },
