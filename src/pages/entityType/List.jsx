@@ -4,7 +4,8 @@ import schemas from "@/schemas"
 import React from "react"
 import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
-import { message, Modal } from "antd"
+import { message, Modal, Divider } from "antd"
+import Attribute from "./Attribute"
 
 @connect(({ global }) => ({
     dict: global.dict,
@@ -15,7 +16,7 @@ class List extends DataList {
         super(props, {
             schema: schemas.entityType.schema,
             service: schemas.entityType.service,
-            operateWidth: "120px",
+            operateWidth: "180px",
         })
         this.schema.domain_key.dict = this.props.dict.domain
     }
@@ -45,7 +46,30 @@ class List extends DataList {
 
         return response
     }
-
+    // renderOperateColumnExtend(record){
+    //     return <><Divider type="vertical"/><a onClick={()=>{
+    //         this.setState({record,showAttr: true})
+    //     }}>属性</a></>
+    // }
+    renderExtend() {
+        const { showAttr, record } = this.state
+        return (
+            <>
+                {showAttr && (
+                    <Modal
+                        visible
+                        onCancel={() => this.setState({ showAttr: false })}
+                        title="属性"
+                        footer={null}
+                        width="80%"
+                        maskClosable
+                    >
+                        <Attribute record={record} />
+                    </Modal>
+                )}
+            </>
+        )
+    }
     handleUpdate = async (data, schema, method = "patch") => {
         // 更新
         if (this.state.infoData.key === data.key) {

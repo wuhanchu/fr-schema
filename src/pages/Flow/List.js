@@ -42,47 +42,46 @@ class List extends ListPage {
 
     async componentDidMount() {
         let intent = await schemas.intent.service.get({ limit: 9999 })
-        let project = await schemas.project.service.get({ limit: 9999 })
-        this.schema.project_id.dict = listToDict(project.list, "", "id", "name")
-
-        this.schema.project_id.props.projectArry = project.list
-        this.schema.project_id.renderInput = (
-            item,
-            tempData,
-            props,
-            action,
-            form
-        ) => {
-            let options = []
-            if (
-                props.form &&
-                props.form.current &&
-                props.form.current.getFieldsValue().domain_key
-            ) {
-                options = props.projectArry
-                    .filter(
-                        (item) =>
-                            item.domain_key ===
-                            props.form.current.getFieldsValue().domain_key
-                    )
-                    .map((item, index) => {
-                        return { value: item.id, label: item.name }
-                    })
-            } else {
-                options = props.projectArry
-                    .filter((item) => {
-                        if (tempData.domain_key)
-                            return item.domain_key === tempData.domain_key
-                        else {
-                            return true
-                        }
-                    })
-                    .map((item, index) => {
-                        return { value: item.id, label: item.name }
-                    })
-            }
-            return <Select mode="tags" {...props} options={options}></Select>
-        }
+        // let project = await schemas.project.service.get({ limit: 9999 })
+        // this.schema.project_id.dict = listToDict(project.list, "", "id", "name")
+        // this.schema.project_id.props.projectArry = project.list
+        // this.schema.project_id.renderInput = (
+        //     item,
+        //     tempData,
+        //     props,
+        //     action,
+        //     form
+        // ) => {
+        //     let options = []
+        //     if (
+        //         props.form &&
+        //         props.form.current &&
+        //         props.form.current.getFieldsValue().domain_key
+        //     ) {
+        //         options = props.projectArry
+        //             .filter(
+        //                 (item) =>
+        //                     item.domain_key ===
+        //                     props.form.current.getFieldsValue().domain_key
+        //             )
+        //             .map((item, index) => {
+        //                 return { value: item.id, label: item.name }
+        //             })
+        //     } else {
+        //         options = props.projectArry
+        //             .filter((item) => {
+        //                 if (tempData.domain_key)
+        //                     return item.domain_key === tempData.domain_key
+        //                 else {
+        //                     return true
+        //                 }
+        //             })
+        //             .map((item, index) => {
+        //                 return { value: item.id, label: item.name }
+        //             })
+        //     }
+        //     return <Select mode="tags" {...props} options={options}></Select>
+        // }
         this.schema.intent_key.dict = listToDict(intent.list, "", "key", "name")
         super.componentDidMount()
     }
