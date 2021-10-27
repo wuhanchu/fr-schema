@@ -21,15 +21,7 @@ const schema = {
 
         title: "编码",
     },
-    project_id: {
-        // required: true,
-        style: { width: "500px" },
-        title: "相关问题库",
-        type: schemaFieldType.Select,
-        props: {
-            mode: "tags",
-        },
-    },
+
     intent_key: {
         // required: true,
         style: { width: "500px" },
@@ -39,7 +31,15 @@ const schema = {
             mode: "tags",
         },
     },
-
+    project_id: {
+        // required: true,
+        style: { width: "500px" },
+        title: "相关问题库",
+        type: schemaFieldType.Select,
+        props: {
+            mode: "tags",
+        },
+    },
     slot: {
         title: "相关槽位",
         listHide: true,
