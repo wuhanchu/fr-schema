@@ -46,11 +46,20 @@ class List extends DataList {
 
         return response
     }
-    // renderOperateColumnExtend(record){
-    //     return <><Divider type="vertical"/><a onClick={()=>{
-    //         this.setState({record,showAttr: true})
-    //     }}>属性</a></>
-    // }
+    renderOperateColumnExtend(record) {
+        return (
+            <>
+                <Divider type="vertical" />
+                <a
+                    onClick={() => {
+                        this.setState({ record, showAttr: true })
+                    }}
+                >
+                    属性
+                </a>
+            </>
+        )
+    }
     renderExtend() {
         const { showAttr, record } = this.state
         return (
