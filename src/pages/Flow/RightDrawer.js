@@ -379,24 +379,33 @@ class RightDrawer extends React.PureComponent {
                                     placeholder="请输入允许重复次数"
                                 />
                             </FormItem>
-                            <FormItem
-                                name={"types"}
-                                label={"类型"}
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: "请输入类型！",
-                                    },
-                                ]}
-                            >
-                                <Select
-                                    disabled={canEditType}
-                                    options={[
-                                        { value: "end", label: "结束节点" },
-                                        { value: "normal", label: "普通节点" },
-                                    ]}
-                                ></Select>
-                            </FormItem>
+                            {cell.getData().types !== "begin" &&
+                                cell.getData().types !== "global" && (
+                                    <FormItem
+                                        name={"types"}
+                                        label={"类型"}
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: "请输入类型！",
+                                            },
+                                        ]}
+                                    >
+                                        <Select
+                                            disabled={canEditType}
+                                            options={[
+                                                {
+                                                    value: "end",
+                                                    label: "结束节点",
+                                                },
+                                                {
+                                                    value: "normal",
+                                                    label: "普通节点",
+                                                },
+                                            ]}
+                                        ></Select>
+                                    </FormItem>
+                                )}
                             <FormItem
                                 label={
                                     <div>
