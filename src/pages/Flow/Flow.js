@@ -132,7 +132,14 @@ class Flow extends React.PureComponent {
 
     render() {
         let { chooseType, cell, intenList, expGraphData, spinning } = this.state
-        const { service, record, dict, other } = this.props
+        const {
+            service,
+            record,
+            dict,
+            other,
+            projectDict,
+            intentDict,
+        } = this.props
         let haveEnd = false
         expGraphData &&
             expGraphData.node &&
@@ -147,6 +154,8 @@ class Flow extends React.PureComponent {
                     <div id="containerChart" />
                     {chooseType && (
                         <RightDrawer
+                            projectDict={projectDict}
+                            intentDict={intentDict}
                             service={service}
                             record={record}
                             intenList={intenList}

@@ -866,7 +866,7 @@ class BaseList extends EditPage {
                 renderInput: () => {
                     return (
                         <a
-                            href="./import/掌数_知料_知识库信息导入.xlsx"
+                            href="../import/掌数_知料_知识库信息导入.xlsx"
                             download
                         >
                             <Button>下载模板文件</Button>

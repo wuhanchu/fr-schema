@@ -228,7 +228,15 @@ class RightDrawer extends React.PureComponent {
     }
 
     renderGrid() {
-        let { chooseType, record, graph, dict } = this.props
+        let {
+            chooseType,
+            record,
+            graph,
+            dict,
+            intentDict,
+            projectDict,
+        } = this.props
+        console.log(projectDict, intentDict)
         return (
             chooseType === "grid" && (
                 <div>
@@ -237,7 +245,11 @@ class RightDrawer extends React.PureComponent {
                         <Form
                             labelAlign="left"
                             colon={false}
-                            initialValues={{ ...record }}
+                            initialValues={{
+                                ...record,
+                                slot:
+                                    record.slot && JSON.stringify(record.slot),
+                            }}
                             onValuesChange={(args) => {
                                 graph.flowSetting = args
                             }}
@@ -256,6 +268,7 @@ class RightDrawer extends React.PureComponent {
                                 <Select
                                     showSearch
                                     placeholder={"请选择域!"}
+                                    disabled
                                     defaultActiveFirstOption={false}
                                     filterOption={(input, option) =>
                                         option.children
@@ -275,6 +288,18 @@ class RightDrawer extends React.PureComponent {
                                 </Select>
                             </FormItem>
                             <FormItem
+                                name={"name"}
+                                label="名称"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: "请输入名称！",
+                                    },
+                                ]}
+                            >
+                                <Input disabled placeholder="请输入名称" />
+                            </FormItem>
+                            <FormItem
                                 name={"key"}
                                 label="编码"
                                 rules={[
@@ -284,7 +309,74 @@ class RightDrawer extends React.PureComponent {
                                     },
                                 ]}
                             >
-                                <Input placeholder="请输入编码" />
+                                <Input disabled placeholder="请输入编码" />
+                            </FormItem>
+                            <FormItem
+                                name={"intent_key"}
+                                label="意图"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: "请输入意图！",
+                                    },
+                                ]}
+                            >
+                                <Select
+                                    showSearch
+                                    placeholder={"请选择意图!"}
+                                    disabled
+                                    mode="tags"
+                                >
+                                    {intentDict &&
+                                        intentDict.map((item) => {
+                                            return (
+                                                <Select.Option value={item.key}>
+                                                    {item.name}
+                                                </Select.Option>
+                                            )
+                                        })}
+                                </Select>
+                            </FormItem>
+                            <FormItem
+                                name={"project_id"}
+                                label="相关项目"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: "请输入项目！",
+                                    },
+                                ]}
+                            >
+                                <Select
+                                    showSearch
+                                    placeholder={"请选择项目!"}
+                                    disabled
+                                    mode="tags"
+                                >
+                                    {projectDict &&
+                                        projectDict.map((item) => {
+                                            return (
+                                                <Select.Option value={item.id}>
+                                                    {item.name}
+                                                </Select.Option>
+                                            )
+                                        })}
+                                </Select>
+                            </FormItem>
+                            <FormItem
+                                name={"slot"}
+                                label="相关槽位"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: "请输入相关槽位！",
+                                    },
+                                ]}
+                            >
+                                <Input.TextArea
+                                    disabled
+                                    placeholder="请输入相关槽位"
+                                />
                             </FormItem>
                         </Form>
                     </div>

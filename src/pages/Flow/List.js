@@ -80,9 +80,17 @@ class List extends ListPage {
                         return { value: item.id, label: item.name }
                     })
             }
-            return <Select mode="tags" {...props} options={options}></Select>
+            return (
+                <Select
+                    {...props}
+                    options={options}
+                    mode="multiple"
+                    allowClear
+                ></Select>
+            )
         }
         this.schema.intent_key.dict = listToDict(intent.list, "", "key", "name")
+        this.setState({ intentDict: intent.list, projectDict: project.list })
         super.componentDidMount()
     }
 
@@ -163,7 +171,13 @@ class List extends ListPage {
     }
 
     renderExtend() {
-        const { visibleFlow, record, visibleCodeModal } = this.state
+        const {
+            visibleFlow,
+            record,
+            visibleCodeModal,
+            projectDict,
+            intentDict,
+        } = this.state
         return (
             <>
                 <Modal
@@ -186,6 +200,8 @@ class List extends ListPage {
                     <ChartModal
                         visibleRelease={false}
                         record={record}
+                        projectDict={projectDict}
+                        intentDict={intentDict}
                         handleSetVisibleFlow={(args) => {
                             this.setState({ visibleFlow: args })
                             this.refreshList()
