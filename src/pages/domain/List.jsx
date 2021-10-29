@@ -13,6 +13,8 @@ import { listToDict } from "@/outter/fr-schema/src/dict"
 import UserTransfer from "./component/UserTransfer"
 import HotWord from "./component/HotWord"
 import SearchHistory from "./component/SearchHistory"
+import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
+import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 
 import IntentIdentify from "./component/IntentIdentify"
 import { DownOutlined, LoadingOutlined } from "@ant-design/icons"
@@ -42,11 +44,15 @@ class List extends ListPage {
             limit: 10000,
             ai_type: "eq.chat",
         })
+        let projectList = await schemas.project.service.get({
+            limit: 10000,
+        })
         this.schema.talk_service_id.dict = listToDict(aiService.list)
         const data = await this.service.getUserAuthUser()
 
         this.setState({
             userList: data,
+            projectList: projectList.list,
         })
 
         super.componentDidMount()
@@ -195,6 +201,7 @@ class List extends ListPage {
                     />
                 )}
                 {this.state.visibleAssign && this.renderAssignModal()}
+                {this.state.visibleAsync && this.renderAsyncModal()}
                 {visibleIntentIdentify && (
                     <IntentIdentify
                         onCancel={() => {
@@ -321,7 +328,84 @@ class List extends ListPage {
         )
     }
 
+    handleVisibleAsyncModal = (flag, record, action) => {
+        this.setState({
+            visibleAsync: !!flag,
+            infoData: record,
+            action,
+        })
+    }
+
+    handleAsync(data) {
+        console.log(data)
+    }
+    renderAsyncModal() {
+        if (this.props.renderInfoModal) {
+            return this.props.renderInfoModal()
+        }
+        const { form } = this.props
+        const renderForm = this.props.renderForm || this.renderForm
+        const { resource, title, addArgs } = this.meta
+        const { visibleAsync, infoData, action } = this.state
+        const updateMethods = {
+            handleVisibleModal: this.handleVisibleAsyncModal.bind(this),
+            handleUpdate: this.handleUpdate.bind(this),
+            handleAdd: this.handleAsync.bind(this),
+        }
+
+        const schema = {
+            project_id: {
+                title: "问题库",
+                required: true,
+                extra: "选择同步问题库",
+                type: schemaFieldType.Select,
+                dict: this.props.dict.domain,
+            },
+        }
+
+        return (
+            visibleAsync && (
+                <InfoModal
+                    renderForm={renderForm}
+                    title={"数据同步"}
+                    action={"add"}
+                    resource={resource}
+                    {...updateMethods}
+                    visible={visibleAsync}
+                    values={infoData}
+                    addArgs={addArgs}
+                    meta={this.meta}
+                    service={this.service}
+                    schema={schema}
+                    width={600}
+                />
+            )
+        )
+    }
+
     renderOperateColumnExtend(record) {
+        let subMenu = []
+        this.state.projectList.map((item) => {
+            if (item.domain_key === record.key) {
+                subMenu.push(
+                    <Menu.Item>
+                        <Popconfirm
+                            title="是否将数据同步数据库！"
+                            onConfirm={async (e) => {
+                                await this.service.fsfundSync({
+                                    domain_key: record.key,
+                                    project_id: item.id,
+                                })
+                                message.success("数据已同步！")
+                                e.stopPropagation()
+                            }}
+                        >
+                            <a>{item.name}</a>
+                        </Popconfirm>
+                    </Menu.Item>
+                )
+            }
+        })
         const testMenu = (
             <Menu>
                 <Menu.Item>
@@ -390,16 +474,20 @@ class List extends ListPage {
             <Menu>
                 <Menu.Item>
                     <Popconfirm
-                        title="是否将数据同步到引擎？会影响查询性能！"
+                        title="是否训练模型？会影响查询性能！"
                         onConfirm={async (e) => {
                             await this.service.sync({ domain_key: record.key })
                             message.success("数据同步中！")
                             e.stopPropagation()
                         }}
                     >
-                        <a>同步</a>
+                        <a>模型训练</a>
                     </Popconfirm>
                 </Menu.Item>
+                {subMenu.length && (
+                    <Menu.SubMenu title="同步数据">{subMenu}</Menu.SubMenu>
+                )}
+
                 <Menu.Item>
                     <a
                         onClick={async () => {

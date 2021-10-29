@@ -162,20 +162,20 @@ const schema = {
         addHide: true,
         editHide: true,
         type: schemaFieldType.DatePicker,
-        render: (item) => {
-            return <div style={{ minWidth: "60px" }}>{item}</div>
+        props: {
+            showTime: true,
         },
-        width: "120px",
+        width: "135px",
     },
     update_time: {
         title: "更新时间",
         addHide: true,
         editHide: true,
         type: schemaFieldType.DatePicker,
-        render: (item) => {
-            return <div style={{ minWidth: "60px" }}>{item}</div>
+        props: {
+            showTime: true,
         },
-        width: "120px",
+        width: "135px",
     },
 }
 
