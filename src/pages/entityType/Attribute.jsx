@@ -17,12 +17,10 @@ class List extends DataList {
         super(props, {
             schema: schemas.entityAttr.schema,
             service: schemas.entityAttr.service,
-            // infoProps: {
-            //     width: "900px",
-            // },
             queryArgs: {
                 ...props.queryArgs,
                 entity_type_key: props.record.key,
+                domain_key: props.record.domain_key,
             },
             operateWidth: "120px",
         })
@@ -42,6 +40,7 @@ class List extends DataList {
                     {
                         ...data,
                         entity_type_key: this.props.record.key,
+                        domain_key: this.props.record.domain_key,
                         alias: data.alias ? "true" : "false",
                     },
                     schema

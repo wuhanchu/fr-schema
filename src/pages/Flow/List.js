@@ -53,6 +53,7 @@ class List extends ListPage {
             form
         ) => {
             let options = []
+            this.infoForm = props.form
             if (
                 props.form &&
                 props.form.current &&
@@ -92,6 +93,15 @@ class List extends ListPage {
         this.schema.intent_key.dict = listToDict(intent.list, "", "key", "name")
         this.setState({ intentDict: intent.list, projectDict: project.list })
         super.componentDidMount()
+    }
+
+    renderInfoModal() {
+        let onValuesChange = (data, item) => {
+            if (data.domain_key) {
+                this.infoForm.current.setFieldsValue({ project_id: [] })
+            }
+        }
+        return super.renderInfoModal({ onValuesChange })
     }
 
     renderOperateColumn(props = {}) {

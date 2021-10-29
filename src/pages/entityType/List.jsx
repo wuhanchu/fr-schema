@@ -4,8 +4,15 @@ import schemas from "@/schemas"
 import React from "react"
 import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
-import { message, Modal, Divider } from "antd"
+import { message, Modal, Divider, Button } from "antd"
 import Attribute from "./Attribute"
+import frSchema from "@/outter/fr-schema/src"
+import { exportData } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
+import { schemaFieldType } from "@/outter/fr-schema/src/schema"
+import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
+import ImportModal from "@/outter/fr-schema-antd-utils/src/components/modal/ImportModal"
+
+const { decorateList } = frSchema
 
 @connect(({ global }) => ({
     dict: global.dict,
@@ -13,10 +20,15 @@ import Attribute from "./Attribute"
 @Form.create()
 class List extends DataList {
     constructor(props) {
+        const importTemplateUrl = (BASE_PATH + "/import/实体.xlsx").replace(
+            "//",
+            "/"
+        )
         super(props, {
             schema: schemas.entityType.schema,
             service: schemas.entityType.service,
             operateWidth: "180px",
+            importTemplateUrl,
         })
         this.schema.domain_key.dict = this.props.dict.domain
     }
@@ -79,6 +91,57 @@ class List extends DataList {
             </>
         )
     }
+
+    /**
+     * 操作栏按钮
+     */
+    renderOperationButtons() {
+        if (this.props.renderOperationButtons) {
+            return this.props.renderOperationButtons()
+        }
+
+        return (
+            <>
+                {!this.props.readOnly && !this.meta.addHide && (
+                    <Button
+                        type="primary"
+                        onClick={() =>
+                            this.handleVisibleModal(true, null, "add")
+                        }
+                    >
+                        新增
+                    </Button>
+                )}
+                <Button
+                    onClick={() => {
+                        this.setState({ visibleImport: true })
+                    }}
+                >
+                    导入
+                </Button>
+
+                <Button
+                    loading={this.state.exportLoading}
+                    onClick={() => {
+                        // this.setState({ visibleExport: true })
+                        console.log("data")
+                        this.handleExport()
+                    }}
+                >
+                    导出
+                </Button>
+            </>
+        )
+    }
+
+    handleVisibleImportModal = (flag, record, action) => {
+        this.setState({
+            visibleImport: !!flag,
+            infoData: record,
+            action,
+        })
+    }
+
     handleUpdate = async (data, schema, method = "patch") => {
         // 更新
         if (this.state.infoData.key === data.key) {
@@ -109,6 +172,138 @@ class List extends DataList {
                 },
             })
         }
+    }
+
+    async handleExport(args, schema) {
+        this.setState({ exportLoading: true }, async () => {
+            let column = this.getColumns(false).filter((item) => {
+                return !item.isExpand && item.key !== "external_id"
+            })
+            let columns = [
+                {
+                    title: "域",
+                    dataIndex: "domain_key",
+                    key: "domain_key",
+                },
+                {
+                    title: "名称",
+                    dataIndex: "name",
+                    key: "name",
+                },
+                {
+                    title: "编码",
+                    dataIndex: "key",
+                    key: "key",
+                },
+                {
+                    title: "正则表达式",
+                    dataIndex: "regex",
+                    key: "regex",
+                },
+                {
+                    title: "备注",
+                    dataIndex: "remark",
+                    key: "remark",
+                },
+                {
+                    title: "属性",
+                    dataIndex: "attribute",
+                    key: "attribute",
+                },
+            ]
+            let data = await this.requestList({
+                pageSize: 1000000,
+                offset: 0,
+                ...args,
+            })
+            let list = data.list
+            let keyArr = list.map((item) => item.key)
+            let attribute = await schemas.entityAttr.service.get({
+                limit: 10000,
+                entity_type_key: "in.(" + keyArr.join(",") + ")",
+            })
+            list = list.map((item, index) => {
+                let attributeArray = attribute.list
+                    .filter(
+                        (itemAttr) =>
+                            item.key === itemAttr.entity_type_key &&
+                            item.domain_key === itemAttr.domain_key
+                    )
+                    .map((item) => {
+                        return {
+                            ...item,
+                            id: undefined,
+                            create_time: undefined,
+                        }
+                    })
+                attributeArray = attributeArray.length
+                    ? JSON.stringify(attributeArray)
+                    : ""
+                return { ...item, attribute: attributeArray }
+            })
+            data = decorateList(list, this.schema)
+            await exportData("意图", data, columns)
+            this.setState({ exportLoading: false })
+        })
+    }
+
+    renderImportModal() {
+        return (
+            <ImportModal
+                importTemplateUrl={this.meta.importTemplateUrl}
+                schema={{
+                    domain_key: {
+                        title: "域",
+                        // required: true,
+                    },
+                    name: {
+                        title: "名称",
+                        rules: (rule, value) => value,
+                        required: true,
+                    },
+                    key: {
+                        title: "编码",
+                        rules: (rule, value) => value,
+                        required: true,
+                    },
+                    regex: {
+                        title: "正则表达式",
+                    },
+                    remark: {
+                        title: "备注",
+                    },
+                    attribute: {
+                        title: "属性",
+                    },
+                }}
+                errorKey={"question_standard"}
+                title={"导入"}
+                sliceNum={1}
+                onCancel={() => this.setState({ visibleImport: false })}
+                onChange={(data) => this.setState({ importData: data })}
+                onOk={async () => {
+                    // to convert
+                    let attributeAttr = []
+                    const data = this.state.importData.map((item) => {
+                        const { attribute, ...others } = item
+                        let attributeArr = attribute
+                            ? JSON.parse(attribute)
+                            : []
+                        attributeAttr = [...attributeAttr, ...attributeArr]
+                        return {
+                            ...this.meta.addArgs,
+                            ...others,
+                        }
+                    })
+                    // let postData = data.filters
+                    await this.service.upInsert(data)
+                    await schemas.entityAttr.service.upInsert(attributeAttr)
+                    message.success("导入成功")
+                    this.setState({ visibleImport: false })
+                    this.refreshList()
+                }}
+            />
+        )
     }
 
     renderSearchBar() {

@@ -46,7 +46,12 @@ const schema = {
 }
 
 const service = createApi("entity_type", schema, null, "eq.")
-
+service.upInsert = createApi(
+    "entity_type?on_conflict=domain_key,key",
+    schema,
+    null,
+    "eq."
+).upInsert
 export default {
     schema,
     service,
