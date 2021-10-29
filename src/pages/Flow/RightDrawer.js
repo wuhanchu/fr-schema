@@ -249,22 +249,23 @@ class RightDrawer extends React.PureComponent {
                                 ...record,
                                 slot:
                                     record.slot && JSON.stringify(record.slot),
+                                project_id:
+                                    record.project_id &&
+                                    record.project_id.length
+                                        ? record.project_id
+                                        : [],
+                                intent_key:
+                                    record.intent_key &&
+                                    record.intent_key.length
+                                        ? record.intent_key
+                                        : [],
                             }}
                             onValuesChange={(args) => {
                                 graph.flowSetting = args
                             }}
                             layout="vertical"
                         >
-                            <FormItem
-                                name={"domain_key"}
-                                label="域"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: "请输入域！",
-                                    },
-                                ]}
-                            >
+                            <FormItem name={"domain_key"} label="域">
                                 <Select
                                     showSearch
                                     placeholder={"请选择域!"}
@@ -287,43 +288,16 @@ class RightDrawer extends React.PureComponent {
                                         })}
                                 </Select>
                             </FormItem>
-                            <FormItem
-                                name={"name"}
-                                label="名称"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: "请输入名称！",
-                                    },
-                                ]}
-                            >
+                            <FormItem name={"name"} label="名称">
                                 <Input disabled placeholder="请输入名称" />
                             </FormItem>
-                            <FormItem
-                                name={"key"}
-                                label="编码"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: "请输入编码！",
-                                    },
-                                ]}
-                            >
+                            <FormItem name={"key"} label="编码">
                                 <Input disabled placeholder="请输入编码" />
                             </FormItem>
-                            <FormItem
-                                name={"intent_key"}
-                                label="意图"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: "请输入意图！",
-                                    },
-                                ]}
-                            >
+                            <FormItem name={"intent_key"} label="意图">
                                 <Select
                                     showSearch
-                                    placeholder={"请选择意图!"}
+                                    placeholder={"暂无意图!"}
                                     disabled
                                     mode="tags"
                                 >
@@ -337,19 +311,10 @@ class RightDrawer extends React.PureComponent {
                                         })}
                                 </Select>
                             </FormItem>
-                            <FormItem
-                                name={"project_id"}
-                                label="相关项目"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: "请输入项目！",
-                                    },
-                                ]}
-                            >
+                            <FormItem name={"project_id"} label="相关项目">
                                 <Select
                                     showSearch
-                                    placeholder={"请选择项目!"}
+                                    placeholder={"暂无项目!"}
                                     disabled
                                     mode="tags"
                                 >
@@ -363,19 +328,10 @@ class RightDrawer extends React.PureComponent {
                                         })}
                                 </Select>
                             </FormItem>
-                            <FormItem
-                                name={"slot"}
-                                label="相关槽位"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: "请输入相关槽位！",
-                                    },
-                                ]}
-                            >
+                            <FormItem name={"slot"} label="相关槽位">
                                 <Input.TextArea
                                     disabled
-                                    placeholder="请输入相关槽位"
+                                    placeholder="暂无相关槽位"
                                 />
                             </FormItem>
                         </Form>

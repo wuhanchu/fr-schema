@@ -201,7 +201,6 @@ class List extends ListPage {
                     />
                 )}
                 {this.state.visibleAssign && this.renderAssignModal()}
-                {this.state.visibleAsync && this.renderAsyncModal()}
                 {visibleIntentIdentify && (
                     <IntentIdentify
                         onCancel={() => {
@@ -325,61 +324,6 @@ class List extends ListPage {
                     </>
                 ),
             }
-        )
-    }
-
-    handleVisibleAsyncModal = (flag, record, action) => {
-        this.setState({
-            visibleAsync: !!flag,
-            infoData: record,
-            action,
-        })
-    }
-
-    handleAsync(data) {
-        console.log(data)
-    }
-    renderAsyncModal() {
-        if (this.props.renderInfoModal) {
-            return this.props.renderInfoModal()
-        }
-        const { form } = this.props
-        const renderForm = this.props.renderForm || this.renderForm
-        const { resource, title, addArgs } = this.meta
-        const { visibleAsync, infoData, action } = this.state
-        const updateMethods = {
-            handleVisibleModal: this.handleVisibleAsyncModal.bind(this),
-            handleUpdate: this.handleUpdate.bind(this),
-            handleAdd: this.handleAsync.bind(this),
-        }
-
-        const schema = {
-            project_id: {
-                title: "问题库",
-                required: true,
-                extra: "选择同步问题库",
-                type: schemaFieldType.Select,
-                dict: this.props.dict.domain,
-            },
-        }
-
-        return (
-            visibleAsync && (
-                <InfoModal
-                    renderForm={renderForm}
-                    title={"数据同步"}
-                    action={"add"}
-                    resource={resource}
-                    {...updateMethods}
-                    visible={visibleAsync}
-                    values={infoData}
-                    addArgs={addArgs}
-                    meta={this.meta}
-                    service={this.service}
-                    schema={schema}
-                    width={600}
-                />
-            )
         )
     }
 
