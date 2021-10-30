@@ -16,7 +16,6 @@ const { decorateList } = frSchema
 @connect(({ global }) => ({
     dict: global.dict,
 }))
-@Form.create()
 class List extends ListPage {
     constructor(props) {
         const importTemplateUrl = (BASE_PATH + "/import/意图.xlsx").replace(
@@ -418,6 +417,16 @@ class List extends ListPage {
     // 排序规则(从大到小)
     sortUp(a, b) {
         return b.tier - a.tier
+    }
+
+    /**
+     * 个性化转换对应的list数据
+     * @param list
+     * @returns {*}
+     */
+    convertList(list) {
+        this.setState({expandedRowKeys: []})
+        return list
     }
 
     // 搜索
