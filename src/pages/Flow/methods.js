@@ -186,10 +186,10 @@ export const ports = {
             position: "top",
             attrs: {
                 circle: {
-                    r: 4,
+                    r: 6,
                     magnet: true,
-                    stroke: "#2D8CF0",
-                    strokeWidth: 1,
+                    stroke: "#31d0c6",
+                    strokeWidth: 2,
                     fill: "#fff",
                 },
             },
@@ -199,10 +199,10 @@ export const ports = {
             position: "bottom",
             attrs: {
                 circle: {
-                    r: 4,
+                    r: 6,
                     magnet: true,
-                    stroke: "#2D8CF0",
-                    strokeWidth: 1,
+                    stroke: "#31d0c6",
+                    strokeWidth: 2,
                     fill: "#fff",
                 },
             },
@@ -211,10 +211,10 @@ export const ports = {
             position: "left",
             attrs: {
                 circle: {
-                    r: 4,
+                    r: 6,
                     magnet: true,
-                    stroke: "#2D8CF0",
-                    strokeWidth: 1,
+                    stroke: "#31d0c6",
+                    strokeWidth: 2,
                     fill: "#fff",
                 },
             },
@@ -223,10 +223,10 @@ export const ports = {
             position: "right",
             attrs: {
                 circle: {
-                    r: 4,
+                    r: 6,
                     magnet: true,
-                    stroke: "#2D8CF0",
-                    strokeWidth: 1,
+                    stroke: "#31d0c6",
+                    strokeWidth: 2,
                     fill: "#fff",
                 },
             },
@@ -373,7 +373,7 @@ export function initGraph(expGraphData, callback, graphChange) {
         },
         connecting: {
             // 节点连接
-            anchor: "top",
+            anchor: "center",
             connectionPoint: "anchor",
             allowBlank: true,
             allowNode: false,
