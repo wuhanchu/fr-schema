@@ -14,7 +14,7 @@ import {
 } from "antd"
 import { formatData } from "@/utils/utils"
 import clone from "clone"
-import {connect} from "dva";
+import { connect } from "dva"
 
 @connect(({ global, user }) => ({
     dict: global.dict,
@@ -46,7 +46,12 @@ class IntentIdentify extends React.Component {
     }
 
     onFinish = async (values) => {
-        this.setState({ isSpin: true })
+        this.setState({
+            data: {},
+            isSpin: true,
+            list: [],
+            result: [],
+        })
         if (values.text) {
             let response = await service.service.intentIdentify({
                 domain_key: this.props.record.key,
@@ -55,19 +60,15 @@ class IntentIdentify extends React.Component {
             let list = response.data.intent_ranking.map((item, index) => {
                 return { ...item, isTrue: false, isDel: false, addTxt: "" }
             })
+
+            console.log(response.data.intent_ranking)
             this.setState({
                 data: response.data,
                 isSpin: false,
-                list: response.data.intent_ranking,
-            })
-        } else {
-            this.setState({
-                data: {},
-                isSpin: false,
-                list: [],
-                result: [],
+                list: clone(response.data.intent_ranking),
             })
         }
+        this.setState({ isSpin: false })
     }
 
     renderContent() {
@@ -159,7 +160,8 @@ class IntentIdentify extends React.Component {
                 key: "type",
                 render: (text, item) => (
                     <span>
-                        {this.props.dict.intent_from[item.from] && this.props.dict.intent_from[item.from].name}
+                        {this.props.dict.intent_from[item.from] &&
+                            this.props.dict.intent_from[item.from].name}
                     </span>
                 ),
             },
@@ -232,6 +234,7 @@ class IntentIdentify extends React.Component {
                 },
             },
         ]
+        console.log(this.state.list)
         return (
             <Spin spinning={this.state.isSpin}>
                 <Table
@@ -259,9 +262,9 @@ class IntentIdentify extends React.Component {
         })
         try {
             await IntentService.service.submit(data)
-            let values = await this.formRef.current.validateFields();
+            let values = await this.formRef.current.validateFields()
             message.success("提交成功")
-            this.onFinish(values);
+            this.onFinish(values)
             // this.props.onCancel(false)
         } catch (error) {
             message.error(error.message)
