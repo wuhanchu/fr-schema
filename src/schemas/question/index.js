@@ -137,15 +137,12 @@ const schema = {
                 "font-size",
                 "text-color",
                 "bold",
-                {
-                    key: "table", // 使用key来指定控件类型
-                    title: "插入表格", // 自定义控件title
-                },
                 "italic",
                 "media",
                 "blockquote",
                 "code",
                 "link",
+                "table",
                 {
                     key: "fullscreen",
                     text: <b>全屏</b>,
