@@ -328,28 +328,6 @@ class List extends ListPage {
     }
 
     renderOperateColumnExtend(record) {
-        let subMenu = []
-        this.state.projectList.map((item) => {
-            if (item.domain_key === record.key) {
-                subMenu.push(
-                    <Menu.Item>
-                        <Popconfirm
-                            title="是否将数据同步数据库！"
-                            onConfirm={async (e) => {
-                                await this.service.fsfundSync({
-                                    domain_key: record.key,
-                                    project_id: item.id,
-                                })
-                                message.success("数据已同步！")
-                                e.stopPropagation()
-                            }}
-                        >
-                            <a>{item.name}</a>
-                        </Popconfirm>
-                    </Menu.Item>
-                )
-            }
-        })
         const testMenu = (
             <Menu>
                 <Menu.Item>
@@ -421,16 +399,27 @@ class List extends ListPage {
                         title="是否训练模型？会影响查询性能！"
                         onConfirm={async (e) => {
                             await this.service.sync({ domain_key: record.key })
-                            message.success("数据同步中！")
+                            message.success("模型训练中！")
                             e.stopPropagation()
                         }}
                     >
                         <a>模型训练</a>
                     </Popconfirm>
                 </Menu.Item>
-                {subMenu.length && (
-                    <Menu.SubMenu title="同步数据">{subMenu}</Menu.SubMenu>
-                )}
+                <Menu.Item>
+                    <Popconfirm
+                        title="是否将数据同步数据库！"
+                        onConfirm={async (e) => {
+                            await this.service.fsfundSync({
+                                domain_key: record.key,
+                            })
+                            message.success("数据已同步！")
+                            e.stopPropagation()
+                        }}
+                    >
+                        <a>同步数据</a>
+                    </Popconfirm>
+                </Menu.Item>
 
                 <Menu.Item>
                     <a

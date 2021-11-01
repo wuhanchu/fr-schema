@@ -92,8 +92,8 @@ service.getUserAuthUser = async (args) => {
     })
     return data
 }
-service.sync = createApi("domain/sync", schema, null, "eq.").post
-service.fsfundSync = createApi("fsfund/sync", schema, null, "eq.").post
+service.sync = createApi("domain/train", schema, null, "eq.").post
+service.fsfundSync = createApi("domain/sync", schema, null, "eq.").post
 
 export default {
     schema,
