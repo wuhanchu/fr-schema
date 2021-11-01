@@ -570,16 +570,16 @@ class Flow extends React.PureComponent {
         //     return false
         // }
         let isTrue = true
-        if (targetView && sourceView) {
-            this.state.expGraphData.connection.map((item) => {
-                if (
-                    item.end === targetView.cell.id &&
-                    item.begin === sourceView.cell.id
-                ) {
-                    isTrue = false
-                }
-            })
-        }
+        // if (targetView && sourceView) {
+        //     this.state.expGraphData.connection.map((item) => {
+        //         if (
+        //             item.end === targetView.cell.id &&
+        //             item.begin === sourceView.cell.id
+        //         ) {
+        //             isTrue = false
+        //         }
+        //     })
+        // }
         return isTrue
     }
 

@@ -298,10 +298,10 @@ export function createEdgeFunc(args) {
                 args: {
                     tagName: "circle",
                     attrs: {
-                        r: 4,
+                        r: 2,
                         fill: "#1890ff",
                         stroke: "#1890ff",
-                        "stroke-width": 4,
+                        "stroke-width": 2,
                         cursor: "move",
                     },
                 },

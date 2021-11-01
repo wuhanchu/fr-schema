@@ -242,7 +242,7 @@ class List extends DataList {
                 return { ...item, attribute: attributeArray }
             })
             data = decorateList(list, this.schema)
-            await exportData("意图", data, columns)
+            await exportData("实体", data, columns)
             this.setState({ exportLoading: false })
         })
     }
