@@ -21,16 +21,6 @@ const schema = {
 
         title: "编码",
     },
-
-    intent_key: {
-        // required: true,
-        style: { width: "500px" },
-        title: "意图",
-        type: schemaFieldType.Select,
-        props: {
-            mode: "tags",
-        },
-    },
     project_id: {
         // required: true,
         style: { width: "500px" },
@@ -40,8 +30,22 @@ const schema = {
             mode: "tags",
         },
     },
+    intent_key: {
+        // required: true,
+        style: { width: "500px" },
+        title: "匹配意图",
+        type: schemaFieldType.Select,
+        props: {
+            mode: "tags",
+        },
+    },
+    intent_key_text: {
+        style: { width: "500px" },
+        title: "意图匹配辅助信息",
+    },
+
     slot: {
-        title: "相关槽位",
+        title: "全局槽位",
         listHide: true,
         props: {
             style: { width: "500px" },
@@ -51,6 +55,7 @@ const schema = {
         type: schemaFieldType.AceEditor,
         decoratorProps: { rules: verifyJson },
     },
+
     create_time: {
         title: "创建时间",
         // required: true,

@@ -188,7 +188,15 @@ class Flow extends React.PureComponent {
                                         this.startDrag("Rect", e)
                                     }
                                 >
-                                    <i className="iconfont icon-square" />
+                                    <span
+                                        style={{
+                                            width: "18px",
+                                            height: "18px",
+                                            marginBottom: "-2px",
+                                            border: "rgba(0,0,0,0.5) 1px solid",
+                                            display: "inline-block",
+                                        }}
+                                    ></span>
                                 </div>
                             </Tooltip>
                             <Tooltip title="结束节点" placement="bottom">
@@ -198,7 +206,17 @@ class Flow extends React.PureComponent {
                                         this.startDrag("end", e)
                                     }
                                 >
-                                    <i className="iconfont icon-circle" />
+                                    {/* <i className="iconfont icon-circle" /> */}
+                                    <span
+                                        style={{
+                                            width: "18px",
+                                            height: "18px",
+                                            marginBottom: "-2px",
+                                            border: "rgba(0,0,0,0.5) 1px solid",
+                                            display: "inline-block",
+                                            borderRadius: "5px",
+                                        }}
+                                    ></span>
                                 </div>
                             </Tooltip>
                             <Tooltip title="全局节点" placement="bottom">
