@@ -52,6 +52,7 @@ class List extends DataList {
             type: undefined,
             select: "label,group",
             limit: 9999,
+            status: undefined,
         })
 
         let labelDictList = {}

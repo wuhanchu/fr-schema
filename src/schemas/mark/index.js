@@ -82,6 +82,7 @@ service.get = async (args) => {
     let list = data.list.map((item, index) => {
         return {
             ...item,
+            disabled: item.status !== 0,
             text: item.info && item.info.text,
             question_standard: item.info && item.info.question_standard,
         }
