@@ -31,7 +31,7 @@ const schema = {
         editHide: true,
         dict: {
             ready: {
-                value: 0,
+                value: "0",
                 remark: "未处理",
             },
             end: {

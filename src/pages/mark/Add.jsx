@@ -26,6 +26,7 @@ class List extends DataList {
             queryArgs: {
                 ...props.queryArgs,
                 type: "add_question",
+                status: "eq.0",
             },
             scroll: { x: "max-content", y: "50vh" },
             operateWidth: "120px",
@@ -72,12 +73,6 @@ class List extends DataList {
                 }
             }
         })
-        // this.setState({
-        //     attachment: [],
-        //     loadingAnnex: false,
-        // })
-        // this.schema.label.dict = labelDictList
-        // this.schema.group.dict = groupDictList
         let options = []
         Object.keys(groupDictList).forEach(function (key) {
             options.push({
@@ -85,12 +80,45 @@ class List extends DataList {
                 value: groupDictList[key].value,
             })
         })
-        console.log("数据是")
-        console.log(options)
+        this.formRef.current.setFieldsValue({ status: "0" })
+
         this.setState({ options: options })
         super.componentDidMount()
     }
 
+    async requestList(tempArgs = {}) {
+        const { queryArgs } = this.meta
+
+        let searchParams = this.getSearchParam()
+
+        const params = {
+            ...(queryArgs || {}),
+            ...searchParams,
+            ...(this.state.pagination || {}),
+            ...tempArgs,
+            status: this.formRef.current.getFieldsValue().status,
+        }
+
+        let data = await this.service.get(params)
+        data = this.dataConvert(data)
+        return data
+    }
+
+    handleFormReset = () => {
+        const { order } = this.props
+
+        this.formRef.current.resetFields()
+        this.formRef.current.setFieldsValue({ status: "0" })
+        this.setState(
+            {
+                pagination: { ...this.state.pagination, currentPage: 1 },
+                searchValues: { order },
+            },
+            () => {
+                this.refreshList()
+            }
+        )
+    }
     renderOperationMulit() {
         return (
             <span>

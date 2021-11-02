@@ -90,11 +90,19 @@ service.get = async (args) => {
 }
 
 service.delete = async (args) => {
-    let data = await createApi("question_mark_task", schema, null, "").patch({
-        id: "in.(" + args.id + ")",
-        status: 2,
-    })
-    return { ...data, msg: "丢弃成功" }
+    if (args.id) {
+        let data = await createApi(
+            "question_mark_task",
+            schema,
+            null,
+            ""
+        ).patch({
+            id: "in.(" + args.id + ")",
+            status: 2,
+        })
+        return { ...data, msg: "丢弃成功" }
+    }
+    return { msg: "没有可丢弃的数据!" }
 }
 service.append = async (args) => {
     let data = await createApi(

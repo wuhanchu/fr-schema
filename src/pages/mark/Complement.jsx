@@ -8,6 +8,7 @@ import "@ant-design/compatible/assets/index.css"
 import frSchema from "@/outter/fr-schema/src"
 import { listToDict } from "@/outter/fr-schema/src/dict"
 import { LoadingOutlined } from "@ant-design/icons"
+const { decorateList } = frSchema
 
 const { utils } = frSchema
 @connect(({ global }) => ({
@@ -37,7 +38,42 @@ class List extends DataList {
             limit: 10000,
         })
         this.schema.project_id.dict = listToDict(project.list)
+        this.formRef.current.setFieldsValue({ status: "0" })
         super.componentDidMount()
+    }
+
+    async requestList(tempArgs = {}) {
+        const { queryArgs } = this.meta
+
+        let searchParams = this.getSearchParam()
+
+        const params = {
+            ...(queryArgs || {}),
+            ...searchParams,
+            ...(this.state.pagination || {}),
+            ...tempArgs,
+            status: this.formRef.current.getFieldsValue().status,
+        }
+
+        let data = await this.service.get(params)
+        data = this.dataConvert(data)
+        return data
+    }
+
+    handleFormReset = () => {
+        const { order } = this.props
+
+        this.formRef.current.resetFields()
+        this.formRef.current.setFieldsValue({ status: "0" })
+        this.setState(
+            {
+                pagination: { ...this.state.pagination, currentPage: 1 },
+                searchValues: { order },
+            },
+            () => {
+                this.refreshList()
+            }
+        )
     }
 
     renderOperationMulit() {
