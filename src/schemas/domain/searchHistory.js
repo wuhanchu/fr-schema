@@ -8,6 +8,9 @@ const schema = {
     create_time: {
         title: "查询时间",
         sorter: true,
+        props: {
+            showTime: true,
+        },
         type: schemaFieldType.DatePicker,
     },
     search: {
@@ -120,13 +123,12 @@ const service = createApi("search_history", schema, null)
 
 service.get = async (args) => {
     if (args.create_time) {
-        console.log(args.create_time.split(","))
-        let beginTime =
-            moment(args.create_time.split(",")[0]).format("YYYY-MM-DD") +
-            "T00:00:00"
-        let endTime =
-            moment(args.create_time.split(",")[1]).format("YYYY-MM-DD") +
-            "T23:59:59"
+        let beginTime = moment(args.create_time.split(",")[0]).format(
+            "YYYY-MM-DDTHH:mm:ss"
+        )
+        let endTime = moment(args.create_time.split(",")[1]).format(
+            "YYYY-MM-DDTHH:mm:ss"
+        )
         args.create_time = undefined
         args.and = `(create_time.gte.${beginTime},create_time.lte.${endTime})`
     }

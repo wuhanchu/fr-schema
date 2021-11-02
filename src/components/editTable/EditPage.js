@@ -119,7 +119,6 @@ class EditPage extends DataList {
                 },
                 listLoading: false,
             })
-            console.log("结果1")
             // let { list } = this.state.data
             this.state.editRow.map((item) => {
                 list.map((listItem, index) => {
@@ -128,8 +127,6 @@ class EditPage extends DataList {
                     }
                 })
             })
-            console.log("data是", data)
-            console.log("list", list)
             this.setState({
                 data: { ...this.state.data, list: [...list] },
             })

@@ -193,7 +193,7 @@ class MyList extends DataList {
                     ...create_time,
                     style: { width: "100%" },
                     renderInput: () => {
-                        return <RangePicker />
+                        return <RangePicker showTime />
                     },
                 },
                 search,

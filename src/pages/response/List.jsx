@@ -157,7 +157,18 @@ class List extends ListPage {
                                 treeDefaultExpandAll
                             />
                         </Form.Item>
-                        <Form.Item colon={false} label={<div><div>回复文本:</div><div style={{color: '#00000073'}}>话术引擎回复</div></div>} name="template_text">
+                        <Form.Item
+                            colon={false}
+                            label={
+                                <div>
+                                    <div>回复文本:</div>
+                                    <div style={{ color: "#00000073" }}>
+                                        话术引擎回复
+                                    </div>
+                                </div>
+                            }
+                            name="template_text"
+                        >
                             <Input.TextArea placeholder="请输入回复文本" />
                         </Form.Item>
                         <Form.List name="texts">
@@ -220,7 +231,18 @@ class List extends ListPage {
                                 </>
                             )}
                         </Form.List>
-                        <Form.Item  colon={false} label={<div><div>回复模板:</div><div style={{color: '#00000073'}}>机器闲聊回复</div></div>} name="template">
+                        <Form.Item
+                            colon={false}
+                            label={
+                                <div>
+                                    <div>回复模板:</div>
+                                    <div style={{ color: "#00000073" }}>
+                                        机器闲聊回复
+                                    </div>
+                                </div>
+                            }
+                            name="template"
+                        >
                             {this.renderAce("template")}
                         </Form.Item>
                     </Form>
@@ -314,6 +336,7 @@ class List extends ListPage {
         infoData = {}
         if (action === "edit") {
             infoData = JSON.parse(JSON.stringify(record))
+
             infoData.intent_key = infoData.intent_key || undefined
             await this.findIntentByDomainKey(record.domain_key)
             if (infoData.template_text && infoData.template_text.length > 1) {
@@ -350,26 +373,25 @@ class List extends ListPage {
                 }
                 let { texts, template_text, ...other } = fieldsValue
                 // 新的回复文本
-                if (fieldsValue["texts"]) {
+                if (fieldsValue["texts"] && fieldsValue["texts"].length) {
                     // 判断是否需要插入
-                    fieldsValue["template_text"] &&
-                        fieldsValue["texts"].unshift(
-                            fieldsValue["template_text"]
-                        )
-                    fieldsValue["template_text"] = fieldsValue["texts"]
+                    if (fieldsValue["template_text"])
+                        if (typeof fieldsValue["template_text"] === "string") {
+                            fieldsValue["template_text"] = [
+                                fieldsValue["template_text"],
+                                ...fieldsValue["texts"],
+                            ]
+                        } else {
+                            fieldsValue["template_text"] = [
+                                ...fieldsValue["template_text"],
+                                ...fieldsValue["texts"],
+                            ]
+                        }
                 } else {
                     fieldsValue["template_text"] = fieldsValue["template_text"]
                         ? [fieldsValue["template_text"]]
                         : []
                 }
-
-                Object.keys(other).forEach((key) => {
-                    param[key] =
-                        fieldsValue[key] instanceof Array &&
-                        fieldsValue[key][0] instanceof String
-                            ? fieldsValue[key].join(",")
-                            : fieldsValue[key]
-                })
                 param["template_text"] = fieldsValue["template_text"]
                 if (action === actions.edit) {
                     param.id = infoData.id
