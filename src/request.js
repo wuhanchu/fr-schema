@@ -227,11 +227,12 @@ export default function request(obj, options = {}) {
                 return response.blob();
             } else if (type.indexOf('json') > -1) {
                 const result = await response.json();
+                let contentRange = response.headers.get('content-range');
 
                 if (Array.isArray(result)) {
                     let total = null;
 
-                    let contentRange = response.headers.get('content-range');
+                    contentRange = response.headers.get('content-range');
                     if (!_.isNil(contentRange)) {
                         total = contentRange.split('/')[1];
                     }
@@ -239,7 +240,7 @@ export default function request(obj, options = {}) {
                 } else if (result.data && result.data.list) {
                     return { list: result.data.list, total: result.data.total, ...result };
                 } else {
-                    return { list: result.data, total: result.count, ...result };
+                    return { list: result.data, total: result.count, ...result, contentRange };
                 }
             } else {
                 let txt = await response.text();
