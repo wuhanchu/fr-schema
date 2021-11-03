@@ -262,6 +262,7 @@ export const ConditionModal = ({
                             showSearch
                             defaultValue={defaultImport}
                             allowClear
+                            optionFilterProp="children"
                             placeholder="请选择引用"
                             style={{ width: "100%" }}
                             onChange={(key) => {
