@@ -1,5 +1,14 @@
 import React, { useState } from "react"
-import { Input, Form, Button, Select, Divider, TreeSelect, message } from "antd"
+import {
+    Input,
+    Form,
+    Button,
+    Select,
+    Divider,
+    TreeSelect,
+    message,
+    InputNumber,
+} from "antd"
 import "antd/lib/style/index.css"
 import Modal from "antd/lib/modal/Modal"
 import clone from "clone"
@@ -240,7 +249,7 @@ export const ConditionModal = ({
                 labelCol={{ span: 4 }}
                 wrapperCol={{ span: 18 }}
                 onValuesChange={onValuesChange}
-                initialValues={initialValues}
+                initialValues={{ priority: 99, ...initialValues }}
                 onFinish={onFinish}
                 onFinishFailed={onFinishFailed}
             >
@@ -307,6 +316,18 @@ export const ConditionModal = ({
                         dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
                         treeData={intenList}
                         treeDefaultExpandAll
+                    />
+                </Form.Item>
+                <Form.Item
+                    label="优先级"
+                    name="priority"
+                    rules={[{ required: true, message: "请输入优先级！" }]}
+                >
+                    <InputNumber
+                        style={{ width: "100%" }}
+                        max={99}
+                        min={0}
+                        placeholder={"请输入名称"}
                     />
                 </Form.Item>
                 <Form.Item label="槽位" name={"slot"} rules={verifyJson}>

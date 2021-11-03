@@ -356,9 +356,7 @@ class List extends ListPage {
      */
     handleSave = () => {
         const { values, infoData, action, addArgs } = this.state
-
         this.setState({ loadingSubmit: true })
-
         this.formRef.current
             .validateFields()
             .then(async (fieldsValue) => {
