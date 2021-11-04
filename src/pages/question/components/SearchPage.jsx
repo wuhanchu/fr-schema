@@ -164,12 +164,19 @@ function renderDescription(item) {
     return (
         <>
             <div
+                style={{
+                    p: {
+                        marginTop: 0,
+                        marginBottom: 0,
+                    },
+                }}
                 dangerouslySetInnerHTML={{
                     __html:
                         item.answer &&
                         item.answer
                             .replace(/<b>/g, "<b style='color:red;'>")
-                            .replace(/\n/g, "<br/>"),
+                            .replace(/\n/g, "<br/>")
+                            .replace(/<p>/g, "<p style='margin:0;'>"),
                 }}
             />
             {item.attachment && item.attachment.length !== 0 && (
