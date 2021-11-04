@@ -208,11 +208,11 @@ class MyList extends DataList {
                                             // style={{ marginLeft: "3px" }}
                                             color="#87d068"
                                         >
-                                            {"正确"}
+                                            {"匹配"}
                                         </Tag>
                                     ) : (
                                         <Popconfirm
-                                            title="是否确认标记此数据为正确返回？"
+                                            title="是否确认标记此数据为正确匹配？"
                                             onConfirm={async (e) => {
                                                 await this.service.patch({
                                                     return_question: data,
@@ -269,11 +269,15 @@ class MyList extends DataList {
                     dict: {
                         true: {
                             value: "true",
-                            remark: "是",
+                            remark: "正确",
                         },
                         false: {
                             value: "false",
-                            remark: "否",
+                            remark: "错误",
+                        },
+                        null: {
+                            value: "null",
+                            remark: "未确认",
                         },
                     },
                 },

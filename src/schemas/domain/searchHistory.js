@@ -39,12 +39,19 @@ const schema = {
         dict: {
             true: {
                 value: true,
-                remark: "是",
+                remark: "正确",
             },
             false: {
                 value: false,
-                remark: "否",
+                remark: "错误",
             },
+        },
+        render: (item) => {
+            if (item === null) {
+                return "未确认"
+            } else {
+                return item
+            }
         },
     },
     have_match_project_id: {
@@ -150,6 +157,9 @@ service.get = async (args) => {
     }
     args.have_match_project_id = undefined
 
+    if (args.user_confirm === "null") {
+        args.user_confirm = "is.null"
+    }
     let data = await createApi("search_history", schema, null, "eq.").get(args)
     return data
 }
