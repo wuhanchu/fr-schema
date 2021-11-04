@@ -265,7 +265,8 @@ service.post = async function (args, schema) {
     return res
 }
 service.patch = async function (args, schema) {
-    let question_extend = null
+    let question_extend = args.question_extend
+
     Object.keys(schema).forEach(function (key) {
         if (schema[key].isExpand) {
             if (args[key]) {
@@ -279,12 +280,12 @@ service.patch = async function (args, schema) {
             args[key] = undefined
         }
     })
-    if (args.question_extend) {
+    if (args.question_extend && typeof args.question_extend === "string") {
         question_extend = args.question_extend.split("\n")
     }
     const res = await createApi("question", schema, null, "eq.").patch({
         ...args,
-        question_extend: question_extend ? question_extend : undefined,
+        question_extend: question_extend || undefined,
     })
 
     return res
@@ -296,6 +297,17 @@ service.uploadExcel = createBasicApi("project/import").post
 
 service.upload = createBasicApi("file").post
 
+service.getDetail = async function (args) {
+    const res = await createApi("question", schema, null, "eq.").getDetail(args)
+    return {
+        ...res,
+        question_extend: res.question_extend
+            ? res.question_extend.join("\n")
+            : null,
+        ...res.info,
+        info: res.info ? JSON.stringify(res.info) : "",
+    }
+}
 export default {
     schema,
     service,

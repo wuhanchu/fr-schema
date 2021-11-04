@@ -9,16 +9,58 @@ import {
     message,
     Tag,
 } from "antd"
+
 import schemas from "@/schemas"
 import { contentHeight } from "@/styles/global"
 import * as _ from "lodash"
 import utils from "@/outter/fr-schema-antd-utils/src"
 import { downloadFile } from "@/utils/minio"
 import { formatData } from "@/utils/utils"
+import { EditOutlined } from "@ant-design/icons"
+import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
+import Question from "@/pages/question/components/BaseList"
 
 const { url } = utils.utils
 
 async function init(props, project_id, setState, state) {
+    const response = await schemas.question.service.get({
+        // ...this.meta.queryArgs,
+        type: undefined,
+        select: "label,group",
+        limit: 9999,
+        status: undefined,
+    })
+
+    let labelDictList = {}
+    let groupDictList = {}
+
+    response.list.forEach((item) => {
+        if (!_.isNil(item.label)) {
+            item.label.forEach((value) => {
+                labelDictList[value] = {
+                    value: value,
+                    remark: value,
+                }
+            })
+        }
+        if (!_.isNil(item.group)) {
+            groupDictList[item.group] = {
+                value: item.group,
+                remark: item.group,
+            }
+        }
+    })
+    let options = []
+    Object.keys(groupDictList).forEach(function (key) {
+        options.push({
+            key: groupDictList[key].value,
+            value: groupDictList[key].value,
+        })
+    })
+
+    console.log(options)
+    setState({ ...state, options: options })
+
     if (props.type === "domain_id") {
         let project = await schemas.project.service.get({
             domain_key: props.record && props.record.key,
@@ -32,31 +74,38 @@ async function init(props, project_id, setState, state) {
         })
         project_id = project_id + ")"
     }
-
-    await schemas.hotWord.service
-        .get({
-            // project_id:
-            //     props.type === "domain_id" ? project_id : "eq." + project_id,
-            domain_key: props.record && props.record.key,
-            project_id: props.record && props.record.project_id,
-            limit: 500,
-        })
-        .then((response) => {
-            let allData = []
-            response.list.forEach((item) => {
-                allData.push(item.question_standard)
+    if (props.type !== "history") {
+        await schemas.hotWord.service
+            .get({
+                // project_id:
+                //     props.type === "domain_id" ? project_id : "eq." + project_id,
+                domain_key: props.record && props.record.key,
+                project_id: props.record && props.record.project_id,
+                limit: 500,
             })
-            setState({
-                ...state,
-                allData,
-                loading: false,
+            .then((response) => {
+                let allData = []
+                response.list.forEach((item) => {
+                    allData.push(item.question_standard)
+                })
+                setState({
+                    ...state,
+                    options: options,
+                    allData,
+                    loading: false,
+                })
             })
-            console.log(allData)
+    } else {
+        setState({
+            ...state,
+            loading: false,
+            options: options,
+            data: props.data,
         })
-    console.log("成功")
+    }
 }
 
-function renderTitle(item) {
+function renderTitle(item, setState, state, props) {
     return (
         <div style={{ width: "100%", display: "flex" }}>
             <span style={{ flex: 1 }}>
@@ -81,14 +130,33 @@ function renderTitle(item) {
                         })}
                     </span>
                 )}
+                {/* {<a style={{marginLeft: '10px', marginRight: '10px'}} onClick={()=>{setState({...state, visibleModal:true, listItem: item})}}><EditOutlined/></a>}
+                {props.renderTitleOpeation && props.renderTitleOpeation(item)}
+             */}
             </span>
             <span
                 style={{
-                    width: "130px",
+                    float: "right",
+                    marginRight: "20px",
                 }}
             >
-                准确度：{formatData(item.compatibility || 0, 5)}
+                匹配度：{formatData(item.compatibility || 0, 5)}
             </span>
+            {
+                <a
+                    style={{ marginLeft: "10px", marginRight: "10px" }}
+                    onClick={() => {
+                        setState({
+                            ...state,
+                            visibleModal: true,
+                            listItem: item,
+                        })
+                    }}
+                >
+                    修改
+                </a>
+            }
+            {props.renderTitleOpeation && props.renderTitleOpeation(item)}
         </div>
     )
 }
@@ -132,6 +200,84 @@ function renderDescription(item) {
     )
 }
 
+function renderInfoModal(state, meta, props, setState) {
+    const { form } = props
+    const { visibleModal, infoData, action } = state
+    const updateMethods = {
+        handleVisibleModal: () => {
+            console.log("handleVisibleModal")
+            setState({ ...state, visibleModal: false })
+        },
+        handleUpdate: async (data, schema, method = "patch") => {
+            // 更新
+            console.log(data)
+            let response
+            try {
+                response = await schemas.question.service.patch(data, schema)
+                message.success("修改成功")
+            } catch (error) {
+                message.error(error.message)
+            }
+            setState({ ...state, visibleModal: false })
+            return response
+        },
+        handleAdd: () => {
+            console.log("handleUpdate")
+        },
+    }
+
+    return (
+        visibleModal && (
+            <InfoModal
+                title={"问题修改"}
+                action={"edit"}
+                {...updateMethods}
+                visible={visibleModal}
+                values={state.listItem}
+                service={schemas.question.service}
+                schema={{
+                    // project_id: this.schema.project_id,
+                    ...schemas.question.schema,
+                    group: {
+                        ...schemas.question.schema.group,
+                        renderInput: (item, data) => {
+                            console.log(state.options)
+                            return (
+                                <AutoComplete
+                                    style={{
+                                        width: "100%",
+                                        maxWidth: "300px",
+                                    }}
+                                    filterOption={(inputValue, option) =>
+                                        option.value
+                                            .toUpperCase()
+                                            .indexOf(
+                                                inputValue.toUpperCase()
+                                            ) !== -1
+                                    }
+                                    options={state.options}
+                                >
+                                    {/* {options} */}
+                                    {/* <Input placeholder="请输入分组1"></Input> */}
+                                </AutoComplete>
+                            )
+                        },
+                    },
+                }}
+                {...{
+                    offline: false,
+                    width: "1100px",
+                    isCustomize: true,
+                    customize: {
+                        left: 10,
+                        right: 14,
+                    },
+                }}
+            />
+        )
+    )
+}
+
 function SearchPage(props) {
     const [state, setState] = useState({
         data: null,
@@ -171,8 +317,6 @@ function SearchPage(props) {
                 state.allData &&
                 state.allData.filter((item) => item.indexOf(value) >= 0),
         })
-        console.log(state.allData)
-        console.log(state.dataSource)
     }
 
     const handleSearch = async (searchValue, event) => {
@@ -228,10 +372,12 @@ function SearchPage(props) {
                 onChange={handleChange}
                 backfill
                 open={open}
-                disabled={loading}
+                disabled={props.type === "history" ? true : loading}
                 onSelect={handleSearch}
                 defaultOpen={false}
-                defaultValue={null}
+                defaultValue={
+                    props.type === "history" ? props.record.search : null
+                }
                 dataSource={state.dataSource}
             >
                 <Input.Search
@@ -260,9 +406,15 @@ function SearchPage(props) {
                             renderItem={(item) => (
                                 <List.Item>
                                     <List.Item.Meta
-                                        title={renderTitle(item)}
+                                        title={renderTitle(
+                                            item,
+                                            setState,
+                                            state,
+                                            props
+                                        )}
                                         description={renderDescription(item)}
                                     />
+                                    {/* <div>{renderDescription(item)}</div> */}
                                 </List.Item>
                             )}
                         />
@@ -271,6 +423,7 @@ function SearchPage(props) {
                     )}
                 </Card>
             </Spin>
+            {state.visibleModal && renderInfoModal(state, {}, props, setState)}
         </Fragment>
     )
 }
