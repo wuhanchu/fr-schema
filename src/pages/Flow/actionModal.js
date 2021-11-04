@@ -253,6 +253,7 @@ export const ActionModal = ({
                             defaultValue={defaultImport}
                             allowClear
                             placeholder="请选择引用"
+                            optionFilterProp="children"
                             style={{ width: "100%" }}
                             onChange={(key) => {
                                 if (key) {

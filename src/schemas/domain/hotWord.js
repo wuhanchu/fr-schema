@@ -1,9 +1,12 @@
 import { createApi } from "@/outter/fr-schema/src/service"
-import {convertFromRemote, schemaFieldType} from "@/outter/fr-schema/src/schema"
+import {
+    convertFromRemote,
+    schemaFieldType,
+} from "@/outter/fr-schema/src/schema"
 import moments from "moment"
-import {request} from "@/outter/fr-schema/src";
-import queryString from 'query-string';
-const config = SETTING;
+import { request } from "@/outter/fr-schema/src"
+import queryString from "query-string"
+const config = SETTING
 
 const schema = {
     id: {
@@ -68,49 +71,52 @@ service.get = async (args) => {
         ? moments(time).format("YYYY-MM-DD")
         : undefined
 
-    let { currentPage, pageSize, limit, ...otherParams } = args;
+    let { currentPage, pageSize, limit, ...otherParams } = args
 
     // convert moment
     Object.keys(otherParams).forEach((key) => {
-        const item = args[key];
+        const item = args[key]
         if (item === undefined) {
-            return;
+            return
         }
-        otherParams[key] = item;
-    });
-    limit = pageSize || limit || 10;
+        otherParams[key] = item
+    })
+    limit = pageSize || limit || 10
 
     const response = await request(
         {
-            method: 'GET',
+            method: "GET",
             url: (
-                '/' +
+                "/" +
                 config.apiVersion +
-                'domain/match_question_count' +
-                '?' +
+                "domain/match_question_count" +
+                "?" +
                 queryString.stringify({
                     offset: limit * ((currentPage || 1) - 1),
                     limit,
-                    ...otherParams
+                    ...otherParams,
                 })
-            ).replace('//', '/'),
+            ).replace("//", "/"),
         },
         {
             headers: {
-                Prefer: 'count=exact',
+                Prefer: "count=exact",
             },
-        },
-    );
+        }
+    )
 
     if (!response) {
-        return;
+        return
     }
-
-    const { total, list } = response || {};
+    let total
+    if (!_.isNil(response.contentRange)) {
+        total = response.contentRange.split("/")[1]
+    }
+    const { list } = response || {}
     return {
         list,
         pagination: { current: currentPage, pageSize, total },
-    };
+    }
 }
 
 export default {

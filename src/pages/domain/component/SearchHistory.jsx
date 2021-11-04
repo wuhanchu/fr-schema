@@ -6,11 +6,22 @@ import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
 import frSchema from "@/outter/fr-schema/src"
 import Modal from "antd/lib/modal/Modal"
-import { Checkbox, Button, Table, Space, Card, message, DatePicker } from "antd"
+import {
+    Checkbox,
+    Button,
+    Table,
+    Space,
+    Card,
+    message,
+    DatePicker,
+    Popconfirm,
+    Tag,
+} from "antd"
 import { formatData } from "@/utils/utils"
 import projectService from "@/schemas/project"
+import SearchPageModal from "@/pages/question/components/SearchPageModal"
 import { listToDict } from "@/outter/fr-schema/src/dict"
-
+import { CheckOutlined } from "@ant-design/icons"
 const { RangePicker } = DatePicker
 const { utils } = frSchema
 
@@ -24,7 +35,6 @@ class MyList extends DataList {
         super(props, {
             schema: schemas.searchHistory.schema,
             service: schemas.searchHistory.service,
-            // mini: true,
             infoProps: {
                 width: "900px",
             },
@@ -32,7 +42,6 @@ class MyList extends DataList {
 
             showEdit: false,
             showDelete: false,
-            // readOnly: true,
             addHide: true,
             queryArgs: {
                 ...props.queryArgs,
@@ -123,56 +132,114 @@ class MyList extends DataList {
             },
         ]
 
+        let data =
+            record &&
+            record.return_question &&
+            record.return_question.map((item) => {
+                return { ...item, question_standard: item.question }
+            })
         return (
             <>
                 {showAnswer && (
-                    <Modal
-                        title="查询结果"
-                        footer={false}
-                        width={1100}
+                    // <Modal
+                    //     title="查询结果"
+                    //     footer={false}
+                    //     width={1100}
+                    //     onCancel={() => {
+                    //         this.setState({
+                    //             showAnswer: false,
+                    //         })
+                    //     }}
+                    //     visible={true}
+                    // >
+                    //     <Card bordered={false}>
+                    //         <Table
+                    //             style={{ marginBottom: "24px" }}
+                    //             bordered
+                    //             pagination={false}
+                    //             size={"small"}
+                    //             columns={columns}
+                    //             dataSource={record.return_question}
+                    //         />
+                    //         <Button
+                    //             type="primary"
+                    //             style={{
+                    //                 float: "right",
+                    //                 right: "24px",
+                    //                 botton: "24px",
+                    //                 position: "absolute",
+                    //             }}
+                    //             onClick={async () => {
+                    //                 try {
+                    //                     await this.service.patch({
+                    //                         return_question: this.state
+                    //                             .matchQuestion,
+                    //                         id: record.id,
+                    //                     })
+                    //                     message.success("确认成功！")
+                    //                     this.setState({ showAnswer: false })
+                    //                     this.refreshList()
+                    //                 } catch (e) {
+                    //                     message.error(e.message)
+                    //                 }
+                    //             }}
+                    //         >
+                    //             确认
+                    //         </Button>
+                    //     </Card>
+                    // </Modal>
+                    <SearchPageModal
+                        type={"history"}
                         onCancel={() => {
-                            this.setState({
-                                showAnswer: false,
-                            })
+                            this.setState({ showAnswer: false })
                         }}
-                        visible={true}
-                    >
-                        <Card bordered={false}>
-                            <Table
-                                style={{ marginBottom: "24px" }}
-                                bordered
-                                pagination={false}
-                                size={"small"}
-                                columns={columns}
-                                dataSource={record.return_question}
-                            />
-                            <Button
-                                type="primary"
-                                style={{
-                                    float: "right",
-                                    right: "24px",
-                                    botton: "24px",
-                                    position: "absolute",
-                                }}
-                                onClick={async () => {
-                                    try {
-                                        await this.service.patch({
-                                            return_question: this.state
-                                                .matchQuestion,
-                                            id: record.id,
-                                        })
-                                        message.success("确认成功！")
-                                        this.setState({ showAnswer: false })
-                                        this.refreshList()
-                                    } catch (e) {
-                                        message.error(e.message)
-                                    }
-                                }}
-                            >
-                                确认
-                            </Button>
-                        </Card>
-                    </Modal>
+                        title={"查询结果" + "(" + record.search + ")"}
+                        record={record}
+                        data={data}
+                        renderTitleOpeation={(data) => {
+                            return (
+                                <>
+                                    {data.id === record.match_question_id ? (
+                                        <Tag
+                                            style={{
+                                                marginLeft: "3px",
+                                                marginRight: "3px",
+                                            }}
+                                            // style={{ marginLeft: "3px" }}
+                                            color="#87d068"
+                                        >
+                                            {"匹配"}
+                                        </Tag>
+                                    ) : (
+                                        <Popconfirm
+                                            title="是否确认标记此数据为正确匹配？"
+                                            onConfirm={async (e) => {
+                                                await this.service.patch({
+                                                    return_question: data,
+                                                    id: record.id,
+                                                })
+                                                message.success("确认成功！")
+                                                this.setState({
+                                                    showAnswer: false,
+                                                })
+                                                this.refreshList()
+                                                e.stopPropagation()
+                                            }}
+                                        >
+                                            <a
+                                                style={{
+                                                    marginLeft: "10px",
+                                                    marginRight: "10px",
+                                                }}
+                                            >
+                                                确认
+                                            </a>
+                                        </Popconfirm>
+                                    )}
+                                </>
+                            )
+                        }}
+                    />
                 )}
             </>
         )
@@ -202,11 +269,15 @@ class MyList extends DataList {
                     dict: {
                         true: {
                             value: "true",
-                            remark: "是",
+                            remark: "正确",
                         },
                         false: {
                             value: "false",
-                            remark: "否",
+                            remark: "错误",
+                        },
+                        null: {
+                            value: "null",
+                            remark: "未确认",
                         },
                     },
                 },

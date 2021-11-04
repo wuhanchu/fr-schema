@@ -69,7 +69,10 @@ class ChatFlowTable extends DataList {
             "intentName"
         )
         this.schema.intent_history_id.render = (item, data) => {
-            return (
+            return item || (data.type === "receive" && data.text ? "未知" : "")
+        }
+        this.schema.text.render = (item, data) => {
+            return data.type === "receive" ? (
                 <a
                     onClick={() => {
                         console.log(this.props, data.text)
@@ -79,9 +82,10 @@ class ChatFlowTable extends DataList {
                         })
                     }}
                 >
-                    {item ||
-                        (data.type === "receive" && data.text ? "未知" : "")}
+                    {item}
                 </a>
+            ) : (
+                item
             )
         }
     }
@@ -93,6 +97,7 @@ class ChatFlowTable extends DataList {
             <>
                 {visibleIntentIdentify && (
                     <IntentIdentify
+                        type={"tabs"}
                         onCancel={() => {
                             this.setState({ visibleIntentIdentify: false })
                         }}

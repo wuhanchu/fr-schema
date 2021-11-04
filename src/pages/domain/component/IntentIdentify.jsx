@@ -11,10 +11,13 @@ import {
     Checkbox,
     Table,
     message,
+    Tabs,
 } from "antd"
 import { formatData } from "@/utils/utils"
+import SearchPage from "@/pages/question/components/SearchPage"
 import clone from "clone"
 import { connect } from "dva"
+const { TabPane } = Tabs
 
 @connect(({ global, user }) => ({
     dict: global.dict,
@@ -234,7 +237,6 @@ class IntentIdentify extends React.Component {
                 },
             },
         ]
-        console.log(this.state.list)
         return (
             <Spin spinning={this.state.isSpin}>
                 <Table
@@ -272,6 +274,71 @@ class IntentIdentify extends React.Component {
         }
     }
 
+    renderCard() {
+        const { changeRow } = this.state
+        return (
+            <Card bordered={false} bodyStyle={{ marginBottom: "0px" }}>
+                {this.renderContent()}
+                {/* <div><Button style={{position: 'absolute', right: '-10px', bottom: '-14px'}}>提交</Button></div> */}
+                {changeRow.length ? (
+                    <Button
+                        onClick={this.handleSubmit}
+                        type={"primary"}
+                        style={{
+                            position: "absolute",
+                            right: "0px",
+                            bottom: "-14px",
+                        }}
+                    >
+                        提交
+                    </Button>
+                ) : (
+                    <div
+                        style={{
+                            position: "absolute",
+                            right: "-10px",
+                            bottom: "-14px",
+                            height: "32px",
+                            width: "100%",
+                        }}
+                    />
+                )}
+            </Card>
+        )
+    }
+
+    renderTabs() {
+        const { record, text } = this.props
+        console.log(record)
+        return (
+            <Tabs defaultActiveKey="1">
+                <TabPane
+                    style={{ marginBottom: "14px" }}
+                    tab="意图识别"
+                    key="1"
+                >
+                    {this.renderCard()}
+                </TabPane>
+                <TabPane tab="数据搜索" key="2">
+                    <SearchPage
+                        // type={"domain_id"}
+                        onCancel={() => {
+                            this.setState({ showAnswer: false })
+                        }}
+                        height={"600px"}
+                        title={"数据搜索" + "(" + text + ")"}
+                        record={{
+                            ...record,
+                            domain_key: record.key,
+                            search: text,
+                        }}
+                        // data={data}
+                    />
+                </TabPane>
+            </Tabs>
+        )
+    }
+
     render() {
         const { changeRow } = this.state
         return (
@@ -280,7 +347,7 @@ class IntentIdentify extends React.Component {
                     <Modal
                         visible
                         onCancel={() => this.props.onCancel(false)}
-                        title="意图识别"
+                        title={this.props.type === "tabs" ? null : "意图识别"}
                         footer={false}
                         onOk={() => {
                             this.setState({
@@ -292,36 +359,9 @@ class IntentIdentify extends React.Component {
                         width={"1100px"}
                         maskClosable
                     >
-                        <Card
-                            bordered={false}
-                            bodyStyle={{ marginBottom: "0px" }}
-                        >
-                            {this.renderContent()}
-                            {/* <div><Button style={{position: 'absolute', right: '-10px', bottom: '-14px'}}>提交</Button></div> */}
-                            {changeRow.length ? (
-                                <Button
-                                    onClick={this.handleSubmit}
-                                    type={"primary"}
-                                    style={{
-                                        position: "absolute",
-                                        right: "-10px",
-                                        bottom: "-14px",
-                                    }}
-                                >
-                                    提交
-                                </Button>
-                            ) : (
-                                <div
-                                    style={{
-                                        position: "absolute",
-                                        right: "-10px",
-                                        bottom: "-14px",
-                                        height: "32px",
-                                        width: "100%",
-                                    }}
-                                />
-                            )}
-                        </Card>
+                        {this.props.type === "tabs"
+                            ? this.renderTabs()
+                            : this.renderCard()}
                     </Modal>
                 }
             </>

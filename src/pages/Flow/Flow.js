@@ -750,7 +750,7 @@ class Flow extends React.PureComponent {
                     }
                 })
                 if (isHave) {
-                    condition.push(oneCondition)
+                    condition.push({ priority: 99, ...oneCondition })
                 }
             })
 

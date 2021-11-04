@@ -1,17 +1,17 @@
-import {connect} from "dva"
+import { connect } from "dva"
 import DataList from "@/outter/fr-schema-antd-utils/src/components/Page/DataList"
 import schemas from "@/schemas"
 import React from "react"
-import {Form} from "@ant-design/compatible"
+import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
 import frSchema from "@/outter/fr-schema/src"
-import {listToDict} from "@/outter/fr-schema/src/dict"
+import { listToDict } from "@/outter/fr-schema/src/dict"
 import Modal from "antd/lib/modal/Modal"
-import {Card, message} from "antd"
+import { Card, message } from "antd"
 
-const {utils} = frSchema
+const { utils } = frSchema
 
-@connect(({global}) => ({
+@connect(({ global }) => ({
     dict: global.dict,
 }))
 @Form.create()
@@ -31,15 +31,19 @@ class List extends DataList {
     }
 
     async componentDidMount() {
-        let {location} = this.props;
+        let { location } = this.props
         if (location && !location.query.domain_key) {
-            message.error('缺少domain_key参数');
-            this.setState({listLoading: false})
-            return;
+            message.error("缺少domain_key参数")
+            this.setState({ listLoading: false })
+            return
         }
-        let domain_key = this.props.domain_key || location.query.domain_key;
-        this.meta.mini = !location
-        this.meta.queryArgs = {...this.meta.queryArgs, domain_key, sort:'desc'}
+        let domain_key = this.props.domain_key || location.query.domain_key
+        // this.meta.mini = !location
+        this.meta.queryArgs = {
+            ...this.meta.queryArgs,
+            domain_key,
+            sort: "desc",
+        }
         let project = await schemas.project.service.get({
             limit: 10000,
             domain_key,
@@ -66,7 +70,7 @@ class List extends DataList {
     }
 
     renderExtend() {
-        const {showAnswer, record} = this.state
+        const { showAnswer, record } = this.state
         return (
             <>
                 {showAnswer && (
@@ -102,7 +106,7 @@ class List extends DataList {
     }
 
     renderSearchBar() {
-        const {begin_time, end_time, project_id} = this.schema
+        const { begin_time, end_time, project_id } = this.schema
         const filters = this.createFilters(
             {
                 begin_time,
