@@ -1,12 +1,20 @@
 import { connect } from "dva"
 import ListPage from "@/outter/fr-schema-antd-utils/src/components/Page/ListPage"
 import InfoModal from "./InfoModal"
-
+import { getTree } from "./methods"
 import schemas from "@/schemas"
 import React from "react"
 import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
-import { Divider, Modal, Button, message, Popconfirm, Select } from "antd"
+import {
+    Divider,
+    Modal,
+    Button,
+    message,
+    Popconfirm,
+    Select,
+    TreeSelect,
+} from "antd"
 import frSchema from "@/outter/fr-schema/src"
 import ChartModal from "./Flow"
 import { exportData } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
@@ -42,6 +50,8 @@ class List extends ListPage {
 
     async componentDidMount() {
         let intent = await schemas.intent.service.get({ limit: 9999 })
+        let intentList = getTree(intent.list)
+
         let project = await schemas.project.service.get({ limit: 9999 })
         this.schema.project_id.dict = listToDict(project.list, "", "id", "name")
         this.schema.project_id.props.projectArry = project.list
@@ -91,6 +101,23 @@ class List extends ListPage {
             )
         }
         this.schema.intent_key.dict = listToDict(intent.list, "", "key", "name")
+        this.schema.intent_key.renderInput = () => {
+            return (
+                <TreeSelect
+                    showSearch
+                    allowClear
+                    // treeCheckable="true"
+                    // showCheckedStrategy="SHOW_PARENT"
+                    multiple
+                    treeNodeFilterProp="name"
+                    style={{ width: "500px" }}
+                    placeholder={"请选择意图"}
+                    dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
+                    treeData={intentList}
+                    treeDefaultExpandAll
+                />
+            )
+        }
         this.setState({ intentDict: intent.list, projectDict: project.list })
         super.componentDidMount()
     }
