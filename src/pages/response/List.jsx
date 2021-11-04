@@ -363,7 +363,8 @@ class List extends ListPage {
                 this.setState({ modalLoading: true })
                 let param = addArgs ? { ...addArgs } : {}
                 const idKey = getPrimaryKey(this.schema)
-
+                console.log(param)
+                console.log(values, infoData, action, addArgs, fieldsValue)
                 // set the id value
                 if (values) {
                     const idValue = values[idKey || "id"]
@@ -393,9 +394,15 @@ class List extends ListPage {
                 param["template_text"] = fieldsValue["template_text"]
                 if (action === actions.edit) {
                     param.id = infoData.id
-                    await this.handleUpdate(param, this.schema)
+                    await this.handleUpdate(
+                        { ...fieldsValue, ...param, texts: undefined },
+                        this.schema
+                    )
                 } else {
-                    await this.handleAdd(param, this.schema)
+                    await this.handleAdd(
+                        { ...fieldsValue, ...param, texts: undefined },
+                        this.schema
+                    )
                 }
             })
             .catch((err) => {
