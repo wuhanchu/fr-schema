@@ -34,7 +34,7 @@ const schema = {
         searchPrefix: "like",
     },
     user_confirm: {
-        title: "结果已确认",
+        title: "是否解决问题",
         type: schemaFieldType.Select,
         dict: {
             true: {
