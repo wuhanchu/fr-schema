@@ -22,7 +22,7 @@ import Question from "@/pages/question/components/BaseList"
 
 const { url } = utils.utils
 
-async function init(props, project_id, setState, state) {
+async function init(props, project_id, setState, state, callback, setOpeation) {
     const response = await schemas.question.service.get({
         // ...this.meta.queryArgs,
         type: undefined,
@@ -58,7 +58,6 @@ async function init(props, project_id, setState, state) {
         })
     })
 
-    console.log(options)
     setState({ ...state, options: options })
 
     if (props.type === "domain_id") {
@@ -74,11 +73,9 @@ async function init(props, project_id, setState, state) {
         })
         project_id = project_id + ")"
     }
-    if (props.type !== "history") {
+    if (props.type !== "history" && !props.record.search) {
         await schemas.hotWord.service
             .get({
-                // project_id:
-                //     props.type === "domain_id" ? project_id : "eq." + project_id,
                 domain_key: props.record && props.record.key,
                 project_id: props.record && props.record.project_id,
                 limit: 500,
@@ -103,6 +100,13 @@ async function init(props, project_id, setState, state) {
             data: props.data,
         })
     }
+    setOpeation(options)
+    callback({
+        ...state,
+        loading: false,
+        options: options,
+        data: props.data,
+    })
 }
 
 function renderTitle(item, setState, state, props) {
@@ -207,7 +211,7 @@ function renderDescription(item) {
     )
 }
 
-function renderInfoModal(state, meta, props, setState, handleSearch) {
+function renderInfoModal(state, meta, props, setState, handleSearch, opeation) {
     const { form } = props
     const { visibleModal, infoData, action } = state
     const updateMethods = {
@@ -261,7 +265,9 @@ function renderInfoModal(state, meta, props, setState, handleSearch) {
                     group: {
                         ...schemas.question.schema.group,
                         renderInput: (item, data) => {
-                            console.log(state.options)
+                            console.log(opeation)
+                            console.log("state.options")
+
                             return (
                                 <AutoComplete
                                     style={{
@@ -275,7 +281,7 @@ function renderInfoModal(state, meta, props, setState, handleSearch) {
                                                 inputValue.toUpperCase()
                                             ) !== -1
                                     }
-                                    options={state.options}
+                                    options={opeation}
                                 >
                                     {/* {options} */}
                                     {/* <Input placeholder="请输入分组1"></Input> */}
@@ -305,6 +311,8 @@ function SearchPage(props) {
         loading: true,
         open: false,
     })
+    const [opeation, setOpeation] = useState([])
+    const [values, setValues] = useState("")
 
     const { data, loading, open, allData } = state
 
@@ -312,7 +320,7 @@ function SearchPage(props) {
     let project_id = url.getUrlParams("project_id")
     let domain_key = url.getUrlParams("domain_key")
 
-    let height = contentHeight
+    let height = props.height || contentHeight
     if (props.record && props.record.id) {
         height = contentHeight - 200
         if (props.type === "domain_id") {
@@ -321,11 +329,6 @@ function SearchPage(props) {
             project_id = props.record && props.record.id
         }
     }
-    useEffect(() => {
-        init(props, project_id, setState, state, () => {
-            console.log("成功")
-        })
-    }, [])
 
     const handleChange = (value) => {
         setState({
@@ -337,10 +340,11 @@ function SearchPage(props) {
                 state.allData &&
                 state.allData.filter((item) => item.indexOf(value) >= 0),
         })
+        setValues(value)
     }
 
-    const handleSearch = async (searchValue, event) => {
-        let value = searchValue || state.value
+    const handleSearch = async (searchValue, state) => {
+        let value = searchValue || values || props.record.search
         if (_.isNil(value)) {
             setState({
                 data: [],
@@ -350,7 +354,6 @@ function SearchPage(props) {
             })
             return
         }
-
         setState({
             ...state,
             loading: true,
@@ -361,7 +364,7 @@ function SearchPage(props) {
         if (props.type === "domain_id") {
             args.domain_key = domain_key
         } else {
-            args.project_id = project_id
+            args.project_id = project_id || undefined
             args.domain_key = domain_key
                 ? domain_key
                 : props.record && props.record.domain_key
@@ -386,6 +389,20 @@ function SearchPage(props) {
             })
         }
     }
+    useEffect(() => {
+        init(
+            props,
+            project_id,
+            setState,
+            state,
+            (state) => {
+                if (props.record.search && props.type !== "history") {
+                    handleSearch(props.record.search, state)
+                }
+            },
+            setOpeation
+        )
+    }, [])
 
     return (
         <Fragment>
@@ -395,12 +412,10 @@ function SearchPage(props) {
                 onChange={handleChange}
                 backfill
                 open={open}
-                disabled={props.type === "history" ? true : loading}
+                disabled={props.record.search ? true : loading}
                 onSelect={handleSearch}
                 defaultOpen={false}
-                defaultValue={
-                    props.type === "history" ? props.record.search : null
-                }
+                defaultValue={props.record.search ? props.record.search : null}
                 dataSource={state.dataSource}
             >
                 <Input.Search
@@ -447,7 +462,14 @@ function SearchPage(props) {
                 </Card>
             </Spin>
             {state.visibleModal &&
-                renderInfoModal(state, {}, props, setState, handleSearch)}
+                renderInfoModal(
+                    state,
+                    {},
+                    props,
+                    setState,
+                    handleSearch,
+                    opeation
+                )}
         </Fragment>
     )
 }
