@@ -34,7 +34,7 @@ class Dialogue extends Chat {
             showSetting: false,
             settingSpin: true,
             domain_key: record.key,
-            collapse: true,
+            collapse: false,
         }
     }
 

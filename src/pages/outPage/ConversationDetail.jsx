@@ -11,7 +11,7 @@ class ConversationDetail extends Chat {
             ...this.state,
             showInput: false,
             roomHeight: this.props.roomHeight || "100vh",
-            collapse: true,
+            collapse: false,
         }
     }
 
