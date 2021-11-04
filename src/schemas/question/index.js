@@ -306,6 +306,7 @@ service.getDetail = async function (args) {
             : null,
         ...res.info,
         info: res.info ? JSON.stringify(res.info) : "",
+        answer: res.answer && res.answer.replace(/\n/g, "<br>"),
     }
 }
 export default {

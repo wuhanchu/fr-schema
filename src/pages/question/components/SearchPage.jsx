@@ -200,7 +200,7 @@ function renderDescription(item) {
     )
 }
 
-function renderInfoModal(state, meta, props, setState) {
+function renderInfoModal(state, meta, props, setState, handleSearch) {
     const { form } = props
     const { visibleModal, infoData, action } = state
     const updateMethods = {
@@ -218,7 +218,20 @@ function renderInfoModal(state, meta, props, setState) {
             } catch (error) {
                 message.error(error.message)
             }
-            setState({ ...state, visibleModal: false })
+            if (props.type === "history") {
+                setState({
+                    ...state,
+                    visibleModal: false,
+                })
+            } else {
+                setState({
+                    ...state,
+                    loading: true,
+                    visibleModal: false,
+                })
+                handleSearch()
+            }
+
             return response
         },
         handleAdd: () => {
@@ -326,6 +339,7 @@ function SearchPage(props) {
                 data: [],
                 open: false,
                 loading: false,
+                visibleModal: false,
             })
             return
         }
@@ -334,6 +348,7 @@ function SearchPage(props) {
             ...state,
             loading: true,
             open: false,
+            visibleModal: false,
         })
         let args = {}
         if (props.type === "domain_id") {
@@ -355,6 +370,7 @@ function SearchPage(props) {
                 data: response.list,
                 open: false,
                 loading: false,
+                visibleModal: false,
             })
         } catch (error) {
             message.error("搜索失败")
@@ -423,7 +439,8 @@ function SearchPage(props) {
                     )}
                 </Card>
             </Spin>
-            {state.visibleModal && renderInfoModal(state, {}, props, setState)}
+            {state.visibleModal &&
+                renderInfoModal(state, {}, props, setState, handleSearch)}
         </Fragment>
     )
 }
