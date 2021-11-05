@@ -35,6 +35,7 @@ class Dialogue extends Chat {
             settingSpin: true,
             domain_key: record.key,
             collapse: false,
+            showIntentFlow: true,
         }
     }
 
@@ -532,7 +533,7 @@ class Dialogue extends Chat {
             this.setState({
                 conversationId: res.data.id,
                 isSpin: false,
-                showIntentFlow: false,
+                showIntentFlow: true,
             })
             this.setState({ showIntentFlow: true }, (_) =>
                 this.onSendMsg("/true")

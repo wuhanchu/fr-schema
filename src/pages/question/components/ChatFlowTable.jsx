@@ -118,16 +118,23 @@ class ChatFlowTable extends DataList {
             config: "not.is.null",
             domain_key: domainKey,
         })
+
+        let action = []
+        let node = []
+        res.list.map((item) => {
+            action.push(...item.config.action)
+            node.push(...item.config.node)
+        })
+
         if (res.list.length) {
-            let result = res.list[0].config
             this.schema.action_key.dict = utils.dict.listToDict(
-                result.action,
+                action,
                 null,
                 "key",
                 "name"
             )
             this.schema.node_key.dict = utils.dict.listToDict(
-                result.node,
+                node,
                 null,
                 "key",
                 "name"

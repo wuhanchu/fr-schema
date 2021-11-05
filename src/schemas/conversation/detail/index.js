@@ -9,6 +9,9 @@ const schema = {
     node_key: {
         title: "节点",
         type: schemaFieldType.Select,
+        render: (item) => {
+            return <div style={{ minWidth: "100px" }}>{item}</div>
+        },
     },
     type: {
         title: "类型",
@@ -27,11 +30,17 @@ const schema = {
                 remark: "操作",
             },
         },
+        render: (item) => {
+            return <div style={{ minWidth: "100px" }}>{item}</div>
+        },
     },
     intent_history_id: {
         title: "意图",
         type: schemaFieldType.Select,
-        width: 80,
+        width: 100,
+        render: (item) => {
+            return <div style={{ minWidth: "100px" }}>{item}</div>
+        },
     },
     text: {
         title: "文本",
@@ -40,6 +49,9 @@ const schema = {
     action_key: {
         title: "操作",
         type: schemaFieldType.Select,
+        render: (item) => {
+            return <div style={{ minWidth: "100px" }}>{item}</div>
+        },
     },
     slot: {
         title: "槽位",
