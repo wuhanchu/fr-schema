@@ -56,13 +56,19 @@ export const ActionModal = ({
                 return
             }
         }
+        console.log("是是是")
+        console.log(isMore, isImport)
         if (isMore <= 1 && !isImport) {
+            console.log("是是是")
             newAction(values)
         }
         if (isMore > 1 && !isImport) {
+            console.log("是是是")
+
             cloneAction(values)
         }
         if ((isMore > 1 && isImport) || isImport) {
+            console.log("是是是")
             importAction(values)
         }
         return values
@@ -95,6 +101,7 @@ export const ActionModal = ({
                 })
                 expGraph.action = null
 
+                // console.log(arr)
                 expGraph.action = arr
                 graphChange()
             }
@@ -112,14 +119,13 @@ export const ActionModal = ({
             key: actionKey,
         })
         if (!isImport) {
-            actionList.splice(
-                actionList.findIndex((item) => {
-                    return key === item
-                }),
-                1
-            )
+            actionList[
+                actionList.findIndex((item, index) => {
+                    return defaultValue.key === item
+                })
+            ] = actionKey
         }
-        actionList.push(actionKey)
+        // actionList.push(actionKey)
         cell.setData({ action: actionList })
         let expGraphAction = [...graph.action]
         expGraphAction.push({
@@ -134,17 +140,19 @@ export const ActionModal = ({
 
     const importAction = (values) => {
         let key = isImport || defaultValue.key
-
         if (actionType === "edit") {
-            actionList.splice(
-                actionList.findIndex((item) => {
+            actionList[
+                actionList.findIndex((item, index) => {
                     return defaultValue.key === item
-                }),
-                1
-            )
+                })
+            ] = isImport
+        }
+        if (actionType === "add") {
+            if (isImport) {
+                actionList.push(isImport)
+            }
         }
         if (isImport) {
-            actionList.push(isImport)
             cell.setData({ action: actionList })
         }
         let arr = expGraph.action.map((item) => {
