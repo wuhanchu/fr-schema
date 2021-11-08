@@ -56,19 +56,13 @@ export const ActionModal = ({
                 return
             }
         }
-        console.log("是是是")
-        console.log(isMore, isImport)
         if (isMore <= 1 && !isImport) {
-            console.log("是是是")
             newAction(values)
         }
         if (isMore > 1 && !isImport) {
-            console.log("是是是")
-
             cloneAction(values)
         }
         if ((isMore > 1 && isImport) || isImport) {
-            console.log("是是是")
             importAction(values)
         }
         return values
