@@ -43,7 +43,6 @@ class Main extends React.PureComponent {
         const menu = (
             <Menu
                 onClick={async (item) => {
-                    console.log(item)
                     try {
                         this.setState({ isLoading: true })
                         let data = await schemas.mark.service.mark_task({

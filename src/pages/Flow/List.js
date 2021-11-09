@@ -6,6 +6,7 @@ import schemas from "@/schemas"
 import React from "react"
 import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
+import DialogueModal from "@/pages/question/components/DialogueModal"
 import {
     Divider,
     Modal,
@@ -40,7 +41,7 @@ class List extends ListPage {
             schema: schemas.flow.schema,
             service: schemas.flow.service,
             importTemplateUrl,
-            operateWidth: "270px",
+            operateWidth: "320px",
             infoProps: {
                 width: "900px",
             },
@@ -185,6 +186,18 @@ class List extends ListPage {
                 <Divider type="vertical" />
                 <a
                     onClick={() => {
+                        this.setState({
+                            record,
+                            visibleDialogue: true,
+                            infoData: record,
+                        })
+                    }}
+                >
+                    对话
+                </a>
+                <Divider type="vertical" />
+                <a
+                    onClick={() => {
                         window.__isReactDndBackendSetUp = undefined
                         this.setState({ record, visibleFlow: true })
                     }}
@@ -214,6 +227,7 @@ class List extends ListPage {
             visibleCodeModal,
             projectDict,
             intentDict,
+            visibleDialogue,
         } = this.state
         return (
             <>
@@ -250,6 +264,17 @@ class List extends ListPage {
                     />
                 </Modal>
                 {visibleCodeModal && this.renderCodeModal()}
+                {visibleDialogue && (
+                    <DialogueModal
+                        type={"domain_id"}
+                        record={{ ...record, key: record.domain_key }}
+                        visibleDialogue={visibleDialogue}
+                        title={"对话" + "(" + record.name + ")"}
+                        handleHideDialogue={() =>
+                            this.setState({ visibleDialogue: false })
+                        }
+                    />
+                )}
             </>
         )
     }

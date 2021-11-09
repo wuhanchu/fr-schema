@@ -39,11 +39,11 @@ const schema = {
         dict: {
             true: {
                 value: true,
-                remark: "正确",
+                remark: "是",
             },
             false: {
                 value: false,
-                remark: "错误",
+                remark: "否",
             },
         },
         render: (item) => {

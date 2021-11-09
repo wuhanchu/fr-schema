@@ -8,8 +8,10 @@ import {
     AutoComplete,
     message,
     Tag,
+    Popconfirm,
+    Button,
 } from "antd"
-
+import { listToDict } from "@/outter/fr-schema/src/dict"
 import schemas from "@/schemas"
 import { contentHeight } from "@/styles/global"
 import * as _ from "lodash"
@@ -21,8 +23,20 @@ import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoMod
 import Question from "@/pages/question/components/BaseList"
 
 const { url } = utils.utils
-
-async function init(props, project_id, setState, state, callback, setOpeation) {
+function unique(arr) {
+    return Array.from(new Set(arr))
+}
+async function init(
+    props,
+    project_id,
+    setState,
+    state,
+    callback,
+    setOpeation,
+    setLoading,
+    setAllData,
+    setProjectList
+) {
     const response = await schemas.question.service.get({
         // ...this.meta.queryArgs,
         type: undefined,
@@ -60,7 +74,7 @@ async function init(props, project_id, setState, state, callback, setOpeation) {
 
     setState({ ...state, options: options })
 
-    if (props.type === "domain_id") {
+    if (props.type !== "project_id") {
         let project = await schemas.project.service.get({
             domain_key: props.record && props.record.key,
             limit: 999,
@@ -72,6 +86,7 @@ async function init(props, project_id, setState, state, callback, setOpeation) {
             else project_id = project_id + item.id
         })
         project_id = project_id + ")"
+        setProjectList(project.list)
     }
     if (props.type !== "history" && !props.record.search) {
         await schemas.hotWord.service
@@ -89,27 +104,37 @@ async function init(props, project_id, setState, state, callback, setOpeation) {
                     ...state,
                     options: options,
                     allData,
-                    loading: false,
                 })
+                setAllData(allData)
+                setLoading(false)
             })
     } else {
         setState({
             ...state,
-            loading: false,
             options: options,
             data: props.data,
         })
+        setLoading(false)
     }
     setOpeation(options)
     callback({
         ...state,
-        loading: false,
         options: options,
         data: props.data,
     })
+    setLoading(false)
 }
 
-function renderTitle(item, setState, state, props) {
+function renderTitle(
+    item,
+    setState,
+    state,
+    props,
+    values,
+    setLoading,
+    handleSearch,
+    setAction
+) {
     return (
         <div style={{ width: "100%", display: "flex" }}>
             <span style={{ flex: 1 }}>
@@ -144,12 +169,16 @@ function renderTitle(item, setState, state, props) {
                     marginRight: "20px",
                 }}
             >
-                匹配度：{formatData(item.compatibility || 0, 5)}
+                匹配度：
+                {item.compatibility === 1
+                    ? "1.00000"
+                    : formatData(item.compatibility || 0, 5)}
             </span>
             {
                 <a
                     style={{ marginLeft: "10px", marginRight: "10px" }}
                     onClick={() => {
+                        setAction("edit")
                         setState({
                             ...state,
                             visibleModal: true,
@@ -160,11 +189,58 @@ function renderTitle(item, setState, state, props) {
                     修改
                 </a>
             }
+            {
+                <Popconfirm
+                    title="是否补充扩展问到此问题？"
+                    onConfirm={async (e) => {
+                        setLoading(true)
+                        let data = await schemas.question.service.getDetail(
+                            item
+                        )
+                        let question_extend = []
+                        if (data.question_extend) {
+                            question_extend = data.question_extend.split("\n")
+                        }
+                        question_extend.push(values || props.record.search)
+                        await schemas.question.service.patch(
+                            {
+                                id: item.id,
+                                question_extend: unique(question_extend),
+                            },
+                            schemas.question.schema
+                        )
+                        message.success("补充成功")
+                        setLoading(false)
+                        e.stopPropagation()
+                    }}
+                >
+                    <a style={{ marginLeft: "10px", marginRight: "10px" }}>
+                        补充
+                    </a>
+                </Popconfirm>
+            }
+            {
+                <Popconfirm
+                    title="是否删除此问题？"
+                    onConfirm={async (e) => {
+                        setLoading(true)
+                        console.log(item)
+                        if (item.id) await schemas.question.service.delete(item)
+                        message.success("删除成功")
+                        handleSearch()
+                        e.stopPropagation()
+                    }}
+                >
+                    <a style={{ marginLeft: "10px", marginRight: "10px" }}>
+                        删除
+                    </a>
+                </Popconfirm>
+            }
             {props.renderTitleOpeation && props.renderTitleOpeation(item)}
         </div>
     )
 }
-function renderDescription(item) {
+function renderDescription(item, props) {
     return (
         <>
             <div
@@ -173,6 +249,9 @@ function renderDescription(item) {
                         marginTop: 0,
                         marginBottom: 0,
                     },
+                    width: props.type === "history" ? "60%" : "65.2%",
+                    verticalAlign: "top",
+                    display: "inline-block",
                 }}
                 dangerouslySetInnerHTML={{
                     __html:
@@ -207,13 +286,34 @@ function renderDescription(item) {
                     })}
                 </>
             )}
+            <div
+                style={{
+                    width: "25%",
+                    verticalAlign: "top",
+                    marginLeft: "4.2%",
+                    color: "rgba(0,0,0,0.8)",
+                    display: "inline-block",
+                }}
+            >
+                匹配问题：{item.match_question_title}
+            </div>
         </>
     )
 }
 
-function renderInfoModal(state, meta, props, setState, handleSearch, opeation) {
+function renderInfoModal(
+    state,
+    meta,
+    props,
+    setState,
+    handleSearch,
+    opeation,
+    setLoading,
+    action,
+    projectList
+) {
     const { form } = props
-    const { visibleModal, infoData, action } = state
+    const { visibleModal, infoData } = state
     const updateMethods = {
         handleVisibleModal: () => {
             console.log("handleVisibleModal")
@@ -221,10 +321,12 @@ function renderInfoModal(state, meta, props, setState, handleSearch, opeation) {
         },
         handleUpdate: async (data, schema, method = "patch") => {
             // 更新
-            console.log(data)
             let response
             try {
-                response = await schemas.question.service.patch(data, schema)
+                response = await schemas.question.service.patch(
+                    data,
+                    schemas.question.schema
+                )
                 message.success("修改成功")
             } catch (error) {
                 message.error(error.message)
@@ -237,15 +339,32 @@ function renderInfoModal(state, meta, props, setState, handleSearch, opeation) {
             } else {
                 setState({
                     ...state,
-                    loading: true,
                     visibleModal: false,
                 })
+                setLoading(true)
                 handleSearch()
             }
 
             return response
         },
-        handleAdd: () => {
+        handleAdd: async (data, schema) => {
+            let response
+            try {
+                console.log(data)
+                response = await schemas.question.service.post(
+                    data,
+                    schemas.question.schema
+                )
+                message.success("新增成功")
+            } catch (error) {
+                message.error(error.message)
+            }
+            setState({
+                ...state,
+                visibleModal: false,
+            })
+            setLoading(true)
+            handleSearch()
             console.log("handleUpdate")
         },
     }
@@ -254,20 +373,26 @@ function renderInfoModal(state, meta, props, setState, handleSearch, opeation) {
         visibleModal && (
             <InfoModal
                 title={"问题修改"}
-                action={"edit"}
+                action={action}
                 {...updateMethods}
                 visible={visibleModal}
                 values={state.listItem}
                 service={schemas.question.service}
                 schema={{
-                    // project_id: this.schema.project_id,
+                    project_id:
+                        action === "add"
+                            ? {
+                                  title: "项目",
+                                  type: "Select",
+                                  sorter: true,
+                                  required: true,
+                                  dict: listToDict(projectList),
+                              }
+                            : undefined,
                     ...schemas.question.schema,
                     group: {
                         ...schemas.question.schema.group,
                         renderInput: (item, data) => {
-                            console.log(opeation)
-                            console.log("state.options")
-
                             return (
                                 <AutoComplete
                                     style={{
@@ -284,7 +409,7 @@ function renderInfoModal(state, meta, props, setState, handleSearch, opeation) {
                                     options={opeation}
                                 >
                                     {/* {options} */}
-                                    {/* <Input placeholder="请输入分组1"></Input> */}
+                                    <Input placeholder="请输入分组"></Input>
                                 </AutoComplete>
                             )
                         },
@@ -307,14 +432,22 @@ function renderInfoModal(state, meta, props, setState, handleSearch, opeation) {
 function SearchPage(props) {
     const [state, setState] = useState({
         data: null,
-        allData: [],
-        loading: true,
+        // allData: [],
         open: false,
     })
+    const [loading, setLoading] = useState(true)
+    const [allData, setAllData] = useState([])
+    const [projectList, setProjectList] = useState([])
+
+    const [action, setAction] = useState("edit")
+
     const [opeation, setOpeation] = useState([])
     const [values, setValues] = useState("")
+    // if(props.record.search){
+    //     setValues(props.record.search)
+    // }
 
-    const { data, loading, open, allData } = state
+    const { data, open } = state
 
     // 判断是否外嵌模式
     let project_id = url.getUrlParams("project_id")
@@ -337,32 +470,36 @@ function SearchPage(props) {
             value,
             dataSource:
                 value &&
-                state.allData &&
-                state.allData.filter((item) => item.indexOf(value) >= 0),
+                allData &&
+                allData.filter((item) => item.indexOf(value) >= 0),
         })
         setValues(value)
     }
 
     const handleSearch = async (searchValue, state) => {
+        console.log(state)
         let value = searchValue || values || props.record.search
         if (_.isNil(value)) {
             setState({
                 data: [],
                 open: false,
-                loading: false,
                 visibleModal: false,
             })
+            setLoading(false)
             return
         }
         setState({
             ...state,
-            loading: true,
             open: false,
             visibleModal: false,
         })
+        setLoading(true)
+
         let args = {}
-        if (props.type === "domain_id") {
+        if (props.type !== "project_id") {
             args.domain_key = domain_key
+                ? domain_key
+                : props.record && props.record.domain_key
         } else {
             args.project_id = project_id || undefined
             args.domain_key = domain_key
@@ -379,14 +516,12 @@ function SearchPage(props) {
                 value,
                 data: response.list,
                 open: false,
-                loading: false,
                 visibleModal: false,
             })
+            setLoading(false)
         } catch (error) {
             message.error("搜索失败")
-            setState({
-                loading: false,
-            })
+            setLoading(false)
         }
     }
     useEffect(() => {
@@ -400,37 +535,60 @@ function SearchPage(props) {
                     handleSearch(props.record.search, state)
                 }
             },
-            setOpeation
+            setOpeation,
+            setLoading,
+            setAllData,
+            setProjectList
         )
     }, [])
 
     return (
         <Fragment>
-            <AutoComplete
-                dropdownMatchSelectWidth={252}
-                style={{ width: "100%" }}
-                onChange={handleChange}
-                backfill
-                open={open}
-                disabled={props.record.search ? true : loading}
-                onSelect={handleSearch}
-                defaultOpen={false}
-                defaultValue={props.record.search ? props.record.search : null}
-                dataSource={state.dataSource}
-            >
-                <Input.Search
-                    placeholder="输入想要搜索的问题"
-                    enterButton
-                    onBlur={() => {
+            <div style={{ display: "flex" }}>
+                <AutoComplete
+                    dropdownMatchSelectWidth={252}
+                    style={{ width: "100%", flex: 1 }}
+                    onChange={handleChange}
+                    backfill
+                    open={open}
+                    disabled={props.record.search ? true : loading}
+                    onSelect={handleSearch}
+                    defaultOpen={false}
+                    defaultValue={
+                        props.record.search ? props.record.search : null
+                    }
+                    dataSource={state.dataSource}
+                >
+                    <Input.Search
+                        placeholder="输入想要搜索的问题"
+                        enterButton
+                        onBlur={() => {
+                            setState({
+                                ...state,
+                                open: false,
+                            })
+                        }}
+                        onSearch={handleSearch}
+                        style={{ paddingBottom: 8 }}
+                    />
+                </AutoComplete>
+                <Button
+                    style={{ marginLeft: "5px" }}
+                    onClick={() => {
+                        let question_extend = values || props.record.search
+                        setAction("add")
                         setState({
                             ...state,
-                            open: false,
+                            visibleModal: true,
+                            listItem: { question_extend: question_extend },
                         })
                     }}
-                    onSearch={handleSearch}
-                    style={{ paddingBottom: 8 }}
-                />
-            </AutoComplete>
+                >
+                    新增
+                </Button>
+                {props.renderOperationButton && props.renderOperationButton()}
+            </div>
+
             <Spin tip={"加载中"} spinning={loading}>
                 <Card>
                     {data && data.length > 0 ? (
@@ -438,6 +596,7 @@ function SearchPage(props) {
                             style={{
                                 maxHeight: height,
                                 overflowY: "scroll",
+                                position: "relative",
                             }}
                             itemLayout="horizontal"
                             dataSource={data}
@@ -448,9 +607,18 @@ function SearchPage(props) {
                                             item,
                                             setState,
                                             state,
+                                            props,
+                                            values,
+                                            setLoading,
+                                            (state) => {
+                                                handleSearch()
+                                            },
+                                            setAction
+                                        )}
+                                        description={renderDescription(
+                                            item,
                                             props
                                         )}
-                                        description={renderDescription(item)}
                                     />
                                     {/* <div>{renderDescription(item)}</div> */}
                                 </List.Item>
@@ -468,7 +636,10 @@ function SearchPage(props) {
                     props,
                     setState,
                     handleSearch,
-                    opeation
+                    opeation,
+                    setLoading,
+                    action,
+                    projectList
                 )}
         </Fragment>
     )

@@ -196,6 +196,33 @@ class MyList extends DataList {
                         title={"查询结果" + "(" + record.search + ")"}
                         record={record}
                         data={data}
+                        renderOperationButton={(data) => {
+                            return (
+                                <>
+                                    <Popconfirm
+                                        title="是否将确认关系清空？"
+                                        onConfirm={async (e) => {
+                                            await this.service.patch({
+                                                id: record.id,
+                                            })
+                                            message.success("操作成功！")
+                                            this.setState({
+                                                showAnswer: false,
+                                            })
+                                            this.refreshList()
+                                            e.stopPropagation()
+                                        }}
+                                    >
+                                        <Button
+                                            style={{ marginLeft: "5px" }}
+                                            onClick={() => {}}
+                                        >
+                                            清空
+                                        </Button>
+                                    </Popconfirm>
+                                </>
+                            )
+                        }}
                         renderTitleOpeation={(data) => {
                             return (
                                 <>
@@ -269,11 +296,11 @@ class MyList extends DataList {
                     dict: {
                         true: {
                             value: "true",
-                            remark: "正确",
+                            remark: "是",
                         },
                         false: {
                             value: "false",
-                            remark: "错误",
+                            remark: "否",
                         },
                         null: {
                             value: "null",
