@@ -139,12 +139,15 @@ function renderTitle(
         <div style={{ width: "100%", display: "flex" }}>
             <span style={{ flex: 1 }}>
                 <span
-                    dangerouslySetInnerHTML={{
-                        __html: item.question_standard
-                            .replace(/<b>/g, "<b style='color:red;'>")
-                            .replace(/\n/g, "<br/>"),
-                    }}
-                />
+                    style={{ fontWeight: "bold" }}
+                    // dangerouslySetInnerHTML={{
+                    //     __html: item.question_standard
+                    //         .replace(/<b>/g, "<b style='color:red;'>")
+                    //         .replace(/\n/g, "<br/>"),
+                    // }}
+                >
+                    {item.question_standard}
+                </span>
                 {item.label && item.label.length !== 0 && (
                     <span style={{ marginLeft: "10px" }}>
                         {item.label.map((item) => {
@@ -162,17 +165,6 @@ function renderTitle(
                 {/* {<a style={{marginLeft: '10px', marginRight: '10px'}} onClick={()=>{setState({...state, visibleModal:true, listItem: item})}}><EditOutlined/></a>}
                 {props.renderTitleOpeation && props.renderTitleOpeation(item)}
              */}
-            </span>
-            <span
-                style={{
-                    float: "right",
-                    marginRight: "20px",
-                }}
-            >
-                匹配度：
-                {item.compatibility === 1
-                    ? "1.00000"
-                    : formatData(item.compatibility || 0, 5)}
             </span>
             {
                 <a
@@ -245,11 +237,46 @@ function renderDescription(item, props) {
         <>
             <div
                 style={{
+                    width: "100%",
+                    marginRight: "10px",
+
+                    marginBottom: "5px",
+                    display: "flex",
+                    // marginLeft: "4.2%",
+                    color: "rgba(0,0,0,0.85)",
+                    // display: "inline-block",
+                }}
+            >
+                <div
+                    style={{
+                        flex: 1,
+                        display: "inline-block",
+                    }}
+                >
+                    匹配问题：{item.match_question_title}
+                </div>
+                <div style={{ width: "130px", marginRight: "10px" }}>
+                    <span
+                        style={{
+                            width: "130px",
+                            textAlign: "right",
+                            display: "inline-block",
+                        }}
+                    >
+                        匹配度：
+                        {item.compatibility === 1
+                            ? "1.00000"
+                            : formatData(item.compatibility || 0, 5)}
+                    </span>
+                </div>
+            </div>
+            <div
+                style={{
                     p: {
                         marginTop: 0,
                         marginBottom: 0,
                     },
-                    width: props.type === "history" ? "60%" : "65.2%",
+                    marginRight: "10px",
                     verticalAlign: "top",
                     display: "inline-block",
                 }}
@@ -286,17 +313,6 @@ function renderDescription(item, props) {
                     })}
                 </>
             )}
-            <div
-                style={{
-                    width: "25%",
-                    verticalAlign: "top",
-                    marginLeft: "4.2%",
-                    color: "rgba(0,0,0,0.8)",
-                    display: "inline-block",
-                }}
-            >
-                匹配问题：{item.match_question_title}
-            </div>
         </>
     )
 }
