@@ -431,7 +431,6 @@ function renderInfoModal(
         handleAdd: async (data, schema) => {
             let response
             try {
-                console.log(props.record)
                 response = await schemas.question.service.post(
                     data,
                     schemas.question.schema
