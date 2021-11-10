@@ -5,7 +5,7 @@ import Modal from "antd/lib/modal/Modal"
 import clone from "clone"
 import AceEditor from "react-ace"
 import { v4 as uuidv4 } from "uuid"
-import { verifyJson } from "@/outter/fr-schema-antd-utils/src/utils/component"
+import { verifyJsonORString } from "@/outter/fr-schema-antd-utils/src/utils/component"
 import "ace-builds/src-noconflict/mode-json"
 import "ace-builds/src-noconflict/theme-github"
 import "ace-builds/src-noconflict/ext-language_tools"
@@ -53,7 +53,7 @@ export const ActionModal = ({
             try {
                 values.param = JSON.parse(values.param)
             } catch (error) {
-                return
+                // return
             }
         }
         if (isMore <= 1 && !isImport) {
@@ -333,7 +333,11 @@ export const ActionModal = ({
                         defaultValue={initialValues.name}
                     />
                 </Form.Item>
-                <Form.Item label="参数" name={"param"} rules={verifyJson}>
+                <Form.Item
+                    label="参数"
+                    name={"param"}
+                    rules={verifyJsonORString}
+                >
                     <div style={{ width: "489px" }}>
                         <AceEditor
                             placeholder={`请输入${"参数"}`}

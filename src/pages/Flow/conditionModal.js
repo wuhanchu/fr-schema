@@ -15,7 +15,10 @@ import clone from "clone"
 import AceEditor from "react-ace"
 import "ace-builds/src-noconflict/mode-json"
 import { v4 as uuidv4 } from "uuid"
-import { verifyJson } from "@/outter/fr-schema-antd-utils/src/utils/component"
+import {
+    verifyJson,
+    verifyJsonORString,
+} from "@/outter/fr-schema-antd-utils/src/utils/component"
 
 import "ace-builds/src-noconflict/theme-github"
 import "ace-builds/src-noconflict/ext-language_tools"
@@ -50,8 +53,8 @@ export const ConditionModal = ({
             try {
                 values.slot = JSON.parse(values.slot)
             } catch (error) {
-                message.error("json格式错误")
-                return
+                // message.error("json格式错误")
+                // return
             }
         }
         if (isMore <= 1 && !isImport) {
@@ -279,6 +282,7 @@ export const ConditionModal = ({
                                     setImportData(importData)
                                     setAceEditorValue("")
                                     if (importData.slot) {
+                                        console.log("不是json")
                                         setAceEditorValue(
                                             JSON.stringify(
                                                 importData.slot,
@@ -331,7 +335,11 @@ export const ConditionModal = ({
                         placeholder={"请输入名称"}
                     />
                 </Form.Item>
-                <Form.Item label="槽位" name={"slot"} rules={verifyJson}>
+                <Form.Item
+                    label="槽位"
+                    name={"slot"}
+                    rules={verifyJsonORString}
+                >
                     <div style={{ width: "489px" }}>
                         <AceEditor
                             placeholder={`请输入${"槽位"}`}
