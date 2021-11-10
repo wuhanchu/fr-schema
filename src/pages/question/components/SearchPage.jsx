@@ -590,6 +590,7 @@ function SearchPage(props) {
                 </AutoComplete>
                 <Button
                     style={{ marginLeft: "5px" }}
+                    disabled={loading}
                     onClick={() => {
                         let question_extend = values || props.record.search
                         setAction("add")
