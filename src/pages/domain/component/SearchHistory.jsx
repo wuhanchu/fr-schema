@@ -200,7 +200,7 @@ class MyList extends DataList {
                             return (
                                 <>
                                     <Popconfirm
-                                        title="是否将确认关系清空？"
+                                        title="是否将确认关系重置匹配？"
                                         onConfirm={async (e) => {
                                             await this.service.patch({
                                                 id: record.id,
@@ -213,11 +213,8 @@ class MyList extends DataList {
                                             e.stopPropagation()
                                         }}
                                     >
-                                        <Button
-                                            style={{ marginLeft: "5px" }}
-                                            onClick={() => {}}
-                                        >
-                                            清空
+                                        <Button style={{ marginLeft: "5px" }}>
+                                            重置匹配
                                         </Button>
                                     </Popconfirm>
                                 </>

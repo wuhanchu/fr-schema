@@ -88,7 +88,7 @@ async function init(
         project_id = project_id + ")"
         setProjectList(project.list)
     }
-    if (props.type !== "history" && !props.record.search) {
+    if (props.type !== "history") {
         await schemas.hotWord.service
             .get({
                 domain_key: props.record && props.record.key,
@@ -106,7 +106,6 @@ async function init(
                     allData,
                 })
                 setAllData(allData)
-                setLoading(false)
             })
     } else {
         setState({
@@ -122,6 +121,9 @@ async function init(
         options: options,
         data: props.data,
     })
+    if (props.record.search) {
+        return
+    }
     setLoading(false)
 }
 
@@ -219,7 +221,10 @@ function renderTitle(
                         console.log(item)
                         if (item.id) await schemas.question.service.delete(item)
                         message.success("删除成功")
-                        handleSearch()
+                        if (props.type !== "history") handleSearch()
+                        else {
+                            setLoading(false)
+                        }
                         e.stopPropagation()
                     }}
                 >
@@ -360,7 +365,6 @@ function renderInfoModal(
                 setLoading(true)
                 handleSearch()
             }
-
             return response
         },
         handleAdd: async (data, schema) => {
@@ -379,9 +383,6 @@ function renderInfoModal(
                 ...state,
                 visibleModal: false,
             })
-            setLoading(true)
-            handleSearch()
-            console.log("handleUpdate")
         },
     }
 
@@ -548,6 +549,7 @@ function SearchPage(props) {
             state,
             (state) => {
                 if (props.record.search && props.type !== "history") {
+                    setLoading(true)
                     handleSearch(props.record.search, state)
                 }
             },
@@ -567,8 +569,8 @@ function SearchPage(props) {
                     onChange={handleChange}
                     backfill
                     open={open}
-                    disabled={props.record.search ? true : loading}
-                    onSelect={handleSearch}
+                    disabled={props.type === "history" ? true : loading}
+                    // onSelect={handleSearch}
                     defaultOpen={false}
                     defaultValue={
                         props.record.search ? props.record.search : null
@@ -601,7 +603,7 @@ function SearchPage(props) {
                         })
                     }}
                 >
-                    新增
+                    新增问题
                 </Button>
                 {props.renderOperationButton && props.renderOperationButton()}
             </div>
