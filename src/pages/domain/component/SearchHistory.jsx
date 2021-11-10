@@ -138,56 +138,10 @@ class MyList extends DataList {
             record.return_question.map((item) => {
                 return { ...item, question_standard: item.question }
             })
+        // this.setState({dataList: data})
         return (
             <>
                 {showAnswer && (
-                    // <Modal
-                    //     title="查询结果"
-                    //     footer={false}
-                    //     width={1100}
-                    //     onCancel={() => {
-                    //         this.setState({
-                    //             showAnswer: false,
-                    //         })
-                    //     }}
-                    //     visible={true}
-                    // >
-                    //     <Card bordered={false}>
-                    //         <Table
-                    //             style={{ marginBottom: "24px" }}
-                    //             bordered
-                    //             pagination={false}
-                    //             size={"small"}
-                    //             columns={columns}
-                    //             dataSource={record.return_question}
-                    //         />
-                    //         <Button
-                    //             type="primary"
-                    //             style={{
-                    //                 float: "right",
-                    //                 right: "24px",
-                    //                 botton: "24px",
-                    //                 position: "absolute",
-                    //             }}
-                    //             onClick={async () => {
-                    //                 try {
-                    //                     await this.service.patch({
-                    //                         return_question: this.state
-                    //                             .matchQuestion,
-                    //                         id: record.id,
-                    //                     })
-                    //                     message.success("确认成功！")
-                    //                     this.setState({ showAnswer: false })
-                    //                     this.refreshList()
-                    //                 } catch (e) {
-                    //                     message.error(e.message)
-                    //                 }
-                    //             }}
-                    //         >
-                    //             确认
-                    //         </Button>
-                    //     </Card>
-                    // </Modal>
                     <SearchPageModal
                         type={"history"}
                         onCancel={() => {
@@ -200,15 +154,21 @@ class MyList extends DataList {
                             return (
                                 <>
                                     <Popconfirm
-                                        title="是否将确认关系重置匹配？"
+                                        title="是否重置当前匹配的问题？"
                                         onConfirm={async (e) => {
                                             await this.service.patch({
                                                 id: record.id,
                                             })
-                                            message.success("操作成功！")
                                             this.setState({
-                                                showAnswer: false,
+                                                record: {
+                                                    ...record,
+                                                    match_question_id: null,
+                                                },
                                             })
+                                            message.success("操作成功！")
+                                            // this.setState({
+                                            //     showAnswer: false,
+                                            // })
                                             this.refreshList()
                                             e.stopPropagation()
                                         }}

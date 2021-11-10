@@ -135,7 +135,9 @@ function renderTitle(
     values,
     setLoading,
     handleSearch,
-    setAction
+    setAction,
+    setAddQuestionExtend,
+    addQuestionExtend
 ) {
     return (
         <div style={{ width: "100%", display: "flex" }}>
@@ -185,7 +187,38 @@ function renderTitle(
             }
             {
                 <Popconfirm
-                    title="是否补充扩展问到此问题？"
+                    title={
+                        <>
+                            <div style={{ width: "300px" }}>
+                                是否补充扩展问到此问题？
+                            </div>
+                            <Input
+                                onChange={(e) => {
+                                    console.log(e.target.value)
+                                    setAddQuestionExtend(e.target.value)
+                                }}
+                                autoSize
+                                width={300}
+                                value={
+                                    addQuestionExtend ||
+                                    values ||
+                                    props.record.search
+                                }
+                                defaultValue={values || props.record.search}
+                                placeholder={"输入扩展问"}
+                                style={{
+                                    marginTop: "10px",
+                                    paddingRight: "10px",
+                                }}
+                            ></Input>
+                        </>
+                    }
+                    onCancel={() => {
+                        setAddQuestionExtend("")
+                    }}
+                    onVisibleChange={() => {
+                        setAddQuestionExtend("")
+                    }}
                     onConfirm={async (e) => {
                         setLoading(true)
                         let data = await schemas.question.service.getDetail(
@@ -195,15 +228,26 @@ function renderTitle(
                         if (data.question_extend) {
                             question_extend = data.question_extend.split("\n")
                         }
-                        question_extend.push(values || props.record.search)
-                        await schemas.question.service.patch(
-                            {
-                                id: item.id,
-                                question_extend: unique(question_extend),
-                            },
-                            schemas.question.schema
-                        )
-                        message.success("补充成功")
+                        if (
+                            addQuestionExtend ||
+                            values ||
+                            props.record.search
+                        ) {
+                            question_extend.push(
+                                addQuestionExtend ||
+                                    values ||
+                                    props.record.search
+                            )
+                            await schemas.question.service.patch(
+                                {
+                                    id: item.id,
+                                    question_extend: unique(question_extend),
+                                },
+                                schemas.question.schema
+                            )
+                            message.success("补充成功")
+                        }
+                        setAddQuestionExtend("")
                         setLoading(false)
                         e.stopPropagation()
                     }}
@@ -213,13 +257,28 @@ function renderTitle(
                     </a>
                 </Popconfirm>
             }
-            {
+            {item.match_question_title !== item.question_standard && (
                 <Popconfirm
-                    title="是否删除此问题？"
+                    title="是否删除匹配到的扩展问？"
                     onConfirm={async (e) => {
                         setLoading(true)
-                        console.log(item)
-                        if (item.id) await schemas.question.service.delete(item)
+                        let data = await schemas.question.service.getDetail(
+                            item
+                        )
+                        let question_extend = []
+                        if (data.question_extend) {
+                            question_extend = data.question_extend.split("\n")
+                            question_extend = question_extend.filter((val) => {
+                                return val !== item.match_question_title
+                            })
+                            await schemas.question.service.patch(
+                                {
+                                    id: item.id,
+                                    question_extend: unique(question_extend),
+                                },
+                                schemas.question.schema
+                            )
+                        }
                         message.success("删除成功")
                         if (props.type !== "history") handleSearch()
                         else {
@@ -232,7 +291,7 @@ function renderTitle(
                         删除
                     </a>
                 </Popconfirm>
-            }
+            )}
             {props.renderTitleOpeation && props.renderTitleOpeation(item)}
         </div>
     )
@@ -275,6 +334,8 @@ function renderDescription(item, props) {
                     </span>
                 </div>
             </div>
+            <div>答案:</div>
+
             <div
                 style={{
                     p: {
@@ -454,6 +515,7 @@ function SearchPage(props) {
     })
     const [loading, setLoading] = useState(true)
     const [allData, setAllData] = useState([])
+    const [addQuestionExtend, setAddQuestionExtend] = useState()
     const [projectList, setProjectList] = useState([])
 
     const [action, setAction] = useState("edit")
@@ -632,7 +694,9 @@ function SearchPage(props) {
                                             (state) => {
                                                 handleSearch()
                                             },
-                                            setAction
+                                            setAction,
+                                            setAddQuestionExtend,
+                                            addQuestionExtend
                                         )}
                                         description={renderDescription(
                                             item,
