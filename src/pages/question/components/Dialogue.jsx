@@ -24,11 +24,11 @@ class Dialogue extends Chat {
         this.state = {
             ...this.state,
             conversationId: "",
-            type: "chat",
+            type: props.dialogueType ? props.dialogueType : "chat",
             serviceId: record.talk_service_id,
             options: [],
             flowOption: [],
-            flow_key: undefined,
+            flow_key: props.flowKey ? props.flowKey : undefined,
             historyId: "",
             resultFlowLength: 1,
             showSetting: false,
@@ -42,7 +42,11 @@ class Dialogue extends Chat {
     formRef = React.createRef()
 
     async componentDidMount() {
-        await this.getChatRecord()
+        if (this.props.dialogueType) {
+            await this.onChatTypeConfirm()
+        } else {
+            await this.getChatRecord()
+        }
         this.chatRef.current && this.scrollToBottom()
         this.getSettingData()
     }
@@ -445,7 +449,7 @@ class Dialogue extends Chat {
             domain_key,
             slot,
         } = this.state
-        this.formRef.current.validateFields()
+        if (!this.props.dialogueType) this.formRef.current.validateFields()
         if (type === "flow" && !flow_key) {
             return
         }

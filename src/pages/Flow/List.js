@@ -267,6 +267,8 @@ class List extends ListPage {
                 {visibleDialogue && (
                     <DialogueModal
                         type={"domain_id"}
+                        dialogueType={"flow"}
+                        flowKey={record.key}
                         record={{ ...record, key: record.domain_key }}
                         visibleDialogue={visibleDialogue}
                         title={"对话" + "(" + record.name + ")"}
