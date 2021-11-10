@@ -431,11 +431,17 @@ function renderInfoModal(
         handleAdd: async (data, schema) => {
             let response
             try {
-                console.log(data)
+                console.log(props.record)
                 response = await schemas.question.service.post(
                     data,
                     schemas.question.schema
                 )
+                if (props.type === "history") {
+                    await schemas.searchHistory.service.patch(
+                        { id: props.record.id },
+                        true
+                    )
+                }
                 message.success("新增成功")
             } catch (error) {
                 message.error(error.message)
