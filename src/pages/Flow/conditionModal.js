@@ -181,9 +181,15 @@ export const ConditionModal = ({
     }
 
     if (initialValues["slot"]) {
-        var [AceEditorValue, setAceEditorValue] = useState(
-            JSON.stringify(initialValues["slot"], null, "\t")
-        )
+        if (typeof initialValues["slot"] === "string") {
+            var [AceEditorValue, setAceEditorValue] = useState(
+                initialValues["slot"]
+            )
+        } else {
+            var [AceEditorValue, setAceEditorValue] = useState(
+                JSON.stringify(initialValues["slot"], null, "\t")
+            )
+        }
     } else {
         var [AceEditorValue, setAceEditorValue] = useState("")
     }
@@ -192,10 +198,8 @@ export const ConditionModal = ({
     let defaultImport
 
     expGraphData.connection.map((nodeItem) => {
-        console.log("连线", nodeItem)
         nodeItem.condition &&
             nodeItem.condition.map((item) => {
-                console.log("意图", item)
                 if (item === defaultValue.key) {
                     isMore = isMore + 1
                     if (isMore > 1) {
@@ -204,7 +208,6 @@ export const ConditionModal = ({
                 }
             })
     })
-    console.log(isMore, defaultImport)
     const [isImport, setIsImport] = useState(
         defaultImport && defaultImport.split("nodeID_")[1]
     )
@@ -213,7 +216,6 @@ export const ConditionModal = ({
 
     expGraphData.connection &&
         expGraphData.connection.map((item) => {
-            console.log("线", item)
             let nodeActionDict = []
             item.condition &&
                 item.condition.map((key) => {

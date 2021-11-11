@@ -165,12 +165,22 @@ export const ActionModal = ({
     const [importData, setImportData] = useState([])
 
     if (initialValues["param"]) {
-        var [AceEditorValue, setAceEditorValue] = useState(
-            JSON.stringify(initialValues["param"], null, "\t")
-        )
+        if (typeof initialValues["param"] === "string") {
+            var [AceEditorValue, setAceEditorValue] = useState(
+                initialValues["param"]
+            )
+        } else {
+            if (typeof (initialValues["param"] === "object")) {
+                var [AceEditorValue, setAceEditorValue] = useState(
+                    JSON.stringify(initialValues["param"], null, "\t")
+                )
+            }
+        }
     } else {
         var [AceEditorValue, setAceEditorValue] = useState("")
     }
+
+    console.log(AceEditorValue)
 
     const onFinishFailed = (errorInfo) => {
         console.log("Failed:", errorInfo)
