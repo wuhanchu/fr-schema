@@ -220,9 +220,11 @@ class EditPage extends DataList {
         for (let i = 0; i < this.state.editRow.length; i++) {
             let item = {}
             for (let j = 0; j < this.state.commitParamStr.length; j++) {
-                item[this.state.commitParamStr[j]] = this.state.editRow[i][
-                    this.state.commitParamStr[j]
-                ]
+                item[this.state.commitParamStr[j]] =
+                    this.state.editRow[i][this.state.commitParamStr[j]] !==
+                    undefined
+                        ? this.state.editRow[i][this.state.commitParamStr[j]]
+                        : null
             }
             this.dataExtra(item)
             this.state.editRow[i] = { ...item }
