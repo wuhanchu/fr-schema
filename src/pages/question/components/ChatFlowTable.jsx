@@ -18,7 +18,7 @@ class ChatFlowTable extends DataList {
     constructor(props) {
         super(props, {
             schema: schemas.schema,
-            service: schemas.service,
+            service: { ...schemas.service, get: schemas.service.getDetail },
             queryArgs: {
                 pageSize: 10000,
                 limit: 10000,
@@ -52,24 +52,13 @@ class ChatFlowTable extends DataList {
 
     // 意图列表-> 列表枚举展示
     async findIntentList() {
-        let res = await createApi(
-            "intent_history",
-            this.schema,
-            null,
-            "eq."
-        ).get({ pageSize: 10000 })
-        res.list = res.list.map((item) => ({
-            ...item,
-            intentName: item.intent_rank ? item.intent_rank[0].name : "",
-        }))
-        this.schema.intent_history_id.dict = utils.dict.listToDict(
-            res.list,
-            null,
-            "id",
-            "intentName"
-        )
         this.schema.intent_history_id.render = (item, data) => {
-            return item || (data.type === "receive" && data.text ? "未知" : "")
+            return (
+                (data.intent_history &&
+                    data.intent_history.intent_rank &&
+                    data.intent_history.intent_rank[0].name) ||
+                "未知"
+            )
         }
         this.schema.text.render = (item, data) => {
             return data.type === "receive" ? (

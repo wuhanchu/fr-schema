@@ -330,6 +330,7 @@ class Dialogue extends Chat {
             message.error(error.message)
             this.setState({ isSpin: false })
         }
+        this.onSendMessageAfter()
     }
 
     // 设置

@@ -125,9 +125,11 @@ class Flow extends React.PureComponent {
             domain_key: record.domain_key,
         }
         this.bindKey()
-        const container = document.getElementById("containerChart")
-        const ports = container.querySelectorAll(".x6-port-body")
-        showPorts(ports, false)
+        try {
+            const container = document.getElementById("containerChart")
+            const ports = container.querySelectorAll(".x6-port-body")
+            showPorts(ports, false)
+        } catch (error) {}
     }
 
     render() {
