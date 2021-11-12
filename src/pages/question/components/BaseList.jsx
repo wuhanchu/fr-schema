@@ -516,7 +516,23 @@ class BaseList extends EditPage {
                 visibleModal && (
                     <MyInfoModal
                         renderForm={renderForm}
-                        title={action !== "edit" ? title : "答案"}
+                        title={
+                            <div
+                                style={{
+                                    overflow: "hidden", //超出的文本隐藏
+                                    textOverflow: "ellipsis", //用省略号显示
+                                    whiteSpace: "nowrap", //不换行
+                                    width: "200px",
+                                    marginLeft: "-12px",
+                                }}
+                            >
+                                {action !== "edit"
+                                    ? title
+                                    : "答案(" +
+                                      infoData.question_standard +
+                                      ")"}
+                            </div>
+                        }
                         action={action}
                         resource={resource}
                         {...updateMethods}

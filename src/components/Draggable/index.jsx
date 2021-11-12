@@ -135,10 +135,16 @@ class ModalWin extends React.Component {
         const modal = (
             <div
                 className={styles.custom_modal_mask}
+                onClick={() => {
+                    this.onCancel()
+                }}
                 style={{ width: clientWidth, height: clientHeight }}
             >
                 <div
                     id="modal"
+                    onClick={(e) => {
+                        e.stopPropagation()
+                    }}
                     className={styles.custom_modal_win}
                     style={{
                         width: width ? width : clientWidth / 3,

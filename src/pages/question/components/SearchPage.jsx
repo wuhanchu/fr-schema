@@ -472,7 +472,24 @@ function renderInfoModal(
     return (
         visibleModal && (
             <InfoModal
-                title={"问题修改"}
+                // title={"问题修改"}
+                title={
+                    <div
+                        style={{
+                            overflow: "hidden", //超出的文本隐藏
+                            textOverflow: "ellipsis", //用省略号显示
+                            whiteSpace: "nowrap", //不换行
+                            width: "200px",
+                            marginLeft: "-12px",
+                        }}
+                    >
+                        {action !== "edit"
+                            ? title
+                            : "问题修改(" +
+                              state.listItem.question_standard +
+                              ")"}
+                    </div>
+                }
                 action={action}
                 {...updateMethods}
                 visible={visibleModal}
