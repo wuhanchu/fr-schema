@@ -4,7 +4,12 @@ import { Button, Input } from "antd"
 import robotSvg from "@/assets/rebot.svg"
 import mySvg from "@/outter/fr-schema-antd-utils/src/components/GlobalHeader/my.svg"
 import ChatFlowTable from "@/pages/question/components/ChatFlowTable"
-import { MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons"
+import {
+    MenuUnfoldOutlined,
+    MenuFoldOutlined,
+    PlaySquareOutlined,
+    SyncOutlined,
+} from "@ant-design/icons"
 
 /**
  * 聊天窗口
@@ -27,6 +32,7 @@ class Chat extends React.PureComponent {
             conversationId: "",
             domain_key: "",
             flow_key: "",
+            audio: document.createElement("AUDIO"),
             collapse: false, // 是否收缩
         }
         this.chatRef = React.createRef()
@@ -123,15 +129,55 @@ class Chat extends React.PureComponent {
         )
     }
 
+    componentWillUnmount() {
+        const { audio } = this.state
+        audio.load()
+    }
+
     // 客户
     renderCostumer(item, index) {
+        console.log(item)
         return (
             <div style={styles.chatRightItem} key={`leave${index}`}>
                 <div style={styles.chatRightMsgItem}>
-                    <div
-                        style={styles.chatRightMsgView}
-                        dangerouslySetInnerHTML={{ __html: item.content }}
-                    />
+                    <div style={styles.chatRightMsgView}>
+                        {item.content}
+                        {item.result && item.result.voice_url && (
+                            <>
+                                {this.state.audioIndex !== index ? (
+                                    <a
+                                        onClick={() => {
+                                            const { audio } = this.state
+                                            audio.src = item.result.voice_url
+                                            audio.play()
+                                            audio.onended = () => {
+                                                this.setState({
+                                                    audioIndex: undefined,
+                                                })
+                                            }
+                                            this.setState({ audioIndex: index })
+                                        }}
+                                        style={{ marginLeft: "5px" }}
+                                    >
+                                        <PlaySquareOutlined />
+                                    </a>
+                                ) : (
+                                    <a
+                                        onClick={() => {
+                                            const { audio } = this.state
+                                            audio.load()
+                                            this.setState({
+                                                audioIndex: undefined,
+                                            })
+                                        }}
+                                        style={{ marginLeft: "5px" }}
+                                    >
+                                        <SyncOutlined spin />
+                                    </a>
+                                )}
+                            </>
+                        )}
+                    </div>
                 </div>
                 <img src={mySvg} alt="" style={styles.chatRightAvatar} />
             </div>

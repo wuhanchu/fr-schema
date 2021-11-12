@@ -61,6 +61,12 @@ const schema = {
 }
 
 const service = createApi("domain/match_question_count", schema, null, "")
+service.getRecentHotQuestion = createApi(
+    "domain/recent_hot_question",
+    schema,
+    null,
+    ""
+).get
 service.get = async (args) => {
     let time = new Date(parseInt(args.begin_time))
     args.begin_time = args.begin_time

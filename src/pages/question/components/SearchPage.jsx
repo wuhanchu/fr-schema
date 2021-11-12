@@ -91,7 +91,7 @@ async function init(
     }
     if (props.type !== "history") {
         await schemas.hotWord.service
-            .get({
+            .getRecentHotQuestion({
                 domain_key: props.record && props.record.key,
                 project_id: props.record && props.record.project_id,
                 limit: 500,

@@ -52,6 +52,7 @@ class ConversationDetail extends Chat {
                 }
                 if (item.type === "receive" && item.text) {
                     list.push({
+                        result: item.result,
                         content: item.text,
                         name: "我",
                         time: new Date(),
