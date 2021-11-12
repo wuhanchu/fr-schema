@@ -9,6 +9,7 @@ import {
     message,
     Tag,
     Popconfirm,
+    Divider,
     Button,
 } from "antd"
 import { listToDict } from "@/outter/fr-schema/src/dict"
@@ -172,7 +173,6 @@ function renderTitle(
             </span>
             {
                 <a
-                    style={{ marginLeft: "10px", marginRight: "10px" }}
                     onClick={() => {
                         setAction("edit")
                         setState({
@@ -185,6 +185,11 @@ function renderTitle(
                     修改
                 </a>
             }
+            <Divider
+                type="vertical"
+                style={{ lineHeight: "16px", height: "16px", marginTop: "3px" }}
+            />
+
             {
                 <Popconfirm
                     title={
@@ -252,12 +257,15 @@ function renderTitle(
                         e.stopPropagation()
                     }}
                 >
-                    <a style={{ marginLeft: "10px", marginRight: "10px" }}>
-                        补充
-                    </a>
+                    <a>补充</a>
                 </Popconfirm>
             }
-            {item.match_question_title !== item.question_standard && (
+            <Divider
+                type="vertical"
+                style={{ lineHeight: "16px", height: "16px", marginTop: "3px" }}
+            />
+
+            {item.match_question_title !== item.question_standard ? (
                 <Popconfirm
                     title="是否删除匹配到的扩展问？"
                     onConfirm={async (e) => {
@@ -287,10 +295,18 @@ function renderTitle(
                         e.stopPropagation()
                     }}
                 >
-                    <a style={{ marginLeft: "10px", marginRight: "10px" }}>
-                        删除
-                    </a>
+                    <a style={{ marginRight: "10px" }}>删除</a>
                 </Popconfirm>
+            ) : (
+                <p
+                    style={{
+                        color: "#00000073",
+                        margin: 0,
+                        marginRight: "10px",
+                    }}
+                >
+                    删除
+                </p>
             )}
             {props.renderTitleOpeation && props.renderTitleOpeation(item)}
         </div>
@@ -299,42 +315,7 @@ function renderTitle(
 function renderDescription(item, props) {
     return (
         <>
-            <div
-                style={{
-                    width: "100%",
-                    marginRight: "10px",
-
-                    marginBottom: "5px",
-                    display: "flex",
-                    // marginLeft: "4.2%",
-                    color: "rgba(0,0,0,0.85)",
-                    // display: "inline-block",
-                }}
-            >
-                <div
-                    style={{
-                        flex: 1,
-                        display: "inline-block",
-                    }}
-                >
-                    匹配问题：{item.match_question_title}
-                </div>
-                <div style={{ width: "130px", marginRight: "10px" }}>
-                    <span
-                        style={{
-                            width: "130px",
-                            textAlign: "right",
-                            display: "inline-block",
-                        }}
-                    >
-                        匹配度：
-                        {item.compatibility === 1
-                            ? "1.00000"
-                            : formatData(item.compatibility || 0, 5)}
-                    </span>
-                </div>
-            </div>
-            <div>答案:</div>
+            <div style={{ color: "rgba(0,0,0,0.85)" }}>答案:</div>
 
             <div
                 style={{
@@ -345,6 +326,7 @@ function renderDescription(item, props) {
                     marginRight: "10px",
                     verticalAlign: "top",
                     display: "inline-block",
+                    color: "rgba(0,0,0,0.85)",
                 }}
                 dangerouslySetInnerHTML={{
                     __html:
@@ -379,6 +361,41 @@ function renderDescription(item, props) {
                     })}
                 </>
             )}
+            <div
+                style={{
+                    width: "100%",
+                    marginRight: "10px",
+
+                    marginTop: "5px",
+                    display: "flex",
+                    // marginLeft: "4.2%",
+                    // color: "rgba(0,0,0,0.85)",
+                    // display: "inline-block",
+                }}
+            >
+                <div
+                    style={{
+                        flex: 1,
+                        display: "inline-block",
+                    }}
+                >
+                    匹配文本：{item.match_question_title}
+                </div>
+                <div style={{ width: "130px", marginRight: "10px" }}>
+                    <span
+                        style={{
+                            width: "130px",
+                            textAlign: "right",
+                            display: "inline-block",
+                        }}
+                    >
+                        匹配度：
+                        {item.compatibility === 1
+                            ? "1.00000"
+                            : formatData(item.compatibility || 0, 5)}
+                    </span>
+                </div>
+            </div>
         </>
     )
 }
