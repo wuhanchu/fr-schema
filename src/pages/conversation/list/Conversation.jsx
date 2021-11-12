@@ -120,6 +120,7 @@ class Conversation extends ListPage {
                     flow_key={detail.flow_key}
                     domain_key={detail.domain_key}
                     roomHeight="60vh"
+                    create_time={detail.create_time}
                     showIntentFlow={showIntentFlow}
                 />
             </Modal>

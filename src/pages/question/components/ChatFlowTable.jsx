@@ -100,20 +100,27 @@ class ChatFlowTable extends DataList {
     }
 
     async findFlowList() {
-        let { flowKey, domainKey } = this.props
+        let { flowKey, domainKey, create_time } = this.props
         const res = await schema.service.getFlowHistory({
             limit: 1000,
             flow_key: flowKey,
             config: "not.is.null",
             domain_key: domainKey,
+            order: "create_time.desc",
+            create_time: create_time ? "lte." + create_time : undefined,
         })
 
         let action = []
         let node = []
-        res.list.map((item) => {
-            action.push(...item.config.action)
-            node.push(...item.config.node)
-        })
+        if (res.list[0]) {
+            action.push(...res.list[0].config.action)
+            node.push(...res.list[0].config.node)
+        }
+        // res.list.map((item) => {
+        //     action.push(...item.config.action)
+        //     node.push(...item.config.node)
+        // })
+        console.log(res.list)
 
         if (res.list.length) {
             this.schema.action_key.dict = utils.dict.listToDict(
