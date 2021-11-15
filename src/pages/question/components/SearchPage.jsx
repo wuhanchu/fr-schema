@@ -438,6 +438,12 @@ function renderInfoModal(
                     data,
                     schemas.question.schema
                 )
+                if (props.type === "history") {
+                    await schemas.searchHistory.service.patch(
+                        { id: props.record.id },
+                        true
+                    )
+                }
                 message.success("修改成功")
             } catch (error) {
                 message.error(error.message)
