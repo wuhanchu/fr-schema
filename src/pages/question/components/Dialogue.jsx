@@ -321,10 +321,10 @@ class Dialogue extends Chat {
                 conversation_id: conversationId,
                 text: data.payload,
             })
-            if (res.data && res.data.result) {
-                this.arrPush(res.data.result, "left")
+            if (res.data) {
+                this.arrPush(res.data, "left")
                 this.setState({
-                    resultFlowLength: res.data.result.length,
+                    resultFlowLength: res.data.length,
                 })
             }
         } catch (error) {
@@ -582,10 +582,10 @@ class Dialogue extends Chat {
                     conversation_id: conversationId,
                     text: inputValue,
                 })
-                if (res.data && res.data.result) {
-                    this.arrPush(res.data.result, "left")
+                if (res.data) {
+                    this.arrPush(res.data, "left")
                     this.setState({
-                        resultFlowLength: res.data.result.length,
+                        resultFlowLength: res.data.length,
                     })
                 }
             } catch (error) {
