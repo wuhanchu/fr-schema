@@ -53,12 +53,14 @@ const schema = {
         searchPrefix: "like",
         style: { width: "500px" },
         required: true,
+        sorter: true,
     },
 
     text: {
         title: "补充扩展问",
         style: { width: "500px" },
         type: schemaFieldType.TextArea,
+        sorter: true,
     },
 }
 
@@ -76,9 +78,24 @@ service.get = async (args) => {
         args.create_time = undefined
         args.and = `(create_time.gte.${beginTime},create_time.lte.${endTime})`
     }
-    let data = await createApi("question_mark_task", schema, null, "eq.").get(
-        args
-    )
+
+    console.log(args.order)
+    if (args.order === "question_standard.desc") {
+        args.order = "info->question_standard.desc"
+    }
+    if (args.order === "question_standard.asc") {
+        args.order = "info->question_standard.asc"
+    }
+    if (args.order === "text.desc") {
+        args.order = "info->text.desc"
+    }
+    if (args.order === "text.asc") {
+        args.order = "info->text.asc"
+    }
+    // order: 'info->question_standard.desc'
+    let data = await createApi("question_mark_task", schema, null, "eq.").get({
+        ...args,
+    })
     let list = data.list.map((item, index) => {
         return {
             ...item,

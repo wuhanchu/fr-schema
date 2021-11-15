@@ -38,7 +38,9 @@ class List extends DataList {
             limit: 10000,
         })
         this.schema.project_id.dict = listToDict(project.list)
-        this.formRef.current.setFieldsValue({ status: "0" })
+        try {
+            this.formRef.current.setFieldsValue({ status: "0" })
+        } catch (error) {}
         super.componentDidMount()
     }
 

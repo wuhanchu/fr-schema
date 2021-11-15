@@ -81,8 +81,9 @@ class List extends DataList {
                 value: groupDictList[key].value,
             })
         })
-        this.formRef.current.setFieldsValue({ status: "0" })
-
+        try {
+            this.formRef.current.setFieldsValue({ status: "0" })
+        } catch (error) {}
         this.setState({ options: options })
         super.componentDidMount()
     }
