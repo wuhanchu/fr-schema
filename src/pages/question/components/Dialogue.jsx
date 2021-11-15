@@ -235,6 +235,7 @@ class Dialogue extends Chat {
                                         enableSnippets: true,
                                         showLineNumbers: true,
                                         tabSize: 2,
+                                        useWorker: false,
                                     }}
                                 />
                             </div>
