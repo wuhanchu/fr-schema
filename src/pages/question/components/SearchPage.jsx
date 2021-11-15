@@ -502,7 +502,7 @@ function renderInfoModal(
                         }}
                     >
                         {action !== "edit"
-                            ? "问题修改"
+                            ? "问题新增"
                             : "问题修改(" +
                               state.listItem.question_standard +
                               ")"}
