@@ -250,6 +250,12 @@ function renderTitle(
                                 },
                                 schemas.question.schema
                             )
+                            if (props.type === "history") {
+                                await schemas.searchHistory.service.patch(
+                                    { id: props.record.id },
+                                    true
+                                )
+                            }
                             message.success("补充成功")
                         }
                         setAddQuestionExtend("")
@@ -286,6 +292,12 @@ function renderTitle(
                                 },
                                 schemas.question.schema
                             )
+                            if (props.type === "history") {
+                                await schemas.searchHistory.service.patch(
+                                    { id: props.record.id },
+                                    true
+                                )
+                            }
                         }
                         message.success("删除成功")
                         if (props.type !== "history") handleSearch()
@@ -484,7 +496,7 @@ function renderInfoModal(
                         }}
                     >
                         {action !== "edit"
-                            ? title
+                            ? "问题修改"
                             : "问题修改(" +
                               state.listItem.question_standard +
                               ")"}
