@@ -150,6 +150,7 @@ class MyList extends DataList {
                         title={"查询结果" + "(" + record.search + ")"}
                         record={record}
                         data={data}
+                        refreshList={this.refreshList.bind(this)}
                         renderOperationButton={(data) => {
                             return (
                                 <>
@@ -166,9 +167,6 @@ class MyList extends DataList {
                                                 },
                                             })
                                             message.success("操作成功！")
-                                            // this.setState({
-                                            //     showAnswer: false,
-                                            // })
                                             this.refreshList()
                                             e.stopPropagation()
                                         }}

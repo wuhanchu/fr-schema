@@ -255,6 +255,7 @@ function renderTitle(
                                     { id: props.record.id },
                                     true
                                 )
+                                props.refreshList && props.refreshList()
                             }
                             message.success("补充成功")
                         }
@@ -297,6 +298,7 @@ function renderTitle(
                                     { id: props.record.id },
                                     true
                                 )
+                                props.refreshList && props.refreshList()
                             }
                         }
                         message.success("删除成功")
@@ -443,6 +445,7 @@ function renderInfoModal(
                         { id: props.record.id },
                         true
                     )
+                    props.refreshList && props.refreshList()
                 }
                 message.success("修改成功")
             } catch (error) {
@@ -475,6 +478,7 @@ function renderInfoModal(
                         { id: props.record.id },
                         true
                     )
+                    props.refreshList && props.refreshList()
                 }
                 message.success("新增成功")
             } catch (error) {
@@ -523,7 +527,14 @@ function renderInfoModal(
                                   required: true,
                                   dict: listToDict(projectList),
                               }
-                            : undefined,
+                            : {
+                                  title: "项目",
+                                  type: "Select",
+                                  sorter: true,
+                                  required: true,
+                                  readOnly: true,
+                                  dict: listToDict(projectList),
+                              },
                     ...schemas.question.schema,
                     group: {
                         ...schemas.question.schema.group,
