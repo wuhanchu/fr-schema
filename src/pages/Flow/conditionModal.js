@@ -378,6 +378,7 @@ export const ConditionModal = ({
                                 enableSnippets: true,
                                 showLineNumbers: true,
                                 tabSize: 2,
+                                useWorker: false,
                             }}
                         />
                     </div>

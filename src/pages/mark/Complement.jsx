@@ -38,7 +38,9 @@ class List extends DataList {
             limit: 10000,
         })
         this.schema.project_id.dict = listToDict(project.list)
-        this.formRef.current.setFieldsValue({ status: "0" })
+        try {
+            this.formRef.current.setFieldsValue({ status: "0" })
+        } catch (error) {}
         super.componentDidMount()
     }
 
@@ -79,6 +81,21 @@ class List extends DataList {
     renderOperationMulit() {
         return (
             <span>
+                <>
+                    {
+                        <Popconfirm
+                            title="是否要补充选中的数据？"
+                            onConfirm={async (e) => {
+                                const { dispatch } = this.props
+                                const { selectedRows } = this.state
+                                await this.handldAppend(selectedRows)
+                                this.refreshList()
+                            }}
+                        >
+                            <Button type="primary">补充</Button>
+                        </Popconfirm>
+                    }
+                </>
                 {
                     <Popconfirm
                         title="是否要删除选中的数据？"

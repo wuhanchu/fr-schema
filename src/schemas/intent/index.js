@@ -23,6 +23,7 @@ const schema = {
     logical_path: {
         title: "意图路径",
         searchPrefix: "not.like",
+        required: true,
     },
     regex: {
         title: "正则表达式",

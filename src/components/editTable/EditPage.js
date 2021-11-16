@@ -25,7 +25,11 @@ class EditPage extends DataList {
             "project_id",
             "answer",
         ]
-        this.setState({ editRow: [], commitParamStr: [...commitParamStr] })
+        this.setState({
+            editRow: [],
+            commitParamStr: [...commitParamStr],
+            updateLoading: false,
+        })
     }
 
     componentWillUnmount() {
@@ -141,7 +145,11 @@ class EditPage extends DataList {
                     </Button>
                 )}
                 {this.state.editRow && this.state.editRow.length > 0 && (
-                    <Button type="primary" onClick={this.onPatchEditData}>
+                    <Button
+                        type="primary"
+                        onClick={this.onPatchEditData}
+                        loading={this.state.updateLoading}
+                    >
                         保存修改
                     </Button>
                 )}
@@ -209,7 +217,7 @@ class EditPage extends DataList {
             message.info("您目前暂未修改任何数据")
             return
         }
-        this.setState({ listLoading: true })
+        this.setState({ listLoading: true, updateLoading: true })
         // 获取所有编辑的字段
         for (let param in this.schema) {
             if (this.schema[param].editable) {
@@ -232,7 +240,7 @@ class EditPage extends DataList {
         await this.updateService()
         this.refreshList()
         message.success("保存成功")
-        this.setState({ editRow: [], listLoading: false })
+        this.setState({ editRow: [], listLoading: false, updateLoading: false })
     }
 
     /**

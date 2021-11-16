@@ -148,13 +148,29 @@ class Chat extends React.PureComponent {
                                     <a
                                         onClick={() => {
                                             const { audio } = this.state
-                                            audio.src = item.result.voice_url
-                                            audio.play()
-                                            audio.onended = () => {
-                                                this.setState({
-                                                    audioIndex: undefined,
-                                                })
-                                            }
+                                            try {
+                                                audio.src =
+                                                    item.result.voice_url
+                                                var playPromise = audio.play()
+
+                                                if (playPromise !== undefined) {
+                                                    playPromise
+                                                        .then((_) => {
+                                                            // Automatic playback started!
+                                                            // Show playing UI.
+                                                        })
+                                                        .catch((error) => {
+                                                            // Auto-play was prevented
+                                                            // Show paused UI.
+                                                        })
+                                                }
+                                                audio.onended = () => {
+                                                    this.setState({
+                                                        audioIndex: undefined,
+                                                    })
+                                                }
+                                            } catch (error) {}
+
                                             this.setState({ audioIndex: index })
                                         }}
                                         style={{ marginLeft: "5px" }}
@@ -165,7 +181,9 @@ class Chat extends React.PureComponent {
                                     <a
                                         onClick={() => {
                                             const { audio } = this.state
-                                            audio.load()
+                                            try {
+                                                audio.load()
+                                            } catch (error) {}
                                             this.setState({
                                                 audioIndex: undefined,
                                             })

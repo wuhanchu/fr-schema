@@ -385,6 +385,7 @@ export const ActionModal = ({
                                 enableSnippets: true,
                                 showLineNumbers: true,
                                 tabSize: 2,
+                                useWorker: false,
                             }}
                         />
                     </div>
