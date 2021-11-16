@@ -250,6 +250,13 @@ function renderTitle(
                                 },
                                 schemas.question.schema
                             )
+                            if (props.type === "history") {
+                                await schemas.searchHistory.service.patch(
+                                    { id: props.record.id },
+                                    true
+                                )
+                                props.refreshList && props.refreshList()
+                            }
                             message.success("补充成功")
                         }
                         setAddQuestionExtend("")
@@ -286,6 +293,13 @@ function renderTitle(
                                 },
                                 schemas.question.schema
                             )
+                            if (props.type === "history") {
+                                await schemas.searchHistory.service.patch(
+                                    { id: props.record.id },
+                                    true
+                                )
+                                props.refreshList && props.refreshList()
+                            }
                         }
                         message.success("删除成功")
                         if (props.type !== "history") handleSearch()
@@ -426,6 +440,13 @@ function renderInfoModal(
                     data,
                     schemas.question.schema
                 )
+                if (props.type === "history") {
+                    await schemas.searchHistory.service.patch(
+                        { id: props.record.id },
+                        true
+                    )
+                    props.refreshList && props.refreshList()
+                }
                 message.success("修改成功")
             } catch (error) {
                 message.error(error.message)
@@ -457,6 +478,7 @@ function renderInfoModal(
                         { id: props.record.id },
                         true
                     )
+                    props.refreshList && props.refreshList()
                 }
                 message.success("新增成功")
             } catch (error) {
@@ -484,7 +506,7 @@ function renderInfoModal(
                         }}
                     >
                         {action !== "edit"
-                            ? title
+                            ? "问题新增"
                             : "问题修改(" +
                               state.listItem.question_standard +
                               ")"}
@@ -505,7 +527,14 @@ function renderInfoModal(
                                   required: true,
                                   dict: listToDict(projectList),
                               }
-                            : undefined,
+                            : {
+                                  title: "项目",
+                                  type: "Select",
+                                  sorter: true,
+                                  required: true,
+                                  readOnly: true,
+                                  dict: listToDict(projectList),
+                              },
                     ...schemas.question.schema,
                     group: {
                         ...schemas.question.schema.group,
