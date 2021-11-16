@@ -40,13 +40,17 @@ class ChatFlowTable extends DataList {
         super.componentDidMount()
     }
 
-    componentWillReceiveProps(nextProps) {
+    async componentWillReceiveProps(nextProps) {
         if (this.props.conversationId !== nextProps.conversationId) {
             this.meta.queryArgs = {
                 ...this.meta.queryArgs,
                 conversation_id: nextProps.conversationId,
             }
             this.refreshList()
+        }
+        if (this.props.flowKey !== nextProps.flowKey) {
+            await this.findFlowList(nextProps.flowKey)
+            // this.refreshList()
         }
     }
 
@@ -99,11 +103,11 @@ class ChatFlowTable extends DataList {
         )
     }
 
-    async findFlowList() {
+    async findFlowList(flow_key) {
         let { flowKey, domainKey, create_time } = this.props
         const res = await schema.service.getFlowHistory({
             limit: 1000,
-            flow_key: flowKey,
+            flow_key: flow_key || flowKey,
             config: "not.is.null",
             domain_key: domainKey,
             order: "create_time.desc",
@@ -116,11 +120,6 @@ class ChatFlowTable extends DataList {
             action.push(...res.list[0].config.action)
             node.push(...res.list[0].config.node)
         }
-        // res.list.map((item) => {
-        //     action.push(...item.config.action)
-        //     node.push(...item.config.node)
-        // })
-        console.log(res.list)
 
         if (res.list.length) {
             this.schema.action_key.dict = utils.dict.listToDict(

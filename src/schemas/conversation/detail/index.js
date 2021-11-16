@@ -58,6 +58,17 @@ const schema = {
         width: 350,
         render: (item, record) => <span>{JSON.stringify(item)}</span>,
     },
+    result_text: {
+        title: "行为结果",
+        width: 350,
+        render: (item, record) => (
+            <span>
+                {record.result && record.result.text && record.type === "action"
+                    ? record.result.text
+                    : ""}
+            </span>
+        ),
+    },
 }
 
 const service = createApi("conversation_detail", schema, null, "eq.")
