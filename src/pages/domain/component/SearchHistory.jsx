@@ -157,9 +157,12 @@ class MyList extends DataList {
                                     <Popconfirm
                                         title="是否重置当前匹配的问题？"
                                         onConfirm={async (e) => {
-                                            await this.service.patch({
-                                                id: record.id,
-                                            })
+                                            await this.service.patch(
+                                                {
+                                                    id: record.id,
+                                                },
+                                                false
+                                            )
                                             this.setState({
                                                 record: {
                                                     ...record,

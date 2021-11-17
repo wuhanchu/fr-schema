@@ -164,20 +164,23 @@ service.get = async (args) => {
     return data
 }
 
-service.patch = async (args, user_confirm) => {
+service.patch = async (args, user_confirm, task_id) => {
     if (!args.return_question) {
         args.match_question_id = null
         args.match_question_txt = null
         args.match_project_id = null
-        args.user_confirm = false
+        args.user_confirm = undefined
     } else {
         args.match_question_id = args.return_question.id
         args.match_question_txt = args.return_question.question
         args.match_project_id = args.return_question.project_id
         args.user_confirm = true
     }
-    if (user_confirm) {
+    if (user_confirm !== undefined) {
         args.user_confirm = user_confirm
+    }
+    if (task_id) {
+        args.task_id = 0
     }
     args.return_question = undefined
     let data = await createApi("search_history", schema, null, "eq.").patch(

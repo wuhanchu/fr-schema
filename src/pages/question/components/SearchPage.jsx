@@ -253,6 +253,7 @@ function renderTitle(
                             if (props.type === "history") {
                                 await schemas.searchHistory.service.patch(
                                     { id: props.record.id },
+                                    undefined,
                                     true
                                 )
                                 props.refreshList && props.refreshList()
@@ -296,6 +297,7 @@ function renderTitle(
                             if (props.type === "history") {
                                 await schemas.searchHistory.service.patch(
                                     { id: props.record.id },
+                                    undefined,
                                     true
                                 )
                                 props.refreshList && props.refreshList()
@@ -443,6 +445,7 @@ function renderInfoModal(
                 if (props.type === "history") {
                     await schemas.searchHistory.service.patch(
                         { id: props.record.id },
+                        undefined,
                         true
                     )
                     props.refreshList && props.refreshList()
@@ -476,6 +479,7 @@ function renderInfoModal(
                 if (props.type === "history") {
                     await schemas.searchHistory.service.patch(
                         { id: props.record.id },
+                        undefined,
                         true
                     )
                     props.refreshList && props.refreshList()
