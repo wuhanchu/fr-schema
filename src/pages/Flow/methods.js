@@ -552,7 +552,7 @@ export function getTree(args) {
                     arr = list.filter((value) => {
                         return (
                             value.logical_path !== list[i].logical_path &&
-                            list[i].logical_path.includes(value.logical_path)
+                            list[i].logical_path.includes(value.logical_path + '.')
                         )
                     })
                     // 存在上层意图则标明当前遍历意图为其他意图的子意图
