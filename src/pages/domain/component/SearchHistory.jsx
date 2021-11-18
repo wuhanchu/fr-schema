@@ -151,50 +151,39 @@ class MyList extends DataList {
                         record={record}
                         data={data}
                         refreshList={this.refreshList.bind(this)}
-                        renderOperationButton={(data) => {
-                            return (
-                                <>
-                                    <Popconfirm
-                                        title="是否重置当前匹配的问题？"
-                                        onConfirm={async (e) => {
-                                            await this.service.patch(
-                                                {
-                                                    id: record.id,
-                                                },
-                                                false
-                                            )
-                                            this.setState({
-                                                record: {
-                                                    ...record,
-                                                    match_question_id: null,
-                                                },
-                                            })
-                                            message.success("操作成功！")
-                                            this.refreshList()
-                                            e.stopPropagation()
-                                        }}
-                                    >
-                                        <Button style={{ marginLeft: "5px" }}>
-                                            重置匹配
-                                        </Button>
-                                    </Popconfirm>
-                                </>
-                            )
-                        }}
                         renderTitleOpeation={(data) => {
                             return (
                                 <>
                                     {data.id === record.match_question_id ? (
-                                        <Tag
-                                            style={{
-                                                marginLeft: "3px",
-                                                marginRight: "3px",
+                                        <Popconfirm
+                                            title="是否删除当前匹配的问题？"
+                                            onConfirm={async (e) => {
+                                                await this.service.patch(
+                                                    {
+                                                        id: record.id,
+                                                    },
+                                                    false
+                                                )
+                                                this.setState({
+                                                    record: {
+                                                        ...record,
+                                                        match_question_id: null,
+                                                    },
+                                                })
+                                                message.success("操作成功！")
+                                                this.refreshList()
+                                                e.stopPropagation()
                                             }}
-                                            // style={{ marginLeft: "3px" }}
-                                            color="#87d068"
                                         >
-                                            {"匹配"}
-                                        </Tag>
+                                            <a
+                                                style={{
+                                                    marginLeft: "10px",
+                                                    marginRight: "10px",
+                                                }}
+                                            >
+                                                删除匹配
+                                            </a>
+                                        </Popconfirm>
                                     ) : (
                                         <Popconfirm
                                             title="是否确认标记此数据为正确匹配？"
@@ -217,7 +206,7 @@ class MyList extends DataList {
                                                     marginRight: "10px",
                                                 }}
                                             >
-                                                确认
+                                                确认匹配
                                             </a>
                                         </Popconfirm>
                                     )}
