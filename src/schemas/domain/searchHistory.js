@@ -6,7 +6,7 @@ import { isNull } from "lodash"
 
 const schema = {
     create_time: {
-        title: "查询时间",
+        title: "提问时间",
         sorter: true,
         props: {
             showTime: true,
@@ -14,7 +14,7 @@ const schema = {
         type: schemaFieldType.DatePicker,
     },
     search: {
-        title: "查询文本",
+        title: "用户提问语",
         render: (text) => {
             return (
                 <Tooltip title={text}>
@@ -33,27 +33,7 @@ const schema = {
         },
         searchPrefix: "like",
     },
-    user_confirm: {
-        title: "是否解决问题",
-        type: schemaFieldType.Select,
-        dict: {
-            true: {
-                value: true,
-                remark: "是",
-            },
-            false: {
-                value: false,
-                remark: "否",
-            },
-        },
-        render: (item) => {
-            if (item === null) {
-                return "未确认"
-            } else {
-                return item
-            }
-        },
-    },
+
     have_match_project_id: {
         title: "匹配情况",
         type: schemaFieldType.Select,
@@ -75,29 +55,7 @@ const schema = {
             }
         },
     },
-    task_id: {
-        title: "处理状态",
-        type: schemaFieldType.Select,
-        dict: {
-            have: {
-                value: "have",
-                remark: "有处理",
-            },
-            notHave: {
-                value: "notHave",
-                remark: "无处理",
-            },
-        },
-        render: (item, data) => {
-            console.log(data)
-            console.log(typeof item)
-            if (data.task_id === null) {
-                return "无处理"
-            } else {
-                return "有处理"
-            }
-        },
-    },
+
     match_project_id: {
         title: "匹配库",
         required: true,
@@ -123,6 +81,48 @@ const schema = {
         },
         required: true,
         searchPrefix: "like",
+    },
+    user_confirm: {
+        title: "是否评价",
+        type: schemaFieldType.Select,
+        dict: {
+            true: {
+                value: true,
+                remark: "已解决",
+            },
+            false: {
+                value: false,
+                remark: "未解决",
+            },
+        },
+        render: (item) => {
+            if (item === null) {
+                return "未评价"
+            } else {
+                return item
+            }
+        },
+    },
+    task_id: {
+        title: "处理状态",
+        type: schemaFieldType.Select,
+        dict: {
+            have: {
+                value: "have",
+                remark: "有处理",
+            },
+            notHave: {
+                value: "notHave",
+                remark: "无处理",
+            },
+        },
+        render: (item, data) => {
+            if (data.task_id === null) {
+                return "无处理"
+            } else {
+                return "有处理"
+            }
+        },
     },
 }
 

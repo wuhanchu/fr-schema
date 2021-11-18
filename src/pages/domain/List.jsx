@@ -225,7 +225,7 @@ class List extends ListPage {
                 )}
                 {visibleSearchHistory && (
                     <Modal
-                        title={"搜索历史"}
+                        title={"提问历史"}
                         width={"90%"}
                         visible={this.state.visibleSearchHistory}
                         footer={null}
@@ -442,7 +442,7 @@ class List extends ListPage {
                             })
                         }}
                     >
-                        搜索历史
+                        提问历史
                     </a>
                 </Menu.Item>
             </Menu>
