@@ -82,7 +82,7 @@ class MyList extends DataList {
                         })
                     }}
                 >
-                    查询结果
+                    处理
                 </a>
             </>
         )
@@ -147,7 +147,7 @@ class MyList extends DataList {
                         onCancel={() => {
                             this.setState({ showAnswer: false })
                         }}
-                        title={"查询结果" + "(" + record.search + ")"}
+                        title={"处理" + "(" + record.search + ")"}
                         record={record}
                         data={data}
                         refreshList={this.refreshList.bind(this)}
