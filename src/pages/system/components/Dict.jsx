@@ -18,8 +18,8 @@ class List extends DataList {
     }
 
     renderSearchBar() {
-        const { name, report_schema_key } = this.schema
-        const filters = this.createFilters({ name, report_schema_key }, 5)
+        const { name } = this.schema
+        const filters = this.createFilters({ name }, 5)
         return this.createSearchBar(filters)
     }
 
