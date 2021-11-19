@@ -7,6 +7,7 @@ export default {
     },
     name: {
         title: "名称",
+        searchPrefix: "like",
     },
     value: {
         title: "数值",

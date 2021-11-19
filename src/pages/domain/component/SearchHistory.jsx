@@ -254,15 +254,15 @@ class MyList extends DataList {
                     dict: {
                         true: {
                             value: "true",
-                            remark: "是",
+                            remark: "已解决",
                         },
                         false: {
                             value: "false",
-                            remark: "否",
+                            remark: "未解决",
                         },
                         null: {
                             value: "null",
-                            remark: "未确认",
+                            remark: "未评价",
                         },
                     },
                 },
