@@ -1,6 +1,8 @@
 import { createApi } from "@/outter/fr-schema/src/service"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 
+var issafariBrowser =
+    /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent)
 const schema = {
     id: {
         title: "编号",
@@ -9,6 +11,7 @@ const schema = {
     node_key: {
         title: "节点",
         type: schemaFieldType.Select,
+        width: issafariBrowser ? "120px" : undefined,
         render: (item) => {
             return <div style={{ minWidth: "100px" }}>{item}</div>
         },
@@ -16,6 +19,7 @@ const schema = {
     type: {
         title: "类型",
         type: schemaFieldType.Select,
+        width: issafariBrowser ? "100px" : undefined,
         dict: {
             receive: {
                 value: "receive",
