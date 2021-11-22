@@ -311,7 +311,7 @@ class List extends ListPage {
                         enableSnippets: true,
                         showLineNumbers: true,
                         tabSize: 2,
-                        useWorker: false
+                        useWorker: false,
                     }}
                 />
             </div>

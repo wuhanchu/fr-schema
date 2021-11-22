@@ -25,7 +25,11 @@ class EditPage extends DataList {
             "project_id",
             "answer",
         ]
-        this.setState({ editRow: [], commitParamStr: [...commitParamStr] ,updateLoading: false})
+        this.setState({
+            editRow: [],
+            commitParamStr: [...commitParamStr],
+            updateLoading: false,
+        })
     }
 
     componentWillUnmount() {
@@ -141,7 +145,11 @@ class EditPage extends DataList {
                     </Button>
                 )}
                 {this.state.editRow && this.state.editRow.length > 0 && (
-                    <Button type="primary" onClick={this.onPatchEditData} loading={this.state.updateLoading}>
+                    <Button
+                        type="primary"
+                        onClick={this.onPatchEditData}
+                        loading={this.state.updateLoading}
+                    >
                         保存修改
                     </Button>
                 )}

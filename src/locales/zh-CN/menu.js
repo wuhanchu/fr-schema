@@ -26,7 +26,7 @@ export default {
     "menu.entity.entityList": "实体信息",
     "menu.entity.entityType": "实体类型",
     "menu.domain.intent": "意图",
-    "menu.domain.synonym": "近似词",
+    "menu.domain.synonym": "专业词汇",
     "menu.system": "系统管理",
     "menu.system.user": "用户管理",
     "menu.system.setting": "字典配置",
