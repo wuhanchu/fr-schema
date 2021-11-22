@@ -104,7 +104,7 @@ class List extends ListPage {
                     }
                 })
             data = decorateList(list, this.schema)
-            await exportData("意图", data, columns)
+            await exportData("统计详情", data, columns)
             this.setState({ exportLoading: false })
         })
         // this.handleVisibleExportModal()
