@@ -64,6 +64,7 @@ class MyList extends DataList {
         }
         this.setState({ projectDict: listToDict(res.list) })
         this.schema.match_project_id.dict = listToDict(res.list)
+        this.schema.project_id.dict = listToDict(res.list)
     }
 
     renderOperateColumnExtend(record) {

@@ -13,8 +13,14 @@ const schema = {
         title: "编号",
         sorter: true,
     },
+    domain_key: {
+        title: "域",
+        listHide: "true",
+        type: schemaFieldType.Select,
+        sorter: true,
+    },
     question_standard: {
-        title: "标准问",
+        title: "匹配问题",
         required: true,
         searchPrefix: "like",
         sorter: true,
@@ -55,8 +61,20 @@ const schema = {
         span: 7,
     },
     total: {
-        title: "次数",
-        // type: schemaFieldType.Select,
+        title: "匹配次数",
+        sorter: true,
+    },
+    mark_total: {
+        sorter: true,
+        title: "参与评价数",
+    },
+    mark_right_num: {
+        sorter: true,
+        title: "解决问题数",
+    },
+    mark_error_num: {
+        sorter: true,
+        title: "未解决问题数",
     },
 }
 
@@ -68,16 +86,25 @@ service.getRecentHotQuestion = createApi(
     ""
 ).get
 service.get = async (args) => {
-    let time = new Date(parseInt(args.begin_time))
-    args.begin_time = args.begin_time
-        ? moments(time).format("YYYY-MM-DD")
-        : undefined
+    let time
+    if (typeof args.begin_time === "number") {
+        time = new Date(parseInt(args.begin_time))
+        args.begin_time = args.begin_time
+            ? moments(time).format("YYYY-MM-DD")
+            : undefined
+    } else {
+        args.begin_time = args.begin_time
+            ? moments(args.begin_time).format("YYYY-MM-DD")
+            : undefined
+    }
+
     time = new Date(parseInt(args.end_time))
     args.end_time = args.end_time
         ? moments(time).format("YYYY-MM-DD")
         : undefined
 
     let { currentPage, pageSize, limit, ...otherParams } = args
+
     if (args.order) {
         args.sort = args.order.split(".")[1]
         args.order = args.order.split(".")[0]
@@ -122,9 +149,18 @@ service.get = async (args) => {
         total = response.contentRange.split("/")[1]
     }
     const { list } = response || {}
+    // match_question_summary
+    const summary = await createApi(
+        "domain/match_question_summary",
+        schema,
+        null,
+        ""
+    ).get(args)
+    console.log(summary)
     return {
         list,
         pagination: { current: currentPage, pageSize, total },
+        summary: summary.list,
     }
 }
 

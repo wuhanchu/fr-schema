@@ -55,7 +55,27 @@ const schema = {
             }
         },
     },
-
+    project_id: {
+        title: "搜索库",
+        required: true,
+        render: (text) => {
+            return (
+                <Tooltip title={text}>
+                    <div
+                        style={{
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                            maxWidth: "200px",
+                        }}
+                    >
+                        {text}
+                    </div>
+                </Tooltip>
+            )
+        },
+        type: schemaFieldType.Select,
+    },
     match_project_id: {
         title: "匹配库",
         required: true,

@@ -11,6 +11,7 @@ export default {
     "menu.project": "问题库",
     "menu.project.projectList": "问题库信息",
     "menu.project.mark": "问题库运维",
+    "menu.statistics": "统计",
     "menu.domain": "域",
     "menu.domain.domainList": "域信息",
     "menu.domain.story": "故事",

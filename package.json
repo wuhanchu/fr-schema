@@ -23,6 +23,7 @@
         "start": "umi dev",
         "start:dev:out": "cross-env AUTH_URL=http://192.168.1.152:36024  SERVER_URL=http://192.168.1.152:36029 BASE_PATH=/z_know_info umi dev",
         "start:dev": "cross-env AUTH_URL=http://192.168.1.152:36024  SERVER_URL=http://192.168.1.152:36017 AI_SERVICE_URL=http://192.168.1.152:36032  umi dev",
+        "start:dev:chen": "cross-env AUTH_URL=http://192.168.1.152:36024  SERVER_URL=http://192.168.43.1:5001 AI_SERVICE_URL=http://192.168.1.152:36032  umi dev",
         "start:dev:server": "cross-env AUTH_URL=http://192.168.1.152:36024   SERVER_URL=http://127.0.0.1:5001 AI_SERVICE_URL=http://192.168.1.152:36032 umi dev",
         "start:dev:local": "cross-env AUTH_URL=http://192.168.1.152:36024  SERVER_URL=http://127.0.0.1:5001 AI_SERVICE_URL=http://192.168.1.152:36032 umi dev",
         "start:test": "cross-env AUTH_URL=https://ai.dataknown.cn/api/user_auth  SERVER_URL=https://ai.dataknown.cn/z_know_info AI_SERVICE_URL=https://192.168.1.34/api umi dev",

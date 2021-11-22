@@ -202,6 +202,12 @@ export default [
                         ],
                     },
                     {
+                        path: "/statistics",
+                        name: "statistics",
+                        title: "统计",
+                        component: "./statistics/List",
+                    },
+                    {
                         name: "system",
                         path: "/system",
                         authority: ["system"],

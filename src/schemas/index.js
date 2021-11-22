@@ -17,9 +17,11 @@ import searchHistory from "./domain/searchHistory"
 import relation from "./relation"
 import relationType from "./relationType"
 import flow from "./flow"
+import statistics from "./statistics"
 
 export default {
     project,
+    statistics,
     question,
     domain,
     story,
