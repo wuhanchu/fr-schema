@@ -19,6 +19,7 @@ import {
     DislikeTwoTone,
 } from "@ant-design/icons"
 import { exportData } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
+import { formatData } from "@/utils/utils"
 
 import moment from "moment"
 const { utils, decorateList } = frSchema
@@ -343,7 +344,10 @@ class List extends ListPage {
                                     }}
                                 >
                                     {summary
-                                        ? summary.satisfaction.toFixed(4) *
+                                        ? formatData(
+                                              summary.satisfaction || 0,
+                                              4
+                                          ) *
                                               100 +
                                           "%"
                                         : 0}
