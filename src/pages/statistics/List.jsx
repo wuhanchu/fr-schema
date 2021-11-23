@@ -120,7 +120,6 @@ class List extends ListPage {
         }
         try {
             this.formRef.current.setFieldsValue({ domain_key: "default" })
-            console.log(moment().subtract("days", 6).format("YYYY-MM-DD"))
             this.formRef.current.setFieldsValue({
                 begin_time: moment().subtract("days", 6),
             })
