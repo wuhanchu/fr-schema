@@ -394,7 +394,10 @@ function renderDescription(item, props) {
                         display: "inline-block",
                     }}
                 >
-                    匹配文本：{item.match_question_title}
+                    {item.match_question_title === item.question_standard
+                        ? "匹配标准文本："
+                        : "匹配扩展文本："}
+                    {item.match_question_title}
                 </div>
                 <div style={{ width: "130px", marginRight: "10px" }}>
                     <span
