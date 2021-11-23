@@ -75,20 +75,19 @@ async function init(
 
     setState({ ...state, options: options })
 
-    if (props.type !== "project_id") {
-        let project = await schemas.project.service.get({
-            domain_key: props.record && props.record.key,
-            limit: 999,
-        })
-        project_id = "in.("
-        project.list.map((item, index) => {
-            if (index !== project.list.length - 1)
-                project_id = project_id + item.id + ","
-            else project_id = project_id + item.id
-        })
-        project_id = project_id + ")"
-        setProjectList(project.list)
-    }
+    let project = await schemas.project.service.get({
+        domain_key: props.record && props.record.key,
+        limit: 999,
+    })
+    project_id = "in.("
+    project.list.map((item, index) => {
+        if (index !== project.list.length - 1)
+            project_id = project_id + item.id + ","
+        else project_id = project_id + item.id
+    })
+    project_id = project_id + ")"
+    setProjectList(project.list)
+
     if (props.type !== "history") {
         await schemas.hotWord.service
             .getRecentHotQuestion({

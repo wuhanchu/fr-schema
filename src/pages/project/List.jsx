@@ -156,6 +156,7 @@ class List extends ListPage {
                 )}
                 {visibleSearch && (
                     <SearchPageModal
+                        type="project_id"
                         onCancel={() => {
                             this.setState({ visibleSearch: false })
                         }}
