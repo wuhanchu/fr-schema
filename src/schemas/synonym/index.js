@@ -29,7 +29,12 @@ const schema = {
 }
 
 const service = createApi("synonym", schema, null, "eq.")
-
+service.upInsert = createApi(
+    "synonym?on_conflict=domain_key,standard_text",
+    schema,
+    null,
+    "eq."
+).upInsert
 export default {
     schema,
     service,

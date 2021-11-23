@@ -63,7 +63,6 @@ export const ConditionModal = ({
         if (isMore > 1 && !isImport) {
             cloneAction(values)
         }
-        console.log(isMore, isImport)
         if ((isMore > 1 && isImport) || isImport) {
             importAction(values)
         }
