@@ -18,7 +18,6 @@ const schema = {
     extend_text: {
         title: "扩展文本",
         sorter: true,
-        required: true,
         type: schemaFieldType.Select,
         props: {
             mode: "tags",
