@@ -180,11 +180,7 @@ class List extends DataList {
                 return !item.isExpand && item.key !== "external_id"
             })
             let columns = [
-                {
-                    title: "域",
-                    dataIndex: "domain_key",
-                    key: "domain_key",
-                },
+                column[0],
                 {
                     title: "名称",
                     dataIndex: "name",
@@ -255,6 +251,8 @@ class List extends DataList {
                     domain_key: {
                         title: "域",
                         // required: true,
+                        type: "Select",
+                        dict: this.props.dict.domain,
                     },
                     name: {
                         title: "名称",

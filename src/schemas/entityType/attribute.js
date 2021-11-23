@@ -8,7 +8,7 @@ const schema = {
         sorter: true,
         addHide: true,
         editHide: true,
-        required: true,
+        // required: true,
         type: schemaFieldType.Select,
     },
     name: {
@@ -43,7 +43,7 @@ const schema = {
     },
     create_time: {
         title: "创建时间",
-        required: true,
+        // required: true,
         sorter: true,
         addHide: true,
         editHide: true,
