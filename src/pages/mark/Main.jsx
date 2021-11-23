@@ -5,6 +5,7 @@ import { connect } from "dva"
 import { Button, Menu, Dropdown, message } from "antd"
 import Add from "./Add"
 import Complement from "./Complement"
+import Repeat from "./Repeat"
 import schemas from "@/schemas"
 import { LoadingOutlined } from "@ant-design/icons"
 
@@ -12,6 +13,7 @@ import { LoadingOutlined } from "@ant-design/icons"
 export const infoType = {
     Complement: "补充扩展问",
     Add: "问题新增",
+    Repeat: "重复问题",
 }
 
 /**
@@ -88,6 +90,7 @@ class Main extends React.PureComponent {
             >
                 {tabActiveKey === infoType.Complement && <Complement />}
                 {tabActiveKey === infoType.Add && <Add />}
+                {tabActiveKey === infoType.Repeat && <Repeat />}
             </PageHeaderWrapper>
         )
     }

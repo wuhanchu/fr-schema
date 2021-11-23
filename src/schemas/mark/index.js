@@ -79,7 +79,6 @@ service.get = async (args) => {
         args.and = `(create_time.gte.${beginTime},create_time.lte.${endTime})`
     }
 
-    console.log(args.order)
     if (args.order === "question_standard.desc") {
         args.order = "info->question_standard.desc"
     }
@@ -98,8 +97,10 @@ service.get = async (args) => {
     })
     let list = data.list.map((item, index) => {
         return {
+            ...item.info,
             ...item,
             disabled: item.status !== 0,
+
             text: item.info && item.info.text,
             question_standard: item.info && item.info.question_standard,
         }
