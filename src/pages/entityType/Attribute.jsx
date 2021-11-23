@@ -18,10 +18,9 @@ const { utils, decorateList } = frSchema
 @Form.create()
 class List extends DataList {
     constructor(props) {
-        const importTemplateUrl = (BASE_PATH + "/import/实体.xlsx").replace(
-            "//",
-            "/"
-        )
+        const importTemplateUrl = (
+            BASE_PATH + "../import/实体属性.xlsx"
+        ).replace("//", "/")
         super(props, {
             schema: schemas.entityAttr.schema,
             service: schemas.entityAttr.service,
@@ -171,7 +170,7 @@ class List extends DataList {
                 }
             })
             data = decorateList(list, this.schema)
-            await exportData("实体", data, columns)
+            await exportData("实体属性", data, columns)
             this.setState({ exportLoading: false })
         })
     }

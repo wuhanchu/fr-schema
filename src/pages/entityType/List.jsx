@@ -20,7 +20,7 @@ const { decorateList } = frSchema
 @Form.create()
 class List extends DataList {
     constructor(props) {
-        const importTemplateUrl = (BASE_PATH + "/import/实体.xlsx").replace(
+        const importTemplateUrl = (BASE_PATH + "../import/实体.xlsx").replace(
             "//",
             "/"
         )
