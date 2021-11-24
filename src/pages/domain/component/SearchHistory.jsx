@@ -53,6 +53,9 @@ class MyList extends DataList {
 
     async componentDidMount() {
         let res = await projectService.service.get({ limit: 1000 })
+        try {
+            this.formRef.current.setFieldsValue({ final_result: "true" })
+        } catch (error) {}
         super.componentDidMount()
         const onChange = (e, data) => {
             this.setState({ listLoading: true })
@@ -65,6 +68,40 @@ class MyList extends DataList {
         this.setState({ projectDict: listToDict(res.list) })
         this.schema.match_project_id.dict = listToDict(res.list)
         this.schema.project_id.dict = listToDict(res.list)
+    }
+
+    async requestList(tempArgs = {}) {
+        const { queryArgs } = this.meta
+
+        let searchParams = this.getSearchParam()
+
+        const params = {
+            ...(queryArgs || {}),
+            ...searchParams,
+            ...(this.state.pagination || {}),
+            ...tempArgs,
+            final_result: this.formRef.current.getFieldsValue().final_result,
+        }
+
+        let data = await this.service.get(params)
+        data = this.dataConvert(data)
+        return data
+    }
+
+    handleFormReset = () => {
+        const { order } = this.props
+
+        this.formRef.current.resetFields()
+        this.formRef.current.setFieldsValue({ final_result: "true" })
+        this.setState(
+            {
+                pagination: { ...this.state.pagination, currentPage: 1 },
+                searchValues: { order },
+            },
+            () => {
+                this.refreshList()
+            }
+        )
     }
 
     renderOperateColumnExtend(record) {
@@ -227,6 +264,7 @@ class MyList extends DataList {
             user_confirm,
             have_match_project_id,
             task_id,
+            final_result,
         } = this.schema
 
         const filters = this.createFilters(
@@ -258,6 +296,19 @@ class MyList extends DataList {
                 },
                 have_match_project_id,
                 task_id,
+                final_result: {
+                    ...final_result,
+                    dict: {
+                        true: {
+                            value: "true",
+                            remark: "有效",
+                        },
+                        false: {
+                            value: "false",
+                            remark: "无效",
+                        },
+                    },
+                },
             },
             5
         )

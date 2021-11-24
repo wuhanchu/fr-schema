@@ -123,6 +123,21 @@ const schema = {
             }
         },
     },
+    final_result: {
+        title: "是否有效",
+        listHide: true,
+        type: schemaFieldType.Select,
+        dict: {
+            true: {
+                value: true,
+                remark: "有效",
+            },
+            false: {
+                value: false,
+                remark: "无效",
+            },
+        },
+    },
     task_id: {
         title: "处理状态",
         type: schemaFieldType.Select,
