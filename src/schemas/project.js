@@ -24,7 +24,20 @@ const schema = {
         style: { width: "500px" },
         required: true,
     },
-
+    inside: {
+        title: "是否内部问题库",
+        type: schemaFieldType.Select,
+        dict: {
+            true: {
+                value: true,
+                remark: "是",
+            },
+            false: {
+                value: false,
+                remark: "否",
+            },
+        },
+    },
     remark: {
         title: "备注",
         type: schemaFieldType.TextArea,
