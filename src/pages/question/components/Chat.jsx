@@ -102,12 +102,6 @@ class Chat extends React.PureComponent {
             <div style={styles.leaveItem} key={`leave${index}`}>
                 <img src={robotSvg} alt="" style={styles.avatar} />
                 <div style={{ marginTop: "8px" }}>
-                    {/*<div style={{ display: 'flex', alignItems: 'center' }}>*/}
-                    {/*    <span>*/}
-                    {/*        {item.name}{' '}*/}
-                    {/*        /!*{moment(item.sendTime).format('YYYY-MM-DD HH:mm:ss')}*!/*/}
-                    {/*    </span>*/}
-                    {/*</div>*/}
                     {item.messageType === "load" ? (
                         <div style={styles.leaveMsgView}>{item.content}</div>
                     ) : (
@@ -254,6 +248,7 @@ class Chat extends React.PureComponent {
             >
                 <div style={styles.tableStyle}>
                     <ChatFlowTable
+                        defaultProject={this.state.defaultProject}
                         conversationId={conversationId}
                         domainKey={domain_key}
                         flowKey={flow_key}

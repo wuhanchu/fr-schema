@@ -90,6 +90,7 @@ class ChatFlowTable extends DataList {
             <>
                 {visibleIntentIdentify && (
                     <IntentIdentify
+                        searchProject={this.props.defaultProject}
                         type={"tabs"}
                         onCancel={() => {
                             this.setState({ visibleIntentIdentify: false })

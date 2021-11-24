@@ -11,6 +11,8 @@ import {
     Popconfirm,
     Divider,
     Button,
+    Select,
+    Popover,
 } from "antd"
 import { listToDict } from "@/outter/fr-schema/src/dict"
 import schemas from "@/schemas"
@@ -19,7 +21,7 @@ import * as _ from "lodash"
 import utils from "@/outter/fr-schema-antd-utils/src"
 import { downloadFile } from "@/utils/minio"
 import { formatData } from "@/utils/utils"
-import { EditOutlined } from "@ant-design/icons"
+import { EditOutlined, SettingOutlined } from "@ant-design/icons"
 import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
 import Question from "@/pages/question/components/BaseList"
 
@@ -596,6 +598,8 @@ function SearchPage(props) {
 
     const [opeation, setOpeation] = useState([])
     const [values, setValues] = useState("")
+    const [searchProject, setSearchProject] = useState(undefined)
+
     // if(props.record.search){
     //     setValues(props.record.search)
     // }
@@ -650,6 +654,8 @@ function SearchPage(props) {
 
         let args = {}
         if (props.type !== "project_id") {
+            args.project_id =
+                (searchProject && searchProject.join(",")) || undefined
             args.domain_key = domain_key
                 ? domain_key
                 : props.record && props.record.domain_key
@@ -741,6 +747,45 @@ function SearchPage(props) {
                 >
                     新增问题
                 </Button>
+
+                {props.type !== "project_id" && (
+                    <Popover
+                        title={"问题库"}
+                        disabled={props.type === "history" ? true : loading}
+                        content={
+                            <Select
+                                mode="multiple"
+                                onChange={(value) => {
+                                    console.log(value)
+                                    setSearchProject(value)
+                                }}
+                                placeholder="请选择问题库"
+                                style={{
+                                    width: "300px",
+                                    marginBottom: "20px",
+                                    zIndex: 99,
+                                }}
+                            >
+                                {projectList.map((item) => {
+                                    return (
+                                        <Select.Option value={item.id}>
+                                            {item.name}
+                                        </Select.Option>
+                                    )
+                                })}
+                            </Select>
+                        }
+                        trigger="click"
+                    >
+                        <Button
+                            disabled={props.type === "history" ? true : loading}
+                            style={{ marginLeft: "5px" }}
+                        >
+                            <SettingOutlined />
+                        </Button>
+                    </Popover>
+                )}
+
                 {props.renderOperationButton && props.renderOperationButton()}
             </div>
 
