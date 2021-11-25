@@ -115,6 +115,7 @@ class Chat extends React.PureComponent {
 
     // 机器人回复内容
     renderServiceContent(item, index) {
+        item.content = item.content && item.content.replace(/\n/g, "<br/>")
         return (
             <div
                 style={styles.leaveMsgView}
