@@ -309,7 +309,7 @@ class IntentIdentify extends React.Component {
         const { record, text } = this.props
         console.log(record)
         return (
-            <Tabs defaultActiveKey="1">
+            <Tabs defaultActiveKey="1" style={{ marginTop: "-13px" }}>
                 <TabPane
                     style={{ marginBottom: "14px" }}
                     tab="意图识别"

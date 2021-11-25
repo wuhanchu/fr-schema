@@ -77,7 +77,6 @@ class ChatFlowTable extends DataList {
             )
         }
         this.schema.text.render = (item, data) => {
-            console.log(item)
             if (data.type === "receive") {
                 return (
                     <Tooltip title={item}>

@@ -27,6 +27,10 @@ class List extends DataList {
             showDelete: false,
             // readOnly: true,
             addHide: true,
+            queryArgs: {
+                ...props.queryArgs,
+                inside: true,
+            },
         })
     }
 

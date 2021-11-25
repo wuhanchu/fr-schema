@@ -40,6 +40,10 @@ class List extends ListPage {
             showDelete: false,
             readOnly: true,
             addHide: true,
+            queryArgs: {
+                ...props.queryArgs,
+                inside: true,
+            },
         })
     }
 

@@ -705,6 +705,33 @@ function SearchPage(props) {
     return (
         <Fragment>
             <div style={{ display: "flex" }}>
+                <Select
+                    mode="multiple"
+                    onChange={(value) => {
+                        console.log(value)
+                        setSearchProject(value)
+                    }}
+                    placeholder="请选择问题库"
+                    style={{
+                        // width: "500px",
+                        minWidth: "150px",
+                        maxHeight: "500px",
+                        marginBottom: "20px",
+                        zIndex: 99,
+                        // marginRight: '5px'
+                        position: "absolute",
+                        right: "50px",
+                        top: "12px",
+                    }}
+                >
+                    {projectList.map((item) => {
+                        return (
+                            <Select.Option value={item.id}>
+                                {item.name}
+                            </Select.Option>
+                        )
+                    })}
+                </Select>
                 <AutoComplete
                     dropdownMatchSelectWidth={252}
                     style={{ width: "100%", flex: 1 }}
@@ -747,44 +774,6 @@ function SearchPage(props) {
                 >
                     新增问题
                 </Button>
-
-                {props.type !== "project_id" && (
-                    <Popover
-                        title={"问题库"}
-                        disabled={props.type === "history" ? true : loading}
-                        content={
-                            <Select
-                                mode="multiple"
-                                onChange={(value) => {
-                                    console.log(value)
-                                    setSearchProject(value)
-                                }}
-                                placeholder="请选择问题库"
-                                style={{
-                                    width: "300px",
-                                    marginBottom: "20px",
-                                    zIndex: 99,
-                                }}
-                            >
-                                {projectList.map((item) => {
-                                    return (
-                                        <Select.Option value={item.id}>
-                                            {item.name}
-                                        </Select.Option>
-                                    )
-                                })}
-                            </Select>
-                        }
-                        trigger="click"
-                    >
-                        <Button
-                            disabled={props.type === "history" ? true : loading}
-                            style={{ marginLeft: "5px" }}
-                        >
-                            <SettingOutlined />
-                        </Button>
-                    </Popover>
-                )}
 
                 {props.renderOperationButton && props.renderOperationButton()}
             </div>
