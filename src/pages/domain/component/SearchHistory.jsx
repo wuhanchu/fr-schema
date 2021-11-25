@@ -54,7 +54,7 @@ class MyList extends DataList {
     async componentDidMount() {
         let res = await projectService.service.get({ limit: 1000 })
         try {
-            this.formRef.current.setFieldsValue({ final_result: "true" })
+            this.formRef.current.setFieldsValue({ final_result: true })
         } catch (error) {}
         super.componentDidMount()
         const onChange = (e, data) => {
@@ -92,7 +92,7 @@ class MyList extends DataList {
         const { order } = this.props
 
         this.formRef.current.resetFields()
-        this.formRef.current.setFieldsValue({ final_result: "true" })
+        this.formRef.current.setFieldsValue({ final_result: true })
         this.setState(
             {
                 pagination: { ...this.state.pagination, currentPage: 1 },
@@ -296,19 +296,7 @@ class MyList extends DataList {
                 },
                 have_match_project_id,
                 task_id,
-                final_result: {
-                    ...final_result,
-                    dict: {
-                        true: {
-                            value: "true",
-                            remark: "有效",
-                        },
-                        false: {
-                            value: "false",
-                            remark: "无效",
-                        },
-                    },
-                },
+                final_result,
             },
             5
         )
