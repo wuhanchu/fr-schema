@@ -411,7 +411,7 @@ const styles = {
         marginRight: "23px",
     },
     tableStyle: {
-        marginTop: "-40px",
+        marginTop: "-48px",
         flex: 1,
     },
 }

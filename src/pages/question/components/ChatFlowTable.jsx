@@ -5,7 +5,7 @@ import React from "react"
 import "@ant-design/compatible/assets/index.css"
 import frSchema from "@/outter/fr-schema/src"
 import IntentIdentify from "@/pages/domain/component/IntentIdentify"
-
+import { Tooltip } from "antd"
 import { createApi } from "@/outter/fr-schema/src/service"
 import schema from "@/schemas/intent"
 
@@ -29,7 +29,7 @@ class ChatFlowTable extends DataList {
             addHide: true,
             mini: true,
             readOnly: true,
-            scroll: { y: "459px", x: "max-content" },
+            scroll: { y: "498px", x: "max-content" },
         })
     }
 
@@ -50,36 +50,80 @@ class ChatFlowTable extends DataList {
         }
         if (this.props.flowKey !== nextProps.flowKey) {
             await this.findFlowList(nextProps.flowKey)
-            // this.refreshList()
         }
     }
 
     // 意图列表-> 列表枚举展示
     async findIntentList() {
         this.schema.intent_history_id.render = (item, data) => {
-            return (
+            let text =
                 (data.intent_history &&
                     data.intent_history.intent_rank &&
                     data.intent_history.intent_rank[0].name) ||
                 "未知"
+            return (
+                <Tooltip title={text}>
+                    <div
+                        style={{
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                            maxWidth: "50px",
+                        }}
+                    >
+                        {text}
+                    </div>
+                </Tooltip>
             )
         }
         this.schema.text.render = (item, data) => {
-            return data.type === "receive" ? (
-                <a
-                    onClick={() => {
-                        console.log(this.props, data.text)
-                        this.setState({
-                            visibleIntentIdentify: true,
-                            record: data,
-                        })
-                    }}
-                >
-                    {item}
-                </a>
-            ) : (
-                item
-            )
+            console.log(item)
+            if (data.type === "receive") {
+                return (
+                    <Tooltip title={item}>
+                        <div
+                            style={{
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap",
+                                maxWidth: "140px",
+                                minWidth: "140px",
+                            }}
+                        >
+                            <a
+                                onClick={() => {
+                                    this.setState({
+                                        visibleIntentIdentify: true,
+                                        record: data,
+                                    })
+                                }}
+                            >
+                                {item}
+                            </a>
+                        </div>
+                    </Tooltip>
+                )
+            } else {
+                if (item) {
+                    return (
+                        <Tooltip title={item}>
+                            <div
+                                style={{
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    whiteSpace: "nowrap",
+                                    maxWidth: "140px",
+                                    minWidth: "140px",
+                                }}
+                            >
+                                {item}
+                            </div>
+                        </Tooltip>
+                    )
+                } else {
+                    return <div style={{ width: "50px" }}></div>
+                }
+            }
         }
     }
 
