@@ -197,8 +197,19 @@ class List extends ListPage {
     }
 
     async refreshList() {
-        super.refreshList()
-        this.initTree()
+        this.setState({ listLoading: true }, async () => {
+            let data = await this.requestList()
+            let list = decorateList(data.list, this.schema)
+            this.convertList && (list = this.convertList(list))
+            this.setState({
+                selectedRows: [],
+                data: {
+                    ...data,
+                    list,
+                },
+            })
+            await this.initTree()
+        })
     }
     renderImportModal() {
         return (
