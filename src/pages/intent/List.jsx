@@ -16,6 +16,7 @@ const { decorateList } = frSchema
 @connect(({ global }) => ({
     dict: global.dict,
 }))
+@Form.create()
 class List extends ListPage {
     constructor(props) {
         const importTemplateUrl = (BASE_PATH + "/import/意图.xlsx").replace(
