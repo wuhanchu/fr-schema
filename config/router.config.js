@@ -118,7 +118,7 @@ export default [
                                 path: "/domain/synonym",
                                 name: "synonym",
                                 component: "./synonym/List",
-                                title: "近视词",
+                                title: "专业词汇",
                             },
                             {
                                 path: "/domain/intent",
