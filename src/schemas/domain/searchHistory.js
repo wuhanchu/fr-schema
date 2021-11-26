@@ -14,7 +14,7 @@ const schema = {
         type: schemaFieldType.DatePicker,
     },
     search: {
-        title: "用户提问语",
+        title: "用户提问",
         render: (text) => {
             return (
                 <Tooltip title={text}>

@@ -598,7 +598,7 @@ function SearchPage(props) {
 
     const [opeation, setOpeation] = useState([])
     const [values, setValues] = useState("")
-    const [searchProject, setSearchProject] = useState(undefined)
+    const [searchProject, setSearchProject] = useState(props.searchProject)
 
     // if(props.record.search){
     //     setValues(props.record.search)
@@ -705,14 +705,15 @@ function SearchPage(props) {
     return (
         <Fragment>
             <div style={{ display: "flex" }}>
-                {props.type !== "project_id" && props.type !== "history" && (
+                {props.type !== "project_id" && (
                     <Select
                         mode="multiple"
                         onChange={(value) => {
                             console.log(value)
                             setSearchProject(value)
                         }}
-                        disabled={loading}
+                        value={searchProject}
+                        disabled={props.type === "history" ? true : loading}
                         placeholder="请选择问题库"
                         style={{
                             // width: "500px",

@@ -1,19 +1,19 @@
-import {connect} from "dva"
+import { connect } from "dva"
 import ListPage from "@/outter/fr-schema-antd-utils/src/components/Page/ListPage"
 import schemas from "@/schemas"
 import React from "react"
-import {Form} from "@ant-design/compatible"
+import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
-import {Modal, Button, message} from "antd"
+import { Modal, Button, message } from "antd"
 import frSchema from "@/outter/fr-schema/src"
-import {exportData} from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
-import {schemaFieldType} from "@/outter/fr-schema/src/schema"
+import { exportData } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
+import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
 import ImportModal from "@/outter/fr-schema-antd-utils/src/components/modal/ImportModal"
 
-const {decorateList} = frSchema
+const { decorateList } = frSchema
 
-@connect(({global}) => ({
+@connect(({ global }) => ({
     dict: global.dict,
 }))
 class List extends ListPage {
@@ -26,14 +26,14 @@ class List extends ListPage {
             schema: schemas.intent.schema,
             service: schemas.intent.service,
             importTemplateUrl,
-            queryArgs: {pageSize: 10000, limit: 10000},
+            queryArgs: { pageSize: 10000, limit: 10000 },
             mini: true,
             operateWidth: "120px",
         })
         this.schema.domain_key.dict = this.props.dict.domain
         this.state = {
             ...this.state,
-            searchValues: {logical_path: "."},
+            searchValues: { logical_path: "." },
             expandedRowKeys: [],
         }
     }
@@ -41,12 +41,11 @@ class List extends ListPage {
     async componentDidMount() {
         super.componentDidMount()
         this.schema.regex.props.onChange = (data) => {
-            this.setState({regex: data})
+            this.setState({ regex: data })
         }
-
         this.schema.regex.props.onInputKeyDown = (e, data) => {
             //回车键
-            const {regex} = this.state
+            const { regex } = this.state
             if (e.keyCode === 13) {
                 if (regex) {
                     const isRepeat = regex.indexOf(e.target.value)
@@ -81,7 +80,7 @@ class List extends ListPage {
                 )}
                 <Button
                     onClick={() => {
-                        this.setState({visibleImport: true})
+                        this.setState({ visibleImport: true })
                     }}
                 >
                     导入
@@ -90,7 +89,7 @@ class List extends ListPage {
                 <Button
                     loading={this.state.exportLoading}
                     onClick={() => {
-                        this.setState({visibleExport: true})
+                        this.handleExport()
                     }}
                 >
                     导出
@@ -129,7 +128,7 @@ class List extends ListPage {
         let response
         try {
             response = await this.service.uploadExcel(
-                {...data, file: data.file.file},
+                { ...data, file: data.file.file },
                 schema
             )
         } catch (error) {
@@ -148,16 +147,13 @@ class List extends ListPage {
     }
 
     async handleExport(args, schema) {
-        this.setState({exportLoading: true}, async () => {
+        this.setState({ exportLoading: true }, async () => {
             let column = this.getColumns(false).filter((item) => {
                 return !item.isExpand && item.key !== "external_id"
             })
+            console.log(column)
             let columns = [
-                {
-                    title: "编号",
-                    dataIndex: "id",
-                    key: "id",
-                },
+                column[2],
                 column[0],
                 {
                     title: "名称",
@@ -193,67 +189,20 @@ class List extends ListPage {
             })
             data = decorateList(data.list, this.schema)
             await exportData("意图", data, columns)
-            this.setState({exportLoading: false})
+            this.setState({ exportLoading: false })
         })
         this.handleVisibleExportModal()
     }
 
-    renderExtend() {
-        return <>{this.renderExportModal()}</>
+    async refreshList() {
+        super.refreshList()
+        this.initTree()
     }
-
-    renderExportModal() {
-        if (this.props.renderInfoModal) {
-            return this.props.renderInfoModal()
-        }
-        const {form} = this.props
-        const renderForm = this.props.renderForm || this.renderForm
-        const {resource, title, addArgs} = this.meta
-        const {visibleExport, infoData, action} = this.state
-        const updateMethods = {
-            handleVisibleModal: this.handleVisibleExportModal.bind(this),
-            handleUpdate: this.handleUpdate.bind(this),
-            handleAdd: this.handleExport.bind(this),
-        }
-
-        const schema = {
-            domain_key: {
-                title: "域",
-                required: true,
-                extra: "意图对应的域",
-                type: schemaFieldType.Select,
-                dict: this.props.dict.domain,
-            },
-        }
-
-        return (
-            visibleExport && (
-                <InfoModal
-                    renderForm={renderForm}
-                    title={"导出"}
-                    action={action}
-                    resource={resource}
-                    {...updateMethods}
-                    visible={visibleExport}
-                    values={infoData}
-                    addArgs={addArgs}
-                    meta={this.meta}
-                    service={this.service}
-                    schema={schema}
-                    width={600}
-                />
-            )
-        )
-    }
-
     renderImportModal() {
         return (
             <ImportModal
                 importTemplateUrl={this.meta.importTemplateUrl}
                 schema={{
-                    id: {
-                        title: "编号",
-                    },
                     domain_key: {
                         title: "域",
                         required: true,
@@ -284,8 +233,8 @@ class List extends ListPage {
                 errorKey={"question_standard"}
                 title={"导入"}
                 sliceNum={1}
-                onCancel={() => this.setState({visibleImport: false})}
-                onChange={(data) => this.setState({importData: data})}
+                onCancel={() => this.setState({ visibleImport: false })}
+                onChange={(data) => this.setState({ importData: data })}
                 onOk={async () => {
                     // to convert
                     const data = this.state.importData.map((item) => {
@@ -316,7 +265,7 @@ class List extends ListPage {
                     // let postData = data.filters
 
                     await this.service.upInsert(data)
-                    this.setState({visibleImport: false})
+                    this.setState({ visibleImport: false })
                     this.refreshList()
                 }}
             />
@@ -325,7 +274,7 @@ class List extends ListPage {
 
     // 搜索
     renderSearchBar() {
-        const {name, domain_key} = this.schema
+        const { name, domain_key } = this.schema
         const filters = this.createFilters(
             {
                 domain_key,
@@ -337,7 +286,7 @@ class List extends ListPage {
     }
 
     renderList(inProps = {}) {
-        let {expandedRowKeys} = this.state
+        let { expandedRowKeys } = this.state
         inProps = {
             expandable: {
                 onExpand: (expanded, record) => this.onExpand(expanded, record),
@@ -347,42 +296,33 @@ class List extends ListPage {
         return super.renderList(inProps)
     }
 
-    // 展开
-    async onExpand(expanded, record) {
-        let {expandedRowKeys} = this.state
-        let flag = expandedRowKeys.includes(record.id) // 是否已经展开过
-        // 展开
-        if (expanded) {
-            // 新数据添加
-            if (!flag) {
-                expandedRowKeys.push(record.id)
-            }
-        } else {
-            // 收起则把数据去除
-            if (flag) {
-                expandedRowKeys = expandedRowKeys.filter((value) => {
-                    return value !== record.id
-                })
-            }
-        }
-        this.setState({expandedRowKeys: [...expandedRowKeys]})
-        // 如果已经获取过,不在重复调用接口
-        if (record.children.length) {
-            return
-        }
+    async initTree() {
         // 加载
-        this.setState({listLoading: true})
+        this.setState({ listLoading: true })
         // 获取子意图
         let res = await super.requestList({
-            logical_path: "like." + record.logical_path + ".*",
+            // logical_path: "like." + record.logical_path + ".*",
             // domain_key: record.domain_key,
             pageSize: 10000, // 显示所有意图,不分页
-            name: null,
+            name: undefined,
+            logical_path: undefined,
         })
-        if (res.list.length) {
-            // 子意图排序 层级最深在最上面
-            let list = decorateList(res.list, this.schema)
+        this.setState({ listLoading: true })
+
+        console.log("res", res)
+        console.log("this.state.data", this.state.data)
+        this.state.data.list.map((record) => {
+            let list = res.list.filter((itemList) => {
+                // console.log(itemList.logical_path.indexOf(item.logical_path) === 0)
+                return (
+                    itemList.logical_path.indexOf(record.logical_path) === 0 &&
+                    itemList.logical_path !== record.logical_path
+                )
+            })
+            list = decorateList(list, this.schema)
             list = list.sort(this.sortUp)
+            console.log(list)
+
             let result = []
             let arr = []
             for (let i = 0; i < list.length; i++) {
@@ -390,7 +330,7 @@ class List extends ListPage {
                 arr = list.filter((value) => {
                     return (
                         value.logical_path !== list[i].logical_path &&
-                        list[i].logical_path.includes(value.logical_path + '.')
+                        list[i].logical_path.includes(value.logical_path + ".")
                     )
                 })
                 // 存在上层意图则标明当前遍历意图为其他意图的子意图
@@ -407,11 +347,79 @@ class List extends ListPage {
                 }
             }
             record.children = [...result]
+            // }
+        })
+        let { expandedRowKeys } = this.state
+        this.setState({ expandedRowKeys: [...expandedRowKeys] })
+        this.setState({ listLoading: false })
+    }
+
+    // 展开
+    async onExpand(expanded, record) {
+        console.log("expanded, record", expanded, record)
+        let { expandedRowKeys } = this.state
+        let flag = expandedRowKeys.includes(record.id) // 是否已经展开过
+        // 展开
+        if (expanded) {
+            // 新数据添加
+            if (!flag) {
+                expandedRowKeys.push(record.id)
+            }
         } else {
-            // 没有子意图时提示,并取消 + 按钮
-            record.children = null
+            // 收起则把数据去除
+            if (flag) {
+                expandedRowKeys = expandedRowKeys.filter((value) => {
+                    return value !== record.id
+                })
+            }
         }
-        this.setState({listLoading: false})
+        this.setState({ expandedRowKeys: [...expandedRowKeys] })
+        // 如果已经获取过,不在重复调用接口
+        if (record.children.length) {
+            return
+        }
+        // 加载
+        this.setState({ listLoading: true })
+        // 获取子意图
+        // let res = await super.requestList({
+        //     logical_path: "like." + record.logical_path + ".*",
+        //     // domain_key: record.domain_key,
+        //     pageSize: 10000, // 显示所有意图,不分页
+        //     name: null,
+        // })
+        // if (res.list.length) {
+        //     // 子意图排序 层级最深在最上面
+        //     let list = decorateList(res.list, this.schema)
+        //     list = list.sort(this.sortUp)
+        //     let result = []
+        //     let arr = []
+        //     for (let i = 0; i < list.length; i++) {
+        //         // 获取当前意图的所有上层意图
+        //         arr = list.filter((value) => {
+        //             return (
+        //                 value.logical_path !== list[i].logical_path &&
+        //                 list[i].logical_path.includes(value.logical_path + '.')
+        //             )
+        //         })
+        //         // 存在上层意图则标明当前遍历意图为其他意图的子意图
+        //         if (arr.length) {
+        //             // 获取当前遍历意图的父意图 并加入其父意图的子集中
+        //             arr = arr.sort(this.sortUp)
+        //             let index = list.findIndex((value) => {
+        //                 return value.id === arr[0].id
+        //             })
+        //             list[index].children.push(list[i])
+        //         } else {
+        //             // 不存在上层意图表示当前遍历意图为最高子意图
+        //             result.push(list[i])
+        //         }
+        //     }
+        //     record.children = [...result]
+        // } else {
+        //     // 没有子意图时提示,并取消 + 按钮
+        //     record.children = null
+        // }
+        this.setState({ listLoading: false })
     }
 
     // 排序规则(从大到小)
@@ -425,14 +433,13 @@ class List extends ListPage {
      * @returns {*}
      */
     convertList(list) {
-        this.setState({expandedRowKeys: []})
         return list
     }
 
     // 搜索
     onSearch(fieldsValue) {
         //  更新列表
-        const searchValues = {...this.state.searchValues}
+        const searchValues = { ...this.state.searchValues }
 
         Object.keys(fieldsValue).forEach((key) => {
             if (!fieldsValue[key]) {
@@ -445,7 +452,7 @@ class List extends ListPage {
 
         this.setState(
             {
-                pagination: {...this.state.pagination, currentPage: 1},
+                pagination: { ...this.state.pagination, currentPage: 1 },
                 searchValues: {
                     ...searchValues,
                     logical_path: searchValues.name ? null : ".",
@@ -462,13 +469,13 @@ class List extends ListPage {
      * 重置查询
      */
     handleFormReset = () => {
-        const {order} = this.props
+        const { order } = this.props
 
         this.formRef.current.resetFields()
         this.setState(
             {
-                pagination: {...this.state.pagination, currentPage: 1},
-                searchValues: {order, logical_path: "."},
+                pagination: { ...this.state.pagination, currentPage: 1 },
+                searchValues: { order, logical_path: "." },
                 expandedRowKeys: [],
             },
             () => {

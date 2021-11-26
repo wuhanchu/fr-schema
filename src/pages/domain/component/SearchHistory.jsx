@@ -182,6 +182,11 @@ class MyList extends DataList {
                 {showAnswer && (
                     <SearchPageModal
                         type={"history"}
+                        searchProject={
+                            record.project_id && record.project_id.length
+                                ? record.project_id
+                                : undefined
+                        }
                         onCancel={() => {
                             this.setState({ showAnswer: false })
                         }}
