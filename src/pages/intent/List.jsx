@@ -165,6 +165,7 @@ class List extends ListPage {
                     dataIndex: "key",
                     key: "key",
                 },
+                column[3],
                 {
                     title: "正则表达式",
                     dataIndex: "regex",
@@ -219,6 +220,10 @@ class List extends ListPage {
                         title: "编码",
                         rules: (rule, value) => value,
                         required: true,
+                    },
+                    logical_path: {
+                        title: "意图路径",
+                        require: true,
                     },
                     example: {
                         title: "例子",
@@ -308,20 +313,19 @@ class List extends ListPage {
             logical_path: undefined,
         })
         this.setState({ listLoading: true })
-
-        console.log("res", res)
-        console.log("this.state.data", this.state.data)
         this.state.data.list.map((record) => {
             let list = res.list.filter((itemList) => {
-                // console.log(itemList.logical_path.indexOf(item.logical_path) === 0)
+                if (!itemList.logical_path) {
+                    console.log("itemList", itemList)
+                }
                 return (
+                    itemList.logical_path &&
                     itemList.logical_path.indexOf(record.logical_path) === 0 &&
                     itemList.logical_path !== record.logical_path
                 )
             })
             list = decorateList(list, this.schema)
             list = list.sort(this.sortUp)
-            console.log(list)
 
             let result = []
             let arr = []
@@ -381,44 +385,6 @@ class List extends ListPage {
         // 加载
         this.setState({ listLoading: true })
         // 获取子意图
-        // let res = await super.requestList({
-        //     logical_path: "like." + record.logical_path + ".*",
-        //     // domain_key: record.domain_key,
-        //     pageSize: 10000, // 显示所有意图,不分页
-        //     name: null,
-        // })
-        // if (res.list.length) {
-        //     // 子意图排序 层级最深在最上面
-        //     let list = decorateList(res.list, this.schema)
-        //     list = list.sort(this.sortUp)
-        //     let result = []
-        //     let arr = []
-        //     for (let i = 0; i < list.length; i++) {
-        //         // 获取当前意图的所有上层意图
-        //         arr = list.filter((value) => {
-        //             return (
-        //                 value.logical_path !== list[i].logical_path &&
-        //                 list[i].logical_path.includes(value.logical_path + '.')
-        //             )
-        //         })
-        //         // 存在上层意图则标明当前遍历意图为其他意图的子意图
-        //         if (arr.length) {
-        //             // 获取当前遍历意图的父意图 并加入其父意图的子集中
-        //             arr = arr.sort(this.sortUp)
-        //             let index = list.findIndex((value) => {
-        //                 return value.id === arr[0].id
-        //             })
-        //             list[index].children.push(list[i])
-        //         } else {
-        //             // 不存在上层意图表示当前遍历意图为最高子意图
-        //             result.push(list[i])
-        //         }
-        //     }
-        //     record.children = [...result]
-        // } else {
-        //     // 没有子意图时提示,并取消 + 按钮
-        //     record.children = null
-        // }
         this.setState({ listLoading: false })
     }
 
@@ -457,7 +423,7 @@ class List extends ListPage {
                     ...searchValues,
                     logical_path: searchValues.name ? null : ".",
                 },
-                expandedRowKeys: [],
+                // expandedRowKeys: [],
             },
             async () => {
                 this.refreshList()
@@ -476,7 +442,7 @@ class List extends ListPage {
             {
                 pagination: { ...this.state.pagination, currentPage: 1 },
                 searchValues: { order, logical_path: "." },
-                expandedRowKeys: [],
+                // expandedRowKeys: [],
             },
             () => {
                 this.refreshList()
