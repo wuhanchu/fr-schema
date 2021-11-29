@@ -396,7 +396,11 @@ class List extends ListPage {
             <Menu>
                 <Menu.Item>
                     <Popconfirm
-                        title="是否训练模型？会影响查询性能！"
+                        title={
+                            "是否训练" +
+                            record.name +
+                            "域模型？会影响查询性能！"
+                        }
                         onConfirm={async (e) => {
                             await this.service.sync({ domain_key: record.key })
                             message.success("模型训练中！")
@@ -408,7 +412,7 @@ class List extends ListPage {
                 </Menu.Item>
                 <Menu.Item>
                     <Popconfirm
-                        title="是否将数据同步数据库！"
+                        title={"是否将" + record.name + "域数据同步数据库！"}
                         onConfirm={async (e) => {
                             await this.service.fsfundSync({
                                 domain_key: record.key,

@@ -24,7 +24,21 @@ const schema = {
         style: { width: "500px" },
         required: true,
     },
-
+    inside: {
+        title: "是否内部问题库",
+        type: schemaFieldType.Select,
+        style: { width: "500px" },
+        dict: {
+            true: {
+                value: true,
+                remark: "是",
+            },
+            false: {
+                value: false,
+                remark: "否",
+            },
+        },
+    },
     remark: {
         title: "备注",
         type: schemaFieldType.TextArea,
@@ -38,7 +52,7 @@ const schema = {
         listHide: true,
         props: {
             style: { width: "500px" },
-            height: "400px",
+            height: "300px",
         },
         // // required: true,
         type: schemaFieldType.AceEditor,

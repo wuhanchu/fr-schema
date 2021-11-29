@@ -14,7 +14,7 @@ const schema = {
         type: schemaFieldType.DatePicker,
     },
     search: {
-        title: "用户提问语",
+        title: "用户提问",
         render: (text) => {
             return (
                 <Tooltip title={text}>
@@ -123,6 +123,21 @@ const schema = {
             }
         },
     },
+    final_result: {
+        title: "数据范围",
+        listHide: true,
+        type: schemaFieldType.Select,
+        dict: {
+            true: {
+                value: true,
+                remark: "有效",
+            },
+            false: {
+                value: false,
+                remark: "全部",
+            },
+        },
+    },
     task_id: {
         title: "处理状态",
         type: schemaFieldType.Select,
@@ -166,6 +181,10 @@ service.get = async (args) => {
         if (args.have_match_project_id === "notHave") {
             args.match_project_id = "is.null"
         }
+    }
+    console.log(args.final_result)
+    if (args.final_result === false) {
+        args.final_result = undefined
     }
     if (args.task_id) {
         if (args.task_id === "have") {

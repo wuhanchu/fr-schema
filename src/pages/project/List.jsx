@@ -314,11 +314,24 @@ class List extends ListPage {
     }
 
     renderSearchBar() {
-        const { name, domain_key } = this.schema
+        const { name, domain_key, inside } = this.schema
         const filters = this.createFilters(
             {
                 domain_key,
                 name,
+                inside: {
+                    ...inside,
+                    dict: {
+                        true: {
+                            value: "true",
+                            remark: "是",
+                        },
+                        false: {
+                            value: "false",
+                            remark: "否",
+                        },
+                    },
+                },
             },
             5
         )

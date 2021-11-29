@@ -141,6 +141,12 @@ service.patch = async function (args, schema) {
 
 service.uploadExcel = createBasicApi("intent/import").post
 
+service.upInsert = createApi(
+    "intent?on_conflict=domain_key,key",
+    schema,
+    null,
+    "eq."
+).upInsert
 service.submit = createApi("intent/correction").upInsert
 
 export default {

@@ -27,6 +27,10 @@ class List extends DataList {
             showDelete: false,
             // readOnly: true,
             addHide: true,
+            queryArgs: {
+                ...props.queryArgs,
+                inside: true,
+            },
         })
     }
 
@@ -88,14 +92,7 @@ class List extends DataList {
                         <Card bordered={false}>
                             <div
                                 dangerouslySetInnerHTML={{
-                                    __html:
-                                        record.answer &&
-                                        record.answer
-                                            .replace(
-                                                /<b>/g,
-                                                "<b style='color:red;'>"
-                                            )
-                                            .replace(/\n/g, "<br/>"),
+                                    __html: record.answer && record.answer,
                                 }}
                             />
                         </Card>

@@ -4,7 +4,7 @@ import { defineConfig } from "umi"
 import routes from "./router.config"
 import settingMap from "./settting"
 
-const { REACT_APP_ENV, SETTING } = process.env
+const { REACT_APP_ENV, SETTING, IS_PROD } = process.env
 
 //获取 setting
 // 加载微应用
@@ -43,6 +43,7 @@ let config = defineConfig({
     targets: {
         ie: 11,
     },
+    extraBabelPlugins: [IS_PROD ? "transform-remove-console" : ""],
     // umi routes: https://umijs.org/docs/routing
     routes,
     // Theme for antd: https://ant.design/docs/react/customize-theme-cn

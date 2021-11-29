@@ -63,8 +63,6 @@ class IntentIdentify extends React.Component {
             let list = response.data.intent_ranking.map((item, index) => {
                 return { ...item, isTrue: false, isDel: false, addTxt: "" }
             })
-
-            console.log(response.data.intent_ranking)
             this.setState({
                 data: response.data,
                 isSpin: false,
@@ -311,7 +309,7 @@ class IntentIdentify extends React.Component {
         const { record, text } = this.props
         console.log(record)
         return (
-            <Tabs defaultActiveKey="1">
+            <Tabs defaultActiveKey="1" style={{ marginTop: "-13px" }}>
                 <TabPane
                     style={{ marginBottom: "14px" }}
                     tab="意图识别"
@@ -325,6 +323,7 @@ class IntentIdentify extends React.Component {
                         onCancel={() => {
                             this.setState({ showAnswer: false })
                         }}
+                        searchProject={this.props.searchProject}
                         height={"600px"}
                         title={"数据搜索" + "(" + text + ")"}
                         record={{
