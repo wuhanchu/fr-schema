@@ -44,7 +44,7 @@ const schema = {
         extra: "每行表示一个问题",
         editable: true,
         render: (item, record) => {
-            let showContent = item ? item.replace(/\n/g, "<br/>") : null
+            let showContent = item ? item : null
             return (
                 <Tooltip
                     title={

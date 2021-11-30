@@ -40,7 +40,6 @@ const schema = {
 
     create_time: {
         title: "创建时间",
-        required: true,
         sorter: true,
         addHide: true,
         editHide: true,

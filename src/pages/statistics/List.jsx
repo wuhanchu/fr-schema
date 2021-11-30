@@ -461,14 +461,7 @@ class List extends ListPage {
                         <Card bordered={false}>
                             <div
                                 dangerouslySetInnerHTML={{
-                                    __html:
-                                        record.answer &&
-                                        record.answer
-                                            .replace(
-                                                /<b>/g,
-                                                "<b style='color:red;'>"
-                                            )
-                                            .replace(/\n/g, "<br/>"),
+                                    __html: record.answer && record.answer,
                                 }}
                             />
                         </Card>
