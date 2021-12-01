@@ -30,8 +30,8 @@ class List extends DataList {
             },
             queryArgs: {
                 ...props.queryArgs,
-                // type: "merge_question",
-                type: "add_question_extend",
+                type: "merge_question",
+                // type: "add_question_extend",
             },
             operateWidth: "120px",
         })

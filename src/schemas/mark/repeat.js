@@ -1,13 +1,14 @@
 import { createApi } from "@/outter/fr-schema/src/service"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import { DatePicker, Tooltip } from "antd"
+import { formatData } from "@/utils/utils"
 import moment from "moment"
 import { verifyJson } from "@/outter/fr-schema-antd-utils/src/utils/component"
 const { RangePicker } = DatePicker
 
 function renderText(data) {
     return (
-        <Tooltip title={data ? data.join(" | ") : ""}>
+        <Tooltip title={data ? data : ""}>
             <div
                 style={{
                     overflow: "hidden",
@@ -16,7 +17,7 @@ function renderText(data) {
                     maxWidth: "400px",
                 }}
             >
-                {data && data.join(" | ")}
+                {data && data}
             </div>
         </Tooltip>
     )
@@ -66,14 +67,13 @@ const schema = {
         title: "检测问题",
         required: true,
         render: renderText,
-
         sorter: true,
     },
-    calibration_question_vector_id: {
-        title: "检测文本",
-        sorter: true,
-        render: renderText,
-    },
+    // calibration_question_vector_id: {
+    //     title: "检测文本",
+    //     sorter: true,
+    //     render: renderText,
+    // },
     compare_question_id: {
         title: "对比问题编号",
         listHide: true,
@@ -87,14 +87,17 @@ const schema = {
 
         sorter: true,
     },
-    compare_question_vector_id: {
-        title: "对比文本",
-        render: renderText,
-        sorter: true,
-    },
+    // compare_question_vector_id: {
+    //     title: "对比文本",
+    //     render: renderText,
+    //     sorter: true,
+    // },
     compatibility: {
         title: "匹配度",
         sorter: true,
+        render: (item) => {
+            return formatData(item, 5)
+        },
     },
 }
 

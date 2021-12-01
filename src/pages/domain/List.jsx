@@ -118,6 +118,7 @@ class List extends ListPage {
     }
 
     componentWillUnmount() {
+        notification.destroy("process")
         clearInterval(this.mysetIntervals)
     }
 
@@ -430,21 +431,32 @@ class List extends ListPage {
                             "域模型？会影响查询性能！"
                         }
                         onConfirm={async (e) => {
-                            await this.service.sync({ domain_key: record.key })
+                            let sync = await this.service.sync({
+                                domain_key: record.key,
+                            })
+                            console.log(sync)
                             message.success("模型训练中！")
                             this.mysetInterval = setInterval(async () => {
                                 let data = await schemas.task.service.getDetail(
-                                    { domain_key: record.key, id: 1 }
+                                    {
+                                        domain_key: record.key,
+                                        id: sync.data.task_id,
+                                    }
                                 )
                                 console.log(data)
-                                if (data.status === "end") {
-                                    const args = {
-                                        message: "已完成",
-                                        description: "训练已完成",
-                                        duration: 0,
+                                if (data) {
+                                    if (data.status === "end") {
+                                        const args = {
+                                            message: "已完成",
+                                            key: "process",
+                                            description: "训练已完成",
+                                            duration: 0,
+                                        }
+                                        clearInterval(this.mysetInterval)
+                                        notification.open(args)
                                     }
+                                } else {
                                     clearInterval(this.mysetInterval)
-                                    notification.open(args)
                                 }
                             }, 10000)
                             e.stopPropagation()
@@ -483,15 +495,19 @@ class List extends ListPage {
                 <Menu.Item>
                     <a
                         onClick={async () => {
-                            // this.setState({
-                            //     showTask: true,
-                            //     record,
-                            // })
+                            const args = {
+                                message: "查询中",
+                                key: "process",
+                                description: "请稍等！",
+                                duration: 0,
+                            }
 
+                            notification.open(args)
                             this.mysetIntervals = setInterval(async () => {
                                 let res = await schemas.task.service.get({
                                     domain_key: record.key,
                                     order: "create_time.desc",
+                                    name: "模型训练任务",
                                 })
                                 let data = res.list && res.list[0]
                                 if (data) {
