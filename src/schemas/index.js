@@ -10,6 +10,8 @@ import mark from "./mark"
 import entityAttr from "./entityType/attribute"
 import entityType from "./entityType"
 import hotWord from "./domain/hotWord"
+import task from "./domain/task"
+
 import response from "./response"
 
 import searchHistory from "./domain/searchHistory"
@@ -34,6 +36,7 @@ export default {
     relation,
     response,
     relationType,
+    task,
     flow,
     mark,
     searchHistory,
