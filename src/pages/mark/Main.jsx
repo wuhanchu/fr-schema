@@ -2,7 +2,7 @@ import ListPage from "@/outter/fr-schema-antd-utils/src/components/Page/ListPage
 import React from "react"
 import { PageHeaderWrapper } from "@ant-design/pro-layout"
 import { connect } from "dva"
-import { Button, Menu, Dropdown, message } from "antd"
+import { Button, Menu, Dropdown, message, notification } from "antd"
 import Add from "./Add"
 import Complement from "./Complement"
 import Repeat from "./Repeat"
@@ -47,11 +47,31 @@ class Main extends React.PureComponent {
                 onClick={async (item) => {
                     try {
                         this.setState({ isLoading: true })
-                        let data = await schemas.mark.service.mark_task({
+                        let sync = await schemas.mark.service.mark_task({
                             domain_key: item.key,
                         })
                         this.setState({ isLoading: false })
-                        message.success(data.message)
+                        message.success(sync.message)
+                        this.mysetInterval = setInterval(async () => {
+                            let data = await schemas.task.service.getDetail({
+                                domain_key: item.key,
+                                id: sync.data.task_id,
+                            })
+                            if (data) {
+                                if (data.status === "end") {
+                                    const args = {
+                                        message: "已完成",
+                                        // key: "process",
+                                        description: "已完成分析",
+                                        duration: 0,
+                                    }
+                                    clearInterval(this.mysetInterval)
+                                    notification.open(args)
+                                }
+                            } else {
+                                clearInterval(this.mysetInterval)
+                            }
+                        }, 10000)
                     } catch (error) {
                         message.error(error.message)
                         this.setState({ isLoading: false })

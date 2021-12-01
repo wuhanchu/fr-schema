@@ -434,7 +434,6 @@ class List extends ListPage {
                             let sync = await this.service.sync({
                                 domain_key: record.key,
                             })
-                            console.log(sync)
                             message.success("模型训练中！")
                             this.mysetInterval = setInterval(async () => {
                                 let data = await schemas.task.service.getDetail(
@@ -469,10 +468,32 @@ class List extends ListPage {
                     <Popconfirm
                         title={"是否将" + record.name + "域数据同步数据库！"}
                         onConfirm={async (e) => {
-                            await this.service.fsfundSync({
+                            let sync = await this.service.fsfundSync({
                                 domain_key: record.key,
                             })
-                            message.success("数据已同步！")
+                            message.success("数据同步中！")
+                            this.mysetInterval = setInterval(async () => {
+                                let data = await schemas.task.service.getDetail(
+                                    {
+                                        domain_key: record.key,
+                                        id: sync.data.task_id,
+                                    }
+                                )
+                                if (data) {
+                                    if (data.status === "end") {
+                                        const args = {
+                                            message: "已完成",
+                                            // key: "process",
+                                            description: "数据已同步",
+                                            duration: 0,
+                                        }
+                                        clearInterval(this.mysetInterval)
+                                        notification.open(args)
+                                    }
+                                } else {
+                                    clearInterval(this.mysetInterval)
+                                }
+                            }, 10000)
                             e.stopPropagation()
                         }}
                     >
@@ -495,31 +516,44 @@ class List extends ListPage {
                 <Menu.Item>
                     <a
                         onClick={async () => {
+                            this.setState({ showProcess: true })
                             const args = {
                                 message: "查询中",
                                 key: "process",
                                 description: "请稍等！",
                                 duration: 0,
                             }
-
+                            if (this.mysetIntervals) {
+                                clearInterval(this.mysetIntervals)
+                            }
                             notification.open(args)
                             this.mysetIntervals = setInterval(async () => {
                                 let res = await schemas.task.service.get({
                                     domain_key: record.key,
                                     order: "create_time.desc",
-                                    name: "模型训练任务",
+                                })
+                                if (!this.state.showProcess) {
+                                    return
+                                }
+                                let modalArr = res.list.filter((item) => {
+                                    return item.name === "模型训练任务"
+                                })
+                                let dataArr = res.list.filter((item) => {
+                                    return item.name === "数据同步任务"
+                                })
+                                let questionArr = res.list.filter((item) => {
+                                    return item.name === "问题库标注任务创建"
                                 })
                                 let data = res.list && res.list[0]
                                 if (data) {
                                     if (data.status === "end") {
                                         const args = {
-                                            message:
-                                                this.state &&
-                                                this.state.process === 100
-                                                    ? "已完成"
-                                                    : "训练中",
+                                            message: data.name,
                                             key: "process",
                                             onClose: () => {
+                                                this.setState({
+                                                    showProcess: false,
+                                                })
                                                 clearInterval(
                                                     this.mysetIntervals
                                                 )
@@ -530,29 +564,24 @@ class List extends ListPage {
                                                         "0%": "#108ee9",
                                                         "100%": "#87d068",
                                                     }}
-                                                    percent={
-                                                        (this.state &&
-                                                            this.state
-                                                                .process) ||
-                                                        0
-                                                    }
+                                                    percent={100}
                                                 />
                                             ),
                                             duration: 0,
                                         }
-
-                                        this.setState({ process: data.process })
+                                        this.setState({ process: 0 })
                                         notification.open(args)
                                         setTimeout(() => {
                                             clearInterval(this.mysetIntervals)
                                         }, 700)
                                     } else {
                                         const args = {
-                                            message: this.mysetIntervals
-                                                ? "训练中"
-                                                : "已完成",
+                                            message: data.name,
                                             key: "process",
                                             onClose: () => {
+                                                this.setState({
+                                                    showProcess: false,
+                                                })
                                                 clearInterval(
                                                     this.mysetIntervals
                                                 )
@@ -584,6 +613,9 @@ class List extends ListPage {
                                         key: "process",
                                         onClose: () => {
                                             clearInterval(this.mysetIntervals)
+                                            this.setState({
+                                                showProcess: false,
+                                            })
                                         },
                                         description: "暂时没有模型正在训练",
                                         duration: 0,
