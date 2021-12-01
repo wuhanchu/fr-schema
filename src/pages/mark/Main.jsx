@@ -13,7 +13,7 @@ import { LoadingOutlined } from "@ant-design/icons"
 export const infoType = {
     Complement: "补充扩展问",
     Add: "问题新增",
-    Repeat: "重复问题",
+    // Repeat: "重复问题",
 }
 
 /**
