@@ -123,9 +123,9 @@ const schema = {
         },
         props: {
             style: {
-                height: "388px",
+                height: "470px",
                 border: "1px solid #d9d9d9",
-                width: "480px",
+                width: "530px",
             },
             defaultLinkTarget: "_blank",
             wrapperWidth: "900px",

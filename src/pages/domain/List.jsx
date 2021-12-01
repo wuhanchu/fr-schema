@@ -356,6 +356,117 @@ class List extends ListPage {
         )
     }
 
+    handleGetTask = (record) => {
+        this.setState({ showProcess: true })
+        const args = {
+            message: "查询中",
+            key: "process",
+            description: "请稍等！",
+            duration: 0,
+        }
+        if (this.mysetIntervals) {
+            clearInterval(this.mysetIntervals)
+        }
+        notification.open(args)
+        try {
+            this.mysetIntervals = setInterval(async () => {
+                let res = await schemas.task.service.get({
+                    domain_key: record.key,
+                    order: "create_time.desc",
+                })
+                if (!this.state.showProcess) {
+                    return
+                }
+                let modalArr = res.list.filter((item) => {
+                    return item.name === "模型训练任务"
+                })
+                let dataArr = res.list.filter((item) => {
+                    return item.name === "数据同步任务"
+                })
+                let questionArr = res.list.filter((item) => {
+                    return item.name === "问题库标注任务创建"
+                })
+                let data = res.list && res.list[0]
+                if (data) {
+                    if (data.status === "end") {
+                        const args = {
+                            message: data.name + "已完成",
+                            key: "process",
+                            onClose: () => {
+                                this.setState({
+                                    showProcess: false,
+                                })
+                                clearInterval(this.mysetIntervals)
+                            },
+                            description: (
+                                <Progress
+                                    strokeColor={{
+                                        "0%": "#108ee9",
+                                        "100%": "#87d068",
+                                    }}
+                                    percent={100}
+                                />
+                            ),
+                            duration: 0,
+                        }
+                        this.setState({ process: 0 })
+                        notification.open(args)
+                        setTimeout(() => {
+                            clearInterval(this.mysetIntervals)
+                        }, 700)
+                    } else {
+                        const args = {
+                            message: data.name,
+                            key: "process",
+                            onClose: () => {
+                                this.setState({
+                                    showProcess: false,
+                                })
+                                clearInterval(this.mysetIntervals)
+                            },
+                            description: (
+                                <Progress
+                                    strokeColor={{
+                                        "0%": "#108ee9",
+                                        "100%": "#87d068",
+                                    }}
+                                    percent={
+                                        this.mysetIntervals
+                                            ? (this.state &&
+                                                  this.state.process) ||
+                                              0
+                                            : 100
+                                    }
+                                />
+                            ),
+                            duration: 0,
+                        }
+                        notification.open(args)
+                        this.setState({ process: data.process })
+                    }
+                } else {
+                    const args = {
+                        message: "暂无训练",
+                        key: "process",
+                        onClose: () => {
+                            clearInterval(this.mysetIntervals)
+                            this.setState({
+                                showProcess: false,
+                            })
+                        },
+                        description: "暂时没有模型正在训练",
+                        duration: 0,
+                    }
+
+                    notification.open(args)
+                    setTimeout(() => {
+                        clearInterval(this.mysetIntervals)
+                    }, 700)
+                }
+            }, 5000)
+        } catch (error) {}
+    }
+
     renderOperateColumnExtend(record) {
         const testMenu = (
             <Menu>
@@ -431,34 +542,44 @@ class List extends ListPage {
                             "域模型？会影响查询性能！"
                         }
                         onConfirm={async (e) => {
-                            let sync = await this.service.sync({
-                                domain_key: record.key,
-                            })
-                            message.success("模型训练中！")
-                            this.mysetInterval = setInterval(async () => {
-                                let data = await schemas.task.service.getDetail(
-                                    {
-                                        domain_key: record.key,
-                                        id: sync.data.task_id,
-                                    }
-                                )
-                                console.log(data)
-                                if (data) {
-                                    if (data.status === "end") {
-                                        const args = {
-                                            message: "已完成",
-                                            key: "process",
-                                            description: "训练已完成",
-                                            duration: 0,
+                            try {
+                                let sync = await this.service.sync({
+                                    domain_key: record.key,
+                                })
+                                message.success("模型训练中！")
+                                this.mysetInterval = setInterval(async () => {
+                                    let data = await schemas.task.service.getDetail(
+                                        {
+                                            domain_key: record.key,
+                                            id: sync.data.task_id,
                                         }
+                                    )
+                                    if (data) {
+                                        if (data.status === "end") {
+                                            const args = {
+                                                message: data.name + "已完成",
+                                                key: "process",
+                                                description: (
+                                                    <Progress
+                                                        strokeColor={{
+                                                            "0%": "#108ee9",
+                                                            "100%": "#87d068",
+                                                        }}
+                                                        percent={100}
+                                                    />
+                                                ),
+                                                duration: 0,
+                                            }
+                                            clearInterval(this.mysetInterval)
+                                            notification.open(args)
+                                        }
+                                    } else {
                                         clearInterval(this.mysetInterval)
-                                        notification.open(args)
                                     }
-                                } else {
-                                    clearInterval(this.mysetInterval)
-                                }
-                            }, 10000)
-                            e.stopPropagation()
+                                }, 10000)
+                                this.handleGetTask(record)
+                                e.stopPropagation()
+                            } catch (error) {}
                         }}
                     >
                         <a>模型训练</a>
@@ -468,32 +589,44 @@ class List extends ListPage {
                     <Popconfirm
                         title={"是否将" + record.name + "域数据同步数据库！"}
                         onConfirm={async (e) => {
-                            let sync = await this.service.fsfundSync({
-                                domain_key: record.key,
-                            })
-                            message.success("数据同步中！")
-                            this.mysetInterval = setInterval(async () => {
-                                let data = await schemas.task.service.getDetail(
-                                    {
-                                        domain_key: record.key,
-                                        id: sync.data.task_id,
-                                    }
-                                )
-                                if (data) {
-                                    if (data.status === "end") {
-                                        const args = {
-                                            message: "已完成",
-                                            // key: "process",
-                                            description: "数据已同步",
-                                            duration: 0,
+                            try {
+                                let sync = await this.service.fsfundSync({
+                                    domain_key: record.key,
+                                })
+                                message.success("数据同步中！")
+                                this.mysetInterval = setInterval(async () => {
+                                    let data = await schemas.task.service.getDetail(
+                                        {
+                                            domain_key: record.key,
+                                            id: sync.data.task_id,
                                         }
+                                    )
+                                    if (data) {
+                                        if (data.status === "end") {
+                                            const args = {
+                                                message: data.name + "已完成",
+                                                key: "process",
+                                                description: (
+                                                    <Progress
+                                                        strokeColor={{
+                                                            "0%": "#108ee9",
+                                                            "100%": "#87d068",
+                                                        }}
+                                                        percent={100}
+                                                    />
+                                                ),
+                                                duration: 0,
+                                            }
+                                            clearInterval(this.mysetInterval)
+                                            notification.open(args)
+                                        }
+                                    } else {
                                         clearInterval(this.mysetInterval)
-                                        notification.open(args)
                                     }
-                                } else {
-                                    clearInterval(this.mysetInterval)
-                                }
-                            }, 10000)
+                                }, 10000)
+                                this.handleGetTask(record)
+                            } catch (error) {}
+
                             e.stopPropagation()
                         }}
                     >
@@ -516,117 +649,7 @@ class List extends ListPage {
                 <Menu.Item>
                     <a
                         onClick={async () => {
-                            this.setState({ showProcess: true })
-                            const args = {
-                                message: "查询中",
-                                key: "process",
-                                description: "请稍等！",
-                                duration: 0,
-                            }
-                            if (this.mysetIntervals) {
-                                clearInterval(this.mysetIntervals)
-                            }
-                            notification.open(args)
-                            this.mysetIntervals = setInterval(async () => {
-                                let res = await schemas.task.service.get({
-                                    domain_key: record.key,
-                                    order: "create_time.desc",
-                                })
-                                if (!this.state.showProcess) {
-                                    return
-                                }
-                                let modalArr = res.list.filter((item) => {
-                                    return item.name === "模型训练任务"
-                                })
-                                let dataArr = res.list.filter((item) => {
-                                    return item.name === "数据同步任务"
-                                })
-                                let questionArr = res.list.filter((item) => {
-                                    return item.name === "问题库标注任务创建"
-                                })
-                                let data = res.list && res.list[0]
-                                if (data) {
-                                    if (data.status === "end") {
-                                        const args = {
-                                            message: data.name,
-                                            key: "process",
-                                            onClose: () => {
-                                                this.setState({
-                                                    showProcess: false,
-                                                })
-                                                clearInterval(
-                                                    this.mysetIntervals
-                                                )
-                                            },
-                                            description: (
-                                                <Progress
-                                                    strokeColor={{
-                                                        "0%": "#108ee9",
-                                                        "100%": "#87d068",
-                                                    }}
-                                                    percent={100}
-                                                />
-                                            ),
-                                            duration: 0,
-                                        }
-                                        this.setState({ process: 0 })
-                                        notification.open(args)
-                                        setTimeout(() => {
-                                            clearInterval(this.mysetIntervals)
-                                        }, 700)
-                                    } else {
-                                        const args = {
-                                            message: data.name,
-                                            key: "process",
-                                            onClose: () => {
-                                                this.setState({
-                                                    showProcess: false,
-                                                })
-                                                clearInterval(
-                                                    this.mysetIntervals
-                                                )
-                                            },
-                                            description: (
-                                                <Progress
-                                                    strokeColor={{
-                                                        "0%": "#108ee9",
-                                                        "100%": "#87d068",
-                                                    }}
-                                                    percent={
-                                                        this.mysetIntervals
-                                                            ? (this.state &&
-                                                                  this.state
-                                                                      .process) ||
-                                                              0
-                                                            : 100
-                                                    }
-                                                />
-                                            ),
-                                            duration: 0,
-                                        }
-                                        notification.open(args)
-                                        this.setState({ process: data.process })
-                                    }
-                                } else {
-                                    const args = {
-                                        message: "暂无训练",
-                                        key: "process",
-                                        onClose: () => {
-                                            clearInterval(this.mysetIntervals)
-                                            this.setState({
-                                                showProcess: false,
-                                            })
-                                        },
-                                        description: "暂时没有模型正在训练",
-                                        duration: 0,
-                                    }
-
-                                    notification.open(args)
-                                    setTimeout(() => {
-                                        clearInterval(this.mysetIntervals)
-                                    }, 700)
-                                }
-                            }, 1000)
+                            this.handleGetTask(record)
                         }}
                     >
                         训练进度

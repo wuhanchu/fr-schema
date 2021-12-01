@@ -568,7 +568,7 @@ function renderInfoModal(
                 }}
                 {...{
                     offline: false,
-                    width: "1100px",
+                    width: "1300px",
                     isCustomize: true,
                     customize: {
                         left: 10,

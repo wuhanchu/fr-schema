@@ -32,7 +32,7 @@ class List extends DataList {
             operateWidth: "120px",
             infoProps: {
                 offline: true,
-                width: "1100px",
+                width: "1200px",
                 isCustomize: true,
                 customize: {
                     left: 10,
