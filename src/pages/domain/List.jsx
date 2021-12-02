@@ -374,7 +374,7 @@ class List extends ListPage {
         let res = await schemas.task.service.getTaskInfo({
             domain_key: record.key,
             task_id: taskId,
-            order: "create_time.asc",
+            order: "create_time.desc",
             limit: 2000,
         })
         console.log(res)

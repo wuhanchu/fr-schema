@@ -66,7 +66,7 @@ class Main extends React.PureComponent {
         let res = await schemas.task.service.getTaskInfo({
             domain_key: record.key,
             task_id: taskId,
-            order: "create_time.asc",
+            order: "create_time.desc",
             limit: 2000,
         })
         if (res.list.length) {
@@ -165,6 +165,7 @@ class Main extends React.PureComponent {
                                                 </Tooltip>
                                             </span>
                                         ),
+                                        key: "process",
                                         description: (
                                             <Progress
                                                 strokeColor={{
