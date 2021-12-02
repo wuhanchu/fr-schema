@@ -67,12 +67,14 @@ class Main extends React.PureComponent {
             domain_key: record.key,
             task_id: taskId,
             order: "create_time.asc",
+            limit: 2000,
         })
         if (res.list.length) {
             let mySteps = (
                 <Steps
                     direction="vertical"
                     progressDot
+                    style={{ maxHeight: "500px", overflowY: "auto" }}
                     current={res.list.length}
                 >
                     {res.list.map((item) => {

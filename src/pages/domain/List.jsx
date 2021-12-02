@@ -375,6 +375,7 @@ class List extends ListPage {
             domain_key: record.key,
             task_id: taskId,
             order: "create_time.asc",
+            limit: 2000,
         })
         console.log(res)
         if (res.list.length) {
@@ -382,6 +383,7 @@ class List extends ListPage {
                 <Steps
                     direction="vertical"
                     progressDot
+                    style={{ maxHeight: "500px", overflowY: "auto" }}
                     current={res.list.length}
                 >
                     {res.list.map((item) => {
