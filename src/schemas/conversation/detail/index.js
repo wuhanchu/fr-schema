@@ -61,14 +61,34 @@ const schema = {
                         overflow: "hidden",
                         textOverflow: "ellipsis",
                         whiteSpace: "nowrap",
-                        minWidth: "100px",
-                        maxWidth: "100px",
+                        minWidth: "80px",
+                        maxWidth: "80px",
                     }}
                 >
                     {JSON.stringify(item)}
                 </div>
             </Tooltip>
         ),
+    },
+    process_time: {
+        title: "处理时间",
+        render: (item) => {
+            return (
+                <Tooltip title={item + "ms"}>
+                    <div
+                        style={{
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                            minWidth: "60px",
+                            maxWidth: "60px",
+                        }}
+                    >
+                        {item ? item + "ms" : ""}
+                    </div>
+                </Tooltip>
+            )
+        },
     },
     result_text: {
         title: "行为结果",
@@ -85,8 +105,8 @@ const schema = {
                             overflow: "hidden",
                             textOverflow: "ellipsis",
                             whiteSpace: "nowrap",
-                            minWidth: "100px",
-                            maxWidth: "100px",
+                            minWidth: "80px",
+                            maxWidth: "80px",
                         }}
                     >
                         {text}

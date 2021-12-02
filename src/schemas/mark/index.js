@@ -66,6 +66,50 @@ const schema = {
 
 const service = createApi("question_mark_task", schema, null, "eq.")
 
+service.getRepeat = async (args) => {
+    if (args.create_time) {
+        let beginTime = moment(args.create_time.split(",")[0]).format(
+            "YYYY-MM-DD"
+        )
+        let endTime = moment(args.create_time.split(",")[1]).format(
+            "YYYY-MM-DD"
+        )
+        args.create_time = undefined
+        args.and = `(create_time.gte.${beginTime},create_time.lte.${endTime})`
+    }
+
+    let order = args.order
+
+    if (order) {
+        args.order = "info->" + order.split(".")[0]
+        args.sort = order.split(".")[1]
+    } else {
+        args.order = "create_time"
+        args.sort = "desc"
+    }
+    let data = await createApi(
+        "question/mark_task/merge_question",
+        schema,
+        null,
+        ""
+    ).get({
+        ...args,
+        status: undefined,
+        type: undefined,
+        notNullsLast: true,
+    })
+    let list = data.list.map((item, index) => {
+        return {
+            ...item.info,
+            ...item,
+            disabled: item.status !== 0,
+            text: item.info && item.info.text,
+            question_standard: item.info && item.info.question_standard,
+        }
+    })
+    return { ...data, list }
+}
+
 service.get = async (args) => {
     if (args.create_time) {
         console.log(args.create_time.split(","))

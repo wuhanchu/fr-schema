@@ -51,6 +51,7 @@ const schema = {
 }
 
 const service = createApi("task", schema, null, "eq.")
+service.getTaskInfo = createApi("task_log", schema, null, "eq.").get
 
 export default {
     schema,

@@ -24,7 +24,11 @@ class List extends DataList {
             showSelect: true,
             schema: schema,
             addHide: true,
-            service: schemas.mark.service,
+            // service: schemas.mark.service,
+            service: {
+                ...schemas.mark.service,
+                get: schemas.mark.service.getRepeat,
+            },
             infoProps: {
                 width: "900px",
             },
@@ -90,7 +94,47 @@ class List extends DataList {
             inDel: true,
         })
         if (!this.props.offline) {
-            // response = await this.service.delete({ id: data[idKey], ...data })
+            response = await schemas.question.service.delete({
+                id: data.delete_id,
+            })
+            response = await this.service.patch(
+                { id: data.id, status: 1 },
+                schema
+            )
+        }
+        const showMessage = (response && response.msg) || "删除成功"
+        this.setState({
+            data: this.state.data,
+            inDel: false,
+        })
+        this.refreshList()
+        message.success(showMessage)
+        this.handleVisibleModal()
+        this.handleChangeCallback && this.handleChangeCallback()
+        this.props.handleChangeCallback && this.props.handleChangeCallback()
+        return response
+    }
+
+    handleDeleteQuestionText = async (data) => {
+        // 更新
+        console.log(data)
+        let response
+        this.setState({
+            inDel: true,
+        })
+        if (!this.props.offline) {
+            // if(data.type_delete==="calibration"){
+            //     if(data.calibration_question_text === data.)
+            // }
+            let res = await schemas.question.service.getDetail({
+                id: data.delete_id,
+            })
+            console.log(res)
+            // response = await schemas.question.service.delete({ id: data.delete_id, })
+            // response = await this.service.patch(
+            //     { id: data.id, status: 1 },
+            //     schema
+            // )
         }
         const showMessage = (response && response.msg) || "删除成功"
         this.setState({
@@ -158,7 +202,8 @@ class List extends DataList {
                         onConfirm={async (e) => {
                             this.setState({ record })
                             await this.handleDeleteQuestion({
-                                id: record.calibration_question_id,
+                                delete_id: record.calibration_question_id,
+                                id: record.id,
                             })
                             e.stopPropagation()
                         }}
@@ -180,7 +225,8 @@ class List extends DataList {
                         onConfirm={async (e) => {
                             this.setState({ record })
                             await this.handleDeleteQuestion({
-                                id: record.compare_question_id,
+                                delete_id: record.compare_question_id,
+                                ...record,
                             })
                             e.stopPropagation()
                         }}
@@ -201,7 +247,11 @@ class List extends DataList {
                         title="是否要删除检测文本？"
                         onConfirm={async (e) => {
                             this.setState({ record })
-                            // await this.handleDelete(record)
+                            await this.handleDeleteQuestionText({
+                                delete_id: record.calibration_question_id,
+                                ...record,
+                                type_delete: "calibration",
+                            })
                             e.stopPropagation()
                         }}
                     >
@@ -221,7 +271,11 @@ class List extends DataList {
                         title="是否要删除对比文本？"
                         onConfirm={async (e) => {
                             this.setState({ record })
-                            // await this.handleDelete(record)
+                            await this.handleDeleteQuestionText({
+                                delete_id: record.compare_question_id,
+                                id: record.id,
+                                type_delete: "compare",
+                            })
                             e.stopPropagation()
                         }}
                     >
