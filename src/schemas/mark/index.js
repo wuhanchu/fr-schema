@@ -74,14 +74,26 @@ service.getRepeat = async (args) => {
         let endTime = moment(args.create_time.split(",")[1]).format(
             "YYYY-MM-DD"
         )
+        // args.and = `(create_time.gte.${beginTime},create_time.lte.${endTime})`
+        args.begin_time = beginTime + "T00:00:00"
+        // args.begin_time = args.create_time.split(",")[0]
+        args.end_time = endTime + "T23:59:59"
+        // args.end_time = args.create_time.split(",")[1]
         args.create_time = undefined
-        args.and = `(create_time.gte.${beginTime},create_time.lte.${endTime})`
     }
 
     let order = args.order
 
     if (order) {
-        args.order = "info->" + order.split(".")[0]
+        if (
+            args.order.split(".")[0] === "calibration_question_text" ||
+            args.order.split(".")[0] === "compare_question_text" ||
+            args.order.split(".")[0] === "compatibility"
+        ) {
+            args.order = "info->>'" + order.split(".")[0] + "'"
+        } else {
+            args.order = order.split(".")[0]
+        }
         args.sort = order.split(".")[1]
     } else {
         args.order = "create_time"
@@ -94,7 +106,6 @@ service.getRepeat = async (args) => {
         ""
     ).get({
         ...args,
-        status: undefined,
         type: undefined,
         notNullsLast: true,
     })
@@ -107,18 +118,19 @@ service.getRepeat = async (args) => {
             question_standard: item.info && item.info.question_standard,
         }
     })
+    console.log(data)
     return { ...data, list }
 }
 
 service.get = async (args) => {
     if (args.create_time) {
         console.log(args.create_time.split(","))
-        let beginTime = moment(args.create_time.split(",")[0]).format(
-            "YYYY-MM-DD"
-        )
-        let endTime = moment(args.create_time.split(",")[1]).format(
-            "YYYY-MM-DD"
-        )
+        let beginTime =
+            moment(args.create_time.split(",")[0]).format("YYYY-MM-DD") +
+            "T00:00:00"
+        let endTime =
+            moment(args.create_time.split(",")[1]).format("YYYY-MM-DD") +
+            "T23:59:59"
         args.create_time = undefined
         args.and = `(create_time.gte.${beginTime},create_time.lte.${endTime})`
     }

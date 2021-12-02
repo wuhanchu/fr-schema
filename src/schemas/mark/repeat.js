@@ -63,35 +63,37 @@ const schema = {
         required: true,
         // type: schemaFieldType.Select,
     },
-    calibration_question_text: {
+    calibration_question_standard: {
         title: "检测问题",
+        render: renderText,
+        sorter: true,
+    },
+    calibration_question_text: {
+        title: "检测文本",
         required: true,
         render: renderText,
         sorter: true,
     },
-    // calibration_question_vector_id: {
-    //     title: "检测文本",
-    //     sorter: true,
-    //     render: renderText,
-    // },
+
     compare_question_id: {
         title: "对比问题编号",
         listHide: true,
         required: true,
         // type: schemaFieldType.Select,
     },
-    compare_question_text: {
+    compare_question_standard: {
         title: "对比问题",
+        sorter: true,
+        render: renderText,
+    },
+    compare_question_text: {
+        title: "对比文本",
         required: true,
         render: renderText,
 
         sorter: true,
     },
-    // compare_question_vector_id: {
-    //     title: "对比文本",
-    //     render: renderText,
-    //     sorter: true,
-    // },
+
     compatibility: {
         title: "匹配度",
         sorter: true,

@@ -123,18 +123,38 @@ class List extends DataList {
             inDel: true,
         })
         if (!this.props.offline) {
-            // if(data.type_delete==="calibration"){
-            //     if(data.calibration_question_text === data.)
-            // }
             let res = await schemas.question.service.getDetail({
                 id: data.delete_id,
             })
             console.log(res)
-            // response = await schemas.question.service.delete({ id: data.delete_id, })
-            // response = await this.service.patch(
-            //     { id: data.id, status: 1 },
-            //     schema
-            // )
+            let question_extend = res.question_extend
+            if (question_extend) {
+                question_extend = question_extend.split("\n")
+                question_extend = question_extend.filter((item) => {
+                    console.log(
+                        item,
+                        data.calibration_question_text,
+                        data.compare_question_text
+                    )
+
+                    if (data.type_delete === "calibration") {
+                        return item !== data.calibration_question_text
+                    } else {
+                        return item !== data.compare_question_text
+                    }
+                })
+
+                question_extend = question_extend.join("\n")
+                console.log(question_extend)
+            }
+            response = await schemas.question.service.patch(
+                { id: data.delete_id, question_extend },
+                schemas.question.schema
+            )
+            response = await this.service.patch(
+                { id: data.id, status: 1 },
+                schema
+            )
         }
         const showMessage = (response && response.msg) || "删除成功"
         this.setState({
@@ -152,24 +172,9 @@ class List extends DataList {
     renderOperationMulit() {
         return (
             <span>
-                <>
-                    {
-                        <Popconfirm
-                            title="是否要补充选中的数据？"
-                            onConfirm={async (e) => {
-                                const { dispatch } = this.props
-                                const { selectedRows } = this.state
-                                await this.handldAppend(selectedRows)
-                                this.refreshList()
-                            }}
-                        >
-                            <Button type="primary">补充</Button>
-                        </Popconfirm>
-                    }
-                </>
                 {
                     <Popconfirm
-                        title="是否要删除选中的数据？"
+                        title="是否要丢弃选中的数据？"
                         onConfirm={(e) => {
                             const { dispatch } = this.props
                             const { selectedRows } = this.state
@@ -203,7 +208,7 @@ class List extends DataList {
                             this.setState({ record })
                             await this.handleDeleteQuestion({
                                 delete_id: record.calibration_question_id,
-                                id: record.id,
+                                ...record,
                             })
                             e.stopPropagation()
                         }}
@@ -273,7 +278,7 @@ class List extends DataList {
                             this.setState({ record })
                             await this.handleDeleteQuestionText({
                                 delete_id: record.compare_question_id,
-                                id: record.id,
+                                ...record,
                                 type_delete: "compare",
                             })
                             e.stopPropagation()
@@ -295,15 +300,17 @@ class List extends DataList {
         return (
             <>
                 {record.status === 0 && <Divider type="vertical" />}
-                <Dropdown overlay={moreMenu}>
-                    <a
-                        className="ant-dropdown-link"
-                        onClick={(e) => e.preventDefault()}
-                    >
-                        {"测试 "}
-                        <DownOutlined />
-                    </a>
-                </Dropdown>
+                {record.status === 0 && (
+                    <Dropdown overlay={moreMenu}>
+                        <a
+                            className="ant-dropdown-link"
+                            onClick={(e) => e.preventDefault()}
+                        >
+                            {"更多 "}
+                            <DownOutlined />
+                        </a>
+                    </Dropdown>
+                )}
             </>
         )
     }

@@ -126,7 +126,7 @@ class List extends DataList {
             <span>
                 {
                     <Popconfirm
-                        title="是否要删除选中的数据？"
+                        title="是否要丢弃选中的数据？"
                         onConfirm={(e) => {
                             const { dispatch } = this.props
                             const { selectedRows } = this.state

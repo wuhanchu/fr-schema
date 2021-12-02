@@ -285,7 +285,7 @@ service.patch = async function (args, schema) {
     }
     const res = await createApi("question", schema, null, "eq.").patch({
         ...args,
-        question_extend: question_extend || undefined,
+        question_extend: question_extend || null,
     })
 
     return res
