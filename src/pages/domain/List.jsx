@@ -393,7 +393,7 @@ class List extends ListPage {
                 message: (
                     <span>
                         <span>"任务详情！"</span>
-                        <Tooltip title="查看详情">
+                        <Tooltip title="刷新">
                             <a
                                 onClick={() => {
                                     this.handleTaskInfo(record, taskId)
