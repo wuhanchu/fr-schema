@@ -228,19 +228,19 @@ export default function request(obj, options = {}) {
             } else if (type.indexOf('json') > -1) {
                 const result = await response.json();
                 let contentRange = response.headers.get('content-range');
-
+                let total = null;
+                if (!_.isNil(contentRange)) {
+                    total = contentRange.split('/')[1];
+                }
                 if (Array.isArray(result)) {
-                    let total = null;
 
                     contentRange = response.headers.get('content-range');
-                    if (!_.isNil(contentRange)) {
-                        total = contentRange.split('/')[1];
-                    }
+          
                     return { list: result, total: total && parseInt(total) };
                 } else if (result.data && result.data.list) {
                     return { list: result.data.list, total: result.data.total, ...result };
                 } else {
-                    return { list: result.data, total: result.count, ...result, contentRange };
+                    return { list: result.data, total: result.count || (total && parseInt(total)), ...result, contentRange };
                 }
             } else {
                 let txt = await response.text();
