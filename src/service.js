@@ -151,7 +151,13 @@ export function createApi(
             if (otherParams.order === undefined) {
                 otherParams.order = order;
             }else {
-                otherParams.order = otherParams.order + '.nullslast'
+                if(otherParams.notNullsLast){
+                    otherParams.order = otherParams.order
+                    otherParams.notNullsLast = undefined
+                }else{
+                    otherParams.order = otherParams.order + '.nullslast'
+
+                }
             }
 
             limit = pageSize || limit || 10;
