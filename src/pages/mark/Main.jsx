@@ -2,6 +2,7 @@ import ListPage from "@/outter/fr-schema-antd-utils/src/components/Page/ListPage
 import React from "react"
 import { PageHeaderWrapper } from "@ant-design/pro-layout"
 import { connect } from "dva"
+import moment from "moment"
 import {
     Button,
     Menu,
@@ -78,7 +79,14 @@ class Main extends React.PureComponent {
                     current={res.list.length}
                 >
                     {res.list.map((item) => {
-                        return <Step title={item.name} />
+                        return (
+                            <Step
+                                title={item.name}
+                                description={moment(item.create_time).format(
+                                    "YYYY-MM-DD HH:mm:ss"
+                                )}
+                            />
+                        )
                     })}
                 </Steps>
             )
@@ -124,7 +132,7 @@ class Main extends React.PureComponent {
                             domain_key: item.key,
                         })
                         this.setState({ isLoading: false })
-                        message.success(sync.message)
+                        message.success("创建成功，请查看进度！")
                         this.mysetInterval = setInterval(async () => {
                             let data
                             try {

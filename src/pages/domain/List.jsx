@@ -36,9 +36,11 @@ import {
     QuestionCircleOutlined,
     SyncOutlined,
 } from "@ant-design/icons"
+import moment from "moment"
 
 const { actions } = frSchema
 const { Step } = Steps
+const { SubMenu } = Menu
 @connect(({ global, user }) => ({
     dict: global.dict,
     global: global,
@@ -367,7 +369,12 @@ class List extends ListPage {
         let args = {
             message: "请稍等！",
             key: "info",
-            description: "查询任务详情中",
+            description: (
+                <>
+                    查询任务详情中
+                    <LoadingOutlined />
+                </>
+            ),
             duration: 0,
         }
         notification.open(args)
@@ -387,7 +394,14 @@ class List extends ListPage {
                     current={res.list.length}
                 >
                     {res.list.map((item) => {
-                        return <Step title={item.name} />
+                        return (
+                            <Step
+                                title={item.name}
+                                description={moment(item.create_time).format(
+                                    "YYYY-MM-DD HH:mm:ss"
+                                )}
+                            />
+                        )
                     })}
                 </Steps>
             )
@@ -422,12 +436,16 @@ class List extends ListPage {
         }
     }
 
-    handleGetTask = (record) => {
+    handleGetTask = (record, id, name) => {
+        notification.destroy("info")
         this.setState({ showProcess: true })
+        let props = {}
+        props.id = id
+        props.name = name
         const args = {
             message: "查询中",
             key: "process",
-            description: "请稍等！",
+            description: <LoadingOutlined />,
             duration: 0,
         }
         if (this.mysetIntervals) {
@@ -441,6 +459,7 @@ class List extends ListPage {
                     res = await schemas.task.service.get({
                         domain_key: record.key,
                         order: "create_time.desc",
+                        ...props,
                     })
                 } catch (error) {
                     if (this.mysetIntervals) {
@@ -548,7 +567,7 @@ class List extends ListPage {
                     }
                 } else {
                     const args = {
-                        message: "暂无训练",
+                        message: "暂无数据",
                         key: "process",
                         onClose: () => {
                             clearInterval(this.mysetIntervals)
@@ -556,7 +575,7 @@ class List extends ListPage {
                                 showProcess: false,
                             })
                         },
-                        description: "暂时没有模型正在训练",
+                        description: "请稍后查询",
                         duration: 0,
                     }
 
@@ -652,7 +671,7 @@ class List extends ListPage {
                                 let sync = await this.service.sync({
                                     domain_key: record.key,
                                 })
-                                message.success("模型训练中！")
+                                // message.success("模型训练中！")
                                 this.mysetInterval = setInterval(async () => {
                                     let data
                                     try {
@@ -715,7 +734,11 @@ class List extends ListPage {
                                         clearInterval(this.mysetInterval)
                                     }
                                 }, 10000)
-                                this.handleGetTask(record)
+                                this.handleGetTask(
+                                    record,
+                                    sync.data.task_id,
+                                    undefined
+                                )
                                 e.stopPropagation()
                             } catch (error) {
                                 if (this.mysetInterval) {
@@ -727,6 +750,7 @@ class List extends ListPage {
                         <a>模型训练</a>
                     </Popconfirm>
                 </Menu.Item>
+
                 <Menu.Item>
                     <Popconfirm
                         title={"是否将" + record.name + "域数据同步数据库！"}
@@ -735,7 +759,7 @@ class List extends ListPage {
                                 let sync = await this.service.fsfundSync({
                                     domain_key: record.key,
                                 })
-                                message.success("数据同步中！")
+                                // message.success("数据同步中！")
                                 this.mysetInterval = setInterval(async () => {
                                     let data
                                     try {
@@ -798,7 +822,11 @@ class List extends ListPage {
                                         clearInterval(this.mysetInterval)
                                     }
                                 }, 10000)
-                                this.handleGetTask(record)
+                                this.handleGetTask(
+                                    record,
+                                    sync.data.task_id,
+                                    undefined
+                                )
                             } catch (error) {
                                 if (this.mysetInterval) {
                                     clearInterval(this.mysetInterval)
@@ -824,7 +852,48 @@ class List extends ListPage {
                         热门问题
                     </a>
                 </Menu.Item>
-                <Menu.Item>
+                <SubMenu title="查看进度">
+                    <Menu.Item key="1">
+                        <a
+                            onClick={async () => {
+                                this.handleGetTask(
+                                    record,
+                                    undefined,
+                                    "模型训练任务"
+                                )
+                            }}
+                        >
+                            训练进度
+                        </a>
+                    </Menu.Item>
+                    <Menu.Item key="2">
+                        <a
+                            onClick={async () => {
+                                this.handleGetTask(
+                                    record,
+                                    undefined,
+                                    "数据同步任务"
+                                )
+                            }}
+                        >
+                            同步进度
+                        </a>
+                    </Menu.Item>
+                    <Menu.Item key="2">
+                        <a
+                            onClick={async () => {
+                                this.handleGetTask(
+                                    record,
+                                    undefined,
+                                    "问题库分析任务"
+                                )
+                            }}
+                        >
+                            分析进度
+                        </a>
+                    </Menu.Item>
+                </SubMenu>
+                {/* <Menu.Item>
                     <a
                         onClick={async () => {
                             this.handleGetTask(record)
@@ -832,7 +901,7 @@ class List extends ListPage {
                     >
                         训练进度
                     </a>
-                </Menu.Item>
+                </Menu.Item> */}
                 <Menu.Item>
                     <a
                         onClick={async () => {
