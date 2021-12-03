@@ -35,6 +35,7 @@ import {
     LoadingOutlined,
     QuestionCircleOutlined,
     SyncOutlined,
+    WarningOutlined,
 } from "@ant-design/icons"
 import moment from "moment"
 
@@ -396,7 +397,23 @@ class List extends ListPage {
                     {res.list.map((item) => {
                         return (
                             <Step
-                                title={item.name}
+                                title={
+                                    <span>
+                                        <span>{item.name}</span>
+                                        {item.remark && (
+                                            <Tooltip title={item.remark}>
+                                                <a>
+                                                    <WarningOutlined
+                                                        style={{
+                                                            marginLeft: "5px",
+                                                            color: "red",
+                                                        }}
+                                                    />
+                                                </a>
+                                            </Tooltip>
+                                        )}
+                                    </span>
+                                }
                                 description={moment(item.create_time).format(
                                     "YYYY-MM-DD HH:mm:ss"
                                 )}
@@ -408,7 +425,7 @@ class List extends ListPage {
             args = {
                 message: (
                     <span>
-                        <span>"任务详情！"</span>
+                        <span>任务详情</span>
                         <Tooltip title="刷新">
                             <a
                                 onClick={() => {
@@ -445,6 +462,12 @@ class List extends ListPage {
         const args = {
             message: "查询中",
             key: "process",
+            onClose: () => {
+                this.setState({
+                    showProcess: false,
+                })
+                clearInterval(this.mysetIntervals)
+            },
             description: <LoadingOutlined />,
             duration: 0,
         }

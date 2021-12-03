@@ -47,7 +47,13 @@ class EditPage extends DataList {
     renderList(inProps = {}) {
         let { loading } = this.props
         const { showSelect, scroll, mini, tableSelectAll } = this.meta
-        let { data, listLoading, selectedRows, tableFooter } = this.state
+        let {
+            data,
+            listLoading,
+            selectedRows,
+            tableFooter,
+            otherFooter,
+        } = this.state
 
         // judge weather hide select
         let otherProps = {}
@@ -67,9 +73,14 @@ class EditPage extends DataList {
         const columns = this.getColumns()
 
         let footer = ""
+
         // 列表底部 显示统计数据(如金额)
         tableFooter &&
             tableFooter.map((item) => (footer += this.reduceTableTotal(item)))
+
+        if (otherFooter) {
+            footer = otherFooter + " " + footer
+        }
         if (footer) {
             otherProps.footer = () => <div>{footer}</div>
         }

@@ -61,6 +61,12 @@ const schema = {
         },
         width: "260px",
     },
+    question_extend_number: {
+        title: "扩展问数量",
+        editHide: true,
+        width: "120px",
+        addHide: true,
+    },
     label: {
         title: "标签",
         type: schemaFieldType.Select,
@@ -183,6 +189,8 @@ const schema = {
 
 const service = createApi("question", schema, null, "eq.")
 service.get = async function (args) {
+    console.log(args)
+    let questionExtendArgs = {}
     if (args.create_time && !args.update_time) {
         let beginTime =
             moment(args.create_time.split(",")[0]).format("YYYY-MM-DD") +
@@ -192,6 +200,8 @@ service.get = async function (args) {
             "T23:59:59"
         args.create_time = undefined
         args.and = `(create_time.gte.${beginTime},create_time.lte.${endTime})`
+        questionExtendArgs.create_time_begin = beginTime
+        questionExtendArgs.create_time_end = endTime
     }
     if (args.update_time && !args.create_time) {
         let beginTime =
@@ -202,6 +212,8 @@ service.get = async function (args) {
             "T23:59:59"
         args.update_time = undefined
         args.and = `(update_time.gte.${beginTime},update_time.lte.${endTime})`
+        questionExtendArgs.update_time_begin = beginTime
+        questionExtendArgs.update_time_end = endTime
     }
     if (args.update_time && args.create_time) {
         let updateBeginTime =
@@ -219,9 +231,33 @@ service.get = async function (args) {
             "T23:59:59"
         args.create_time = undefined
         args.and = `(update_time.gte.${updateBeginTime},update_time.lte.${updateEndTime},create_time.gte.${createBeginTime},create_time.lte.${createEndTime})`
+        questionExtendArgs.create_time_begin = createBeginTime
+        questionExtendArgs.create_time_end = createEndTime
+        questionExtendArgs.update_time_begin = updateBeginTime
+        questionExtendArgs.update_time_end = updateEndTime
     }
 
     const res = await createApi("question", schema, null, null).get(args)
+    const questionExtendCount = await createApi(
+        "question/question_extend_count",
+        schema,
+        null,
+        ""
+    ).getBasic({
+        ...questionExtendArgs,
+        project_id: args.project_id.replace("eq.", ""),
+        group: args.group
+            ? args.group.substr(0, args.group.length - 1).replace("like.*", "")
+            : undefined,
+        label: args.label
+            ? args.label.substr(0, args.label.length - 1).replace("ov.{", "")
+            : undefined,
+        question_standard: args.question_standard
+            ? args.question_standard
+                  .substr(0, args.question_standard.length - 1)
+                  .replace("like.*", "")
+            : undefined,
+    })
     let list = res.list.map((item) => {
         return {
             ...item,
@@ -232,7 +268,11 @@ service.get = async function (args) {
             info: item.info ? JSON.stringify(item.info) : "",
         }
     })
-    return { ...res, list: list }
+    return {
+        ...res,
+        list: list,
+        question_extend_count: questionExtendCount.data.total,
+    }
 }
 service.getMinioConfig = async function (args) {
     const res = await createApi("minio", schema, null, "").get(args)

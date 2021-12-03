@@ -141,6 +141,7 @@ class BaseList extends EditPage {
 
     async componentDidMount() {
         this.setBraftEditor()
+
         await super.componentDidMount()
     }
 
@@ -920,6 +921,35 @@ class BaseList extends EditPage {
         )
     }
 
+    async refreshList() {
+        this.setState({ listLoading: true }, async () => {
+            let data = await this.requestList()
+            let list = decorateList(data.list, this.schema)
+            this.convertList && (list = this.convertList(list))
+
+            this.setState({
+                selectedRows: [],
+                data: {
+                    ...data,
+                    list,
+                },
+                listLoading: false,
+            })
+            // let { list } = this.state.data
+            this.state.editRow.map((item) => {
+                list.map((listItem, index) => {
+                    if (item.id === listItem.id) {
+                        list[index] = item
+                    }
+                })
+            })
+            this.setState({
+                data: { ...this.state.data, list: [...list] },
+                otherFooter:
+                    "总扩展问数量：" + this.state.data.question_extend_count,
+            })
+        })
+    }
     async handleUploadExcel(data, schema) {
         // 更新
         let response

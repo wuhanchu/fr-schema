@@ -21,6 +21,7 @@ import {
     LoadingOutlined,
     QuestionCircleOutlined,
     SyncOutlined,
+    WarningOutlined,
 } from "@ant-design/icons"
 
 const { Step } = Steps
@@ -81,7 +82,23 @@ class Main extends React.PureComponent {
                     {res.list.map((item) => {
                         return (
                             <Step
-                                title={item.name}
+                                title={
+                                    <span>
+                                        <span>{item.name}</span>
+                                        {item.remark && (
+                                            <Tooltip title={item.remark}>
+                                                <a>
+                                                    <WarningOutlined
+                                                        style={{
+                                                            marginLeft: "5px",
+                                                            color: "red",
+                                                        }}
+                                                    />
+                                                </a>
+                                            </Tooltip>
+                                        )}
+                                    </span>
+                                }
                                 description={moment(item.create_time).format(
                                     "YYYY-MM-DD HH:mm:ss"
                                 )}
@@ -93,7 +110,7 @@ class Main extends React.PureComponent {
             args = {
                 message: (
                     <span>
-                        <span>"任务详情！"</span>
+                        <span>任务详情</span>
                         <Tooltip title="刷新">
                             <a
                                 onClick={() => {
@@ -107,7 +124,7 @@ class Main extends React.PureComponent {
                 ),
                 key: "info",
                 description: mySteps,
-                duration: 10,
+                duration: 0,
             }
             notification.open(args)
         } else {
