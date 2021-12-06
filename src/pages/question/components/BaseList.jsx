@@ -65,7 +65,10 @@ class BaseList extends EditPage {
         super(props, {
             operateWidth: 170,
             schema: clone({ ...schemas.question.schema, ...config }),
-            service: schemas.question.service,
+            service: {
+                ...schemas.question.service,
+                get: schemas.question.service.getData,
+            },
             // showEdit: false,
             allowExport: true,
             showSelect: true,
