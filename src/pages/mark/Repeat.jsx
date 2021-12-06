@@ -42,10 +42,10 @@ class List extends DataList {
     }
 
     async componentDidMount() {
-        // let project = await schemas.project.service.get({
-        //     limit: 10000,
-        // })
-        // this.schema.project_id.dict = listToDict(project.list)
+        let project = await schemas.project.service.get({
+            limit: 10000,
+        })
+        this.schema.project_id.dict = listToDict(project.list)
         try {
             this.formRef.current.setFieldsValue({ status: "0" })
         } catch (error) {}

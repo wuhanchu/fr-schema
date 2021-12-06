@@ -35,6 +35,7 @@ const schema = {
         renderInput: () => <RangePicker style={{ width: "100%" }} />,
         type: schemaFieldType.DatePicker,
     },
+
     status: {
         title: "状态",
         sorter: true,
@@ -54,6 +55,11 @@ const schema = {
                 remark: "已丢弃",
             },
         },
+        required: true,
+        type: schemaFieldType.Select,
+    },
+    project_id: {
+        title: "问题库",
         required: true,
         type: schemaFieldType.Select,
     },
