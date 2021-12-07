@@ -4,12 +4,22 @@ import schemas from "@/schemas"
 import React from "react"
 import schema from "@/schemas/mark/repeat"
 
-import { Button, Popconfirm, Divider, message, Dropdown, Menu } from "antd"
+import {
+    Button,
+    Popconfirm,
+    Divider,
+    message,
+    Dropdown,
+    Menu,
+    AutoComplete,
+    Input,
+} from "antd"
 import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
 import frSchema from "@/outter/fr-schema/src"
 import { listToDict } from "@/outter/fr-schema/src/dict"
 import { LoadingOutlined, DownOutlined } from "@ant-design/icons"
+import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
 
 const { decorateList } = frSchema
 
@@ -30,7 +40,12 @@ class List extends DataList {
                 get: schemas.mark.service.getRepeat,
             },
             infoProps: {
-                width: "900px",
+                width: "1200px",
+                isCustomize: true,
+                customize: {
+                    left: 10,
+                    right: 14,
+                },
             },
             queryArgs: {
                 ...props.queryArgs,
@@ -49,6 +64,42 @@ class List extends DataList {
         try {
             this.formRef.current.setFieldsValue({ status: "0" })
         } catch (error) {}
+        this.schema.calibration_question_standard.render = (item, data) => {
+            return (
+                <a
+                    onClick={() => {
+                        this.handleVisibleModal(
+                            true,
+                            {
+                                ...data,
+                                id: data.calibration_question_id,
+                            },
+                            "show"
+                        )
+                    }}
+                >
+                    {item}
+                </a>
+            )
+        }
+        this.schema.compare_question_standard.render = (item, data) => {
+            return (
+                <a
+                    onClick={() => {
+                        this.handleVisibleModal(
+                            true,
+                            {
+                                ...data,
+                                id: data.compare_question_id,
+                            },
+                            "show"
+                        )
+                    }}
+                >
+                    {item}
+                </a>
+            )
+        }
         super.componentDidMount()
     }
 
@@ -362,6 +413,72 @@ class List extends DataList {
                     </>
                 ),
             }
+        )
+    }
+
+    renderInfoModal(customProps = {}) {
+        if (this.props.renderInfoModal) {
+            return this.props.renderInfoModal()
+        }
+        const { form } = this.props
+        const renderForm = this.props.renderForm || this.renderForm
+        const { resource, title, addArgs } = this.meta
+        const { visibleModal, infoData, action } = this.state
+        const updateMethods = {
+            handleVisibleModal: this.handleVisibleModal.bind(this),
+            handleUpdate: this.handleAdd.bind(this),
+            handleAdd: this.handleAdd.bind(this),
+        }
+
+        return (
+            visibleModal && (
+                <InfoModal
+                    renderForm={renderForm}
+                    title={"问题详情"}
+                    action={action}
+                    resource={resource}
+                    {...updateMethods}
+                    visible={visibleModal}
+                    values={infoData}
+                    addArgs={addArgs}
+                    meta={this.meta}
+                    service={schemas.question.service}
+                    schema={{
+                        id: { title: "编号" },
+                        project_id: this.schema.project_id,
+                        ...schemas.question.schema,
+                        group: {
+                            ...schemas.question.schema.group,
+                            renderInput: (item, data, other) => {
+                                console.log(item)
+                                console.log(data, other)
+                                return (
+                                    <AutoComplete
+                                        style={{
+                                            width: "100%",
+                                            maxWidth: "300px",
+                                        }}
+                                        disabled={other.disabled}
+                                        filterOption={(inputValue, option) =>
+                                            option.value
+                                                .toUpperCase()
+                                                .indexOf(
+                                                    inputValue.toUpperCase()
+                                                ) !== -1
+                                        }
+                                        options={this.state.options}
+                                    >
+                                        {/* {options} */}
+                                        <Input placeholder="请输入分组"></Input>
+                                    </AutoComplete>
+                                )
+                            },
+                        },
+                    }}
+                    {...this.meta.infoProps}
+                    {...customProps}
+                />
+            )
         )
     }
 

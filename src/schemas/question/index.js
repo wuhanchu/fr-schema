@@ -66,6 +66,7 @@ const schema = {
         editHide: true,
         width: "120px",
         addHide: true,
+        showHide: true,
     },
     label: {
         title: "标签",
@@ -160,6 +161,7 @@ const schema = {
         title: "外部编号",
         addHide: true,
         editHide: true,
+        showHide: true,
         render: (item) => {
             return <div style={{ minWidth: "60px" }}>{item}</div>
         },
@@ -168,6 +170,8 @@ const schema = {
     create_time: {
         title: "创建时间",
         addHide: true,
+        showHide: true,
+
         editHide: true,
         type: schemaFieldType.DatePicker,
         props: {
@@ -178,6 +182,7 @@ const schema = {
     update_time: {
         title: "更新时间",
         addHide: true,
+        showHide: true,
         editHide: true,
         type: schemaFieldType.DatePicker,
         props: {
