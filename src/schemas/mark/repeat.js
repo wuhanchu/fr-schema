@@ -65,7 +65,7 @@ const schema = {
     },
     calibration_question_id: {
         title: "检测问题编号",
-        listHide: true,
+        // listHide: true,
         required: true,
         // type: schemaFieldType.Select,
     },
@@ -83,7 +83,7 @@ const schema = {
 
     compare_question_id: {
         title: "对比问题编号",
-        listHide: true,
+        // listHide: true,
         required: true,
         // type: schemaFieldType.Select,
     },

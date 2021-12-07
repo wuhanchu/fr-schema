@@ -444,7 +444,7 @@ class List extends DataList {
                     meta={this.meta}
                     service={schemas.question.service}
                     schema={{
-                        id: { title: "编号" },
+                        // id: { title: "编号" },
                         project_id: this.schema.project_id,
                         ...schemas.question.schema,
                         group: {
