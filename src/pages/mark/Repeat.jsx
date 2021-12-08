@@ -298,54 +298,60 @@ class List extends DataList {
                         </a>
                     </Popconfirm>
                 </Menu.Item>
-                <Menu.Item>
-                    <Popconfirm
-                        title="是否要删除检测文本？"
-                        onConfirm={async (e) => {
-                            this.setState({ record })
-                            await this.handleDeleteQuestionText({
-                                delete_id: record.calibration_question_id,
-                                ...record,
-                                type_delete: "calibration",
-                            })
-                            e.stopPropagation()
-                        }}
-                    >
-                        <a>
-                            {inDel &&
-                                this.state.record &&
-                                this.state.record.id &&
-                                this.state.record.id === record.id && (
-                                    <LoadingOutlined />
-                                )}
-                            删除检测文本
-                        </a>
-                    </Popconfirm>
-                </Menu.Item>
-                <Menu.Item>
-                    <Popconfirm
-                        title="是否要删除对比文本？"
-                        onConfirm={async (e) => {
-                            this.setState({ record })
-                            await this.handleDeleteQuestionText({
-                                delete_id: record.compare_question_id,
-                                ...record,
-                                type_delete: "compare",
-                            })
-                            e.stopPropagation()
-                        }}
-                    >
-                        <a>
-                            {inDel &&
-                                this.state.record &&
-                                this.state.record.id &&
-                                this.state.record.id === record.id && (
-                                    <LoadingOutlined />
-                                )}
-                            删除对比文本
-                        </a>
-                    </Popconfirm>
-                </Menu.Item>
+                {record.calibration_question_standard !==
+                    record.calibration_question_text && (
+                    <Menu.Item>
+                        <Popconfirm
+                            title="是否要删除检测文本？"
+                            onConfirm={async (e) => {
+                                this.setState({ record })
+                                await this.handleDeleteQuestionText({
+                                    delete_id: record.calibration_question_id,
+                                    ...record,
+                                    type_delete: "calibration",
+                                })
+                                e.stopPropagation()
+                            }}
+                        >
+                            <a>
+                                {inDel &&
+                                    this.state.record &&
+                                    this.state.record.id &&
+                                    this.state.record.id === record.id && (
+                                        <LoadingOutlined />
+                                    )}
+                                删除检测文本
+                            </a>
+                        </Popconfirm>
+                    </Menu.Item>
+                )}
+                {record.compare_question_standard !==
+                    record.compare_question_text && (
+                    <Menu.Item>
+                        <Popconfirm
+                            title="是否要删除对比文本？"
+                            onConfirm={async (e) => {
+                                this.setState({ record })
+                                await this.handleDeleteQuestionText({
+                                    delete_id: record.compare_question_id,
+                                    ...record,
+                                    type_delete: "compare",
+                                })
+                                e.stopPropagation()
+                            }}
+                        >
+                            <a>
+                                {inDel &&
+                                    this.state.record &&
+                                    this.state.record.id &&
+                                    this.state.record.id === record.id && (
+                                        <LoadingOutlined />
+                                    )}
+                                删除对比文本
+                            </a>
+                        </Popconfirm>
+                    </Menu.Item>
+                )}
             </Menu>
         )
         return (
