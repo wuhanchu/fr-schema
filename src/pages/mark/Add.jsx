@@ -255,7 +255,7 @@ class List extends DataList {
         return (
             !this.meta.readOnly &&
             !this.props.readOnly && {
-                title: "是否正确返回",
+                title: "操作",
                 width: this.meta.operateWidth,
                 fixed: "right",
                 render: (text, record) => (
