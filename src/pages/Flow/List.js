@@ -425,6 +425,16 @@ class List extends ListPage {
                     dataIndex: "intent_key",
                     key: "intent_key",
                 },
+                {
+                    title: "意图匹配辅助信息",
+                    dataIndex: "intent_key_text",
+                    key: "intent_key_text",
+                },
+                {
+                    title: "全局槽位",
+                    dataIndex: "slot",
+                    key: "slot",
+                },
             ]
             let data = await this.requestList({
                 pageSize: 1000000,
@@ -440,10 +450,11 @@ class List extends ListPage {
                         config: JSON.stringify(item.config),
                         intent_key:
                             item.intent_key && item.intent_key.join("|"),
+                        slot: item.slot && JSON.stringify(item.slot),
                     }
                 })
             data = decorateList(list, this.schema)
-            await exportData("意图", data, columns)
+            await exportData("流程", data, columns)
             this.setState({ exportLoading: false })
         })
         // this.handleVisibleExportModal()
@@ -465,13 +476,19 @@ class List extends ListPage {
                 onOk={async () => {
                     try {
                         const data = this.state.importData.map((item) => {
+                            console.log(
+                                item.intent_key
+                                    ? item.intent_key.split("|")
+                                    : "unl"
+                            )
                             return {
                                 ...item,
                                 id: item.id || undefined,
                                 config: JSON.parse(item.config),
-                                intent_key:
-                                    item.intent_key &&
-                                    item.intent_key.split("|"),
+                                slot: item.slot ? JSON.parse(item.slot) : {},
+                                intent_key: item.intent_key
+                                    ? item.intent_key.split("|")
+                                    : [],
                             }
                         })
                         await this.service.upInsert(data)
