@@ -12,6 +12,7 @@ class ConversationDetail extends Chat {
             showInput: false,
             roomHeight: this.props.roomHeight || "100vh",
             collapse: false,
+            loading: true,
         }
     }
 
@@ -50,7 +51,7 @@ class ConversationDetail extends Chat {
                         type: "left",
                     })
                 }
-                if (item.type === "receive" && item.text) {
+                if (item.type === "receive" && item.text && item.node_key) {
                     list.push({
                         result: item.result,
                         content: item.text,
@@ -67,6 +68,11 @@ class ConversationDetail extends Chat {
                 domain_key: this.props.domain_key,
                 conversationId: this.props.conversation_id,
                 showIntentFlow,
+                loading: false,
+            })
+        } else {
+            this.setState({
+                loading: false,
             })
         }
     }

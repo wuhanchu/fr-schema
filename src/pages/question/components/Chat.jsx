@@ -1,6 +1,6 @@
 import React from "react"
 import { autobind } from "core-decorators"
-import { Button, Input } from "antd"
+import { Button, Input, Spin } from "antd"
 import robotSvg from "@/assets/rebot.svg"
 import mySvg from "@/outter/fr-schema-antd-utils/src/components/GlobalHeader/my.svg"
 import ChatFlowTable from "@/pages/question/components/ChatFlowTable"
@@ -34,6 +34,7 @@ class Chat extends React.PureComponent {
             flow_key: "",
             audio: document.createElement("AUDIO"),
             collapse: false, // 是否收缩
+            loading: false,
         }
         this.chatRef = React.createRef()
         this.inputRef = React.createRef()
@@ -43,38 +44,40 @@ class Chat extends React.PureComponent {
     render() {
         let { showInput, showIntentFlow, collapse } = this.state
         return (
-            <div style={styles.contentSt}>
-                <div style={styles.chatView}>
-                    {showIntentFlow && (
-                        <div
-                            style={{
-                                display: "flex",
-                                justifyContent: "flex-end",
-                                width: "100%",
-                                fontSize: "21px",
-                                marginBottom: "10px",
-                            }}
-                        >
-                            {collapse ? (
-                                <MenuFoldOutlined
-                                    onClick={(_) =>
-                                        this.setState({ collapse: false })
-                                    }
-                                />
-                            ) : (
-                                <MenuUnfoldOutlined
-                                    onClick={(_) =>
-                                        this.setState({ collapse: true })
-                                    }
-                                />
-                            )}
-                        </div>
-                    )}
-                    {this.renderChatView()}
-                    {showInput && this.renderInput()}
+            <Spin tip="加载中..." spinning={this.state.loading}>
+                <div style={styles.contentSt}>
+                    <div style={styles.chatView}>
+                        {showIntentFlow && (
+                            <div
+                                style={{
+                                    display: "flex",
+                                    justifyContent: "flex-end",
+                                    width: "100%",
+                                    fontSize: "21px",
+                                    marginBottom: "10px",
+                                }}
+                            >
+                                {collapse ? (
+                                    <MenuFoldOutlined
+                                        onClick={(_) =>
+                                            this.setState({ collapse: false })
+                                        }
+                                    />
+                                ) : (
+                                    <MenuUnfoldOutlined
+                                        onClick={(_) =>
+                                            this.setState({ collapse: true })
+                                        }
+                                    />
+                                )}
+                            </div>
+                        )}
+                        {this.renderChatView()}
+                        {showInput && this.renderInput()}
+                    </div>
+                    {collapse && showIntentFlow && this.renderChatIntentFlow()}
                 </div>
-                {collapse && showIntentFlow && this.renderChatIntentFlow()}
-            </div>
+            </Spin>
         )
     }
 
