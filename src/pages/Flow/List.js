@@ -42,6 +42,8 @@ class List extends ListPage {
             service: schemas.flow.service,
             importTemplateUrl,
             operateWidth: "320px",
+            showDelete: true,
+            showSelect: true,
             infoProps: {
                 width: "900px",
             },

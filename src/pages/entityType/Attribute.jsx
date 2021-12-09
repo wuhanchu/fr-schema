@@ -29,6 +29,8 @@ class List extends DataList {
                 entity_type_key: props.record.key,
                 domain_key: props.record.domain_key,
             },
+            showDelete: true,
+            showSelect: true,
             importTemplateUrl,
             operateWidth: "120px",
         })

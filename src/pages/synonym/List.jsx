@@ -26,6 +26,8 @@ class List extends ListPage {
             service: schemas.synonym.service,
             operateWidth: "120px",
             importTemplateUrl,
+            showDelete: true,
+            showSelect: true,
         })
         this.schema.domain_key.dict = this.props.dict.domain
     }

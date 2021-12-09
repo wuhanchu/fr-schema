@@ -29,6 +29,8 @@ class List extends ListPage {
             importTemplateUrl,
             queryArgs: { pageSize: 10000, limit: 10000 },
             mini: true,
+            showDelete: true,
+            showSelect: true,
             operateWidth: "120px",
         })
         this.schema.domain_key.dict = this.props.dict.domain

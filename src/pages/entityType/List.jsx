@@ -29,6 +29,8 @@ class List extends DataList {
             service: schemas.entityType.service,
             operateWidth: "180px",
             importTemplateUrl,
+            showDelete: true,
+            showSelect: true,
         })
         this.schema.domain_key.dict = this.props.dict.domain
     }
