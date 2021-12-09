@@ -23,7 +23,7 @@ import ImportModal from "@/outter/fr-schema-antd-utils/src/components/modal/Impo
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import { async } from "@antv/x6/lib/registry/marker/main"
 import { listToDict } from "@/outter/fr-schema/src/dict"
-
+import { LoadingOutlined } from "@ant-design/icons"
 const { decorateList } = frSchema
 
 @connect(({ global }) => ({
