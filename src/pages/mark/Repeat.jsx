@@ -24,6 +24,10 @@ import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoMod
 const { decorateList } = frSchema
 
 const { utils } = frSchema
+
+function unique(arr) {
+    return Array.from(new Set(arr))
+}
 @connect(({ global }) => ({
     dict: global.dict,
 }))
@@ -141,9 +145,6 @@ class List extends DataList {
         // 更新
         console.log(data)
         let response
-        this.setState({
-            inDel: true,
-        })
         if (!this.props.offline) {
             response = await schemas.question.service.delete({
                 id: data.delete_id,
@@ -156,7 +157,6 @@ class List extends DataList {
         const showMessage = (response && response.msg) || "删除成功"
         this.setState({
             data: this.state.data,
-            inDel: false,
         })
         this.refreshList()
         message.success(showMessage)
@@ -170,9 +170,6 @@ class List extends DataList {
         // 更新
         console.log(data)
         let response
-        this.setState({
-            inDel: true,
-        })
         if (!this.props.offline) {
             let res = await schemas.question.service.getDetail({
                 id: data.delete_id,
@@ -182,12 +179,6 @@ class List extends DataList {
             if (question_extend) {
                 question_extend = question_extend.split("\n")
                 question_extend = question_extend.filter((item) => {
-                    console.log(
-                        item,
-                        data.calibration_question_text,
-                        data.compare_question_text
-                    )
-
                     if (data.type_delete === "calibration") {
                         return item !== data.calibration_question_text
                     } else {
@@ -196,7 +187,6 @@ class List extends DataList {
                 })
 
                 question_extend = question_extend.join("\n")
-                console.log(question_extend)
             }
             response = await schemas.question.service.patch(
                 { id: data.delete_id, question_extend },
@@ -210,10 +200,61 @@ class List extends DataList {
         const showMessage = (response && response.msg) || "删除成功"
         this.setState({
             data: this.state.data,
-            inDel: false,
         })
         this.refreshList()
         message.success(showMessage)
+        this.handleVisibleModal()
+        this.handleChangeCallback && this.handleChangeCallback()
+        this.props.handleChangeCallback && this.props.handleChangeCallback()
+        return response
+    }
+
+    handMergeQuestion = async (calibration_id, compare_id, data) => {
+        this.setState({ listLoading: true })
+        let res = await schemas.question.service.getDetails({
+            id: "in.(" + calibration_id + "," + compare_id + ")",
+        })
+        let list = res.list
+        let compare
+        let calibration
+        list.map((item) => {
+            if (item.id === calibration_id) {
+                calibration = item
+            }
+            if (item.id === compare_id) {
+                compare = item
+            }
+        })
+        let response
+        try {
+            let question_extend = compare.question_extend
+                ? [...compare.question_extend]
+                : []
+            question_extend.push(calibration.question_standard)
+            if (calibration.question_extend) {
+                question_extend = [
+                    ...question_extend,
+                    ...calibration.question_extend,
+                ]
+            }
+
+            response = await schemas.question.service.patch(
+                { id: compare_id, question_extend: unique(question_extend) },
+                schemas.question.schema
+            )
+            response = await schemas.question.service.delete({
+                id: calibration_id,
+            })
+            response = await this.service.patch(
+                { id: data.id, status: 1 },
+                schema
+            )
+            this.refreshList()
+            message.success("合并成功！")
+        } catch (error) {
+            message.error("合并失败！")
+        }
+
         this.handleVisibleModal()
         this.handleChangeCallback && this.handleChangeCallback()
         this.props.handleChangeCallback && this.props.handleChangeCallback()
@@ -252,6 +293,22 @@ class List extends DataList {
         const { inDel } = this.state
         const moreMenu = (
             <Menu>
+                <Menu.Item>
+                    <Popconfirm
+                        title="是否要合并问题？"
+                        onConfirm={async (e) => {
+                            this.setState({ record })
+                            await this.handMergeQuestion(
+                                record.calibration_question_id,
+                                record.compare_question_id,
+                                record
+                            )
+                            e.stopPropagation()
+                        }}
+                    >
+                        <a>合并问题</a>
+                    </Popconfirm>
+                </Menu.Item>
                 <Menu.Item>
                     <Popconfirm
                         title="是否要删除检测问题？"

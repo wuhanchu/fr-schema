@@ -409,6 +409,12 @@ service.getDetail = async function (args) {
         answer: res.answer && res.answer.replace(/\n/g, "<br>"),
     }
 }
+service.getDetails = async function (args) {
+    const res = await createApi("question", schema, null, "").get(args)
+    return {
+        ...res,
+    }
+}
 export default {
     schema,
     service,
