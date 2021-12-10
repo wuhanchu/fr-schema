@@ -295,22 +295,6 @@ class List extends DataList {
             <Menu>
                 <Menu.Item>
                     <Popconfirm
-                        title="是否要合并问题？"
-                        onConfirm={async (e) => {
-                            this.setState({ record })
-                            await this.handMergeQuestion(
-                                record.calibration_question_id,
-                                record.compare_question_id,
-                                record
-                            )
-                            e.stopPropagation()
-                        }}
-                    >
-                        <a>合并问题</a>
-                    </Popconfirm>
-                </Menu.Item>
-                <Menu.Item>
-                    <Popconfirm
                         title="是否要删除检测问题？"
                         onConfirm={async (e) => {
                             this.setState({ record })
@@ -409,6 +393,22 @@ class List extends DataList {
                         </Popconfirm>
                     </Menu.Item>
                 )}
+                <Menu.Item>
+                    <Popconfirm
+                        title="是否要合并问题？"
+                        onConfirm={async (e) => {
+                            this.setState({ record })
+                            await this.handMergeQuestion(
+                                record.calibration_question_id,
+                                record.compare_question_id,
+                                record
+                            )
+                            e.stopPropagation()
+                        }}
+                    >
+                        <a>合并到对比问题</a>
+                    </Popconfirm>
+                </Menu.Item>
             </Menu>
         )
         return (
