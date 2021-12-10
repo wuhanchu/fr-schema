@@ -401,7 +401,13 @@ class List extends ListPage {
                                     <span>
                                         <span>{item.name}</span>
                                         {item.remark && (
-                                            <Tooltip title={item.remark}>
+                                            <Tooltip
+                                                title={item.remark}
+                                                overlayStyle={{
+                                                    maxHeight: "300px",
+                                                    overflow: "auto",
+                                                }}
+                                            >
                                                 <a>
                                                     <WarningOutlined
                                                         style={{
