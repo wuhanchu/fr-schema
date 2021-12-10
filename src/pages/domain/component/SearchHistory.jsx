@@ -16,6 +16,7 @@ import {
     DatePicker,
     Popconfirm,
     Tag,
+    Divider,
 } from "antd"
 import { formatData } from "@/utils/utils"
 import projectService from "@/schemas/project"
@@ -197,6 +198,15 @@ class MyList extends DataList {
                         renderTitleOpeation={(data) => {
                             return (
                                 <>
+                                    <Divider
+                                        type="vertical"
+                                        style={{
+                                            lineHeight: "16px",
+                                            height: "16px",
+                                            marginTop: "3px",
+                                        }}
+                                    />
+
                                     {data.id === record.match_question_id ? (
                                         <Popconfirm
                                             title="是否删除当前匹配的问题？"
@@ -220,7 +230,7 @@ class MyList extends DataList {
                                         >
                                             <a
                                                 style={{
-                                                    marginLeft: "10px",
+                                                    // marginLeft: "10px",
                                                     marginRight: "10px",
                                                 }}
                                             >
@@ -245,7 +255,7 @@ class MyList extends DataList {
                                         >
                                             <a
                                                 style={{
-                                                    marginLeft: "10px",
+                                                    // marginLeft: "10px",
                                                     marginRight: "10px",
                                                 }}
                                             >

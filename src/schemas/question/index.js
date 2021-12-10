@@ -415,6 +415,14 @@ service.getDetails = async function (args) {
         ...res,
     }
 }
+
+service.compare = async function (args) {
+    const res = await createApi("search/compare", schema, null, "").get(args)
+    return {
+        ...res,
+    }
+}
+
 export default {
     schema,
     service,

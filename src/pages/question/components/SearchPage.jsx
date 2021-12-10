@@ -13,10 +13,12 @@ import {
     Button,
     Select,
     Popover,
+    notification,
 } from "antd"
 import { listToDict } from "@/outter/fr-schema/src/dict"
 import schemas from "@/schemas"
 import { contentHeight } from "@/styles/global"
+import JsonViewer from "react-json-view"
 import * as _ from "lodash"
 import utils from "@/outter/fr-schema-antd-utils/src"
 import { downloadFile } from "@/utils/minio"
@@ -172,6 +174,7 @@ function renderTitle(
                 {props.renderTitleOpeation && props.renderTitleOpeation(item)}
              */}
             </span>
+
             {
                 <a
                     onClick={() => {
@@ -312,19 +315,73 @@ function renderTitle(
                         e.stopPropagation()
                     }}
                 >
-                    <a style={{ marginRight: "10px" }}>删除</a>
+                    <a>删除</a>
                 </Popconfirm>
             ) : (
                 <p
                     style={{
                         color: "#00000073",
                         margin: 0,
-                        marginRight: "10px",
                     }}
                 >
                     删除
                 </p>
             )}
+            <Divider
+                type="vertical"
+                style={{ lineHeight: "16px", height: "16px", marginTop: "3px" }}
+            />
+            {item.match_question_title && (
+                <Popconfirm
+                    title="是否进行实体对比？"
+                    onConfirm={async (e) => {
+                        setLoading(true)
+                        let domain_key
+                        if (props.record && props.record.key) {
+                            domain_key = props.record.key
+                        }
+                        if (props.record && props.record.domain_key) {
+                            domain_key = props.record.domain_key
+                        }
+                        let data = await schemas.question.service.compare({
+                            domain_key: domain_key,
+                            sentences1: values || props.record.search,
+                            sentences2: item.match_question_title,
+                        })
+                        const args = {
+                            message: "对比结果",
+                            key: "match_question_title",
+                            description: (
+                                <JsonViewer
+                                    sortKeys
+                                    style={{ backgroundColor: "white" }}
+                                    src={data.list}
+                                    collapseStringsAfterLength={12}
+                                    displayObjectSize
+                                    name={null}
+                                />
+                            ),
+
+                            duration: 0,
+                        }
+                        notification.open(args)
+                        console.log(data)
+                        setLoading(false)
+                        e.stopPropagation()
+                    }}
+                >
+                    <a
+                        style={{
+                            marginRight: props.renderTitleOpeation
+                                ? "0"
+                                : "10px",
+                        }}
+                    >
+                        实体对比
+                    </a>
+                </Popconfirm>
+            )}
+
             {props.renderTitleOpeation && props.renderTitleOpeation(item)}
         </div>
     )
