@@ -15,7 +15,8 @@ import schemas from "@/schemas"
 import { SettingOutlined, LoadingOutlined } from "@ant-design/icons"
 import Chat from "@/pages/question/components/Chat"
 import Modal from "antd/lib/modal/Modal"
-
+import utils from "@/outter/fr-schema-antd-utils/src"
+const { url } = utils.utils
 @autobind
 class Dialogue extends Chat {
     constructor(props) {
@@ -25,7 +26,7 @@ class Dialogue extends Chat {
             ...this.state,
             conversationId: "",
             type: props.dialogueType ? props.dialogueType : "chat",
-            serviceId: record.talk_service_id,
+            serviceId: record && record.talk_service_id,
             options: [],
             flowOption: [],
             flow_key: props.flowKey ? props.flowKey : undefined,
@@ -33,7 +34,8 @@ class Dialogue extends Chat {
             resultFlowLength: 1,
             showSetting: false,
             settingSpin: true,
-            domain_key: record.key,
+            domain_key:
+                (record && record.key) || url.getUrlParams("domain_key"),
             // collapse: false,
             showIntentFlow: true,
         }
@@ -42,11 +44,23 @@ class Dialogue extends Chat {
     formRef = React.createRef()
 
     async componentDidMount() {
+        if (url.getUrlParams("project_id")) {
+            let domain = await schemas.project.service.get({
+                id: "eq." + url.getUrlParams("project_id"),
+            })
+            if (domain && domain.list && domain.list[0]) {
+                this.setState({
+                    domain_key: domain.list[0].domain_key,
+                })
+            }
+        }
+
         if (this.props.dialogueType) {
             await this.onChatTypeConfirm()
         } else {
             await this.getChatRecord()
         }
+
         this.chatRef.current && this.scrollToBottom()
         this.getSettingData()
     }
@@ -473,6 +487,7 @@ class Dialogue extends Chat {
                     type: "flow",
                     domain_key,
                     flow_key,
+                    project_id: url.getUrlParams("project_id") || undefined,
                     slot: slotObj,
                 })
                 param.conversationId = res.data.id
@@ -485,6 +500,7 @@ class Dialogue extends Chat {
                 res = await schemas.domain.service.conversation({
                     type: "chat",
                     domain_key,
+                    project_id: url.getUrlParams("project_id") || undefined,
                     slot: {
                         domain_key: domain_key,
                     },
@@ -492,6 +508,7 @@ class Dialogue extends Chat {
                 await schemas.domain.service.message({
                     domain_key,
                     conversation_id: res.data.id,
+
                     text:
                         `/slot{"project\_id":"` +
                         checkboxValue.join(",") +
@@ -533,6 +550,8 @@ class Dialogue extends Chat {
             let res = await schemas.domain.service.conversation({
                 type: "flow",
                 domain_key,
+                project_id: url.getUrlParams("project_id") || undefined,
+
                 flow_key,
                 slot: slotObj,
             })
@@ -606,6 +625,8 @@ class Dialogue extends Chat {
         let res = await schemas.domain.service.conversation({
             domain_key,
             type: "chat",
+            project_id: url.getUrlParams("project_id") || undefined,
+
             slot: {
                 domain_key: domain_key,
             },

@@ -93,24 +93,25 @@ async function init(
     setProjectList(project.list)
 
     if (props.type !== "history") {
-        await schemas.hotWord.service
-            .getRecentHotQuestion({
-                domain_key: props.record && props.record.key,
-                project_id: props.record && props.record.project_id,
-                limit: 500,
-            })
-            .then((response) => {
-                let allData = []
-                response.list.forEach((item) => {
-                    allData.push(item.question_standard)
+        if (!url.getUrlParams("project_id") && !url.getUrlParams("domain_key"))
+            await schemas.hotWord.service
+                .getRecentHotQuestion({
+                    domain_key: props.record && props.record.key,
+                    project_id: props.record && props.record.project_id,
+                    limit: 500,
                 })
-                setState({
-                    ...state,
-                    options: options,
-                    allData,
+                .then((response) => {
+                    let allData = []
+                    response.list.forEach((item) => {
+                        allData.push(item.question_standard)
+                    })
+                    setState({
+                        ...state,
+                        options: options,
+                        allData,
+                    })
+                    setAllData(allData)
                 })
-                setAllData(allData)
-            })
     } else {
         setState({
             ...state,
@@ -125,7 +126,7 @@ async function init(
         options: options,
         data: props.data,
     })
-    if (props.record.search) {
+    if (props.record && props.record.search) {
         return
     }
     setLoading(false)
@@ -744,9 +745,15 @@ function SearchPage(props) {
             setState,
             state,
             (state) => {
-                if (props.record.search && props.type !== "history") {
-                    setLoading(true)
-                    handleSearch(props.record.search, state)
+                if (
+                    url.getUrlParams("project_id") ||
+                    url.getUrlParams("domain_key")
+                ) {
+                } else {
+                    if (props.record.search && props.type !== "history") {
+                        setLoading(true)
+                        handleSearch(props.record.search, state)
+                    }
                 }
             },
             setOpeation,
@@ -759,37 +766,39 @@ function SearchPage(props) {
     return (
         <Fragment>
             <div style={{ display: "flex" }}>
-                {props.type !== "project_id" && (
-                    <Select
-                        mode="multiple"
-                        onChange={(value) => {
-                            console.log(value)
-                            setSearchProject(value)
-                        }}
-                        value={searchProject}
-                        disabled={props.type === "history" ? true : loading}
-                        placeholder="请选择问题库"
-                        style={{
-                            // width: "500px",
-                            minWidth: "150px",
-                            maxHeight: "500px",
-                            marginBottom: "20px",
-                            zIndex: 99,
-                            // marginRight: '5px'
-                            position: "absolute",
-                            right: "50px",
-                            top: "12px",
-                        }}
-                    >
-                        {projectList.map((item) => {
-                            return (
-                                <Select.Option value={item.id}>
-                                    {item.name}
-                                </Select.Option>
-                            )
-                        })}
-                    </Select>
-                )}
+                {props.type !== "project_id" &&
+                    !url.getUrlParams("project_id") &&
+                    !url.getUrlParams("domain_key") && (
+                        <Select
+                            mode="multiple"
+                            onChange={(value) => {
+                                console.log(value)
+                                setSearchProject(value)
+                            }}
+                            value={searchProject}
+                            disabled={props.type === "history" ? true : loading}
+                            placeholder="请选择问题库"
+                            style={{
+                                // width: "500px",
+                                minWidth: "150px",
+                                maxHeight: "500px",
+                                marginBottom: "20px",
+                                zIndex: 99,
+                                // marginRight: '5px'
+                                position: "absolute",
+                                right: "50px",
+                                top: "12px",
+                            }}
+                        >
+                            {projectList.map((item) => {
+                                return (
+                                    <Select.Option value={item.id}>
+                                        {item.name}
+                                    </Select.Option>
+                                )
+                            })}
+                        </Select>
+                    )}
                 <AutoComplete
                     dropdownMatchSelectWidth={252}
                     style={{ width: "100%", flex: 1 }}
@@ -800,7 +809,9 @@ function SearchPage(props) {
                     // onSelect={handleSearch}
                     defaultOpen={false}
                     defaultValue={
-                        props.record.search ? props.record.search : null
+                        props.record && props.record.search
+                            ? props.record.search
+                            : null
                     }
                     dataSource={state.dataSource}
                 >
