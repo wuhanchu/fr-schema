@@ -297,7 +297,7 @@ class List extends DataList {
                     <Popconfirm
                         title="是否要删除检测问题？"
                         onConfirm={async (e) => {
-                            this.setState({ record })
+                            this.setState({ record, listLoading: true })
                             await this.handleDeleteQuestion({
                                 delete_id: record.calibration_question_id,
                                 ...record,
@@ -320,7 +320,7 @@ class List extends DataList {
                     <Popconfirm
                         title="是否要删除对比问题？"
                         onConfirm={async (e) => {
-                            this.setState({ record })
+                            this.setState({ record, listLoading: true })
                             await this.handleDeleteQuestion({
                                 delete_id: record.compare_question_id,
                                 ...record,
@@ -345,7 +345,7 @@ class List extends DataList {
                         <Popconfirm
                             title="是否要删除检测文本？"
                             onConfirm={async (e) => {
-                                this.setState({ record })
+                                this.setState({ record, listLoading: true })
                                 await this.handleDeleteQuestionText({
                                     delete_id: record.calibration_question_id,
                                     ...record,
@@ -372,7 +372,7 @@ class List extends DataList {
                         <Popconfirm
                             title="是否要删除对比文本？"
                             onConfirm={async (e) => {
-                                this.setState({ record })
+                                this.setState({ record, listLoading: true })
                                 await this.handleDeleteQuestionText({
                                     delete_id: record.compare_question_id,
                                     ...record,
@@ -397,7 +397,7 @@ class List extends DataList {
                     <Popconfirm
                         title="是否要合并问题？"
                         onConfirm={async (e) => {
-                            this.setState({ record })
+                            this.setState({ record, listLoading: true })
                             await this.handMergeQuestion(
                                 record.calibration_question_id,
                                 record.compare_question_id,
@@ -513,8 +513,6 @@ class List extends DataList {
                         group: {
                             ...schemas.question.schema.group,
                             renderInput: (item, data, other) => {
-                                console.log(item)
-                                console.log(data, other)
                                 return (
                                     <AutoComplete
                                         style={{
