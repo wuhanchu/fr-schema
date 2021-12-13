@@ -44,6 +44,15 @@ class Dialogue extends Chat {
     formRef = React.createRef()
 
     async componentDidMount() {
+        console.log(url.getUrlParams("showIntentFlow"))
+        if (url.getUrlParams("showIntentFlow") !== undefined) {
+            this.setState({
+                showIntentFlow:
+                    url.getUrlParams("showIntentFlow") === "false"
+                        ? false
+                        : true,
+            })
+        }
         if (url.getUrlParams("project_id")) {
             let domain = await schemas.project.service.get({
                 id: "eq." + url.getUrlParams("project_id"),
@@ -487,7 +496,6 @@ class Dialogue extends Chat {
                     type: "flow",
                     domain_key,
                     flow_key,
-                    project_id: url.getUrlParams("project_id") || undefined,
                     slot: slotObj,
                 })
                 param.conversationId = res.data.id
@@ -500,9 +508,9 @@ class Dialogue extends Chat {
                 res = await schemas.domain.service.conversation({
                     type: "chat",
                     domain_key,
-                    project_id: url.getUrlParams("project_id") || undefined,
                     slot: {
                         domain_key: domain_key,
+                        project_id: url.getUrlParams("project_id") || undefined,
                     },
                 })
                 await schemas.domain.service.message({
@@ -550,8 +558,6 @@ class Dialogue extends Chat {
             let res = await schemas.domain.service.conversation({
                 type: "flow",
                 domain_key,
-                project_id: url.getUrlParams("project_id") || undefined,
-
                 flow_key,
                 slot: slotObj,
             })
@@ -625,10 +631,9 @@ class Dialogue extends Chat {
         let res = await schemas.domain.service.conversation({
             domain_key,
             type: "chat",
-            project_id: url.getUrlParams("project_id") || undefined,
-
             slot: {
                 domain_key: domain_key,
+                project_id: url.getUrlParams("project_id") || undefined,
             },
         })
 
