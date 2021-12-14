@@ -34,7 +34,8 @@ class ConversationDetail extends Chat {
         let conversation_id =
             this.props.conversation_id ||
             this.props.location.query.conversation_id
-        let flow_key
+        let flow_key = undefined
+        let domain_key = undefined
         if (
             this.props.location &&
             this.props.location.query &&
@@ -48,6 +49,8 @@ class ConversationDetail extends Chat {
 
             conversation_id = res && res.list && res.list[0] && res.list[0].id
             flow_key = res && res.list && res.list[0] && res.list[0].flow_key
+            domain_key =
+                res && res.list && res.list[0] && res.list[0].domain_key
         }
         let list = []
         if (conversation_id) {
@@ -96,7 +99,11 @@ class ConversationDetail extends Chat {
             this.props.location.query &&
             this.props.location.query.call_id
         ) {
-            this.setState({ conversationId: conversation_id, flow_key })
+            this.setState({
+                conversationId: conversation_id,
+                flow_key,
+                domain_key,
+            })
         }
     }
 }
