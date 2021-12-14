@@ -74,6 +74,12 @@ const schema = {
         render: renderText,
         sorter: true,
     },
+    question: {
+        title: "问题",
+        listHide: true,
+        editHide: true,
+        addHide: true,
+    },
     calibration_question_text: {
         title: "检测文本",
         required: true,
