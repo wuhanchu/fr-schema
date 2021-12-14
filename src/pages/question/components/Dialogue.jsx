@@ -53,6 +53,18 @@ class Dialogue extends Chat {
                         : true,
             })
         }
+        if (url.getUrlParams("flow_key")) {
+            let flowList = await schemas.flow.service.get({
+                key: "eq." + url.getUrlParams("flow_key"),
+            })
+            if (flowList && flowList.list && flowList.list[0]) {
+                this.setState({
+                    type: "flow",
+                    flow_key: url.getUrlParams("flow_key"),
+                    domain_key: flowList.list[0].domain_key,
+                })
+            }
+        }
         if (url.getUrlParams("project_id")) {
             let domain = await schemas.project.service.get({
                 id: "eq." + url.getUrlParams("project_id"),
@@ -64,7 +76,7 @@ class Dialogue extends Chat {
             }
         }
 
-        if (this.props.dialogueType) {
+        if (this.props.dialogueType || url.getUrlParams("flow_key")) {
             await this.onChatTypeConfirm()
         } else {
             await this.getChatRecord()
@@ -474,7 +486,8 @@ class Dialogue extends Chat {
             domain_key,
             slot,
         } = this.state
-        if (!this.props.dialogueType) this.formRef.current.validateFields()
+        if (!this.props.dialogueType && this.formRef.current)
+            this.formRef.current.validateFields()
         if (type === "flow" && !flow_key) {
             return
         }
@@ -500,7 +513,15 @@ class Dialogue extends Chat {
                 })
                 param.conversationId = res.data.id
                 param.isFlow = true
-                param.showIntentFlow = true
+                if (url.getUrlParams("flow_key")) {
+                    if (url.getUrlParams("showIntentFlow") === "true") {
+                        param.showIntentFlow = true
+                    } else {
+                        param.showIntentFlow = false
+                    }
+                } else {
+                    param.showIntentFlow = true
+                }
                 this.setState({ ...param }, (_) => this.onSendMsg("/true"))
             }
         } else {

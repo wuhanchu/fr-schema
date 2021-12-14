@@ -2,6 +2,7 @@ import React from "react"
 import { autobind } from "core-decorators"
 import Chat from "@/pages/question/components/Chat"
 import schema from "@/schemas/conversation/detail"
+import schemaConversation from "@/schemas/conversation/list"
 
 @autobind
 class ConversationDetail extends Chat {
@@ -33,6 +34,20 @@ class ConversationDetail extends Chat {
         let conversation_id =
             this.props.conversation_id ||
             this.props.location.query.conversation_id
+
+        if (
+            this.props.location &&
+            this.props.location.query &&
+            this.props.location.query.call_id
+        ) {
+            let res = await schemaConversation.service.get({
+                limit: 10000,
+                call_id: this.props.location.query.call_id,
+                // order: "create_time",
+            })
+            console.log(res)
+            conversation_id = res && res.list && res.list[0] && res.list[0].id
+        }
         let list = []
         if (conversation_id) {
             let res = await schema.service.get({
