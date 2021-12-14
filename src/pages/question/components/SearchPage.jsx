@@ -212,9 +212,12 @@ function renderTitle(
                                 value={
                                     addQuestionExtend ||
                                     values ||
-                                    props.record.search
+                                    (props.record && props.record.search)
                                 }
-                                defaultValue={values || props.record.search}
+                                defaultValue={
+                                    values ||
+                                    (props.record && props.record.search)
+                                }
                                 placeholder={"输入扩展问"}
                                 style={{
                                     marginTop: "10px",
@@ -689,7 +692,6 @@ function SearchPage(props) {
     }
 
     const handleSearch = async (searchValue, state) => {
-        console.log(state)
         let value = searchValue || values || props.record.search
         if (_.isNil(value)) {
             setState({
@@ -720,10 +722,25 @@ function SearchPage(props) {
                 ? domain_key
                 : props.record && props.record.domain_key
         }
+        let haveProjectDomainKey
+        if (url.getUrlParams("project_id") && !url.getUrlParams("domain_key")) {
+            projectList.map((item) => {
+                if (url.getUrlParams("project_id") == item.id)
+                    haveProjectDomainKey = item.domain_key
+                // return url.getUrlParams("project_id") == item.id
+            })
+        }
+        console.log(haveProjectDomainKey)
         try {
             const response = await schemas.question.service.search({
                 search: value,
                 ...args,
+                domain_key: haveProjectDomainKey
+                    ? haveProjectDomainKey
+                    : args.domain_key,
+                project_id: url.getUrlParams("project_id")
+                    ? url.getUrlParams("project_id")
+                    : args.project_id,
             })
             setState({
                 ...state,
@@ -765,7 +782,7 @@ function SearchPage(props) {
 
     return (
         <Fragment>
-            <div style={{ display: "flex" }}>
+            <div style={{ display: "flex", marginTop: "3px" }}>
                 {props.type !== "project_id" &&
                     !url.getUrlParams("project_id") &&
                     !url.getUrlParams("domain_key") && (
