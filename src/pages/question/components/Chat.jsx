@@ -251,14 +251,16 @@ class Chat extends React.PureComponent {
                 }}
             >
                 <div style={styles.tableStyle}>
-                    <ChatFlowTable
-                        defaultProject={this.state.defaultProject}
-                        conversationId={conversationId}
-                        domainKey={domain_key}
-                        flowKey={flow_key}
-                        onRef={this.getRef}
-                        roomHeight={roomHeight}
-                    />
+                    {
+                        <ChatFlowTable
+                            defaultProject={this.state.defaultProject}
+                            conversationId={conversationId}
+                            domainKey={domain_key}
+                            flowKey={flow_key}
+                            onRef={this.getRef}
+                            roomHeight={roomHeight}
+                        />
+                    }
                 </div>
 
                 <div style={styles.refreshButton}>

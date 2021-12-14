@@ -20,8 +20,8 @@ class ChatFlowTable extends DataList {
             schema: schemas.schema,
             service: { ...schemas.service, get: schemas.service.getDetail },
             queryArgs: {
-                pageSize: 10000,
-                limit: 10000,
+                pageSize: 1000,
+                limit: 1000,
                 conversation_id: props.conversationId,
                 order: "create_time",
             },
@@ -34,6 +34,7 @@ class ChatFlowTable extends DataList {
     }
 
     async componentDidMount() {
+        console.log(this.props)
         this.props.onRef(this)
         await this.findIntentList()
         await this.findFlowList()
