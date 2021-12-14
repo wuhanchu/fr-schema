@@ -56,7 +56,7 @@ class List extends ListPage {
             infoProps: {
                 offline: true,
             },
-            operateWidth: "360px",
+            operateWidth: "450px",
         })
     }
 
@@ -881,56 +881,7 @@ class List extends ListPage {
                         热门问题
                     </a>
                 </Menu.Item>
-                <SubMenu title="查看进度">
-                    <Menu.Item key="1">
-                        <a
-                            onClick={async () => {
-                                this.handleGetTask(
-                                    record,
-                                    undefined,
-                                    "模型训练任务"
-                                )
-                            }}
-                        >
-                            训练进度
-                        </a>
-                    </Menu.Item>
-                    <Menu.Item key="2">
-                        <a
-                            onClick={async () => {
-                                this.handleGetTask(
-                                    record,
-                                    undefined,
-                                    "数据同步任务"
-                                )
-                            }}
-                        >
-                            同步进度
-                        </a>
-                    </Menu.Item>
-                    <Menu.Item key="2">
-                        <a
-                            onClick={async () => {
-                                this.handleGetTask(
-                                    record,
-                                    undefined,
-                                    "问题库分析任务"
-                                )
-                            }}
-                        >
-                            分析进度
-                        </a>
-                    </Menu.Item>
-                </SubMenu>
-                {/* <Menu.Item>
-                    <a
-                        onClick={async () => {
-                            this.handleGetTask(record)
-                        }}
-                    >
-                        训练进度
-                    </a>
-                </Menu.Item> */}
+
                 <Menu.Item>
                     <a
                         onClick={async () => {
@@ -941,6 +892,50 @@ class List extends ListPage {
                         }}
                     >
                         提问历史
+                    </a>
+                </Menu.Item>
+            </Menu>
+        )
+
+        const taskMenu = (
+            <Menu>
+                <Menu.Item key="1">
+                    <a
+                        onClick={async () => {
+                            this.handleGetTask(
+                                record,
+                                undefined,
+                                "模型训练任务"
+                            )
+                        }}
+                    >
+                        训练进度
+                    </a>
+                </Menu.Item>
+                <Menu.Item key="2">
+                    <a
+                        onClick={async () => {
+                            this.handleGetTask(
+                                record,
+                                undefined,
+                                "数据同步任务"
+                            )
+                        }}
+                    >
+                        同步进度
+                    </a>
+                </Menu.Item>
+                <Menu.Item key="2">
+                    <a
+                        onClick={async () => {
+                            this.handleGetTask(
+                                record,
+                                undefined,
+                                "问题库分析任务"
+                            )
+                        }}
+                    >
+                        分析进度
                     </a>
                 </Menu.Item>
             </Menu>
@@ -992,6 +987,16 @@ class List extends ListPage {
                         onClick={(e) => e.preventDefault()}
                     >
                         {"RASA "}
+                        <DownOutlined />
+                    </a>
+                </Dropdown>
+                <Divider type="vertical" />
+                <Dropdown overlay={taskMenu}>
+                    <a
+                        className="ant-dropdown-link"
+                        onClick={(e) => e.preventDefault()}
+                    >
+                        {"任务进度 "}
                         <DownOutlined />
                     </a>
                 </Dropdown>
