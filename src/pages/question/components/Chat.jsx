@@ -42,7 +42,7 @@ class Chat extends React.PureComponent {
     }
 
     render() {
-        let { showInput, showIntentFlow, collapse } = this.state
+        let { showInput, showIntentFlow, collapse, conversationId } = this.state
         return (
             <Spin tip="加载中..." spinning={this.state.loading}>
                 <div style={styles.contentSt}>
@@ -65,9 +65,13 @@ class Chat extends React.PureComponent {
                                     />
                                 ) : (
                                     <MenuUnfoldOutlined
-                                        onClick={(_) =>
-                                            this.setState({ collapse: true })
-                                        }
+                                        onClick={(_) => {
+                                            if (conversationId) {
+                                                this.setState({
+                                                    collapse: true,
+                                                })
+                                            }
+                                        }}
                                     />
                                 )}
                             </div>
