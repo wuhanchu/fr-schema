@@ -122,7 +122,6 @@ const service = createApi("conversation_detail", schema, null, "eq.")
 service.getDetail = (args) => {
     return createApi("conversation_detail", schema, null, "eq.").get({
         ...args,
-        // select: "*,intent_history(*)",
     })
 }
 
