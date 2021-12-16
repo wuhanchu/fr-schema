@@ -34,7 +34,6 @@ class ChatFlowTable extends DataList {
     }
 
     async componentDidMount() {
-        console.log(this.props)
         this.props.onRef(this)
         await this.findIntentList()
         await this.findFlowList()
@@ -151,7 +150,7 @@ class ChatFlowTable extends DataList {
     async findFlowList(flow_key) {
         let { flowKey, domainKey, create_time } = this.props
         const res = await schema.service.getFlowHistory({
-            limit: 1000,
+            limit: 10,
             flow_key: flow_key || flowKey,
             config: "not.is.null",
             domain_key: domainKey,
