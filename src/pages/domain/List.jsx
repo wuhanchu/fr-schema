@@ -385,7 +385,6 @@ class List extends ListPage {
             order: "create_time.desc",
             limit: 2000,
         })
-        console.log(res)
         if (res.list.length) {
             let mySteps = (
                 <Steps
