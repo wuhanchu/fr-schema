@@ -15,7 +15,9 @@ export default {
     remark: {
         title: "备注",
         sorter: true,
-
+        props: {
+            autoSize: { minRows: 2, maxRows: 6 },
+        },
         type: schemaFieldType.TextArea,
     },
 }
