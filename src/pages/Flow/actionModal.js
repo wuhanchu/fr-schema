@@ -258,7 +258,7 @@ export const ActionModal = ({
                 {
                     <Form.Item
                         label="引用"
-                        extra="可选择流程中其他连线配置的条件定义，做到数据复用，避免重复定义相同的逻辑。"
+                        extra="可选择流程中其他节点配置的操作定义，做到数据复用，避免重复定义相同的逻辑。"
                     >
                         <Select
                             showSearch
