@@ -336,9 +336,11 @@ function renderTitle(
                 style={{ lineHeight: "16px", height: "16px", marginTop: "3px" }}
             />
             {item.match_question_title && (
-                <Popconfirm
-                    title="是否进行实体对比？"
-                    onConfirm={async (e) => {
+                <a
+                    style={{
+                        marginRight: props.renderTitleOpeation ? "0" : "10px",
+                    }}
+                    onClick={async () => {
                         setLoading(true)
                         let domain_key
                         if (props.record && props.record.key) {
@@ -371,19 +373,10 @@ function renderTitle(
                         notification.open(args)
                         console.log(data)
                         setLoading(false)
-                        e.stopPropagation()
                     }}
                 >
-                    <a
-                        style={{
-                            marginRight: props.renderTitleOpeation
-                                ? "0"
-                                : "10px",
-                        }}
-                    >
-                        实体对比
-                    </a>
-                </Popconfirm>
+                    实体对比
+                </a>
             )}
 
             {props.renderTitleOpeation && props.renderTitleOpeation(item)}
