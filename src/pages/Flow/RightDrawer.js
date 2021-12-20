@@ -459,7 +459,7 @@ class RightDrawer extends React.PureComponent {
                                 label={
                                     <div>
                                         操作定义
-                                        <Tooltip title="操作之间顺序执行可以拖动进行排序。节点相关的处理逻辑，根据配置的顺序进行执行。">
+                                        <Tooltip title="节点相关的处理逻辑，根据配置的顺序进行执行。可以拖动进行排序。">
                                             <QuestionCircleOutlined
                                                 style={{ marginLeft: "5px" }}
                                             />
