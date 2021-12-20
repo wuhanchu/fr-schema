@@ -260,7 +260,7 @@ export const ConditionModal = ({
                 {
                     <Form.Item
                         label="引用"
-                        extra="复用已有的条件，数据会保持同步"
+                        extra="可选择流程中其他连线配置的条件定义，做到数据复用，避免重复定义相同的逻辑。"
                     >
                         <Select
                             showSearch
@@ -312,7 +312,11 @@ export const ConditionModal = ({
                     <Input placeholder={"请输入名称"} />
                 </Form.Item>
 
-                <Form.Item label="意图" name="intent">
+                <Form.Item
+                    label="意图"
+                    extra="选择预先定义好的意图进行配置。"
+                    name="intent"
+                >
                     <TreeSelect
                         showSearch
                         allowClear
@@ -327,6 +331,7 @@ export const ConditionModal = ({
                 <Form.Item
                     label="优先级"
                     name="priority"
+                    extra="如果同时有多个条件满足的时候，会通过优先级进行判断走哪条线路。数字越小越优先。"
                     rules={[{ required: true, message: "请输入优先级！" }]}
                 >
                     <InputNumber
@@ -339,6 +344,8 @@ export const ConditionModal = ({
                 <Form.Item
                     label="槽位"
                     name={"slot"}
+                    extra="判断当前上下文提取到的槽位数据是否包含当前配置的槽位数据。
+                    同时支持表达式例如 search_result == True（python语法）和图中的逻辑是一致的。使用到的变量只能是槽位定义的变量，需要在开始节点进行初始化数据，否则会出错。"
                     rules={verifyJsonORString}
                 >
                     <div style={{ width: "489px" }}>
@@ -358,7 +365,7 @@ export const ConditionModal = ({
                             showPrintMargin
                             showGutter
                             width={"489px"}
-                            height={"300px"}
+                            height={"200px"}
                             highlightActiveLine
                             value={AceEditorValue}
                             markers={[

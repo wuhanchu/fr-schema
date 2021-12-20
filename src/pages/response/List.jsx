@@ -141,7 +141,11 @@ class List extends ListPage {
                         >
                             <Input placeholder="请输入编码" />
                         </Form.Item>
-                        <Form.Item label="意图" name="intent_key">
+                        <Form.Item
+                            label="意图"
+                            name="intent_key"
+                            extra="设置回应对应的意图，例如 问候的意图，需要回复 您好。"
+                        >
                             <TreeSelect
                                 showSearch
                                 allowClear
@@ -168,6 +172,7 @@ class List extends ListPage {
                                 </div>
                             }
                             name="template_text"
+                            extra="相关的回复文本，可配置多个，增加回复的多样性。"
                         >
                             <Input.TextArea placeholder="请输入回复文本" />
                         </Form.Item>
@@ -233,6 +238,7 @@ class List extends ListPage {
                         </Form.List>
                         <Form.Item
                             colon={false}
+                            extra="针对机器闲聊的配置。"
                             label={
                                 <div>
                                     <div>回复模板:</div>

@@ -45,6 +45,7 @@ const schema = {
         props: {
             autoSize: { minRows: 3, maxRows: 6 },
         },
+        extra: "相关的回复文本，可配置多个，增加回复的多样性。",
         render: (item) => (
             <span>
                 {item &&
@@ -61,6 +62,7 @@ const schema = {
             style: { width: "500px" },
             height: "400px",
         },
+        extra: "针对机器闲聊的配置。",
         // // required: true,
         type: schemaFieldType.AceEditor,
         decoratorProps: { rules: verifyJson },

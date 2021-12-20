@@ -414,6 +414,7 @@ class RightDrawer extends React.PureComponent {
                             <FormItem
                                 name={"allow_repeat_time"}
                                 label={"允许重复次数"}
+                                extra="节点在一次会话中允许执行的次数，如果超过了次数会设置槽位{repeat_out_of_limit:true}。如果希望对超过次数的逻辑进行处理，可在全局节点下配置对应的对立节点。"
                                 rules={[
                                     {
                                         required: true,
@@ -458,7 +459,7 @@ class RightDrawer extends React.PureComponent {
                                 label={
                                     <div>
                                         操作定义
-                                        <Tooltip title="操作之间顺序执行，可以拖动进行排序">
+                                        <Tooltip title="操作之间顺序执行可以拖动进行排序。节点相关的处理逻辑，根据配置的顺序进行执行。">
                                             <QuestionCircleOutlined
                                                 style={{ marginLeft: "5px" }}
                                             />
@@ -591,7 +592,7 @@ class RightDrawer extends React.PureComponent {
                                 label={
                                     <div>
                                         条件定义
-                                        <Tooltip title="条件之间为或的关系,一个条件成立即条件成立">
+                                        <Tooltip title="条件定义是以或的逻辑进行判断，也就是说有一个条件定义满足就算满足条件。">
                                             <QuestionCircleOutlined
                                                 style={{ marginLeft: "5px" }}
                                             />

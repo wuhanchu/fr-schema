@@ -28,6 +28,7 @@ const schema = {
     regex: {
         title: "正则表达式",
         type: schemaFieldType.Select,
+        extra: "建议配置5个字符，2个词汇之内的表达式。",
         listHide: true,
         props: {
             mode: "tags",
@@ -44,7 +45,7 @@ const schema = {
         },
         // listHide: true,
         exportConcat: true,
-        extra: "每行表示一个话术",
+        extra: "一行一个数据，用于相似度比对，不建议包含重复的相似文本。",
     },
     example: {
         title: "例子",
@@ -54,7 +55,7 @@ const schema = {
         },
         listHide: true,
         exportConcat: true,
-        extra: "每行表示一个例子",
+        extra: "一行一个数据，用于模型训练，建议包含重复的相似文本",
     },
     create_time: {
         title: "创建时间",

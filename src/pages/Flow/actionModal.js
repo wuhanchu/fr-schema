@@ -258,7 +258,7 @@ export const ActionModal = ({
                 {
                     <Form.Item
                         label="引用"
-                        extra="复用已有的操作，数据会保持同步"
+                        extra="可选择流程中其他连线配置的条件定义，做到数据复用，避免重复定义相同的逻辑。"
                     >
                         <Select
                             showSearch
@@ -346,6 +346,7 @@ export const ActionModal = ({
                 <Form.Item
                     label="参数"
                     name={"param"}
+                    extra="操作的输入参数，大部分是json格式，小部分支持python表达式。"
                     rules={verifyJsonORString}
                 >
                     <div style={{ width: "489px" }}>
@@ -366,7 +367,7 @@ export const ActionModal = ({
                             showPrintMargin
                             showGutter
                             width={"489px"}
-                            height={"300px"}
+                            height={"200px"}
                             highlightActiveLine
                             value={AceEditorValue}
                             markers={[
