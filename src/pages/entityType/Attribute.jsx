@@ -6,7 +6,7 @@ import { message, Button } from "antd"
 import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
 import frSchema from "@/outter/fr-schema/src"
-
+import { listToDict } from "@/outter/fr-schema/src/dict"
 import { exportData } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import ImportModal from "@/outter/fr-schema-antd-utils/src/components/modal/ImportModal"
@@ -38,6 +38,11 @@ class List extends DataList {
 
     async componentDidMount() {
         this.schema.domain_key.dict = this.props.dict.domain
+        let res = await this.service.getBasic({
+            limit: 1000,
+            entity_type_key: "eq." + this.props.record.key,
+        })
+        this.schema.depend_on.dict = listToDict(res.list, "", "key", "name")
         super.componentDidMount()
     }
 
@@ -150,13 +155,21 @@ class List extends DataList {
     async handleExport(args, schema) {
         this.setState({ exportLoading: true }, async () => {
             let column = this.getColumns(false).filter((item) => {
+                console.log(item)
                 return (
                     !item.isExpand &&
-                    item.key !== "external_id" &&
+                    item.key !== "depend_on" &&
                     item.key != "create_time"
                 )
             })
-            let columns = column
+            let columns = [
+                ...column,
+                {
+                    title: "依赖字段",
+                    dataIndex: "depend_on",
+                    key: "depend_on",
+                },
+            ]
             let data = await this.requestList({
                 pageSize: 1000000,
                 offset: 0,
@@ -166,6 +179,10 @@ class List extends DataList {
             list = list.map((item) => {
                 return {
                     ...item,
+                    depend_on:
+                        item.depend_on && item.depend_on.length
+                            ? item.depend_on.join("|")
+                            : "",
                     attribute: item.attribute
                         ? JSON.stringify(item.attribute)
                         : "",
@@ -189,6 +206,9 @@ class List extends DataList {
                         type: "Select",
                         dict: this.props.dict.domain,
                     },
+                    depend_on: {
+                        title: "依赖字段",
+                    },
                 }}
                 errorKey={"question_standard"}
                 title={"导入"}
@@ -201,6 +221,9 @@ class List extends DataList {
                     const data = this.state.importData.map((item) => {
                         return {
                             ...item,
+                            depend_on: item.depend_on
+                                ? item.depend_on.split("|")
+                                : [],
                             entity_type_key: this.props.record.key,
                         }
                     })

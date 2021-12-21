@@ -41,6 +41,16 @@ const schema = {
         },
         sorter: true,
     },
+    depend_on: {
+        title: "依赖字段",
+        // addHide: true,
+        // editHide: true,
+        type: schemaFieldType.Select,
+        props: {
+            mode: "tags",
+        },
+    },
+
     create_time: {
         title: "创建时间",
         // required: true,
