@@ -401,6 +401,14 @@ class BaseList extends EditPage {
                         </Button>
                     </Authorized>
                 )}
+
+                <Button
+                    onClick={() => {
+                        this.setState({ visibleMatchDel: true })
+                    }}
+                >
+                    匹配删除
+                </Button>
             </>
         )
     }
@@ -845,6 +853,7 @@ class BaseList extends EditPage {
                         </Spin>
                     </Modal>
                 )}
+                {this.state.visibleMatchDel && this.renderMatchDelModal()}
             </>
         )
     }
@@ -861,6 +870,13 @@ class BaseList extends EditPage {
     handleVisibleImportModal = (flag, record, action) => {
         this.setState({
             visibleImport: !!flag,
+            infoData: record,
+            action,
+        })
+    }
+    handleVisibleMatchDel = (flag, record, action) => {
+        this.setState({
+            visibleMatchDel: !!flag,
             infoData: record,
             action,
         })
@@ -924,6 +940,54 @@ class BaseList extends EditPage {
         )
     }
 
+    renderMatchDelModal() {
+        if (this.props.renderInfoModal) {
+            return this.props.renderInfoModal()
+        }
+        const { form } = this.props
+        const renderForm = this.props.renderForm || this.renderForm
+        const { resource, title, addArgs } = this.meta
+        const { visibleMatchDel, infoData, action } = this.state
+        const updateMethods = {
+            handleVisibleModal: this.handleVisibleMatchDel.bind(this),
+            handleUpdate: this.handleUpdate.bind(this),
+            handleAdd: this.handleMatchDel.bind(this),
+        }
+
+        const schema = {
+            external_id: {
+                title: "外部编号",
+                extra: "每行表示一个外部编号",
+                required: true,
+                type: schemaFieldType.TextArea,
+                props: {
+                    autoSize: { minRows: 2, maxRows: 6 },
+                },
+            },
+        }
+
+        return (
+            visibleMatchDel && (
+                <InfoModal
+                    renderForm={renderForm}
+                    title={"根据外部编号进行删除"}
+                    action={"add"}
+                    resource={resource}
+                    {...updateMethods}
+                    visible={visibleMatchDel}
+                    values={infoData}
+                    addArgs={addArgs}
+                    meta={this.meta}
+                    service={this.service}
+                    schema={schema}
+                    width={600}
+
+                    // {...customProps}
+                />
+            )
+        )
+    }
+
     async refreshList() {
         this.setState({ listLoading: true }, async () => {
             let data = await this.requestList()
@@ -970,6 +1034,25 @@ class BaseList extends EditPage {
         this.refreshList()
         message.success("添加成功")
         this.handleVisibleImportModal()
+        this.handleChangeCallback && this.handleChangeCallback()
+        this.props.handleChangeCallback && this.props.handleChangeCallback()
+
+        return response
+    }
+
+    async handleMatchDel(data, schema) {
+        // 更新
+        let response
+        try {
+            response = await this.service.matchDel({ ...data }, schema)
+        } catch (error) {
+            message.error(error.message)
+            return
+        }
+
+        this.refreshList()
+        message.success("删除成功")
+        this.handleVisibleMatchDel()
         this.handleChangeCallback && this.handleChangeCallback()
         this.props.handleChangeCallback && this.props.handleChangeCallback()
 

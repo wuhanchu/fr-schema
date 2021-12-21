@@ -416,6 +416,16 @@ service.getDetails = async function (args) {
     }
 }
 
+service.matchDel = async (args) => {
+    console.log("结果", args)
+    const res = await createApi(
+        "question?external_id=in.(" + args.external_id.replace("\n", ",") + ")",
+        schema,
+        null,
+        ""
+    ).delete({})
+}
+
 service.compare = async function (args) {
     const res = await createApi("search/compare", schema, null, "").get(args)
     return {
