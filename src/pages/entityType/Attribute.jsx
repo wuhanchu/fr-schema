@@ -38,12 +38,16 @@ class List extends DataList {
 
     async componentDidMount() {
         this.schema.domain_key.dict = this.props.dict.domain
+        super.componentDidMount()
+    }
+
+    async refreshList() {
         let res = await this.service.getBasic({
             limit: 1000,
             entity_type_key: "eq." + this.props.record.key,
         })
         this.schema.depend_on.dict = listToDict(res.list, "", "key", "name")
-        super.componentDidMount()
+        super.refreshList()
     }
 
     async handleAdd(data, schema) {
