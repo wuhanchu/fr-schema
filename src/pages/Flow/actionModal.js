@@ -258,7 +258,7 @@ export const ActionModal = ({
                 {
                     <Form.Item
                         label="引用"
-                        extra="可选择流程中其他节点配置的操作定义，做到数据复用，避免重复定义相同的逻辑。"
+                        extra="可选择流程中其他节点配置的操作定义。"
                     >
                         <Select
                             showSearch
@@ -346,7 +346,7 @@ export const ActionModal = ({
                 <Form.Item
                     label="参数"
                     name={"param"}
-                    extra="操作的输入参数，大部分是json格式，小部分支持python表达式。"
+                    extra="操作的输入参数"
                     rules={verifyJsonORString}
                 >
                     <div style={{ width: "489px" }}>

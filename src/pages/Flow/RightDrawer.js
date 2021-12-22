@@ -414,7 +414,7 @@ class RightDrawer extends React.PureComponent {
                             <FormItem
                                 name={"allow_repeat_time"}
                                 label={"允许重复次数"}
-                                extra="节点在一次会话中允许执行的次数，如果超过了次数会设置槽位{repeat_out_of_limit:true}。如果希望对超过次数的逻辑进行处理，可在全局节点下配置对应的对立节点。"
+                                extra="节点在一次会话中允许执行的次数。"
                                 rules={[
                                     {
                                         required: true,
