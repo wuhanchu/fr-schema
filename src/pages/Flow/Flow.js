@@ -59,7 +59,7 @@ class Flow extends React.PureComponent {
     getHistory = async () => {
         const { record } = this.props
         const res = await schema.service.getFlowHistory({
-            limit: 1000,
+            limit: 50,
             flow_key: record.key,
             config: "not.is.null",
             domain_key: record.domain_key,
@@ -116,7 +116,7 @@ class Flow extends React.PureComponent {
         await this.initData()
         this.getData()
         await this.getIntent()
-        await this.getHistory()
+        this.getHistory()
         this.setState({
             spinning: false,
         })
