@@ -349,10 +349,10 @@ class List extends ListPage {
                                     {summary
                                         ? formatData(
                                               summary.satisfaction || 0,
-                                              4
-                                          ) *
-                                              100 +
-                                          "%"
+                                              // 0.8461538461538461,
+                                              4,
+                                              100
+                                          ) + "%"
                                         : 0}
                                 </div>
                             </div>
