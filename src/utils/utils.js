@@ -1,11 +1,5 @@
 import { parse } from "querystring"
 /* eslint no-useless-escape:0 import/prefer-default-export:0 */
-import { create, all } from "mathjs"
-const config = {
-    number: "BigNumber",
-    precision: 20,
-}
-const math = create(all, config)
 
 const reg = /(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+(?::\d+)?|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)$/
 export const isUrl = (path) => reg.test(path)
@@ -19,17 +13,12 @@ export const isAntDesignPro = () => {
 
 export const formatData = (value, n, multiple) => {
     if (multiple) {
-        return math
-            .multiply(
-                math.divide(
-                    Math.round(value * Math.pow(10, n)),
-                    Math.pow(10, n)
-                ),
-                multiple
-            )
-            .toFixed(2)
+        return (
+            (Math.round(value * Math.pow(10, n)) / Math.pow(10, n)) *
+            multiple
+        ).toFixed(2)
     }
-    return math.divide(Math.round(value * Math.pow(10, n)), Math.pow(10, n))
+    return Math.round(value * Math.pow(10, n)) / Math.pow(10, n)
 }
 
 export const isAntDesignProOrDev = () => {
