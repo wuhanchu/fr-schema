@@ -393,6 +393,11 @@ class Main extends React.PureComponent {
         }
     }
 
+    componentWillUnmount() {
+        notification.destroy("process")
+        clearInterval(this.mysetIntervals)
+    }
+
     render() {
         const { tabActiveKey, domian } = this.state
         const menu = (
