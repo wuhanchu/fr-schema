@@ -70,38 +70,59 @@ class List extends DataList {
         } catch (error) {}
         this.schema.calibration_question_standard.render = (item, data) => {
             return (
-                <a
-                    onClick={() => {
-                        this.handleVisibleModal(
-                            true,
-                            {
-                                ...data,
-                                id: data.calibration_question_id,
-                            },
-                            "show"
-                        )
+                <div
+                    style={{
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        maxWidth: "300px",
                     }}
                 >
-                    {item}
-                </a>
+                    <a
+                        onClick={() => {
+                            this.setState({ record: data })
+                            this.handleVisibleModal(
+                                true,
+                                {
+                                    ...data,
+                                    id: data.calibration_question_id,
+                                },
+                                "edit"
+                            )
+                        }}
+                    >
+                        {item}
+                    </a>
+                </div>
             )
         }
         this.schema.compare_question_standard.render = (item, data) => {
             return (
-                <a
-                    onClick={() => {
-                        this.handleVisibleModal(
-                            true,
-                            {
-                                ...data,
-                                id: data.compare_question_id,
-                            },
-                            "show"
-                        )
+                <div
+                    style={{
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        maxWidth: "300px",
                     }}
                 >
-                    {item}
-                </a>
+                    <a
+                        onClick={() => {
+                            this.setState({ record: data })
+                            console.log(data)
+                            this.handleVisibleModal(
+                                true,
+                                {
+                                    ...data,
+                                    id: data.compare_question_id,
+                                },
+                                "edit"
+                            )
+                        }}
+                    >
+                        {item}
+                    </a>
+                </div>
             )
         }
         super.componentDidMount()
@@ -428,6 +449,35 @@ class List extends DataList {
             </>
         )
     }
+
+    async handleQuestionEdit(data, schema) {
+        // 更新
+        console.log(this.state.record)
+
+        let response
+        try {
+            console.log("新增")
+            console.log(data)
+            response = await schemas.question.service.patch(data, schema)
+            console.log(this.state.infoData)
+            console.log(this.state.record)
+            await this.service.patch(
+                { id: this.state.record.id, status: 1 },
+                schema
+            )
+
+            this.refreshList()
+            message.success("修改成功")
+        } catch (error) {
+            message.error(error.message)
+        }
+
+        this.handleVisibleModal()
+        this.handleChangeCallback && this.handleChangeCallback()
+        this.props.handleChangeCallback && this.props.handleChangeCallback()
+
+        return response
+    }
     /**
      * 表格操作列
      * @returns {{width: string, fixed: (*|string), title: string, render: (function(*, *=): *)}}
@@ -489,7 +539,7 @@ class List extends DataList {
         const { visibleModal, infoData, action } = this.state
         const updateMethods = {
             handleVisibleModal: this.handleVisibleModal.bind(this),
-            handleUpdate: this.handleAdd.bind(this),
+            handleUpdate: this.handleQuestionEdit.bind(this),
             handleAdd: this.handleAdd.bind(this),
         }
 

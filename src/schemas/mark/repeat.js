@@ -14,7 +14,7 @@ function renderText(data) {
                     overflow: "hidden",
                     textOverflow: "ellipsis",
                     whiteSpace: "nowrap",
-                    maxWidth: "400px",
+                    maxWidth: "300px",
                 }}
             >
                 {data && data}
@@ -64,46 +64,16 @@ const schema = {
         sorter: true,
         type: schemaFieldType.Select,
     },
-    calibration_question_id: {
-        title: "检测问题编号",
-        // listHide: true,
-        required: true,
-        // type: schemaFieldType.Select,
-    },
-    calibration_question_standard: {
-        title: "检测问题",
-        render: renderText,
-        sorter: true,
-    },
-    question: {
-        title: "问题",
-        listHide: true,
-        editHide: true,
-        addHide: true,
-    },
     calibration_question_text: {
         title: "检测文本",
         required: true,
         render: renderText,
         sorter: true,
     },
-
-    compare_question_id: {
-        title: "对比问题编号",
-        // listHide: true,
-        required: true,
-        // type: schemaFieldType.Select,
-    },
-    compare_question_standard: {
-        title: "对比问题",
-        sorter: true,
-        render: renderText,
-    },
     compare_question_text: {
         title: "对比文本",
         required: true,
         render: renderText,
-
         sorter: true,
     },
 
@@ -114,6 +84,36 @@ const schema = {
             return formatData(item, 5)
         },
     },
+    // calibration_question_id: {
+    //     title: "检测问题编号",
+    //     // listHide: true,
+    //     required: true,
+    //     // type: schemaFieldType.Select,
+    // },
+    calibration_question_standard: {
+        title: "检测问题",
+        render: renderText,
+        sorter: true,
+    },
+    compare_question_standard: {
+        title: "对比问题",
+        sorter: true,
+        render: renderText,
+    },
+
+    question: {
+        title: "问题",
+        listHide: true,
+        editHide: true,
+        addHide: true,
+    },
+
+    // compare_question_id: {
+    //     title: "对比问题编号",
+    //     // listHide: true,
+    //     required: true,
+    //     // type: schemaFieldType.Select,
+    // },
 }
 
 export default schema
