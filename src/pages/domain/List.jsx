@@ -458,6 +458,131 @@ class List extends ListPage {
         }
     }
 
+    handleIntervals = async (record, id, name, props) => {
+        let res
+        try {
+            res = await schemas.task.service.get({
+                domain_key: record.key,
+                order: "create_time.desc",
+                ...props,
+            })
+        } catch (error) {
+            if (this.mysetIntervals) {
+                clearInterval(this.mysetIntervals)
+            }
+            return
+        }
+
+        if (!this.state.showProcess) {
+            return
+        }
+        let data = res.list && res.list[0]
+        if (data) {
+            if (data.status === "end") {
+                const args = {
+                    message: (
+                        <span>
+                            <span>{data.name + "已完成"}</span>
+                            <Tooltip title="查看详情">
+                                <a
+                                    onClick={() => {
+                                        this.handleTaskInfo(record, data.id)
+                                    }}
+                                >
+                                    <QuestionCircleOutlined
+                                        style={{ marginLeft: "5px" }}
+                                    />
+                                </a>
+                            </Tooltip>
+                        </span>
+                    ),
+                    key: "process",
+                    onClose: () => {
+                        this.setState({
+                            showProcess: false,
+                        })
+                        clearInterval(this.mysetIntervals)
+                    },
+                    description: (
+                        <Progress
+                            strokeColor={{
+                                "0%": "#108ee9",
+                                "100%": "#87d068",
+                            }}
+                            percent={100}
+                        />
+                    ),
+                    duration: 0,
+                }
+                this.setState({ process: 0 })
+                notification.open(args)
+                setTimeout(() => {
+                    clearInterval(this.mysetIntervals)
+                }, 700)
+            } else {
+                const args = {
+                    message: (
+                        <span>
+                            <span>{data.name}</span>
+                            <Tooltip title="查看详情">
+                                <a
+                                    onClick={() => {
+                                        this.handleTaskInfo(record, data.id)
+                                    }}
+                                >
+                                    <QuestionCircleOutlined
+                                        style={{ marginLeft: "5px" }}
+                                    />
+                                </a>
+                            </Tooltip>
+                        </span>
+                    ),
+                    key: "process",
+                    onClose: () => {
+                        this.setState({
+                            showProcess: false,
+                        })
+                        clearInterval(this.mysetIntervals)
+                    },
+                    description: (
+                        <Progress
+                            strokeColor={{
+                                "0%": "#108ee9",
+                                "100%": "#87d068",
+                            }}
+                            percent={
+                                this.mysetIntervals
+                                    ? (this.state && this.state.process) || 0
+                                    : 100
+                            }
+                        />
+                    ),
+                    duration: 0,
+                }
+                notification.open(args)
+                this.setState({ process: data.process })
+            }
+        } else {
+            const args = {
+                message: "暂无数据",
+                key: "process",
+                onClose: () => {
+                    clearInterval(this.mysetIntervals)
+                    this.setState({
+                        showProcess: false,
+                    })
+                },
+                description: "请稍后查询",
+                duration: 0,
+            }
+
+            notification.open(args)
+            setTimeout(() => {
+                clearInterval(this.mysetIntervals)
+            }, 700)
+        }
+    }
+
     handleGetTask = (record, id, name) => {
         notification.destroy("info")
         this.setState({ showProcess: true })
@@ -480,138 +605,10 @@ class List extends ListPage {
             clearInterval(this.mysetIntervals)
         }
         notification.open(args)
+        this.handleIntervals(record, id, name, props)
         try {
             this.mysetIntervals = setInterval(async () => {
-                let res
-                try {
-                    res = await schemas.task.service.get({
-                        domain_key: record.key,
-                        order: "create_time.desc",
-                        ...props,
-                    })
-                } catch (error) {
-                    if (this.mysetIntervals) {
-                        clearInterval(this.mysetIntervals)
-                    }
-                    return
-                }
-
-                if (!this.state.showProcess) {
-                    return
-                }
-                let data = res.list && res.list[0]
-                if (data) {
-                    if (data.status === "end") {
-                        const args = {
-                            message: (
-                                <span>
-                                    <span>{data.name + "已完成"}</span>
-                                    <Tooltip title="查看详情">
-                                        <a
-                                            onClick={() => {
-                                                this.handleTaskInfo(
-                                                    record,
-                                                    data.id
-                                                )
-                                            }}
-                                        >
-                                            <QuestionCircleOutlined
-                                                style={{ marginLeft: "5px" }}
-                                            />
-                                        </a>
-                                    </Tooltip>
-                                </span>
-                            ),
-                            key: "process",
-                            onClose: () => {
-                                this.setState({
-                                    showProcess: false,
-                                })
-                                clearInterval(this.mysetIntervals)
-                            },
-                            description: (
-                                <Progress
-                                    strokeColor={{
-                                        "0%": "#108ee9",
-                                        "100%": "#87d068",
-                                    }}
-                                    percent={100}
-                                />
-                            ),
-                            duration: 0,
-                        }
-                        this.setState({ process: 0 })
-                        notification.open(args)
-                        setTimeout(() => {
-                            clearInterval(this.mysetIntervals)
-                        }, 700)
-                    } else {
-                        const args = {
-                            message: (
-                                <span>
-                                    <span>{data.name}</span>
-                                    <Tooltip title="查看详情">
-                                        <a
-                                            onClick={() => {
-                                                this.handleTaskInfo(
-                                                    record,
-                                                    data.id
-                                                )
-                                            }}
-                                        >
-                                            <QuestionCircleOutlined
-                                                style={{ marginLeft: "5px" }}
-                                            />
-                                        </a>
-                                    </Tooltip>
-                                </span>
-                            ),
-                            key: "process",
-                            onClose: () => {
-                                this.setState({
-                                    showProcess: false,
-                                })
-                                clearInterval(this.mysetIntervals)
-                            },
-                            description: (
-                                <Progress
-                                    strokeColor={{
-                                        "0%": "#108ee9",
-                                        "100%": "#87d068",
-                                    }}
-                                    percent={
-                                        this.mysetIntervals
-                                            ? (this.state &&
-                                                  this.state.process) ||
-                                              0
-                                            : 100
-                                    }
-                                />
-                            ),
-                            duration: 0,
-                        }
-                        notification.open(args)
-                        this.setState({ process: data.process })
-                    }
-                } else {
-                    const args = {
-                        message: "暂无数据",
-                        key: "process",
-                        onClose: () => {
-                            clearInterval(this.mysetIntervals)
-                            this.setState({
-                                showProcess: false,
-                            })
-                        },
-                        description: "请稍后查询",
-                        duration: 0,
-                    }
-
-                    notification.open(args)
-                    setTimeout(() => {
-                        clearInterval(this.mysetIntervals)
-                    }, 700)
-                }
+                this.handleIntervals(record, id, name, props)
             }, 5000)
         } catch (error) {
             if (this.mysetIntervals) {
