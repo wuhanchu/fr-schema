@@ -43,15 +43,15 @@ const schema = {
         editHide: true,
         dict: {
             ready: {
-                value: "wait",
+                value: "0",
                 remark: "未处理",
             },
             end: {
-                value: "end",
+                value: 1,
                 remark: "已处理",
             },
             deny: {
-                value: "deny",
+                value: 2,
                 remark: "已丢弃",
             },
         },

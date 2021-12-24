@@ -26,7 +26,7 @@ class List extends DataList {
             queryArgs: {
                 ...props.queryArgs,
                 type: "add_question",
-                status: "eq.'wait",
+                status: "eq.0",
             },
             scroll: { x: "max-content", y: "50vh" },
             operateWidth: "120px",
@@ -82,7 +82,7 @@ class List extends DataList {
             })
         })
         try {
-            this.formRef.current.setFieldsValue({ status: "wait" })
+            this.formRef.current.setFieldsValue({ status: "0" })
         } catch (error) {}
         this.setState({ options: options })
         super.componentDidMount()
@@ -110,7 +110,7 @@ class List extends DataList {
         const { order } = this.props
 
         this.formRef.current.resetFields()
-        this.formRef.current.setFieldsValue({ status: "wait" })
+        this.formRef.current.setFieldsValue({ status: "0" })
         this.setState(
             {
                 pagination: { ...this.state.pagination, currentPage: 1 },
@@ -132,7 +132,7 @@ class List extends DataList {
                             const { selectedRows } = this.state
                             let idArray = []
                             selectedRows.map((item) => {
-                                if (item.status !== "end") {
+                                if (item.status !== 1) {
                                     idArray.push(item.id)
                                 }
                                 return item
@@ -221,7 +221,7 @@ class List extends DataList {
                 response = await schemas.question.service.post(data, schema)
                 console.log(this.state.infoData)
                 response = await this.service.patch(
-                    { id: this.state.infoData.id, status: "end" },
+                    { id: this.state.infoData.id, status: 1 },
                     schema
                 )
             } else {
@@ -260,7 +260,7 @@ class List extends DataList {
                 fixed: "right",
                 render: (text, record) => (
                     <>
-                        {record.status !== "end" && (
+                        {record.status !== 1 && (
                             <>
                                 <a
                                     onClick={() =>
@@ -280,10 +280,8 @@ class List extends DataList {
                                 </a>
                             </>
                         )}
-                        {record.status === "wait" && (
-                            <Divider type="vertical" />
-                        )}
-                        {record.status !== "deny" && record.status !== "end" && (
+                        {record.status === 0 && <Divider type="vertical" />}
+                        {record.status !== 2 && record.status !== 1 && (
                             <>
                                 <Popconfirm
                                     title="是否要丢弃此行？"
