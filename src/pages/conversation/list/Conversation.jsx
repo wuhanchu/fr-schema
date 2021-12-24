@@ -72,13 +72,24 @@ class Conversation extends ListPage {
 
     // 搜索
     renderSearchBar() {
-        const { domain_key, flow_key, status, intent_key } = this.schema
+        const {
+            begin_time,
+            end_time,
+            domain_key,
+            flow_key,
+            status,
+            intent_key,
+            call_id,
+        } = this.schema
         const filters = this.createFilters(
             {
-                domain_key,
+                begin_time,
                 flow_key,
                 status,
+                domain_key,
+                end_time,
                 intent_key,
+                call_id,
             },
             5
         )

@@ -78,6 +78,9 @@ class Main extends React.PureComponent {
         let data = res.list && res.list[0]
         if (data) {
             if (data.status === "end") {
+                if (this.mysetInterval) {
+                    clearInterval(this.mysetInterval)
+                }
                 const args = {
                     message: (
                         <span>
