@@ -558,7 +558,10 @@ class List extends DataList {
                     service={schemas.question.service}
                     schema={{
                         // id: { title: "编号" },
-                        project_id: this.schema.project_id,
+                        project_id: {
+                            ...this.schema.project_id,
+                            readOnly: true,
+                        },
                         ...schemas.question.schema,
                         group: {
                             ...schemas.question.schema.group,
