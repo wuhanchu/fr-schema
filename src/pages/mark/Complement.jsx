@@ -243,10 +243,11 @@ class List extends DataList {
         return response
     }
     renderSearchBar() {
-        const { create_time, status } = this.schema
+        const { create_time, status, project_id } = this.schema
         const filters = this.createFilters(
             {
                 create_time,
+                project_id,
                 status,
             },
             5

@@ -61,6 +61,7 @@ const schema = {
     project_id: {
         title: "问题库",
         required: true,
+        sorter: true,
         type: schemaFieldType.Select,
     },
     calibration_question_id: {

@@ -587,11 +587,12 @@ class List extends DataList {
         return response
     }
     renderSearchBar() {
-        const { create_time, status, question } = this.schema
+        const { create_time, status, question, project_id } = this.schema
         const filters = this.createFilters(
             {
                 create_time,
                 question,
+                project_id,
                 status,
             },
             5
