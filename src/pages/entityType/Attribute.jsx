@@ -206,7 +206,7 @@ class List extends DataList {
                     ...this.schema,
                     domain_key: {
                         title: "域",
-                        // required: true,
+                        required: true,
                         type: "Select",
                         dict: this.props.dict.domain,
                     },
@@ -222,20 +222,24 @@ class List extends DataList {
                 onOk={async () => {
                     // to convert
                     let attributeAttr = []
-                    const data = this.state.importData.map((item) => {
-                        return {
-                            ...item,
-                            depend_on: item.depend_on
-                                ? item.depend_on.split("|")
-                                : [],
-                            entity_type_key: this.props.record.key,
-                        }
-                    })
-                    console.log(data)
-                    await this.service.upInsert(data)
-                    message.success("导入成功")
-                    this.setState({ visibleImport: false })
-                    this.refreshList()
+                    if (this.state.importData) {
+                        const data =
+                            this.state.importData &&
+                            this.state.importData.map((item) => {
+                                return {
+                                    ...item,
+                                    depend_on: item.depend_on
+                                        ? item.depend_on.split("|")
+                                        : [],
+                                    entity_type_key: this.props.record.key,
+                                }
+                            })
+                        console.log(data)
+                        await this.service.upInsert(data)
+                        message.success("导入成功")
+                        this.setState({ visibleImport: false })
+                        this.refreshList()
+                    }
                 }}
             />
         )

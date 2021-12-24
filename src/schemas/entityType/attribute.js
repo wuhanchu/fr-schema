@@ -6,6 +6,7 @@ const schema = {
     domain_key: {
         title: "域",
         sorter: true,
+        required: true,
         addHide: true,
         editHide: true,
         // required: true,

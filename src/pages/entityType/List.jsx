@@ -232,6 +232,7 @@ class List extends DataList {
                             ...item,
                             id: undefined,
                             create_time: undefined,
+                            domain_key: undefined,
                         }
                     })
                 attributeArray = attributeArray.length
@@ -252,7 +253,7 @@ class List extends DataList {
                 schema={{
                     domain_key: {
                         title: "域",
-                        // required: true,
+                        required: true,
                         type: "Select",
                         dict: this.props.dict.domain,
                     },
@@ -284,11 +285,17 @@ class List extends DataList {
                 onOk={async () => {
                     // to convert
                     let attributeAttr = []
+                    if (!this.state.importData) {
+                        return
+                    }
                     const data = this.state.importData.map((item) => {
                         const { attribute, ...others } = item
                         let attributeArr = attribute
                             ? JSON.parse(attribute)
                             : []
+                        attributeArr = attributeArr.map((items) => {
+                            return { ...items, domain_key: item.domain_key }
+                        })
                         attributeAttr = [...attributeAttr, ...attributeArr]
                         return {
                             ...this.meta.addArgs,
