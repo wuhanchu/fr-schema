@@ -431,7 +431,7 @@ class RightDrawer extends React.PureComponent {
                             <FormItem
                                 name={"skip_repeat_action"}
                                 label={"是否跳过行为"}
-                                extra="如果已执行次数等于允许的执行次数，则跳过执行行为。"
+                                extra="如已执行次数等于允许的执行次数，则跳过。"
                                 rules={[
                                     {
                                         required: true,
