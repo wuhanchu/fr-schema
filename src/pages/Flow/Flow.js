@@ -449,6 +449,12 @@ class Flow extends React.PureComponent {
     }
 
     addNodes(args) {
+        let skip_repeat_action
+        if (args.skip_repeat_action === undefined) {
+            skip_repeat_action = false
+        } else {
+            skip_repeat_action = args.skip_repeat_action
+        }
         this.graph.addNode({
             id: args.key,
             width: 110,
@@ -462,7 +468,7 @@ class Flow extends React.PureComponent {
                 key: args.key,
                 name: args.name,
                 allow_repeat_time: args.allow_repeat_time,
-                skip_repeat_action: args.skip_repeat_action,
+                skip_repeat_action: skip_repeat_action,
                 action: args.action,
                 types: args.type,
             },
