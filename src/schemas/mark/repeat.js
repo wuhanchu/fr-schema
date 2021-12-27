@@ -14,7 +14,7 @@ function renderText(data) {
                     overflow: "hidden",
                     textOverflow: "ellipsis",
                     whiteSpace: "nowrap",
-                    maxWidth: "250px",
+                    maxWidth: "250px", // 宽度250
                 }}
             >
                 {data && data}
