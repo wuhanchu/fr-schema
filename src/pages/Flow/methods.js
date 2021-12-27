@@ -13,6 +13,7 @@ export const startDragToGraph = async (graph, type, e, callback) => {
                   data: {
                       name: "未命名",
                       allow_repeat_time: 2,
+                      skip_repeat_action: false,
                       types: "normal",
                   },
                   attrs: {
@@ -42,6 +43,7 @@ export const startDragToGraph = async (graph, type, e, callback) => {
                   data: {
                       name: "全局节点",
                       allow_repeat_time: 2,
+                      skip_repeat_action: false,
                       types: "global",
                   },
                   attrs: {
@@ -86,6 +88,7 @@ export const startDragToGraph = async (graph, type, e, callback) => {
                   data: {
                       name: "开始节点",
                       allow_repeat_time: 2,
+                      skip_repeat_action: false,
                       types: "begin",
                   },
                   attrs: {
@@ -125,6 +128,7 @@ export const startDragToGraph = async (graph, type, e, callback) => {
                       name: "结束节点",
                       types: "end",
                       allow_repeat_time: 2,
+                      skip_repeat_action: false,
                   },
                   attrs: {
                       radius: 20,
@@ -455,8 +459,11 @@ export function isError(data, graph) {
         return item.name
     })
     data.config.node.map((item) => {
+        console.log(item.skip_repeat_action)
         if (
-            (!item.allow_repeat_time || countName(nameArr, item.name) > 1) &&
+            (!item.allow_repeat_time ||
+                countName(nameArr, item.name) > 1 ||
+                item.skip_repeat_action === undefined) &&
             item.type !== "global"
         ) {
             let cell = graph.getCellById(item.key)
@@ -552,7 +559,9 @@ export function getTree(args) {
                     arr = list.filter((value) => {
                         return (
                             value.logical_path !== list[i].logical_path &&
-                            list[i].logical_path.includes(value.logical_path + '.')
+                            list[i].logical_path.includes(
+                                value.logical_path + "."
+                            )
                         )
                     })
                     // 存在上层意图则标明当前遍历意图为其他意图的子意图

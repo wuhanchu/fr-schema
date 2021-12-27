@@ -405,6 +405,7 @@ class Flow extends React.PureComponent {
                             name: "开始节点",
                             key: uuidv4(),
                             allow_repeat_time: 2,
+                            skip_repeat_action: false,
                             type: "begin",
                             position: {
                                 x: 369,
@@ -424,6 +425,7 @@ class Flow extends React.PureComponent {
                         name: "开始节点",
                         key: uuidv4(),
                         allow_repeat_time: 2,
+                        skip_repeat_action: false,
                         type: "begin",
                         position: {
                             x: 369,
@@ -460,6 +462,7 @@ class Flow extends React.PureComponent {
                 key: args.key,
                 name: args.name,
                 allow_repeat_time: args.allow_repeat_time,
+                skip_repeat_action: args.skip_repeat_action,
                 action: args.action,
                 types: args.type,
             },
@@ -545,6 +548,7 @@ class Flow extends React.PureComponent {
                 shape: "ellipse",
                 type: "global",
                 allow_repeat_time: 2,
+                skip_repeat_action: false,
                 position: {
                     x: endNode.store.data.position.x,
                     y: endNode.store.data.position.y - 150,
@@ -632,6 +636,7 @@ class Flow extends React.PureComponent {
                     data: {
                         name: "未命名",
                         allow_repeat_time: 2,
+                        skip_repeat_action: false,
                         types: "normal",
                     },
                     attrs: {
@@ -688,11 +693,18 @@ class Flow extends React.PureComponent {
         }
         expGraph.getNodes().map((item, index) => {
             let nodeData = item.getData()
+            let skip_repeat_action
+            if (nodeData.skip_repeat_action === undefined) {
+                skip_repeat_action = false
+            } else {
+                skip_repeat_action = nodeData.skip_repeat_action
+            }
             let itemData = {
                 name: nodeData.name,
                 key: item.id,
                 action: nodeData.action,
                 allow_repeat_time: nodeData.allow_repeat_time,
+                skip_repeat_action: skip_repeat_action,
                 type: nodeData.types,
                 position: {
                     x: item.store.data.position.x,

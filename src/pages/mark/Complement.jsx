@@ -29,7 +29,7 @@ class List extends DataList {
                 ...props.queryArgs,
                 type: "add_question_extend",
             },
-            operateWidth: "120px",
+            operateWidth: "150px",
         })
     }
 
@@ -117,10 +117,50 @@ class List extends DataList {
                         <Button>丢弃</Button>
                     </Popconfirm>
                 }
+                {
+                    <Popconfirm
+                        title="是否要删除选中的数据？"
+                        onConfirm={(e) => {
+                            const { dispatch } = this.props
+                            const { selectedRows } = this.state
+                            this.handleDeleteMulti(selectedRows)
+                        }}
+                    >
+                        <Button>批量删除</Button>
+                    </Popconfirm>
+                }
             </span>
         )
     }
+    handleDeleteRow = async (data) => {
+        // 更新
+        let response
 
+        const showMessage = (response && response.msg) || "删除成功"
+
+        // 修改当前数据
+
+        if (!this.props.offline) {
+            response = await this.service.delete({ id: data.id, ...data })
+        }
+
+        this.state.data.list.some((item, index) => {
+            if (data.id == item.id) {
+                this.state.data.list.splice(index, 1)
+                return true
+            }
+        })
+        this.setState({
+            data: this.state.data,
+        })
+        this.refreshList()
+        message.success(showMessage)
+        this.handleVisibleModal()
+        this.handleChangeCallback && this.handleChangeCallback()
+        this.props.handleChangeCallback && this.props.handleChangeCallback()
+
+        return response
+    }
     /**
      * 表格操作列
      * @returns {{width: string, fixed: (*|string), title: string, render: (function(*, *=): *)}}
@@ -192,6 +232,27 @@ class List extends DataList {
                                 </Popconfirm>
                             </>
                         )}
+                        <Divider type="vertical" />
+                        <>
+                            <Popconfirm
+                                title="是否要丢弃此行？"
+                                onConfirm={async (e) => {
+                                    this.setState({ record })
+                                    await this.handleDeleteRow(record)
+                                    e.stopPropagation()
+                                }}
+                            >
+                                <a>
+                                    {inDel &&
+                                        this.state.record &&
+                                        this.state.record.id &&
+                                        this.state.record.id === record.id && (
+                                            <LoadingOutlined />
+                                        )}
+                                    删除
+                                </a>
+                            </Popconfirm>
+                        </>
                         {this.renderOperateColumnExtend(record)}
                     </>
                 ),

@@ -56,7 +56,7 @@ class List extends DataList {
                 type: "merge_question",
                 // type: "add_question_extend",
             },
-            operateWidth: "120px",
+            operateWidth: "160px",
         })
     }
 
@@ -75,7 +75,7 @@ class List extends DataList {
                         overflow: "hidden",
                         textOverflow: "ellipsis",
                         whiteSpace: "nowrap",
-                        maxWidth: "300px",
+                        maxWidth: "250px",
                     }}
                 >
                     <a
@@ -103,7 +103,7 @@ class List extends DataList {
                         overflow: "hidden",
                         textOverflow: "ellipsis",
                         whiteSpace: "nowrap",
-                        maxWidth: "300px",
+                        maxWidth: "250px",
                     }}
                 >
                     <a
@@ -144,6 +144,36 @@ class List extends DataList {
         let data = await this.service.get(params)
         data = this.dataConvert(data)
         return data
+    }
+
+    handleDeleteRow = async (data) => {
+        // 更新
+        let response
+
+        const showMessage = (response && response.msg) || "删除成功"
+
+        // 修改当前数据
+
+        if (!this.props.offline) {
+            response = await this.service.delete({ id: data.id, ...data })
+        }
+
+        this.state.data.list.some((item, index) => {
+            if (data.id == item.id) {
+                this.state.data.list.splice(index, 1)
+                return true
+            }
+        })
+        this.setState({
+            data: this.state.data,
+        })
+        this.refreshList()
+        message.success(showMessage)
+        this.handleVisibleModal()
+        this.handleChangeCallback && this.handleChangeCallback()
+        this.props.handleChangeCallback && this.props.handleChangeCallback()
+
+        return response
     }
 
     handleFormReset = () => {
@@ -306,6 +336,18 @@ class List extends DataList {
                         <Button>丢弃</Button>
                     </Popconfirm>
                 }
+                {
+                    <Popconfirm
+                        title="是否要删除选中的数据？"
+                        onConfirm={(e) => {
+                            const { dispatch } = this.props
+                            const { selectedRows } = this.state
+                            this.handleDeleteMulti(selectedRows)
+                        }}
+                    >
+                        <Button>批量删除</Button>
+                    </Popconfirm>
+                }
             </span>
         )
     }
@@ -416,6 +458,36 @@ class List extends DataList {
                 )}
                 <Menu.Item>
                     <Popconfirm
+                        title="是否要清空任务编号？"
+                        onConfirm={async (e) => {
+                            this.setState({ record, listLoading: true })
+                            try {
+                                let res = await this.service.patch({
+                                    id: record.id,
+                                    task_code: "",
+                                })
+                                this.setState({ record, listLoading: false })
+                                message.success("清空成功")
+                            } catch (error) {
+                                message.error("清空失败！")
+                            }
+
+                            e.stopPropagation()
+                        }}
+                    >
+                        <a>
+                            {inDel &&
+                                this.state.record &&
+                                this.state.record.id &&
+                                this.state.record.id === record.id && (
+                                    <LoadingOutlined />
+                                )}
+                            清空任务编号
+                        </a>
+                    </Popconfirm>
+                </Menu.Item>
+                <Menu.Item>
+                    <Popconfirm
                         title="是否要合并问题？"
                         onConfirm={async (e) => {
                             this.setState({ record, listLoading: true })
@@ -456,8 +528,6 @@ class List extends DataList {
 
         let response
         try {
-            console.log("新增")
-            console.log(data)
             response = await schemas.question.service.patch(data, schema)
             console.log(this.state.infoData)
             console.log(this.state.record)
@@ -521,7 +591,27 @@ class List extends DataList {
                                 </Popconfirm>
                             </>
                         )}
-
+                        <Divider type="vertical" />
+                        <>
+                            <Popconfirm
+                                title="是否要丢弃此行？"
+                                onConfirm={async (e) => {
+                                    this.setState({ record })
+                                    await this.handleDeleteRow(record)
+                                    e.stopPropagation()
+                                }}
+                            >
+                                <a>
+                                    {inDel &&
+                                        this.state.record &&
+                                        this.state.record.id &&
+                                        this.state.record.id === record.id && (
+                                            <LoadingOutlined />
+                                        )}
+                                    删除
+                                </a>
+                            </Popconfirm>
+                        </>
                         {this.renderOperateColumnExtend(record)}
                     </>
                 ),
@@ -648,7 +738,7 @@ class List extends DataList {
                 project_id,
                 status,
             },
-            5
+            4
         )
         return this.createSearchBar(filters)
     }

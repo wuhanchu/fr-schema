@@ -428,6 +428,30 @@ class RightDrawer extends React.PureComponent {
                                     placeholder="请输入允许重复次数"
                                 />
                             </FormItem>
+                            <FormItem
+                                name={"skip_repeat_action"}
+                                label={"是否跳过行为"}
+                                extra="如果已执行次数等于允许的执行次数，则跳过执行行为。"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: "请输入是否跳过行为！",
+                                    },
+                                ]}
+                            >
+                                <Select
+                                    options={[
+                                        {
+                                            value: true,
+                                            label: "是",
+                                        },
+                                        {
+                                            value: false,
+                                            label: "否",
+                                        },
+                                    ]}
+                                ></Select>
+                            </FormItem>
                             {cell.getData().types !== "begin" &&
                                 cell.getData().types !== "global" && (
                                     <FormItem
