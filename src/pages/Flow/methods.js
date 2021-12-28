@@ -275,7 +275,8 @@ export function createEdgeFunc(args) {
                 attrs: {
                     text: {
                         text: (args && args.data && args.data.name) || "未命名",
-                        fontSize: 14,
+                        fontSize: 15,
+                        zIndex: 1000,
                         fill: "#000000A6",
                     },
                     body: {
@@ -459,7 +460,6 @@ export function isError(data, graph) {
         return item.name
     })
     data.config.node.map((item) => {
-        console.log(item.skip_repeat_action)
         if (
             (!item.allow_repeat_time ||
                 countName(nameArr, item.name) > 1 ||

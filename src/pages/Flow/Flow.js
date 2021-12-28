@@ -275,7 +275,7 @@ class Flow extends React.PureComponent {
                             {this.state.historyList &&
                                 this.state.historyList.map((item, index) => {
                                     return (
-                                        <Option value={index}>
+                                        <Option value={index} key={index}>
                                             {item.create_time.format(
                                                 "YYYY-MM-DD HH:mm:ss"
                                             )}
@@ -476,7 +476,7 @@ class Flow extends React.PureComponent {
                 label: {
                     text: args.name,
                     fill: "#000000",
-                    fontSize: 14,
+                    fontSize: 15,
                     textWrap: {
                         width: -10,
                         height: -10,
@@ -649,7 +649,7 @@ class Flow extends React.PureComponent {
                         label: {
                             text: "未命名",
                             fill: "#000000",
-                            fontSize: 14,
+                            fontSize: 15,
                             textWrap: {
                                 width: -10,
                                 height: -10,

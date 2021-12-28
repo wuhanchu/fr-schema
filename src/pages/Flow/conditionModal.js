@@ -144,7 +144,6 @@ export const ConditionModal = ({
         if (conditionType === "edit") {
             conditionList.splice(
                 conditionList.findIndex((item) => {
-                    console.log("结果", defaultValue.key, item)
                     return defaultValue.key === item
                 }),
                 1
@@ -237,7 +236,6 @@ export const ConditionModal = ({
             )
         })
 
-    console.log(importDict)
     return (
         <Modal
             title={"条件配置"}

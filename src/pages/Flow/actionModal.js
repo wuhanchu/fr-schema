@@ -180,8 +180,6 @@ export const ActionModal = ({
         var [AceEditorValue, setAceEditorValue] = useState("")
     }
 
-    console.log(AceEditorValue)
-
     const onFinishFailed = (errorInfo) => {
         console.log("Failed:", errorInfo)
     }
@@ -192,7 +190,7 @@ export const ActionModal = ({
     let options = []
     Object.keys(dict).forEach((key) => {
         options.push(
-            <Select.Option value={key}>
+            <Select.Option value={key} key={key}>
                 {/* <Tooltip title={dict[key].remarks || ""}>
                     <div style={{ width: "100%" }}>{dict[key].remark}</div>
                 </Tooltip> */}
@@ -206,7 +204,6 @@ export const ActionModal = ({
         if (value.type) {
             formRef.current.setFieldsValue({ name: dict[value.type].remark })
             setType(value.type)
-            console.log(type)
         }
     }
 
@@ -224,13 +221,14 @@ export const ActionModal = ({
                         nodeActionDict.push(
                             <Select.Option
                                 value={item.key + "nodeID_" + oneNodeAction.key}
+                                key={item.key + "nodeID_" + oneNodeAction.key}
                             >
                                 {oneNodeAction.name}
                             </Select.Option>
                         )
                 })
             importDict.push(
-                <Select.OptGroup label={item.name}>
+                <Select.OptGroup label={item.name} key={item.name}>
                     {nodeActionDict}
                 </Select.OptGroup>
             )

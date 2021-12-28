@@ -236,7 +236,6 @@ class RightDrawer extends React.PureComponent {
             intentDict,
             projectDict,
         } = this.props
-        console.log(projectDict, intentDict)
         return (
             chooseType === "grid" && (
                 <div>
@@ -281,7 +280,10 @@ class RightDrawer extends React.PureComponent {
                                     {dict.domain &&
                                         dict.domain.map((item) => {
                                             return (
-                                                <Select.Option value={item.key}>
+                                                <Select.Option
+                                                    value={item.key}
+                                                    key={item.key}
+                                                >
                                                     {item.name}
                                                 </Select.Option>
                                             )
@@ -304,7 +306,10 @@ class RightDrawer extends React.PureComponent {
                                     {intentDict &&
                                         intentDict.map((item) => {
                                             return (
-                                                <Select.Option value={item.key}>
+                                                <Select.Option
+                                                    value={item.key}
+                                                    key={item.key}
+                                                >
                                                     {item.name}
                                                 </Select.Option>
                                             )
@@ -321,7 +326,10 @@ class RightDrawer extends React.PureComponent {
                                     {projectDict &&
                                         projectDict.map((item) => {
                                             return (
-                                                <Select.Option value={item.id}>
+                                                <Select.Option
+                                                    value={item.id}
+                                                    key={item.key}
+                                                >
                                                     {item.name}
                                                 </Select.Option>
                                             )
@@ -442,10 +450,12 @@ class RightDrawer extends React.PureComponent {
                                 <Select
                                     options={[
                                         {
+                                            key: "true",
                                             value: true,
                                             label: "是",
                                         },
                                         {
+                                            key: "false",
                                             value: false,
                                             label: "否",
                                         },
@@ -468,10 +478,12 @@ class RightDrawer extends React.PureComponent {
                                             disabled={canEditType}
                                             options={[
                                                 {
+                                                    key: "end",
                                                     value: "end",
                                                     label: "结束节点",
                                                 },
                                                 {
+                                                    key: "normal",
                                                     value: "normal",
                                                     label: "普通节点",
                                                 },
@@ -507,7 +519,7 @@ class RightDrawer extends React.PureComponent {
                                                     keys={item.key}
                                                     key={item.key}
                                                 >
-                                                    <Tag>
+                                                    <Tag key={item.key + "Tag"}>
                                                         <span
                                                             onClick={() => {
                                                                 this.setState({
@@ -578,7 +590,7 @@ class RightDrawer extends React.PureComponent {
                                     attrs: {
                                         text: {
                                             text: args.name,
-                                            fontSize: 14,
+                                            fontSize: 15,
                                             fill: "#000000A6",
                                         },
                                         body: {
@@ -635,7 +647,7 @@ class RightDrawer extends React.PureComponent {
                                                 }}
                                                 key={item.key}
                                             >
-                                                <Tag>
+                                                <Tag key={item.key + "Tag"}>
                                                     <span
                                                         onClick={() => {
                                                             this.setState({

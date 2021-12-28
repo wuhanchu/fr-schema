@@ -406,7 +406,7 @@ class Dialogue extends Chat {
                     {item.buttons.map((data, indexs) => {
                         return (
                             <a
-                                key={`extraButton${index}`}
+                                key={`extraButton${index}${indexs}`}
                                 onClick={this.operaClick.bind(
                                     this,
                                     data,
@@ -693,12 +693,15 @@ class Dialogue extends Chat {
                 options.push({
                     label: item.name,
                     value: item.id,
+                    key: item.id,
+
                     defaultChecked: true,
                 })
             })
         flow.list &&
             flow.list.map((item) => {
                 flowOption.push({
+                    key: item.key,
                     label: item.name,
                     value: item.key,
                     defaultChecked: true,
