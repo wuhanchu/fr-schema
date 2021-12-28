@@ -328,7 +328,7 @@ class RightDrawer extends React.PureComponent {
                                             return (
                                                 <Select.Option
                                                     value={item.id}
-                                                    key={item.key}
+                                                    key={item.id}
                                                 >
                                                     {item.name}
                                                 </Select.Option>

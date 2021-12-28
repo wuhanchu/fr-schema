@@ -57,7 +57,7 @@ class List extends ListPage {
 
         let project = await schemas.project.service.get({ limit: 9999 })
         this.schema.project_id.dict = listToDict(project.list, "", "id", "name")
-        this.schema.project_id.props.projectArry = project.list
+        this.schema.project_id.props.projectarry = project.list
         this.schema.project_id.renderInput = (
             item,
             tempData,
@@ -72,7 +72,7 @@ class List extends ListPage {
                 props.form.current &&
                 props.form.current.getFieldsValue().domain_key
             ) {
-                options = props.projectArry
+                options = props.projectarry
                     .filter(
                         (item) =>
                             item.domain_key ===
@@ -82,7 +82,7 @@ class List extends ListPage {
                         return { value: item.id, label: item.name }
                     })
             } else {
-                options = props.projectArry
+                options = props.projectarry
                     .filter((item) => {
                         if (tempData.domain_key)
                             return item.domain_key === tempData.domain_key
@@ -91,7 +91,11 @@ class List extends ListPage {
                         }
                     })
                     .map((item, index) => {
-                        return { value: item.id, label: item.name }
+                        return {
+                            value: item.id,
+                            label: item.name,
+                            key: item.id,
+                        }
                     })
             }
             return (
@@ -333,9 +337,9 @@ class List extends ListPage {
     }
 
     renderCodeModal(customProps = {}) {
-        if (this.props.renderInfoModal) {
-            return this.props.renderInfoModal()
-        }
+        // if (this.props.renderInfoModal) {
+        //     return this.props.renderInfoModal()
+        // }
         const { form } = this.props
         const renderForm = this.props.renderForm || this.renderForm
         const { resource, title, addArgs } = this.meta

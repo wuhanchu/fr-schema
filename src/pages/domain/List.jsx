@@ -33,7 +33,7 @@ import IntentIdentify from "./component/IntentIdentify"
 import {
     DownOutlined,
     LoadingOutlined,
-    QuestionCircleOutlined,
+    InfoCircleOutlined,
     SyncOutlined,
     WarningOutlined,
 } from "@ant-design/icons"
@@ -393,9 +393,10 @@ class List extends ListPage {
                     style={{ maxHeight: "500px", overflowY: "auto" }}
                     current={res.list.length}
                 >
-                    {res.list.map((item) => {
+                    {res.list.map((item, index) => {
                         return (
                             <Step
+                                key={index}
                                 title={
                                     <span>
                                         <span>{item.name}</span>
@@ -489,7 +490,7 @@ class List extends ListPage {
                                         this.handleTaskInfo(record, data.id)
                                     }}
                                 >
-                                    <QuestionCircleOutlined
+                                    <InfoCircleOutlined
                                         style={{ marginLeft: "5px" }}
                                     />
                                 </a>
@@ -501,6 +502,8 @@ class List extends ListPage {
                         this.setState({
                             showProcess: false,
                         })
+                        notification.destroy("info")
+
                         clearInterval(this.mysetIntervals)
                     },
                     description: (
@@ -530,7 +533,7 @@ class List extends ListPage {
                                         this.handleTaskInfo(record, data.id)
                                     }}
                                 >
-                                    <QuestionCircleOutlined
+                                    <InfoCircleOutlined
                                         style={{ marginLeft: "5px" }}
                                     />
                                 </a>
@@ -542,6 +545,8 @@ class List extends ListPage {
                         this.setState({
                             showProcess: false,
                         })
+                        notification.destroy("info")
+
                         clearInterval(this.mysetIntervals)
                     },
                     description: (
@@ -568,6 +573,7 @@ class List extends ListPage {
                 key: "process",
                 onClose: () => {
                     clearInterval(this.mysetIntervals)
+                    notification.destroy("info")
                     this.setState({
                         showProcess: false,
                     })
@@ -596,6 +602,7 @@ class List extends ListPage {
                 this.setState({
                     showProcess: false,
                 })
+                notification.destroy("info")
                 clearInterval(this.mysetIntervals)
             },
             description: <LoadingOutlined />,
@@ -730,7 +737,7 @@ class List extends ListPage {
                                                                     )
                                                                 }}
                                                             >
-                                                                <QuestionCircleOutlined
+                                                                <InfoCircleOutlined
                                                                     style={{
                                                                         marginLeft:
                                                                             "5px",
@@ -818,7 +825,7 @@ class List extends ListPage {
                                                                     )
                                                                 }}
                                                             >
-                                                                <QuestionCircleOutlined
+                                                                <InfoCircleOutlined
                                                                     style={{
                                                                         marginLeft:
                                                                             "5px",
@@ -921,7 +928,7 @@ class List extends ListPage {
                         同步进度
                     </a>
                 </Menu.Item>
-                <Menu.Item key="2">
+                <Menu.Item key="3">
                     <a
                         onClick={async () => {
                             this.handleGetTask(

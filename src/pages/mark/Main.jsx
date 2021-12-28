@@ -19,7 +19,7 @@ import Repeat from "./Repeat"
 import schemas from "@/schemas"
 import {
     LoadingOutlined,
-    QuestionCircleOutlined,
+    InfoCircleOutlined,
     SyncOutlined,
     WarningOutlined,
 } from "@ant-design/icons"
@@ -91,7 +91,7 @@ class Main extends React.PureComponent {
                                         this.handleTaskInfo(record, data.id)
                                     }}
                                 >
-                                    <QuestionCircleOutlined
+                                    <InfoCircleOutlined
                                         style={{ marginLeft: "5px" }}
                                     />
                                 </a>
@@ -103,6 +103,7 @@ class Main extends React.PureComponent {
                         this.setState({
                             showProcess: false,
                         })
+                        notification.destroy("info")
                         clearInterval(this.mysetIntervals)
                     },
                     description: (
@@ -134,7 +135,7 @@ class Main extends React.PureComponent {
                                         this.handleTaskInfo(record, data.id)
                                     }}
                                 >
-                                    <QuestionCircleOutlined
+                                    <InfoCircleOutlined
                                         style={{ marginLeft: "5px" }}
                                     />
                                 </a>
@@ -146,6 +147,7 @@ class Main extends React.PureComponent {
                         this.setState({
                             showProcess: false,
                         })
+                        notification.destroy("info")
                         clearInterval(this.mysetIntervals)
                     },
                     description: (
@@ -174,6 +176,7 @@ class Main extends React.PureComponent {
                     this.setState({
                         showProcess: false,
                     })
+                    notification.destroy("info")
                 },
                 description: "请稍后查询",
                 duration: 0,
@@ -279,6 +282,7 @@ class Main extends React.PureComponent {
                 this.setState({
                     showProcess: false,
                 })
+                notification.destroy("info")
                 clearInterval(this.mysetIntervals)
             },
             description: <LoadingOutlined />,
@@ -358,7 +362,7 @@ class Main extends React.PureComponent {
                                                             )
                                                         }}
                                                     >
-                                                        <QuestionCircleOutlined
+                                                        <InfoCircleOutlined
                                                             style={{
                                                                 marginLeft:
                                                                     "5px",
