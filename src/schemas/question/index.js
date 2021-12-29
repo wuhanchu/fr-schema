@@ -163,7 +163,11 @@ const schema = {
         editHide: true,
         showHide: true,
         render: (item) => {
-            return <div style={{ minWidth: "60px" }}>{item}</div>
+            return item ? (
+                <div style={{ minWidth: "300px" }}>{item}</div>
+            ) : (
+                <div></div>
+            )
         },
         width: "120px",
     },
