@@ -209,12 +209,7 @@ function renderTitle(
                                 }}
                                 autoSize
                                 width={300}
-                                // value={
-                                //     addQuestionExtend
-                                //     // addQuestionExtend ||
-                                //     // values ||
-                                //     // (props.record && props.record.search)
-                                // }
+                                value={addQuestionExtend}
                                 defaultValue={
                                     values ||
                                     (props.record && props.record.search)
@@ -231,7 +226,8 @@ function renderTitle(
                         setAddQuestionExtend("")
                     }}
                     onVisibleChange={() => {
-                        setAddQuestionExtend("")
+                        setAddQuestionExtend(values || props.record.search)
+                        // setAddQuestionExtend("")
                     }}
                     onConfirm={async (e) => {
                         if (!addQuestionExtend) {
@@ -275,6 +271,7 @@ function renderTitle(
                 >
                     <a
                         onClick={() => {
+                            console.log("是")
                             setAddQuestionExtend(values || props.record.search)
                         }}
                     >
