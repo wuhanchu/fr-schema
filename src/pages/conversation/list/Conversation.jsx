@@ -3,7 +3,7 @@ import ListPage from "@/outter/fr-schema-antd-utils/src/components/Page/ListPage
 import schemas from "@/schemas/conversation/list"
 import React, { Fragment } from "react"
 import "@ant-design/compatible/assets/index.css"
-import { Modal, TreeSelect } from "antd"
+import { InputNumber, Modal, Select, TreeSelect } from "antd"
 import ConversationDetail from "@/pages/outPage/ConversationDetail"
 import flowSchemas from "@/schemas/flow/index"
 import userService from "@/pages/authority/user/service"
@@ -32,9 +32,49 @@ class Conversation extends ListPage {
         this.state = {
             ...this.state,
             showDetail: false,
+            showIntent: true,
             detail: {},
             showIntentFlow: true,
         }
+    }
+
+    /**
+     * 重置查询
+     */
+    handleFormReset = () => {
+        const { order } = this.props
+        let treeList = this.state.treeList
+        this.setState({ showIntent: false })
+
+        // let list = getTree(this.state.intentList)
+
+        this.formRef.current.resetFields()
+        this.setState(
+            {
+                pagination: { ...this.state.pagination, currentPage: 1 },
+                searchValues: { order },
+            },
+            () => {
+                this.refreshList()
+            }
+        )
+        console.log(treeList)
+        this.schema.intent_key.renderInput = (data, item, props) => {
+            console.log(data, item, props)
+            return (
+                <TreeSelect
+                    showSearch
+                    allowClear
+                    treeNodeFilterProp="name"
+                    style={{ width: "100%" }}
+                    placeholder={"请选择意图"}
+                    dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
+                    treeData={treeList}
+                    treeDefaultExpandAll
+                />
+            )
+        }
+        this.setState({ showIntent: true })
     }
 
     async componentDidMount() {
@@ -55,45 +95,56 @@ class Conversation extends ListPage {
             key: "not.eq.null",
         })
         let list = getTree(res.list)
-        this.schema.intent_key.renderInput = () => (
-            <TreeSelect
-                showSearch
-                allowClear
-                treeNodeFilterProp="name"
-                style={{ width: "100%" }}
-                placeholder={"请选择意图"}
-                dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
-                treeData={list}
-                treeDefaultExpandAll
-            />
-        )
+        this.setState({ intentList: res.list })
+        this.schema.intent_key.renderInput = (data, item, props) => {
+            return (
+                <TreeSelect
+                    showSearch
+                    allowClear
+                    treeNodeFilterProp="name"
+                    style={{ width: "100%" }}
+                    placeholder={"请选择意图"}
+                    dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
+                    treeData={list}
+                    treeDefaultExpandAll
+                />
+            )
+        }
+        this.setState({
+            treeList: list,
+        })
         super.componentDidMount()
     }
 
     // 搜索
     renderSearchBar() {
         const {
+            domain_key,
             begin_time,
             end_time,
-            domain_key,
             flow_key,
             status,
             intent_key,
             call_id,
+            called,
+            caller,
         } = this.schema
         const filters = this.createFilters(
             {
-                begin_time,
-                flow_key,
-                status,
                 domain_key,
-                end_time,
+
+                status,
+                flow_key,
                 intent_key,
                 call_id,
+                called,
+                caller,
+                begin_time,
+                end_time,
             },
-            5
+            4
         )
-        return this.createSearchBar(filters)
+        return this.state.showIntent && this.createSearchBar(filters)
     }
 
     /**
@@ -146,12 +197,66 @@ class Conversation extends ListPage {
     // 流程列表-> 列表枚举展示
     async findFlowList() {
         let res = await flowSchemas.service.get({ pageSize: 10000 })
-        this.schema.flow_key.dict = utils.dict.listToDict(
-            res.list,
-            null,
-            "key",
-            "name"
-        )
+        console.log(res)
+        let dict = utils.dict.listToDict(res.list, null, "key", "name")
+        let list = res.list.map((item) => {
+            return {
+                ...item,
+                label: item.name,
+                value: item.key,
+            }
+        })
+        this.schema.flow_key.dict = dict
+        this.schema.flow_key.renderInput = (item, data, props) => {
+            return (
+                <Select
+                    {...props}
+                    options={list}
+                    onChange={(value) => {
+                        let treeList = this.state.treeList
+                        let treeData = getTree(this.state.intentList)
+                        let flowIntent = []
+                        this.setState({ showIntent: undefined })
+                        if (
+                            value &&
+                            item.dict[value].config &&
+                            item.dict[value].config.condition
+                        ) {
+                            item.dict[value].config.condition.map((items) => {
+                                if (items.intent) flowIntent.push(items.intent)
+                            })
+                            treeData = this.state.intentList.filter((items) => {
+                                return flowIntent.indexOf(items.key) > -1
+                            })
+                            treeData = treeData.map((items) => {
+                                return {
+                                    ...item,
+                                    value: items.key,
+                                    label: items.name,
+                                }
+                            })
+                        }
+                        this.schema.intent_key.renderInput = () => (
+                            <TreeSelect
+                                showSearch
+                                allowClear
+                                treeNodeFilterProp="name"
+                                style={{ width: "100%" }}
+                                placeholder={"请选择意图"}
+                                dropdownStyle={{
+                                    maxHeight: 400,
+                                    overflow: "auto",
+                                }}
+                                treeData={treeData}
+                                treeDefaultExpandAll
+                            />
+                        )
+                        this.setState({ showIntent: [] })
+                    }}
+                    allowClear
+                ></Select>
+            )
+        }
     }
 
     // 流程列表-> 列表枚举展示

@@ -1,5 +1,6 @@
 import { Addon, FunctionExt, Graph, Shape } from "@antv/x6"
 import frSchema from "@/outter/fr-schema/src"
+import clone from "clone"
 
 const { decorateList } = frSchema
 // 拖拽生成四边形或者圆形
@@ -580,5 +581,5 @@ export function getTree(args) {
                 // record.push(result)
                 // record.children = [...result]
             })
-    return record
+    return clone(record)
 }
