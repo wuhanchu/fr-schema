@@ -514,7 +514,7 @@ class List extends ListPage {
             {
                 domain_key,
                 name,
-                project_id,
+                // project_id,
             },
             5
         )
