@@ -734,9 +734,9 @@ class List extends DataList {
         const filters = this.createFilters(
             {
                 create_time,
-                question,
-                project_id,
                 status,
+                project_id,
+                question,
             },
             4
         )

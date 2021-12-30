@@ -308,8 +308,8 @@ class List extends DataList {
         const filters = this.createFilters(
             {
                 create_time,
-                project_id,
                 status,
+                project_id,
             },
             5
         )
