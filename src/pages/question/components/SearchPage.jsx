@@ -209,11 +209,12 @@ function renderTitle(
                                 }}
                                 autoSize
                                 width={300}
-                                value={
-                                    addQuestionExtend ||
-                                    values ||
-                                    (props.record && props.record.search)
-                                }
+                                // value={
+                                //     addQuestionExtend
+                                //     // addQuestionExtend ||
+                                //     // values ||
+                                //     // (props.record && props.record.search)
+                                // }
                                 defaultValue={
                                     values ||
                                     (props.record && props.record.search)
@@ -233,6 +234,12 @@ function renderTitle(
                         setAddQuestionExtend("")
                     }}
                     onConfirm={async (e) => {
+                        if (!addQuestionExtend) {
+                            message.error("请输入补充内容")
+                            setLoading(false)
+
+                            return
+                        }
                         setLoading(true)
                         let data = await schemas.question.service.getDetail(
                             item
@@ -241,16 +248,8 @@ function renderTitle(
                         if (data.question_extend) {
                             question_extend = data.question_extend.split("\n")
                         }
-                        if (
-                            addQuestionExtend ||
-                            values ||
-                            props.record.search
-                        ) {
-                            question_extend.push(
-                                addQuestionExtend ||
-                                    values ||
-                                    props.record.search
-                            )
+                        if (addQuestionExtend) {
+                            question_extend.push(addQuestionExtend)
                             await schemas.question.service.patch(
                                 {
                                     id: item.id,
@@ -268,12 +267,19 @@ function renderTitle(
                             }
                             message.success("补充成功")
                         }
+
                         setAddQuestionExtend("")
                         setLoading(false)
                         e.stopPropagation()
                     }}
                 >
-                    <a>补充</a>
+                    <a
+                        onClick={() => {
+                            setAddQuestionExtend(values || props.record.search)
+                        }}
+                    >
+                        补充
+                    </a>
                 </Popconfirm>
             }
             <Divider
@@ -642,7 +648,7 @@ function SearchPage(props) {
     })
     const [loading, setLoading] = useState(true)
     const [allData, setAllData] = useState([])
-    const [addQuestionExtend, setAddQuestionExtend] = useState()
+
     const [projectList, setProjectList] = useState([])
 
     const [action, setAction] = useState("edit")
@@ -654,7 +660,7 @@ function SearchPage(props) {
     // if(props.record.search){
     //     setValues(props.record.search)
     // }
-
+    const [addQuestionExtend, setAddQuestionExtend] = useState()
     const { data, open } = state
 
     // 判断是否外嵌模式
