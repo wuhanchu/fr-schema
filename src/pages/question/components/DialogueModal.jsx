@@ -9,6 +9,7 @@ export default function DialogueModal(props) {
             onCancel={() => {
                 props.handleHideDialogue()
             }}
+            maskClosable={false}
             style={{ height: "700px" }}
             title={"对话"}
             width="90%"
