@@ -13,6 +13,7 @@ import {
     Menu,
     AutoComplete,
     Input,
+    Tooltip,
 } from "antd"
 import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
@@ -70,59 +71,63 @@ class List extends DataList {
         } catch (error) {}
         this.schema.calibration_question_standard.render = (item, data) => {
             return (
-                <div
-                    style={{
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                        maxWidth: "250px",
-                    }}
-                >
-                    <a
-                        onClick={() => {
-                            this.setState({ record: data })
-                            this.handleVisibleModal(
-                                true,
-                                {
-                                    ...data,
-                                    id: data.calibration_question_id,
-                                },
-                                "edit"
-                            )
+                <Tooltip title={item}>
+                    <div
+                        style={{
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                            maxWidth: "250px",
                         }}
                     >
-                        {item}
-                    </a>
-                </div>
+                        <a
+                            onClick={() => {
+                                this.setState({ record: data })
+                                this.handleVisibleModal(
+                                    true,
+                                    {
+                                        ...data,
+                                        id: data.calibration_question_id,
+                                    },
+                                    "edit"
+                                )
+                            }}
+                        >
+                            {item}
+                        </a>
+                    </div>
+                </Tooltip>
             )
         }
         this.schema.compare_question_standard.render = (item, data) => {
             return (
-                <div
-                    style={{
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                        maxWidth: "250px",
-                    }}
-                >
-                    <a
-                        onClick={() => {
-                            this.setState({ record: data })
-                            console.log(data)
-                            this.handleVisibleModal(
-                                true,
-                                {
-                                    ...data,
-                                    id: data.compare_question_id,
-                                },
-                                "edit"
-                            )
+                <Tooltip title={item}>
+                    <div
+                        style={{
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                            maxWidth: "250px",
                         }}
                     >
-                        {item}
-                    </a>
-                </div>
+                        <a
+                            onClick={() => {
+                                this.setState({ record: data })
+                                console.log(data)
+                                this.handleVisibleModal(
+                                    true,
+                                    {
+                                        ...data,
+                                        id: data.compare_question_id,
+                                    },
+                                    "edit"
+                                )
+                            }}
+                        >
+                            {item}
+                        </a>
+                    </div>
+                </Tooltip>
             )
         }
         super.componentDidMount()

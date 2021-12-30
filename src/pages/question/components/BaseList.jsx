@@ -77,7 +77,7 @@ class BaseList extends EditPage {
             expandKey: "info",
             infoProps: {
                 offline: true,
-                width: "1100px",
+                width: "1300px",
                 isCustomize: true,
                 customize: {
                     left: 10,
