@@ -328,6 +328,28 @@ class Flow extends React.PureComponent {
         )
     }
 
+    async changHistory(index) {
+        let _this = this
+
+        const { record } = this.props
+
+        _this.setState({ spinning: true })
+        localStorage.removeItem("flowCreate" + record.id)
+        localStorage.removeItem("flow" + record.id)
+
+        _this.graph.dispose()
+        await _this.initData()
+        await _this.getData(_this.state.historyList[index].config)
+        _this.graph.flowSetting = {
+            key: record.key,
+            domain_key: record.domain_key,
+        }
+        _this.setState({
+            historyIndex: index,
+            spinning: false,
+        })
+    }
+
     onHistoryChange(index) {
         let _this = this
         const { record } = this.props
@@ -340,32 +362,14 @@ class Flow extends React.PureComponent {
                 okText: "确定",
                 cancelText: "取消",
                 onOk() {
-                    _this.graph.dispose()
-                    _this.initData()
-                    _this.getData(_this.state.historyList[index].config)
-                    _this.graph.flowSetting = {
-                        key: record.key,
-                        domain_key: record.domain_key,
-                    }
-                    _this.setState({
-                        historyIndex: index,
-                    })
+                    _this.changHistory(index)
                 },
                 onCancel() {
                     console.log("Cancel")
                 },
             })
         } else {
-            _this.graph.dispose()
-            _this.initData()
-            _this.getData(_this.state.historyList[index].config)
-            _this.graph.flowSetting = {
-                key: record.key,
-                domain_key: record.domain_key,
-            }
-            _this.setState({
-                historyIndex: index,
-            })
+            _this.changHistory(index)
         }
     }
 
