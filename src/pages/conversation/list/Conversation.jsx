@@ -131,16 +131,15 @@ class Conversation extends ListPage {
         } = this.schema
         const filters = this.createFilters(
             {
+                begin_time,
+                end_time,
                 domain_key,
-
                 status,
                 flow_key,
                 intent_key,
-                call_id,
                 called,
                 caller,
-                begin_time,
-                end_time,
+                call_id,
             },
             4
         )
