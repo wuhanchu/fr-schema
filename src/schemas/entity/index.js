@@ -43,6 +43,7 @@ const schema = {
         sorter: true,
         addHide: true,
         editHide: true,
+        search: false,
         props: {
             showTime: true,
         },
@@ -50,6 +51,7 @@ const schema = {
     },
     remark: {
         title: "备注",
+        search: false,
         style: { width: "500px" },
 
         sorter: true,
