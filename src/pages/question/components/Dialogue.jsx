@@ -86,6 +86,14 @@ class Dialogue extends Chat {
         this.getSettingData()
     }
 
+    componentWillUnmount() {
+        if (this.state.conversationId && this.state.domain_key)
+            schemas.domain.service.closeConversation({
+                domain_key: this.state.domain_key,
+                conversation_id: this.state.conversationId,
+            })
+    }
+
     renderService(item, index) {
         let { historyId } = this.state
         return (
