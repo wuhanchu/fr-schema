@@ -25,15 +25,15 @@ const schema = {
         editHide: true,
         dict: {
             ready: {
-                value: "0",
+                value: "wait",
                 remark: "未处理",
             },
             end: {
-                value: 1,
+                value: "end",
                 remark: "已处理",
             },
             deny: {
-                value: 2,
+                value: "deny",
                 remark: "已丢弃",
             },
         },
@@ -173,7 +173,7 @@ service.delete = async (args) => {
             ""
         ).patch({
             id: "in.(" + args.id + ")",
-            status: 2,
+            status: "deny",
         })
         return { ...data, msg: "丢弃成功" }
     }
