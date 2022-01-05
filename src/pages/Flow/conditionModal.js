@@ -231,7 +231,7 @@ export const ConditionModal = ({
                         )
                 })
             importDict.push(
-                <Select.OptGroup label={item.name} key={item.name}>
+                <Select.OptGroup label={item.name} key={item.key}>
                     {nodeActionDict}
                 </Select.OptGroup>
             )
