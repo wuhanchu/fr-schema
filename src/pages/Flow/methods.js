@@ -13,7 +13,7 @@ export const startDragToGraph = async (graph, type, e, callback) => {
 
                   data: {
                       name: "未命名",
-                      allow_repeat_time: 2,
+                      allow_repeat_time: 5,
                       skip_repeat_action: false,
                       types: "normal",
                   },
@@ -43,7 +43,7 @@ export const startDragToGraph = async (graph, type, e, callback) => {
                   height: 50,
                   data: {
                       name: "全局节点",
-                      allow_repeat_time: 2,
+                      allow_repeat_time: 5,
                       skip_repeat_action: false,
                       types: "global",
                   },
@@ -88,7 +88,7 @@ export const startDragToGraph = async (graph, type, e, callback) => {
                   height: 50,
                   data: {
                       name: "开始节点",
-                      allow_repeat_time: 2,
+                      allow_repeat_time: 5,
                       skip_repeat_action: false,
                       types: "begin",
                   },
@@ -128,7 +128,7 @@ export const startDragToGraph = async (graph, type, e, callback) => {
                   data: {
                       name: "结束节点",
                       types: "end",
-                      allow_repeat_time: 2,
+                      allow_repeat_time: 5,
                       skip_repeat_action: false,
                   },
                   attrs: {

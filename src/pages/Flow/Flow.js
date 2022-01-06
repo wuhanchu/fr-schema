@@ -408,7 +408,7 @@ class Flow extends React.PureComponent {
                         {
                             name: "开始节点",
                             key: uuidv4(),
-                            allow_repeat_time: 2,
+                            allow_repeat_time: 5,
                             skip_repeat_action: false,
                             type: "begin",
                             position: {
@@ -428,7 +428,7 @@ class Flow extends React.PureComponent {
                     {
                         name: "开始节点",
                         key: uuidv4(),
-                        allow_repeat_time: 2,
+                        allow_repeat_time: 5,
                         skip_repeat_action: false,
                         type: "begin",
                         position: {
@@ -557,7 +557,7 @@ class Flow extends React.PureComponent {
                 action: [],
                 shape: "ellipse",
                 type: "global",
-                allow_repeat_time: 2,
+                allow_repeat_time: 5,
                 skip_repeat_action: false,
                 position: {
                     x: endNode.store.data.position.x,
@@ -645,7 +645,7 @@ class Flow extends React.PureComponent {
                     position: { x: args.x, y: args.y },
                     data: {
                         name: "未命名",
-                        allow_repeat_time: 2,
+                        allow_repeat_time: 5,
                         skip_repeat_action: false,
                         types: "normal",
                     },
