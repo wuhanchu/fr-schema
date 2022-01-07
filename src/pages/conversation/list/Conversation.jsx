@@ -13,6 +13,7 @@ import { getTree } from "@/pages/Flow/methods"
 import intentSchema from "@/schemas/intent"
 import Zip from "jszip"
 import fileSaver from "file-saver"
+import moment from "moment"
 
 const { utils } = frSchema
 
@@ -93,16 +94,16 @@ class Conversation extends ListPage {
         let details = await schemaDetail.service.get({
             conversation_id: "in.(" + ids.join(",") + ")",
             limit: 100000,
-            order: "create_time.desc",
+            order: "id.asc",
         })
         let conversation = {}
         const zip = new Zip()
-        ids.map((item) => {
-            conversation[item] = details.list.filter(
-                (list) => item === list.conversation_id
+        data.list.map((items) => {
+            conversation[items.id] = details.list.filter(
+                (list) => items.id === list.conversation_id
             )
             let content = ""
-            conversation[item].map((item) => {
+            conversation[items.id].map((item) => {
                 if (item.type == "reply" && item.text) {
                     content = content + "robot:" + item.text + "\n"
                 }
@@ -110,8 +111,14 @@ class Conversation extends ListPage {
                     content = content + "customer:" + item.text + "\n"
                 }
             })
-            console.log(item, conversation[item])
-            zip.file(item + ".txt", content)
+            // console.log(item, conversation[item])
+            let time = new Date(parseInt(items.create_time))
+            zip.file(
+                moment(items.create_time).format("YYYY-MM-DDHH:mm:ss") +
+                    items.id +
+                    ".txt",
+                content
+            )
         })
         zip.generateAsync({
             type: "blob",
