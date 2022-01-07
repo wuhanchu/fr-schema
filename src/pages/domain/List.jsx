@@ -666,7 +666,7 @@ class List extends ListPage {
             visibleTTsModal && (
                 <InfoModal
                     renderForm={renderForm}
-                    title={"语音合成缓存"}
+                    title={"创建语音合成缓存任务"}
                     action={"edit"}
                     resource={resource}
                     {...updateMethods}
@@ -959,18 +959,6 @@ class List extends ListPage {
                         热门问题
                     </a>
                 </Menu.Item>
-                <Menu.Item>
-                    <a
-                        onClick={async () => {
-                            this.setState({
-                                visibleTTsModal: true,
-                                record,
-                            })
-                        }}
-                    >
-                        TTS缓存任务
-                    </a>
-                </Menu.Item>
 
                 <Menu.Item>
                     <a
@@ -982,6 +970,18 @@ class List extends ListPage {
                         }}
                     >
                         提问历史
+                    </a>
+                </Menu.Item>
+                <Menu.Item>
+                    <a
+                        onClick={async () => {
+                            this.setState({
+                                visibleTTsModal: true,
+                                record,
+                            })
+                        }}
+                    >
+                        TTS缓存任务
                     </a>
                 </Menu.Item>
             </Menu>
