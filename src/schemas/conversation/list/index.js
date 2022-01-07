@@ -113,13 +113,13 @@ service.get = async (args) => {
     let time = new Date(parseInt(args.end_time))
     console.log(time)
     args.end_time = args.end_time
-        ? moments(time).format("YYYY-MM-DDThh:mm:ss")
+        ? moments(time).format("YYYY-MM-DDTHH:mm:ss")
         : undefined
     time = new Date(parseInt(args.begin_time))
     console.log(time)
 
     args.begin_time = args.begin_time
-        ? moments(time).format("YYYY-MM-DDThh:mm:ss")
+        ? moments(time).format("YYYY-MM-DDTHH:mm:ss")
         : undefined
 
     if (args.intent_key) {
