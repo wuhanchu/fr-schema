@@ -63,17 +63,27 @@ class List extends ListPage {
     async componentDidMount() {
         let aiService = await this.service.getServices({
             limit: 10000,
-            ai_type: "eq.chat",
+            // ai_type: "eq.chat",
         })
+        let ttsService = aiService.list.filter((item) => {
+            return item.ai_type == "tts"
+        })
+
+        aiService = aiService.list.filter((item) => {
+            return item.ai_type == "chat"
+        })
+
         let projectList = await schemas.project.service.get({
             limit: 10000,
         })
-        this.schema.talk_service_id.dict = listToDict(aiService.list)
+        this.schema.talk_service_id.dict = listToDict(aiService)
+        let tts_service_id_dict = listToDict(ttsService)
         const data = await this.service.getUserAuthUser()
 
         this.setState({
             userList: data,
             projectList: projectList.list,
+            tts_service_id_dict,
         })
 
         super.componentDidMount()
@@ -181,6 +191,14 @@ class List extends ListPage {
         return response
     }
 
+    handleTTsVisibleModal = (flag, record, action) => {
+        this.setState({
+            visibleTTsModal: !!flag,
+            infoData: record,
+            action,
+        })
+    }
+
     renderExtend() {
         const {
             record,
@@ -188,6 +206,7 @@ class List extends ListPage {
             visibleDialogue,
             visibleIntentIdentify,
             visibleSearchHistory,
+            visibleTTsModal,
         } = this.state
         return (
             <Fragment>
@@ -262,6 +281,8 @@ class List extends ListPage {
                         <Task domain_key={this.state.record.key} />
                     </Modal>
                 )}
+                {visibleTTsModal && this.renderCodeModal()}
+
                 {visibleSearchHistory && (
                     <Modal
                         title={"提问历史"}
@@ -623,6 +644,60 @@ class List extends ListPage {
             }
         }
     }
+    renderCodeModal(customProps = {}) {
+        const { form } = this.props
+        const renderForm = this.props.renderForm || this.renderForm
+        const { resource, title, addArgs } = this.meta
+        const { visibleTTsModal, infoData, action } = this.state
+        const updateMethods = {
+            handleVisibleModal: this.handleTTsVisibleModal.bind(this),
+            handleUpdate: async (args) => {
+                console.log(args, this.state.record.domain_key)
+                await this.service.cache_tts({
+                    ...args,
+                    domain_key: this.state.record.key,
+                }),
+                    message.success("操作成功")
+                this.setState({ visibleTTsModal: false })
+            },
+            handleAdd: this.handleAdd.bind(this),
+        }
+        return (
+            visibleTTsModal && (
+                <InfoModal
+                    renderForm={renderForm}
+                    title={"语音合成缓存"}
+                    action={"edit"}
+                    resource={resource}
+                    {...updateMethods}
+                    visible={visibleTTsModal}
+                    values={infoData}
+                    addArgs={addArgs}
+                    meta={this.meta}
+                    service={this.service}
+                    {...this.meta.infoProps}
+                    {...customProps}
+                    schema={{
+                        service_id: {
+                            title: "语音合成服务",
+                            editHide: false,
+                            required: true,
+                            type: schemaFieldType.Select,
+                            dict: this.state.tts_service_id_dict,
+                        },
+                        concurrent: {
+                            title: "并发数",
+                            type: schemaFieldType.InputNumber,
+                            props: {
+                                min: 0,
+                                max: 40,
+                            },
+                        },
+                    }}
+                />
+            )
+        )
+    }
 
     renderOperateColumnExtend(record) {
         const testMenu = (
@@ -882,6 +957,18 @@ class List extends ListPage {
                         }}
                     >
                         热门问题
+                    </a>
+                </Menu.Item>
+                <Menu.Item>
+                    <a
+                        onClick={async () => {
+                            this.setState({
+                                visibleTTsModal: true,
+                                record,
+                            })
+                        }}
+                    >
+                        TTS缓存任务
                     </a>
                 </Menu.Item>
 
