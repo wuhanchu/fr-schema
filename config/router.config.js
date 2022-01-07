@@ -29,7 +29,130 @@ export default [
             },
         ],
     },
+    {
+        path: "/frame",
+        component: "../outter/fr-schema-antd-utils/src/layouts/SecurityLayout",
+        routes: [
+            {
+                path: "/frame",
+                component: "../layouts/FrameLayout",
+                routes: [
+                    {
+                        path: "/",
+                        redirect: "/frame/domain/list",
+                        title: "域列表",
+                    },
+                    {
+                        path: "/frame/domain",
+                        name: "domain",
+                        // component: "./domain/List",
+                        routes: [
+                            {
+                                path: "/frame/domain/list",
+                                name: "domainList",
+                                component: "./domain/List",
+                                title: "域列表",
+                            },
+                            {
+                                path: "/frame/domain/synonym",
+                                name: "synonym",
+                                component: "./synonym/List",
+                                title: "专业词汇",
+                            },
+                            {
+                                path: "/frame/domain/intent",
+                                name: "intent",
+                                component: "./intent/List",
+                                title: "意图",
+                            },
+                            // response
+                            {
+                                path: "/frame/domain/response",
+                                name: "response",
+                                component: "./response/List",
+                                title: "回应",
+                            },
+                            {
+                                path: "/frame/domain/flow",
+                                name: "flow",
+                                title: "话术",
+                                component: "./Flow/List",
+                            },
 
+                            {
+                                path: "/frame/domain/story",
+                                name: "story",
+                                component: "./story/List",
+                                title: "故事",
+                            },
+                        ],
+                    },
+                    {
+                        path: "/frame/conversation",
+                        name: "conversation",
+                        routes: [
+                            {
+                                path: "/frame/conversation/list",
+                                name: "conversationList",
+                                component: "./conversation/list/Conversation",
+                                title: "会话信息",
+                            },
+                        ],
+                    },
+                    {
+                        path: "/frame/entity",
+                        name: "entity",
+                        routes: [
+                            {
+                                path: "/frame/entity/list",
+                                name: "entityList",
+                                title: "实体",
+
+                                component: "./entity/Main",
+                            },
+                            {
+                                path: "/frame/entity/relation",
+                                name: "relation",
+                                component: "./relation/Main",
+                                title: "实体关系",
+                            },
+                        ],
+                    },
+
+                    {
+                        path: "/frame/project",
+                        name: "project",
+                        title: "问题库",
+                        // component: "./project/List",
+                        routes: [
+                            {
+                                path: "/frame/project/list",
+                                name: "projectList",
+                                title: "问题库信息",
+                                component: "./project/List",
+                            },
+
+                            {
+                                path: "/frame/project/mark",
+                                name: "mark",
+                                component: "./mark/Main",
+                                title: "问题库运维",
+                            },
+                        ],
+                    },
+                    {
+                        path: "/frame/statistics",
+                        name: "statistics",
+                        title: "统计",
+                        component: "./statistics/List",
+                    },
+                    {
+                        component: "./404",
+                    },
+                ],
+            },
+        ],
+    },
     {
         path: "/outter",
         component: "../layouts/BlankLayout",
