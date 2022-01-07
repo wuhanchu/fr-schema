@@ -1,15 +1,18 @@
 import { connect } from "dva"
 import ListPage from "@/outter/fr-schema-antd-utils/src/components/Page/ListPage"
 import schemas from "@/schemas/conversation/list"
+import schemaDetail from "@/schemas/conversation/detail"
 import React, { Fragment } from "react"
 import "@ant-design/compatible/assets/index.css"
-import { InputNumber, Modal, Select, TreeSelect } from "antd"
+import { InputNumber, Modal, Select, TreeSelect, Button, message } from "antd"
 import ConversationDetail from "@/pages/outPage/ConversationDetail"
 import flowSchemas from "@/schemas/flow/index"
 import userService from "@/pages/authority/user/service"
 import frSchema from "@/outter/fr-schema/src"
 import { getTree } from "@/pages/Flow/methods"
 import intentSchema from "@/schemas/intent"
+import Zip from "jszip"
+import fileSaver from "file-saver"
 
 const { utils } = frSchema
 
@@ -24,6 +27,8 @@ class Conversation extends ListPage {
             operateWidth: "170px",
             showEdit: false,
             showDelete: false,
+            // showSelect: true,
+
             addHide: true,
             queryArgs: {
                 order: "create_time.desc",
@@ -58,9 +63,7 @@ class Conversation extends ListPage {
                 this.refreshList()
             }
         )
-        console.log(treeList)
         this.schema.intent_key.renderInput = (data, item, props) => {
-            console.log(data, item, props)
             return (
                 <TreeSelect
                     showSearch
@@ -75,6 +78,71 @@ class Conversation extends ListPage {
             )
         }
         this.setState({ showIntent: true })
+    }
+
+    async handleExport() {
+        this.setState({ exportLoading: true })
+        let data = await this.requestList({
+            pageSize: 100,
+            offset: 0,
+            // ...args,
+        })
+        let ids = data.list.map((item) => {
+            return item.id
+        })
+        let details = await schemaDetail.service.get({
+            conversation_id: "in.(" + ids.join(",") + ")",
+            limit: 100000,
+            order: "create_time.desc",
+        })
+        let conversation = {}
+        const zip = new Zip()
+        ids.map((item) => {
+            conversation[item] = details.list.filter(
+                (list) => item === list.conversation_id
+            )
+            let content = ""
+            conversation[item].map((item) => {
+                if (item.type == "reply" && item.text) {
+                    content = content + "robot:" + item.text + "\n"
+                }
+                if (item.type == "receive" && item.text) {
+                    content = content + "customer:" + item.text + "\n"
+                }
+            })
+            console.log(item, conversation[item])
+            zip.file(item + ".txt", content)
+        })
+        zip.generateAsync({
+            type: "blob",
+        }).then((content) => {
+            fileSaver.saveAs(content, `对话文本.zip`)
+        })
+        this.setState({ exportLoading: false })
+
+        message.success("导出成功")
+        console.log(conversation)
+    }
+
+    renderOperationButtons() {
+        if (this.props.renderOperationButtons) {
+            return this.props.renderOperationButtons()
+        }
+
+        return (
+            <>
+                <Button
+                    loading={this.state.exportLoading}
+                    onClick={() => {
+                        // this.setState({ visibleExport: true })
+                        // this.refreshList({})
+                        this.handleExport({}, {})
+                    }}
+                >
+                    导出
+                </Button>
+            </>
+        )
     }
 
     async componentDidMount() {
