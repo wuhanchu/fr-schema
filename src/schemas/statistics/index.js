@@ -18,6 +18,9 @@ const schema = {
         listHide: "true",
         type: schemaFieldType.Select,
         sorter: true,
+        props: {
+            allowClear: false,
+        },
     },
     question_standard: {
         title: "匹配问题",

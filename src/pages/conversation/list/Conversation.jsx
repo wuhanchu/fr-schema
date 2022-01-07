@@ -94,7 +94,7 @@ class Conversation extends ListPage {
         let details = await schemaDetail.service.get({
             conversation_id: "in.(" + ids.join(",") + ")",
             limit: 100000,
-            order: "id.asc",
+            order: "create_time",
         })
         let conversation = {}
         const zip = new Zip()
