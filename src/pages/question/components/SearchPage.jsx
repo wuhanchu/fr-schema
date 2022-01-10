@@ -386,7 +386,8 @@ function renderTitle(
         </div>
     )
 }
-function renderDescription(item, props) {
+function renderDescription(item, props, projectDict) {
+    console.log("projectDict是", projectDict[item.project_id].name)
     return (
         <>
             <div style={{ color: "rgba(0,0,0,0.85)" }}>答案:</div>
@@ -454,6 +455,11 @@ function renderDescription(item, props) {
                         ? "匹配标准文本："
                         : "匹配扩展文本："}
                     {item.match_question_title}
+                    <div
+                        style={{ marginLeft: "20px", display: "inline-block" }}
+                    >
+                        匹配问题库： {projectDict[item.project_id].name}
+                    </div>
                 </div>
                 <div style={{ width: "130px", marginRight: "10px" }}>
                     <span
@@ -890,7 +896,8 @@ function SearchPage(props) {
                                         )}
                                         description={renderDescription(
                                             item,
-                                            props
+                                            props,
+                                            listToDict(projectList)
                                         )}
                                     />
                                     {/* <div>{renderDescription(item)}</div> */}

@@ -17,10 +17,12 @@ import {
     ThunderboltTwoTone,
     HeartTwoTone,
     DislikeTwoTone,
+    TagTwoTone,
+    TagsTwoTone,
 } from "@ant-design/icons"
 import { exportData } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
 import { formatData } from "@/utils/utils"
-
+import clientService from "@/pages/authority/clientList/service"
 import moment from "moment"
 const { utils, decorateList } = frSchema
 
@@ -117,6 +119,13 @@ class List extends ListPage {
     async componentDidMount() {
         // let domain_key = "fsfund"
         // this.meta.mini = !location
+        let res = await clientService.get({ limit: 1000 })
+        this.schema.client_id.dict = listToDict(
+            res.list,
+            null,
+            "client_id",
+            "client_name"
+        )
         this.meta.queryArgs = {
             ...this.meta.queryArgs,
             // domain_key,
@@ -189,7 +198,7 @@ class List extends ListPage {
                             </div>
                             <div style={{ flex: 1 }}>
                                 <div style={{ color: "#00000073" }}>
-                                    总匹配数
+                                    总提问数
                                 </div>
                                 <div
                                     style={{
@@ -198,6 +207,88 @@ class List extends ListPage {
                                     }}
                                 >
                                     {summary ? summary.total : 0}
+                                </div>
+                            </div>
+                        </div>
+                    </Card>
+
+                    <div style={{ width: "20px", height: "100%" }}></div>
+                    <Card style={{ flex: 1 }} title={false}>
+                        <div style={{ display: "flex" }}>
+                            <div
+                                style={{
+                                    width: "36px",
+                                    height: "36px",
+                                    marginTop: "8.5px",
+                                    borderRadius: "20px",
+                                    background: "#1890ff",
+                                    marginRight: "24px",
+                                }}
+                            >
+                                <TagsTwoTone
+                                    twoToneColor="#fff"
+                                    style={{
+                                        fontSize: "20px",
+                                        marginTop: "8px",
+                                        marginLeft: "8px",
+                                    }}
+                                />
+                            </div>
+                            <div style={{ flex: 1 }}>
+                                <div style={{ color: "#00000073" }}>
+                                    总匹配数
+                                </div>
+                                <div
+                                    style={{
+                                        marginTop: "px",
+                                        fontSize: "20px",
+                                    }}
+                                >
+                                    {summary ? summary.match_total : 0}
+                                </div>
+                            </div>
+                        </div>
+                    </Card>
+                    <div style={{ width: "20px", height: "100%" }}></div>
+                    <Card style={{ flex: 1 }} title={false}>
+                        <div style={{ display: "flex" }}>
+                            <div
+                                style={{
+                                    width: "36px",
+                                    height: "36px",
+                                    marginTop: "8.5px",
+                                    borderRadius: "20px",
+                                    background: "#1890ff",
+                                    marginRight: "24px",
+                                }}
+                            >
+                                <TagTwoTone
+                                    twoToneColor="#fff"
+                                    style={{
+                                        fontSize: "20px",
+                                        marginTop: "8px",
+                                        marginLeft: "8px",
+                                    }}
+                                />
+                            </div>
+                            <div style={{ flex: 1 }}>
+                                <div style={{ color: "#00000073" }}>
+                                    总匹配率
+                                </div>
+                                <div
+                                    style={{
+                                        marginTop: "px",
+                                        fontSize: "20px",
+                                    }}
+                                >
+                                    {summary
+                                        ? formatData(
+                                              summary.match_rate || 0,
+                                              // 0.8461538461538461,
+                                              4,
+                                              100
+                                          ) + "%"
+                                        : 0}
                                 </div>
                             </div>
                         </div>
@@ -313,6 +404,7 @@ class List extends ListPage {
                             </div>
                         </div>
                     </Card>
+
                     <div style={{ width: "20px", height: "100%" }}></div>
                     <Card style={{ flex: 1 }} title={false}>
                         <div style={{ display: "flex" }}>
@@ -472,12 +564,13 @@ class List extends ListPage {
     }
 
     renderSearchBar() {
-        const { begin_time, end_time, domain_key } = this.schema
+        const { begin_time, end_time, domain_key, client_id } = this.schema
         const filters = this.createFilters(
             {
                 begin_time,
                 end_time,
                 domain_key,
+                client_id,
             },
             5
         )

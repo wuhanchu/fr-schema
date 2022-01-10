@@ -79,6 +79,11 @@ const schema = {
         sorter: true,
         title: "未解决问题数",
     },
+    client_id: {
+        title: "渠道",
+        listHide: true,
+        type: schemaFieldType.Select,
+    },
 }
 
 const service = createApi("domain/match_question_count", schema, null, "")
