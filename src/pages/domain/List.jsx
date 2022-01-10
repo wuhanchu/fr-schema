@@ -946,7 +946,18 @@ class List extends ListPage {
                         <a>同步数据</a>
                     </Popconfirm>
                 </Menu.Item>
-
+                <Menu.Item>
+                    <a
+                        onClick={async () => {
+                            this.setState({
+                                visibleTTsModal: true,
+                                record,
+                            })
+                        }}
+                    >
+                        语音缓存
+                    </a>
+                </Menu.Item>
                 <Menu.Item>
                     <a
                         onClick={async () => {
@@ -970,18 +981,6 @@ class List extends ListPage {
                         }}
                     >
                         提问历史
-                    </a>
-                </Menu.Item>
-                <Menu.Item>
-                    <a
-                        onClick={async () => {
-                            this.setState({
-                                visibleTTsModal: true,
-                                record,
-                            })
-                        }}
-                    >
-                        TTS缓存任务
                     </a>
                 </Menu.Item>
             </Menu>
