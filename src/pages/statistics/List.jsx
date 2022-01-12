@@ -197,7 +197,14 @@ class List extends ListPage {
                                 />
                             </div>
                             <div style={{ flex: 1 }}>
-                                <div style={{ color: "#00000073" }}>
+                                <div
+                                    style={{
+                                        color: "#00000073",
+                                        whiteSpace: "nowrap",
+                                        textOverflow: "ellipsis",
+                                        overflow: "hidden",
+                                    }}
+                                >
                                     总提问数
                                 </div>
                                 <div
@@ -235,7 +242,14 @@ class List extends ListPage {
                                 />
                             </div>
                             <div style={{ flex: 1 }}>
-                                <div style={{ color: "#00000073" }}>
+                                <div
+                                    style={{
+                                        color: "#00000073",
+                                        whiteSpace: "nowrap",
+                                        textOverflow: "ellipsis",
+                                        overflow: "hidden",
+                                    }}
+                                >
                                     总匹配数
                                 </div>
                                 <div
@@ -272,7 +286,14 @@ class List extends ListPage {
                                 />
                             </div>
                             <div style={{ flex: 1 }}>
-                                <div style={{ color: "#00000073" }}>
+                                <div
+                                    style={{
+                                        color: "#00000073",
+                                        whiteSpace: "nowrap",
+                                        textOverflow: "ellipsis",
+                                        overflow: "hidden",
+                                    }}
+                                >
                                     总匹配率
                                 </div>
                                 <div
@@ -316,7 +337,14 @@ class List extends ListPage {
                                 />
                             </div>
                             <div style={{ flex: 1 }}>
-                                <div style={{ color: "#00000073" }}>
+                                <div
+                                    style={{
+                                        color: "#00000073",
+                                        whiteSpace: "nowrap",
+                                        textOverflow: "ellipsis",
+                                        overflow: "hidden",
+                                    }}
+                                >
                                     总参与评价数
                                 </div>
                                 <div
@@ -353,7 +381,14 @@ class List extends ListPage {
                                 />
                             </div>
                             <div style={{ flex: 1 }}>
-                                <div style={{ color: "#00000073" }}>
+                                <div
+                                    style={{
+                                        color: "#00000073",
+                                        whiteSpace: "nowrap",
+                                        textOverflow: "ellipsis",
+                                        overflow: "hidden",
+                                    }}
+                                >
                                     解决问题数
                                 </div>
                                 <div
@@ -390,7 +425,14 @@ class List extends ListPage {
                                 />
                             </div>
                             <div style={{ flex: 1 }}>
-                                <div style={{ color: "#00000073" }}>
+                                <div
+                                    style={{
+                                        color: "#00000073",
+                                        whiteSpace: "nowrap",
+                                        textOverflow: "ellipsis",
+                                        overflow: "hidden",
+                                    }}
+                                >
                                     未解决问题数
                                 </div>
                                 <div
@@ -429,7 +471,14 @@ class List extends ListPage {
                             </div>
 
                             <div style={{ flex: 1 }}>
-                                <div style={{ color: "#00000073" }}>
+                                <div
+                                    style={{
+                                        color: "#00000073",
+                                        whiteSpace: "nowrap",
+                                        textOverflow: "ellipsis",
+                                        overflow: "hidden",
+                                    }}
+                                >
                                     满意度占比
                                 </div>
                                 <div
