@@ -120,12 +120,13 @@ class List extends ListPage {
         // let domain_key = "fsfund"
         // this.meta.mini = !location
         let res = await clientService.get({ limit: 1000 })
-        this.schema.client_id.dict = listToDict(
-            res.list,
-            null,
-            "client_id",
-            "client_name"
-        )
+        let client_dict = listToDict(res.list, null, "client_id", "client_name")
+
+        client_dict["null"] = {
+            value: "null",
+            remark: "其他",
+        }
+        this.schema.client_id.dict = client_dict
         this.meta.queryArgs = {
             ...this.meta.queryArgs,
             // domain_key,
