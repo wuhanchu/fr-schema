@@ -51,7 +51,6 @@ pipeline {
                 stage('Build Standard') {
                     when {
                        anyOf {
-                           branch 'develop';
                            allOf{ buildingTag();
                            not { tag '*dataknown*'}}}
                      }
@@ -80,7 +79,6 @@ pipeline {
                      when {
                          anyOf {
                             branch 'master'
-                            branch 'develop'
                         }
                     }
 
@@ -111,7 +109,6 @@ pipeline {
                     when {
                          anyOf {
                             branch 'master'
-                            branch 'develop'
                         }
                     }
                     steps {
@@ -137,18 +134,7 @@ pipeline {
 
         stage('Deploy') {
             parallel {
-                stage('Deploy Develop') {
-                    when {
-                        branch 'develop'
-                     }
-
-                    steps {
-                        sshagent(credentials : ['dataknown_dev']) {
-                             sh "ssh  -t  root@${SERVER_DEV} -o StrictHostKeyChecking=no  'cd /root/project/maintenance_script && docker-compose -f ./compose/z_know_info.yml -p dataknown --env-file ./env/dataknown_dev.env pull &&  docker-compose -f ./compose/z_know_info.yml -p dataknown --env-file ./env/dataknown_dev.env up -d'"
-                        }
-                    }
-                }
-
+               
                 stage('Deploy Test') {
                     when {
                         branch 'master'
