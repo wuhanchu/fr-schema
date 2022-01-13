@@ -3,13 +3,23 @@ import ListPage from "@/outter/fr-schema-antd-utils/src/components/Page/ListPage
 import schemas from "@/schemas"
 import React from "react"
 import "@ant-design/compatible/assets/index.css"
-import { Form, Select, Input, Modal, Button, Spin, TreeSelect } from "antd"
+import {
+    Form,
+    Select,
+    Input,
+    Modal,
+    Button,
+    Spin,
+    TreeSelect,
+    message,
+} from "antd"
 import { autobind } from "core-decorators"
 import { globalStyle } from "@/outter/fr-schema-antd-utils/src/styles/global"
 import AceEditor from "react-ace"
 import frSchema from "@/outter/fr-schema/src"
-
-const { actions, getPrimaryKey } = frSchema
+import ImportModal from "@/outter/fr-schema-antd-utils/src/components/modal/ImportModal"
+import { exportData } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
+const { actions, getPrimaryKey, decorateList } = frSchema
 import "ace-builds/src-noconflict/mode-json"
 import "ace-builds/src-noconflict/theme-github"
 import "ace-builds/src-noconflict/ext-language_tools"
@@ -38,6 +48,179 @@ class List extends ListPage {
             domainList: [],
             modalLoading: false,
         }
+    }
+
+    /**
+     * 操作栏按钮
+     */
+    renderOperationButtons() {
+        if (this.props.renderOperationButtons) {
+            return this.props.renderOperationButtons()
+        }
+
+        return (
+            <>
+                {!this.props.readOnly && !this.meta.addHide && (
+                    <Button
+                        type="primary"
+                        onClick={() =>
+                            this.handleVisibleModal(true, null, "add")
+                        }
+                    >
+                        新增
+                    </Button>
+                )}
+                <Button
+                    onClick={() => {
+                        this.setState({ visibleImport: true })
+                    }}
+                >
+                    导入
+                </Button>
+
+                <Button
+                    loading={this.state.exportLoading}
+                    onClick={() => {
+                        // this.setState({ visibleExport: true })
+                        console.log("data")
+                        this.handleExport()
+                    }}
+                >
+                    导出
+                </Button>
+            </>
+        )
+    }
+
+    async handleExport(args, schema) {
+        this.setState({ exportLoading: true }, async () => {
+            let column = this.getColumns(false).filter((item) => {
+                return !item.isExpand && item.key !== "external_id"
+            })
+            let columns = [
+                column[0],
+                {
+                    title: "名称",
+                    dataIndex: "name",
+                    key: "name",
+                },
+                {
+                    title: "编码",
+                    dataIndex: "key",
+                    key: "key",
+                },
+                {
+                    title: "意图",
+                    dataIndex: "intent_key",
+                    key: "intent_key",
+                },
+                {
+                    title: "回复文本",
+                    dataIndex: "template_text",
+                    key: "template_text",
+                },
+                {
+                    title: "回复模板",
+                    dataIndex: "template",
+                    key: "template",
+                },
+            ]
+            let data = await this.requestList({
+                pageSize: 1000000,
+                offset: 0,
+                ...args,
+            })
+            let list = data.list
+            list = list.map((item) => {
+                console.log(item)
+                return {
+                    ...item,
+                    intent_key: item.intent_key
+                        ? JSON.stringify(item.intent_key)
+                        : undefined,
+                    template_text: item.template_text
+                        ? JSON.stringify(item.template_text)
+                        : undefined,
+                    template: item.template
+                        ? JSON.stringify(item.template)
+                        : undefined,
+                }
+            })
+            console.log(list)
+            data = decorateList(list, this.schema)
+            await exportData("回应", data, columns)
+            this.setState({ exportLoading: false })
+        })
+    }
+
+    renderImportModal() {
+        return (
+            <ImportModal
+                importTemplateUrl={this.meta.importTemplateUrl}
+                schema={{
+                    domain_key: {
+                        title: "域",
+                        required: true,
+                        type: "Select",
+                        dict: this.props.dict.domain,
+                    },
+                    name: {
+                        title: "名称",
+                        rules: (rule, value) => value,
+                        required: true,
+                    },
+                    key: {
+                        title: "编码",
+                        rules: (rule, value) => value,
+                        required: true,
+                    },
+                    intent_key: {
+                        title: "意图",
+                    },
+                    template_text: {
+                        title: "回复文本",
+                    },
+                    template: {
+                        title: "回复模板",
+                    },
+                }}
+                errorKey={"question_standard"}
+                title={"导入"}
+                sliceNum={1}
+                onCancel={() => this.setState({ visibleImport: false })}
+                onChange={(data) => this.setState({ importData: data })}
+                onOk={async () => {
+                    if (this.state.importData) {
+                        const data = this.state.importData.map((item) => {
+                            return {
+                                ...item,
+                                intent_key: item.intent_key
+                                    ? JSON.parse(item.intent_key)
+                                    : [],
+                                template_text: item.template_text
+                                    ? JSON.parse(item.template_text)
+                                    : [],
+                                template: item.template
+                                    ? JSON.parse(item.template)
+                                    : {},
+                            }
+                        })
+                        await this.service.upInsert(data)
+                        message.success("导入成功")
+                        this.setState({ visibleImport: false })
+                        this.refreshList()
+                    }
+                }}
+            />
+        )
+    }
+
+    handleVisibleImportModal = (flag, record, action) => {
+        this.setState({
+            visibleImport: !!flag,
+            infoData: record,
+            action,
+        })
     }
 
     async componentDidMount() {

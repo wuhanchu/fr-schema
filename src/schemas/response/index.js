@@ -81,7 +81,12 @@ const schema = {
 }
 
 const service = createApi("response", schema, null, "eq.")
-
+service.upInsert = createApi(
+    "response?on_conflict=domain_key,key",
+    schema,
+    null,
+    "eq."
+).upInsert
 export default {
     schema,
     service,
