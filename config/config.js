@@ -22,12 +22,12 @@ if (BASE_PATH) {
     }
 } else {
     BASE_PATH = ""
-    extend = {
-        ...extend,
-        base: "/",
-        publicPath: "/",
-        runtimePublicPath: true,
-    }
+    // extend = {
+    //     ...extend,
+    //     base: "/",
+    //     publicPath: "/",
+    //     runtimePublicPath: true,
+    // }
 }
 
 let config = defineConfig({
@@ -63,9 +63,9 @@ let config = defineConfig({
         BASE_PATH: BASE_PATH,
     },
     mountElementId: "z_know_info",
-    qiankun: {
-        slave: {},
-    },
+    // qiankun: {
+    //     slave: {},
+    // },
     manifest: {
         basePath: "/",
     },
