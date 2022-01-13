@@ -124,7 +124,7 @@ class List extends ListPage {
 
         client_dict["null"] = {
             value: "null",
-            remark: "其他",
+            remark: "未知",
         }
         this.schema.client_id.dict = client_dict
         this.meta.queryArgs = {
