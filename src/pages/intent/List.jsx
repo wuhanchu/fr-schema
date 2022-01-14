@@ -36,6 +36,7 @@ class List extends ListPage {
         this.schema.domain_key.dict = this.props.dict.domain
         this.state = {
             ...this.state,
+            // tableType: 'old',
             searchValues: { logical_path: "." },
             expandedRowKeys: [],
         }
@@ -202,10 +203,12 @@ class List extends ListPage {
         if (param) {
             this.setState({ searchValues: param })
         }
+        console.log("搜索问题")
         this.setState({ listLoading: true }, async () => {
             let data = await this.requestList()
             let list = decorateList(data.list, this.schema)
             this.convertList && (list = this.convertList(list))
+            console.log(list)
             this.setState({
                 selectedRows: [],
                 data: {
@@ -267,10 +270,13 @@ class List extends ListPage {
                             ...others
                         } = item
 
-                        let regex_data = regex && regex.split("\n")
-                        let example_data = example && example.split("\n")
+                        let regex_data =
+                            regex && regex.replace("\r", "").split("\n")
+                        let example_data =
+                            example && example.replace("\r", "").split("\n")
                         let standard_discourse_data =
-                            standard_discourse && standard_discourse.split("\n")
+                            standard_discourse &&
+                            standard_discourse.replace("\r", "").split("\n")
                         return {
                             ...this.meta.addArgs,
                             ...others,
@@ -313,6 +319,8 @@ class List extends ListPage {
             expandable: {
                 onExpand: (expanded, record) => this.onExpand(expanded, record),
                 expandedRowKeys,
+                // defaultExpandAllRows: true
+                // defaultExpandedRowKeys: true
             },
         }
         return super.renderList(inProps)
