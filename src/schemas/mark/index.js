@@ -6,14 +6,32 @@ import { verifyJson } from "@/outter/fr-schema-antd-utils/src/utils/component"
 const { RangePicker } = DatePicker
 
 const schema = {
-    create_time: {
+    flitter_time: {
         title: "时间",
         required: true,
+        // search: false,
         sorter: true,
         addHide: true,
         editHide: true,
         props: {
             showTime: true,
+            valueType: "dateRange",
+        },
+        hideInTable: true,
+        renderInput: () => <RangePicker style={{ width: "100%" }} />,
+        type: schemaFieldType.DatePicker,
+    },
+    create_time: {
+        title: "时间",
+        required: true,
+        // search: false,
+        sorter: true,
+        addHide: true,
+        editHide: true,
+        search: false,
+        props: {
+            showTime: true,
+            // valueType: 'dateRange',
         },
         renderInput: () => <RangePicker style={{ width: "100%" }} />,
         type: schemaFieldType.DatePicker,
@@ -24,7 +42,7 @@ const schema = {
         addHide: true,
         editHide: true,
         dict: {
-            ready: {
+            wait: {
                 value: "wait",
                 remark: "未处理",
             },
@@ -54,10 +72,12 @@ const schema = {
         style: { width: "500px" },
         required: true,
         sorter: true,
+        search: false,
     },
 
     text: {
         title: "补充扩展问",
+        search: false,
         style: { width: "500px" },
         type: schemaFieldType.TextArea,
         sorter: true,
@@ -67,19 +87,16 @@ const schema = {
 const service = createApi("question_mark_task", schema, null, "eq.")
 
 service.getRepeat = async (args) => {
-    if (args.create_time) {
-        let beginTime = moment(args.create_time.split(",")[0]).format(
-            "YYYY-MM-DD"
-        )
-        let endTime = moment(args.create_time.split(",")[1]).format(
-            "YYYY-MM-DD"
-        )
+    console.log(args)
+    if (args.flitter_time) {
+        let beginTime = args.flitter_time[0].format("YYYY-MM-DD")
+        let endTime = args.flitter_time[1].format("YYYY-MM-DD")
         // args.and = `(create_time.gte.${beginTime},create_time.lte.${endTime})`
         args.begin_time = beginTime + "T00:00:00"
         // args.begin_time = args.create_time.split(",")[0]
         args.end_time = endTime + "T23:59:59"
         // args.end_time = args.create_time.split(",")[1]
-        args.create_time = undefined
+        args.flitter_time = undefined
     }
 
     let order = args.order
@@ -123,15 +140,11 @@ service.getRepeat = async (args) => {
 }
 
 service.get = async (args) => {
-    if (args.create_time) {
-        console.log(args.create_time.split(","))
-        let beginTime =
-            moment(args.create_time.split(",")[0]).format("YYYY-MM-DD") +
-            "T00:00:00"
-        let endTime =
-            moment(args.create_time.split(",")[1]).format("YYYY-MM-DD") +
-            "T23:59:59"
-        args.create_time = undefined
+    if (args.flitter_time) {
+        // console.log(args.create_time.split(","))
+        let beginTime = args.flitter_time[0].format("YYYY-MM-DD") + "T00:00:00"
+        let endTime = args.flitter_time[1].format("YYYY-MM-DD") + "T23:59:59"
+        args.flitter_time = undefined
         args.and = `(create_time.gte.${beginTime},create_time.lte.${endTime})`
     }
 

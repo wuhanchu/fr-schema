@@ -10,6 +10,7 @@ const schema = {
         props: {
             showTime: true,
             style: { width: "100%" },
+            valueType: "dateTime",
         },
         hideInTable: true,
     },
@@ -19,6 +20,7 @@ const schema = {
         props: {
             showTime: true,
             style: { width: "100%" },
+            valueType: "dateTime",
         },
         hideInTable: true,
     },
@@ -113,13 +115,11 @@ service.get = async (args) => {
     if (args.call_id === "text") {
         args.call_id = "is.null"
     }
-    let time = new Date(parseInt(args.end_time))
     args.end_time = args.end_time
-        ? moments(time).format("YYYY-MM-DDTHH:mm:ss")
+        ? args.end_time.format("YYYY-MM-DDTHH:mm:ss")
         : undefined
-    time = new Date(parseInt(args.begin_time))
     args.begin_time = args.begin_time
-        ? moments(time).format("YYYY-MM-DDTHH:mm:ss")
+        ? args.begin_time.format("YYYY-MM-DDTHH:mm:ss")
         : undefined
 
     if (args.intent_key) {

@@ -12,15 +12,20 @@ const schema = {
     id: {
         title: "编号",
         sorter: true,
+        search: false,
     },
     question_standard: {
         title: "标准问",
         required: true,
+        search: false,
+
         searchPrefix: "like",
         sorter: true,
     },
     question_extend: {
         title: "扩展问",
+        search: false,
+
         // type: schemaFieldType.Select,
         type: schemaFieldType.TextArea,
         props: {
@@ -56,6 +61,7 @@ const schema = {
     },
     total: {
         title: "次数",
+        search: false,
         // type: schemaFieldType.Select,
     },
 }
@@ -68,13 +74,11 @@ service.getRecentHotQuestion = createApi(
     ""
 ).get
 service.get = async (args) => {
-    let time = new Date(parseInt(args.begin_time))
     args.begin_time = args.begin_time
-        ? moments(time).format("YYYY-MM-DD")
+        ? args.begin_time.format("YYYY-MM-DD")
         : undefined
-    time = new Date(parseInt(args.end_time))
     args.end_time = args.end_time
-        ? moments(time).format("YYYY-MM-DD")
+        ? args.end_time.format("YYYY-MM-DD")
         : undefined
 
     let { currentPage, pageSize, limit, ...otherParams } = args

@@ -63,7 +63,7 @@ class MyList extends DataList {
             "client_name"
         )
         try {
-            this.formRef.current.setFieldsValue({ final_result: true })
+            this.formRef.current.setFieldsValue({ final_result: "true" })
         } catch (error) {}
         super.componentDidMount()
         const onChange = (e, data) => {
@@ -89,9 +89,14 @@ class MyList extends DataList {
             ...searchParams,
             ...(this.state.pagination || {}),
             ...tempArgs,
-            final_result: this.formRef.current.getFieldsValue().final_result,
+            // final_result: this.formRef.current.getFieldsValue().final_result,
+            final_result:
+                tempArgs.final_result ||
+                searchParams.final_result ||
+                this.formRef.current.getFieldsValue().final_result,
         }
 
+        console.log(params)
         let data = await this.service.get(params)
         data = this.dataConvert(data)
         return data
@@ -101,7 +106,7 @@ class MyList extends DataList {
         const { order } = this.props
 
         this.formRef.current.resetFields()
-        this.formRef.current.setFieldsValue({ final_result: true })
+        this.formRef.current.setFieldsValue({ final_result: "true" })
         this.setState(
             {
                 pagination: { ...this.state.pagination, currentPage: 1 },

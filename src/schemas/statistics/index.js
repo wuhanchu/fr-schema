@@ -9,9 +9,29 @@ import queryString from "query-string"
 const config = SETTING
 
 const schema = {
+    begin_time: {
+        title: "开始时间",
+        type: schemaFieldType.DatePicker,
+        props: {
+            format: "YYYY-MM-DD",
+            style: { width: "100%" },
+        },
+        // listHide: true,
+        hideInTable: true,
+    },
+    end_time: {
+        title: "结束时间",
+        type: schemaFieldType.DatePicker,
+        props: {
+            format: "YYYY-MM-DD",
+            style: { width: "100%" },
+        },
+        hideInTable: true,
+    },
     id: {
         title: "编号",
         sorter: true,
+        search: false,
     },
     domain_key: {
         title: "域",
@@ -26,6 +46,7 @@ const schema = {
         title: "匹配问题",
         required: true,
         searchPrefix: "like",
+        search: false,
         sorter: true,
     },
     question_extend: {
@@ -41,25 +62,7 @@ const schema = {
         exportConcat: true,
         extra: "每行表示一个问题",
     },
-    begin_time: {
-        title: "开始时间",
-        type: schemaFieldType.DatePicker,
-        props: {
-            format: "YYYY-MM-DD",
-            style: { width: "100%" },
-        },
-        listHide: true,
-        hideInTable: true,
-    },
-    end_time: {
-        title: "结束时间",
-        type: schemaFieldType.DatePicker,
-        props: {
-            format: "YYYY-MM-DD",
-            style: { width: "100%" },
-        },
-        hideInTable: true,
-    },
+
     project_id: {
         title: "项目",
         type: schemaFieldType.Select,
@@ -92,7 +95,7 @@ const schema = {
     },
     client_id: {
         title: "渠道",
-        listHide: true,
+        hideInTable: true,
         type: schemaFieldType.Select,
     },
 }
@@ -105,21 +108,24 @@ service.getRecentHotQuestion = createApi(
     ""
 ).get
 service.get = async (args) => {
+    console.log(args.end_time)
     let time
-    if (typeof args.begin_time === "number") {
+    if (typeof args.begin_time === "string") {
         time = new Date(parseInt(args.begin_time))
         args.begin_time = args.begin_time
             ? moments(time).format("YYYY-MM-DD")
             : undefined
     } else {
-        args.begin_time = args.begin_time
-            ? moments(args.begin_time).format("YYYY-MM-DD")
-            : undefined
+        console.log(args.begin_time)
+        if (args.begin_time)
+            args.begin_time = args.begin_time
+                ? args.begin_time.format("YYYY-MM-DD")
+                : undefined
     }
 
-    time = new Date(parseInt(args.end_time))
+    // time = new Date(parseInt(args.end_time))
     args.end_time = args.end_time
-        ? moments(time).format("YYYY-MM-DD")
+        ? args.end_time.format("YYYY-MM-DD")
         : undefined
 
     let { currentPage, pageSize, limit, ...otherParams } = args

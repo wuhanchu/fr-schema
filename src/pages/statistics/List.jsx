@@ -61,12 +61,16 @@ class List extends ListPage {
             ...tempArgs,
             domain_key:
                 tempArgs.domain_key ||
+                searchParams.domain_key ||
                 this.formRef.current.getFieldsValue().domain_key,
             begin_time:
+                searchParams.begin_time ||
                 tempArgs.begin_time ||
-                this.formRef.current.getFieldsValue().begin_time,
+                this.formRef.current.getFieldsValue().begin_time ||
+                undefined,
+            // begin_time: undefined
         }
-
+        // console.log(this.searchValues())
         let data = await this.service.get(params)
         data = this.dataConvert(data)
         return data
@@ -126,6 +130,7 @@ class List extends ListPage {
     async componentDidMount() {
         // let domain_key = "fsfund"
         // this.meta.mini = !location
+
         let res = await clientService.get({ limit: 1000 })
         let client_dict = listToDict(res.list, null, "client_id", "client_name")
 
@@ -152,6 +157,12 @@ class List extends ListPage {
         this.schema.domain_key.dict = this.props.dict.domain
         this.schema.project_id.dict = listToDict(project.list)
         super.componentDidMount()
+        this.setState({
+            searchValues: {
+                domain_key: "default",
+                begin_time: moment().subtract("days", 6),
+            },
+        })
     }
 
     renderOperateColumnExtend(record) {

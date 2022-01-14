@@ -10,16 +10,35 @@ const schema = {
         title: "问题库",
         hideInTable: true,
         required: true,
+        search: false,
         type: schemaFieldType.Select,
     },
-    create_time: {
+    flitter_time: {
         title: "时间",
         required: true,
+        // search: false,
         sorter: true,
         addHide: true,
         editHide: true,
         props: {
             showTime: true,
+            valueType: "dateRange",
+        },
+        hideInTable: true,
+        renderInput: () => <RangePicker style={{ width: "100%" }} />,
+        type: schemaFieldType.DatePicker,
+    },
+    create_time: {
+        title: "时间",
+        required: true,
+        // search: false,
+        sorter: true,
+        addHide: true,
+        editHide: true,
+        search: false,
+        props: {
+            showTime: true,
+            // valueType: 'dateRange',
         },
         renderInput: () => <RangePicker style={{ width: "100%" }} />,
         type: schemaFieldType.DatePicker,
@@ -30,7 +49,7 @@ const schema = {
         addHide: true,
         editHide: true,
         dict: {
-            ready: {
+            wait: {
                 value: "wait",
                 remark: "未处理",
             },
@@ -50,6 +69,7 @@ const schema = {
     text: {
         title: "文本列表",
         style: { width: "500px" },
+        search: false,
         render: (data) => {
             return (
                 <Tooltip title={data ? data.join(" | ") : ""}>
@@ -64,10 +84,6 @@ const schema = {
                         {data && data.join(" | ")}
                     </div>
                 </Tooltip>
-                // <div>
-                //     {data &&
-                //         data.join(" | ")}
-                // </div>
             )
         },
         type: schemaFieldType.TextArea,

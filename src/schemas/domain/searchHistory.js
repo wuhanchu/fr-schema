@@ -5,11 +5,22 @@ import { Tooltip } from "antd"
 import { isNull } from "lodash"
 
 const schema = {
+    fitter_time: {
+        title: "提问时间",
+        sorter: true,
+        hideInTable: true,
+        props: {
+            showTime: true,
+            valueType: "dateRange",
+        },
+        type: schemaFieldType.DatePicker,
+    },
     create_time: {
         title: "提问时间",
         sorter: true,
         props: {
             showTime: true,
+            valueType: "dateTime",
         },
         type: schemaFieldType.DatePicker,
     },
@@ -58,6 +69,7 @@ const schema = {
     project_id: {
         title: "搜索库",
         required: true,
+        search: false,
         render: (text) => {
             return (
                 <Tooltip title={text}>
@@ -78,11 +90,13 @@ const schema = {
     },
     match_project_id: {
         title: "匹配库",
+        search: false,
         required: true,
         type: schemaFieldType.Select,
     },
     match_question_txt: {
         title: "匹配问题",
+        search: false,
         render: (text) => {
             return (
                 <Tooltip title={text}>
@@ -129,11 +143,11 @@ const schema = {
         type: schemaFieldType.Select,
         dict: {
             true: {
-                value: true,
+                value: "true",
                 remark: "有效",
             },
             false: {
-                value: false,
+                value: "false",
                 remark: "全部",
             },
         },
@@ -171,14 +185,10 @@ const schema = {
 const service = createApi("search_history", schema, null)
 
 service.get = async (args) => {
-    if (args.create_time) {
-        let beginTime = moment(args.create_time.split(",")[0]).format(
-            "YYYY-MM-DDTHH:mm:ss"
-        )
-        let endTime = moment(args.create_time.split(",")[1]).format(
-            "YYYY-MM-DDTHH:mm:ss"
-        )
-        args.create_time = undefined
+    if (args.fitter_time) {
+        let beginTime = args.fitter_time[0].format("YYYY-MM-DDTHH:mm:ss")
+        let endTime = args.fitter_time[1].format("YYYY-MM-DDTHH:mm:ss")
+        args.fitter_time = undefined
         args.and = `(create_time.gte.${beginTime},create_time.lte.${endTime})`
     }
     if (args.have_match_project_id) {
@@ -190,7 +200,7 @@ service.get = async (args) => {
         }
     }
     console.log(args.final_result)
-    if (args.final_result === false) {
+    if (args.final_result === "false") {
         args.final_result = undefined
     }
     if (args.task_id) {

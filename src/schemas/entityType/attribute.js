@@ -9,6 +9,7 @@ const schema = {
         required: true,
         addHide: true,
         editHide: true,
+        search: false,
         // required: true,
         type: schemaFieldType.Select,
     },
@@ -29,6 +30,7 @@ const schema = {
     alias: {
         title: "是否别名",
         searchPrefix: "like",
+        search: false,
         type: schemaFieldType.Select,
         dict: {
             true: {
@@ -44,6 +46,8 @@ const schema = {
     },
     depend_on: {
         title: "依赖字段",
+        search: false,
+
         // addHide: true,
         // editHide: true,
         type: schemaFieldType.Select,
@@ -54,6 +58,7 @@ const schema = {
 
     create_time: {
         title: "创建时间",
+        search: false,
         // required: true,
         sorter: true,
         addHide: true,

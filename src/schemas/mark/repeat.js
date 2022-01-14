@@ -23,26 +23,43 @@ function renderText(data) {
     )
 }
 const schema = {
-    create_time: {
+    flitter_time: {
         title: "时间",
         required: true,
+        // search: false,
         sorter: true,
         addHide: true,
         editHide: true,
         props: {
             showTime: true,
+            valueType: "dateRange",
+        },
+        hideInTable: true,
+        renderInput: () => <RangePicker style={{ width: "100%" }} />,
+        type: schemaFieldType.DatePicker,
+    },
+    create_time: {
+        title: "时间",
+        required: true,
+        // search: false,
+        sorter: true,
+        addHide: true,
+        editHide: true,
+        search: false,
+        props: {
+            showTime: true,
+            // valueType: 'dateRange',
         },
         renderInput: () => <RangePicker style={{ width: "100%" }} />,
         type: schemaFieldType.DatePicker,
     },
-
     status: {
         title: "状态",
         sorter: true,
         addHide: true,
         editHide: true,
         dict: {
-            ready: {
+            wait: {
                 value: "wait",
                 remark: "未处理",
             },
@@ -67,11 +84,14 @@ const schema = {
     calibration_question_text: {
         title: "检测文本",
         required: true,
+        search: false,
         render: renderText,
         sorter: true,
     },
     compare_question_text: {
         title: "对比文本",
+        search: false,
+
         required: true,
         render: renderText,
         sorter: true,
@@ -80,6 +100,8 @@ const schema = {
     compatibility: {
         title: "匹配度",
         sorter: true,
+        search: false,
+
         render: (item) => {
             return formatData(item, 5)
         },
@@ -93,10 +115,14 @@ const schema = {
     calibration_question_standard: {
         title: "检测问题",
         render: renderText,
+        search: false,
+
         sorter: true,
     },
     compare_question_standard: {
         title: "对比问题",
+        search: false,
+
         sorter: true,
         render: renderText,
     },
