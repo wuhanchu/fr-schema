@@ -15,7 +15,7 @@ const schema = {
     },
     domain_key: {
         title: "域",
-        listHide: "true",
+        hideInTable: true,
         type: schemaFieldType.Select,
         sorter: true,
     },
@@ -29,10 +29,12 @@ const schema = {
         title: "扩展问",
         // type: schemaFieldType.Select,
         type: schemaFieldType.TextArea,
+        search: false,
+
         props: {
             autoSize: { minRows: 2, maxRows: 6 },
         },
-        listHide: true,
+        hideInTable: true,
         exportConcat: true,
         extra: "每行表示一个问题",
     },
@@ -44,6 +46,7 @@ const schema = {
             style: { width: "100%" },
         },
         listHide: true,
+        hideInTable: true,
     },
     end_time: {
         title: "结束时间",
@@ -52,29 +55,37 @@ const schema = {
             format: "YYYY-MM-DD",
             style: { width: "100%" },
         },
-        listHide: true,
+        hideInTable: true,
     },
     project_id: {
         title: "项目",
         type: schemaFieldType.Select,
-        listHide: true,
+        hideInTable: true,
+        search: false,
+
         span: 7,
     },
     total: {
         title: "匹配次数",
+        search: false,
+
         sorter: true,
     },
     mark_total: {
         sorter: true,
         title: "参与评价数",
+        search: false,
     },
     mark_right_num: {
         sorter: true,
+        search: false,
+
         title: "解决问题数",
     },
     mark_error_num: {
         sorter: true,
         title: "未解决问题数",
+        search: false,
     },
 }
 

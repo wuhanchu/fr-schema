@@ -26,7 +26,7 @@ const schema = {
         props: {
             autoSize: { minRows: 2, maxRows: 6 },
         },
-        listHide: true,
+        hideInTable: true,
         exportConcat: true,
         extra: "每行表示一个问题",
     },
@@ -37,7 +37,7 @@ const schema = {
             format: "YYYY-MM-DD",
             style: { width: "100%" },
         },
-        listHide: true,
+        hideInTable: true,
     },
     end_time: {
         title: "结束时间",
@@ -46,12 +46,12 @@ const schema = {
             format: "YYYY-MM-DD",
             style: { width: "100%" },
         },
-        listHide: true,
+        hideInTable: true,
     },
     project_id: {
         title: "项目",
         type: schemaFieldType.Select,
-        listHide: true,
+        hideInTable: true,
         span: 7,
     },
     total: {

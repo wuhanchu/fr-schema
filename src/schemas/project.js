@@ -9,6 +9,7 @@ const schema = {
         title: "编号",
         addHide: true,
         editHide: true,
+        search: false,
     },
     domain_key: {
         title: "域",
@@ -41,6 +42,8 @@ const schema = {
     },
     remark: {
         title: "备注",
+        search: false,
+
         type: schemaFieldType.TextArea,
         style: { width: "500px" },
         props: {
@@ -49,7 +52,8 @@ const schema = {
     },
     config: {
         title: "配置",
-        listHide: true,
+        search: false,
+        hideInTable: true,
         props: {
             style: { width: "500px" },
             height: "300px",

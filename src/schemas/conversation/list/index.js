@@ -10,7 +10,7 @@ const schema = {
             showTime: true,
             style: { width: "100%" },
         },
-        listHide: true,
+        hideInTable: true,
     },
     end_time: {
         title: "结束时间",
@@ -19,13 +19,14 @@ const schema = {
             showTime: true,
             style: { width: "100%" },
         },
-        listHide: true,
+        hideInTable: true,
     },
 
     id: {
         title: "编号",
         addHide: true,
         editHide: true,
+        search: false,
         sorter: true,
         width: "320px",
     },
@@ -37,6 +38,7 @@ const schema = {
     },
     user_id: {
         title: "用户",
+        search: false,
     },
     flow_key: {
         title: "流程",
@@ -59,13 +61,14 @@ const schema = {
     },
     intent_key: {
         title: "意图",
-        listHide: true,
+        hideInTable: true,
         addHide: true,
         editHide: true,
         type: schemaFieldType.Select,
     },
     create_time: {
         title: "创建时间",
+        search: false,
         sorter: true,
         props: {
             showTime: true,
@@ -75,7 +78,7 @@ const schema = {
     call_id: {
         title: "类型",
         type: schemaFieldType.Select,
-        listHide: true,
+        hideInTable: true,
         dict: {
             running: {
                 value: "call",

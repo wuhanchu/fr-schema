@@ -19,6 +19,7 @@ const schema = {
         title: "扩展文本",
         sorter: true,
         type: schemaFieldType.Select,
+        search: false,
         props: {
             mode: "tags",
             dropdownRender: false,

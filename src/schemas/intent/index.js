@@ -22,6 +22,8 @@ const schema = {
     },
     logical_path: {
         title: "意图路径",
+        search: false,
+
         searchPrefix: "not.like",
         required: true,
     },
@@ -29,7 +31,9 @@ const schema = {
         title: "正则表达式",
         type: schemaFieldType.Select,
         extra: "建议配置5个字符，2个词汇之内的表达式。",
-        listHide: true,
+        hideInTable: true,
+        search: false,
+
         props: {
             mode: "tags",
             dropdownRender: false,
@@ -39,31 +43,37 @@ const schema = {
     standard_discourse: {
         title: "标准话术",
         type: schemaFieldType.TextArea,
-        listHide: true,
+        search: false,
+
+        hideInTable: true,
         props: {
             autoSize: { minRows: 2, maxRows: 6 },
         },
-        // listHide: true,
+        // hideInTable: true,
         exportConcat: true,
         extra: "一行一个数据，用于相似度比对，不建议包含重复的相似文本。",
     },
     example: {
         title: "例子",
+        search: false,
+
         type: schemaFieldType.TextArea,
         props: {
             autoSize: { minRows: 2, maxRows: 6 },
         },
-        listHide: true,
+        hideInTable: true,
         exportConcat: true,
         extra: "一行一个数据，用于模型训练，建议包含重复的相似文本",
     },
     create_time: {
         title: "创建时间",
         // required: true,
+        search: false,
+
         sorter: true,
         addHide: true,
         editHide: true,
-        listHide: true,
+        hideInTable: true,
         props: {
             showTime: true,
         },

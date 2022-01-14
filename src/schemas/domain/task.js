@@ -46,7 +46,7 @@ const schema = {
         props: {
             autoSize: { minRows: 2, maxRows: 6 },
         },
-        listHide: true,
+        hideInTable: true,
     },
 }
 

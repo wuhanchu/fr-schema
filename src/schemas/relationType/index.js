@@ -24,14 +24,18 @@ const schema = {
 
     config: {
         title: "配置",
+        search: false,
+
         searchPrefix: "like",
         type: schemaFieldType.AceEditor,
         sorter: true,
-        listHide: true,
+        hideInTable: true,
     },
 
     create_time: {
         title: "创建时间",
+        search: false,
+
         required: true,
         sorter: true,
         addHide: true,

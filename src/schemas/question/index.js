@@ -98,7 +98,7 @@ const schema = {
     },
     answer: {
         title: "答案",
-        listHide: true,
+        hideInTable: true,
         type: schemaFieldType.BraftEditor,
         // span: 24,
         position: "right",

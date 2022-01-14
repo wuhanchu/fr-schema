@@ -125,7 +125,7 @@ const schema = {
     },
     final_result: {
         title: "数据范围",
-        listHide: true,
+        hideInTable: true,
         type: schemaFieldType.Select,
         dict: {
             true: {

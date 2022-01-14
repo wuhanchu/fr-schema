@@ -25,6 +25,8 @@ const schema = {
         // required: true,
         style: { width: "500px" },
         title: "相关问题库",
+        search: false,
+
         type: schemaFieldType.Select,
         props: {
             mode: "tags",
@@ -33,6 +35,8 @@ const schema = {
     intent_key: {
         // required: true,
         style: { width: "500px" },
+        search: false,
+
         title: "匹配意图",
         type: schemaFieldType.Select,
         props: {
@@ -41,12 +45,16 @@ const schema = {
     },
     intent_key_text: {
         style: { width: "500px" },
+        search: false,
+
         title: "意图匹配辅助信息",
     },
 
     slot: {
         title: "全局槽位",
-        listHide: true,
+        search: false,
+
+        hideInTable: true,
         props: {
             style: { width: "500px" },
             height: "300px",
@@ -58,11 +66,13 @@ const schema = {
 
     create_time: {
         title: "创建时间",
+        search: false,
+
         // required: true,
         sorter: true,
         addHide: true,
         editHide: true,
-        listHide: true,
+        hideInTable: true,
         props: {
             showTime: true,
         },
@@ -71,10 +81,12 @@ const schema = {
     update_time: {
         title: "更新时间",
         // required: true,
+        search: false,
+
         sorter: true,
         addHide: true,
         editHide: true,
-        listHide: true,
+        hideInTable: true,
         props: {
             showTime: true,
         },
@@ -83,9 +95,10 @@ const schema = {
     config: {
         title: "流程代码",
         // required: true,
+        search: false,
         editHide: true,
         addHide: true,
-        listHide: true,
+        hideInTable: true,
         props: {
             style: { width: "900px" },
             height: "500px",

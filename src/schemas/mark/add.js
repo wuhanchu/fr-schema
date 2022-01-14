@@ -8,7 +8,7 @@ const { RangePicker } = DatePicker
 const schema = {
     project_id: {
         title: "问题库",
-        listHide: true,
+        hideInTable: true,
         required: true,
         type: schemaFieldType.Select,
     },

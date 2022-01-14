@@ -17,13 +17,17 @@ const schema = {
     talk_service_id: {
         title: "对话服务",
         type: schemaFieldType.Select,
+        // search: false
     },
     nlu_server_url: {
         title: "解析服务地址",
+        search: false,
     },
     create_time: {
         title: "创建时间",
         required: true,
+        search: false,
+
         sorter: true,
         addHide: true,
         editHide: true,
@@ -35,6 +39,8 @@ const schema = {
 
     remark: {
         title: "备注",
+        search: false,
+
         type: schemaFieldType.TextArea,
         sorter: true,
     },

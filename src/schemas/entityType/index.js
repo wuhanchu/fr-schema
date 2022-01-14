@@ -32,6 +32,8 @@ const schema = {
         required: true,
         sorter: true,
         addHide: true,
+        search: false,
+
         editHide: true,
         props: {
             showTime: true,
@@ -40,6 +42,7 @@ const schema = {
     },
     remark: {
         title: "备注",
+        search: false,
         type: schemaFieldType.TextArea,
         sorter: true,
     },

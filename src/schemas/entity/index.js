@@ -59,7 +59,9 @@ const schema = {
     },
     attribute: {
         title: "属性",
-        listHide: true,
+        hideInTable: true,
+        search: false,
+
         props: {
             style: { width: "500px" },
             height: "300px",

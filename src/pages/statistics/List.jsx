@@ -57,8 +57,12 @@ class List extends ListPage {
             ...searchParams,
             ...(this.state.pagination || {}),
             ...tempArgs,
-            domain_key: this.formRef.current.getFieldsValue().domain_key,
-            begin_time: this.formRef.current.getFieldsValue().begin_time,
+            domain_key:
+                tempArgs.domain_key ||
+                this.formRef.current.getFieldsValue().domain_key,
+            begin_time:
+                tempArgs.begin_time ||
+                this.formRef.current.getFieldsValue().begin_time,
         }
 
         let data = await this.service.get(params)
@@ -81,7 +85,10 @@ class List extends ListPage {
                 searchValues: { order },
             },
             () => {
-                this.refreshList()
+                this.refreshList({
+                    domain_key: "default",
+                    begin_time: moment().subtract("days", 6),
+                })
             }
         )
     }

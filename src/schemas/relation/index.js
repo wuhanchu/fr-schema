@@ -14,12 +14,13 @@ const schema = {
     from_entity_type_name: {
         title: "左实体类型",
         editHide: true,
+        search: false,
         addHide: true,
     },
     from_entity_type_id: {
         title: "左实体类型",
         type: schemaFieldType.Select,
-        listHide: true,
+        hideInTable: true,
         editHide: true,
         addHide: true,
     },
@@ -27,12 +28,13 @@ const schema = {
         title: "左实体",
         editHide: true,
         addHide: true,
+        search: false,
         required: true,
     },
     from_entity_id: {
         title: "左实体",
         type: schemaFieldType.Select,
-        listHide: true,
+        hideInTable: true,
         sorter: true,
         required: true,
     },
@@ -47,12 +49,14 @@ const schema = {
     to_entity_type_name: {
         title: "右实体类型",
         editHide: true,
+        search: false,
+
         addHide: true,
     },
     to_entity_type_id: {
         type: schemaFieldType.Select,
         title: "右实体类型",
-        listHide: true,
+        hideInTable: true,
         editHide: true,
         addHide: true,
     },
@@ -60,12 +64,14 @@ const schema = {
         title: "右实体",
         editHide: true,
         addHide: true,
+        search: false,
+
         required: true,
     },
 
     to_entity_id: {
         title: "右实体",
-        listHide: true,
+        hideInTable: true,
         type: schemaFieldType.Select,
         sorter: true,
         required: true,
@@ -75,6 +81,7 @@ const schema = {
         title: "创建时间",
         required: true,
         sorter: true,
+        search: false,
         addHide: true,
         editHide: true,
         props: {
@@ -85,7 +92,8 @@ const schema = {
 
     attribute: {
         title: "属性",
-        listHide: true,
+        search: false,
+        hideInTable: true,
         props: {
             height: "300px",
         },

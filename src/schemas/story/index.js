@@ -25,11 +25,14 @@ const schema = {
         props: {
             showTime: true,
         },
+        search: false,
         type: schemaFieldType.DatePicker,
     },
 
     remark: {
         title: "备注",
+        search: false,
+
         type: schemaFieldType.TextArea,
         sorter: true,
     },

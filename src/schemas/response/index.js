@@ -37,11 +37,13 @@ const schema = {
         title: "意图",
         type: schemaFieldType.MultiSelect,
         style: { width: "500px" },
+        search: false,
     },
     template_text: {
         title: "回复文本",
         type: schemaFieldType.TextArea,
         style: { width: "500px" },
+        search: false,
         props: {
             autoSize: { minRows: 3, maxRows: 6 },
         },
@@ -57,12 +59,14 @@ const schema = {
     },
     template: {
         title: "回复模板",
-        listHide: true,
+        hideInTable: true,
         props: {
             style: { width: "500px" },
             height: "400px",
         },
         extra: "针对机器闲聊的配置。",
+        search: false,
+
         // // required: true,
         type: schemaFieldType.AceEditor,
         decoratorProps: { rules: verifyJson },
@@ -73,6 +77,7 @@ const schema = {
         sorter: true,
         addHide: true,
         editHide: true,
+        search: false,
         props: {
             showTime: true,
         },

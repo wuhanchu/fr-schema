@@ -6,7 +6,7 @@ var issafariBrowser =
 const schema = {
     id: {
         title: "编号",
-        listHide: true,
+        hideInTable: true,
     },
     node_key: {
         title: "节点",
