@@ -143,6 +143,7 @@ class BaseList extends EditPage {
     }
 
     async componentDidMount() {
+        this.setState({ showSearchBar: true })
         this.setBraftEditor()
 
         await super.componentDidMount()

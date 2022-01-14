@@ -198,7 +198,10 @@ class List extends ListPage {
         this.handleVisibleExportModal()
     }
 
-    async refreshList() {
+    async refreshList(param) {
+        if (param) {
+            this.setState({ searchValues: param })
+        }
         this.setState({ listLoading: true }, async () => {
             let data = await this.requestList()
             let list = decorateList(data.list, this.schema)

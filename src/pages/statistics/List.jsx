@@ -102,8 +102,9 @@ class List extends ListPage {
     async handleExport(args, schema) {
         this.setState({ exportLoading: true }, async () => {
             let column = this.getColumns(false).filter((item) => {
-                return !item.isExpand && item.key !== "external_id"
+                return !item.hideInTable
             })
+            console.log(columns)
             let columns = column
             let data = await this.requestList({
                 pageSize: 1000000,
