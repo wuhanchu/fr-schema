@@ -209,11 +209,7 @@ function renderTitle(
                                 }}
                                 autoSize
                                 width={300}
-                                value={
-                                    addQuestionExtend ||
-                                    values ||
-                                    (props.record && props.record.search)
-                                }
+                                value={addQuestionExtend}
                                 defaultValue={
                                     values ||
                                     (props.record && props.record.search)
@@ -230,9 +226,16 @@ function renderTitle(
                         setAddQuestionExtend("")
                     }}
                     onVisibleChange={() => {
-                        setAddQuestionExtend("")
+                        setAddQuestionExtend(values || props.record.search)
+                        // setAddQuestionExtend("")
                     }}
                     onConfirm={async (e) => {
+                        if (!addQuestionExtend) {
+                            message.error("请输入补充内容")
+                            setLoading(false)
+
+                            return
+                        }
                         setLoading(true)
                         let data = await schemas.question.service.getDetail(
                             item
@@ -241,16 +244,8 @@ function renderTitle(
                         if (data.question_extend) {
                             question_extend = data.question_extend.split("\n")
                         }
-                        if (
-                            addQuestionExtend ||
-                            values ||
-                            props.record.search
-                        ) {
-                            question_extend.push(
-                                addQuestionExtend ||
-                                    values ||
-                                    props.record.search
-                            )
+                        if (addQuestionExtend) {
+                            question_extend.push(addQuestionExtend)
                             await schemas.question.service.patch(
                                 {
                                     id: item.id,
@@ -268,12 +263,20 @@ function renderTitle(
                             }
                             message.success("补充成功")
                         }
+
                         setAddQuestionExtend("")
                         setLoading(false)
                         e.stopPropagation()
                     }}
                 >
-                    <a>补充</a>
+                    <a
+                        onClick={() => {
+                            console.log("是")
+                            setAddQuestionExtend(values || props.record.search)
+                        }}
+                    >
+                        补充
+                    </a>
                 </Popconfirm>
             }
             <Divider
@@ -383,7 +386,8 @@ function renderTitle(
         </div>
     )
 }
-function renderDescription(item, props) {
+function renderDescription(item, props, projectDict) {
+    console.log("projectDict是", projectDict[item.project_id].name)
     return (
         <>
             <div style={{ color: "rgba(0,0,0,0.85)" }}>答案:</div>
@@ -451,6 +455,11 @@ function renderDescription(item, props) {
                         ? "匹配标准文本："
                         : "匹配扩展文本："}
                     {item.match_question_title}
+                    <div
+                        style={{ marginLeft: "20px", display: "inline-block" }}
+                    >
+                        匹配问题库： {projectDict[item.project_id].name}
+                    </div>
                 </div>
                 <div style={{ width: "130px", marginRight: "10px" }}>
                     <span
@@ -642,7 +651,7 @@ function SearchPage(props) {
     })
     const [loading, setLoading] = useState(true)
     const [allData, setAllData] = useState([])
-    const [addQuestionExtend, setAddQuestionExtend] = useState()
+
     const [projectList, setProjectList] = useState([])
 
     const [action, setAction] = useState("edit")
@@ -654,7 +663,7 @@ function SearchPage(props) {
     // if(props.record.search){
     //     setValues(props.record.search)
     // }
-
+    const [addQuestionExtend, setAddQuestionExtend] = useState()
     const { data, open } = state
 
     // 判断是否外嵌模式
@@ -887,7 +896,8 @@ function SearchPage(props) {
                                         )}
                                         description={renderDescription(
                                             item,
-                                            props
+                                            props,
+                                            listToDict(projectList)
                                         )}
                                     />
                                     {/* <div>{renderDescription(item)}</div> */}

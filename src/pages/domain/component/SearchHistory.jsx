@@ -23,6 +23,7 @@ import projectService from "@/schemas/project"
 import SearchPageModal from "@/pages/question/components/SearchPageModal"
 import { listToDict } from "@/outter/fr-schema/src/dict"
 import { CheckOutlined } from "@ant-design/icons"
+import clientService from "@/pages/authority/clientList/service"
 const { RangePicker } = DatePicker
 const { utils } = frSchema
 
@@ -54,6 +55,13 @@ class MyList extends DataList {
 
     async componentDidMount() {
         let res = await projectService.service.get({ limit: 1000 })
+        let resClient = await clientService.get({ limit: 1000 })
+        this.schema.client_id.dict = listToDict(
+            resClient.list,
+            null,
+            "client_id",
+            "client_name"
+        )
         try {
             this.formRef.current.setFieldsValue({ final_result: true })
         } catch (error) {}
@@ -280,6 +288,7 @@ class MyList extends DataList {
             have_match_project_id,
             task_id,
             final_result,
+            client_id,
         } = this.schema
 
         const filters = this.createFilters(
@@ -312,6 +321,7 @@ class MyList extends DataList {
                 have_match_project_id,
                 task_id,
                 final_result,
+                client_id,
             },
             5
         )

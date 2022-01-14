@@ -86,6 +86,17 @@ class Dialogue extends Chat {
         this.getSettingData()
     }
 
+    componentWillUnmount() {
+        if (this.state.conversationId && this.state.domain_key)
+            schemas.domain.service.closeConversation({
+                domain_key: this.state.domain_key,
+                conversation_id: this.state.conversationId,
+            })
+        this.setState({
+            conversationId: undefined,
+        })
+    }
+
     renderService(item, index) {
         let { historyId } = this.state
         return (
@@ -363,7 +374,9 @@ class Dialogue extends Chat {
                 })
             }
         } catch (error) {
-            message.error(error.message)
+            if (this.state.conversationId) {
+                message.error(error.message)
+            }
             this.setState({ isSpin: false })
         }
         this.onSendMessageAfter()
@@ -534,17 +547,24 @@ class Dialogue extends Chat {
                         project_id: url.getUrlParams("project_id") || undefined,
                     },
                 })
-                await schemas.domain.service.message({
-                    domain_key,
-                    conversation_id: res.data.id,
+                try {
+                    await schemas.domain.service.message({
+                        domain_key,
+                        conversation_id: res.data.id,
 
-                    text:
-                        `/slot{"project\_id":"` +
-                        checkboxValue.join(",") +
-                        `"}`,
-                })
-                param.conversationId = res.data.id
-                param.isFlow = false
+                        text:
+                            `/slot{"project\_id":"` +
+                            checkboxValue.join(",") +
+                            `"}`,
+                    })
+                    param.conversationId = res.data.id
+                    param.isFlow = false
+                } catch (error) {
+                    if (this.state.conversationId) {
+                        message.error(error.message)
+                    }
+                }
+
                 // param.showIntentFlow = false
             }
             this.setState({ isSpin: false })
@@ -635,7 +655,9 @@ class Dialogue extends Chat {
                     })
                 }
             } catch (error) {
-                message.error(error.message)
+                if (this.state.conversationId) {
+                    message.error(error.message)
+                }
                 this.setState({ isSpin: false })
             }
         } catch (error) {

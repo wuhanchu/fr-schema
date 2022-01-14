@@ -65,6 +65,12 @@ const schema = {
 }
 
 const service = createApi("project", schema, null, "eq.")
+service.getDetail = async (args) => {
+    let res = await createApi("project", schema, null, "eq.").getDetail(args)
+    console.log(res)
+    return res
+}
+
 service.export = async (args) => {
     const res = await createApi(`project/mark`, schema).post(args)
     return res

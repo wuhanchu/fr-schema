@@ -25,15 +25,15 @@ const schema = {
         editHide: true,
         dict: {
             ready: {
-                value: "0",
+                value: "wait",
                 remark: "未处理",
             },
             end: {
-                value: 1,
+                value: "end",
                 remark: "已处理",
             },
             deny: {
-                value: 2,
+                value: "deny",
                 remark: "已丢弃",
             },
         },
@@ -113,7 +113,7 @@ service.getRepeat = async (args) => {
         return {
             ...item.info,
             ...item,
-            disabled: item.status !== 0,
+            disabled: item.status !== "wait",
             text: item.info && item.info.text,
             question_standard: item.info && item.info.question_standard,
         }
@@ -155,7 +155,7 @@ service.get = async (args) => {
         return {
             ...item.info,
             ...item,
-            disabled: item.status !== 0,
+            disabled: item.status !== "wait",
 
             text: item.info && item.info.text,
             question_standard: item.info && item.info.question_standard,
@@ -173,7 +173,7 @@ service.delete = async (args) => {
             ""
         ).patch({
             id: "in.(" + args.id + ")",
-            status: 2,
+            status: "deny",
         })
         return { ...data, msg: "丢弃成功" }
     }

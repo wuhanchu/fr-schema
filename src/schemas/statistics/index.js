@@ -18,6 +18,9 @@ const schema = {
         hideInTable: true,
         type: schemaFieldType.Select,
         sorter: true,
+        props: {
+            allowClear: false,
+        },
     },
     question_standard: {
         title: "匹配问题",
@@ -86,6 +89,11 @@ const schema = {
         sorter: true,
         title: "未解决问题数",
         search: false,
+    },
+    client_id: {
+        title: "渠道",
+        listHide: true,
+        type: schemaFieldType.Select,
     },
 }
 

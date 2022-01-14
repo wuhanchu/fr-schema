@@ -1,6 +1,7 @@
 import { createApi } from "@/outter/fr-schema/src/service"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import moments from "moment"
+import { render } from "mustache"
 
 const schema = {
     begin_time: {
@@ -75,6 +76,18 @@ const schema = {
         },
         type: schemaFieldType.DatePicker,
     },
+    caller: {
+        title: "外呼号码",
+        render: (item, data) => {
+            return (data.info && data.info.CALLER) || ""
+        },
+    },
+    called: {
+        title: "被叫号码",
+        render: (item, data) => {
+            return (data.info && data.info.CALLED) || ""
+        },
+    },
     call_id: {
         title: "类型",
         type: schemaFieldType.Select,
@@ -82,11 +95,11 @@ const schema = {
         dict: {
             running: {
                 value: "call",
-                remark: "外呼",
+                remark: "智能呼出",
             },
             end: {
                 value: "text",
-                remark: "文本",
+                remark: "文本对话",
             },
         },
     },
@@ -101,21 +114,21 @@ service.get = async (args) => {
         args.call_id = "is.null"
     }
     let time = new Date(parseInt(args.end_time))
-    console.log(time)
     args.end_time = args.end_time
-        ? moments(time).format("YYYY-MM-DDThh:mm:ss")
+        ? moments(time).format("YYYY-MM-DDTHH:mm:ss")
         : undefined
     time = new Date(parseInt(args.begin_time))
-    console.log(time)
-
     args.begin_time = args.begin_time
-        ? moments(time).format("YYYY-MM-DDThh:mm:ss")
+        ? moments(time).format("YYYY-MM-DDTHH:mm:ss")
         : undefined
 
     if (args.intent_key) {
         args.intent_key = "eq." + args.intent_key
     }
     let data = await createApi("conversation", schema, null, "").get(args)
+    let list = data.list.map((item) => {
+        return { ...item.info, ...item }
+    })
     return data
 }
 

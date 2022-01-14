@@ -100,6 +100,7 @@ service.getUserAuthUser = async (args) => {
 }
 service.sync = createApi("domain/train", schema, null, "eq.").post
 service.fsfundSync = createApi("domain/sync", schema, null, "eq.").post
+service.cache_tts = createApi("domain/cache_tts", schema, null, "eq.").post
 
 export default {
     schema,

@@ -138,6 +138,13 @@ const schema = {
             },
         },
     },
+    client_id: {
+        title: "搜索渠道",
+        type: schemaFieldType.Select,
+        listHide: true,
+        addHide: true,
+        editHide: true,
+    },
     task_id: {
         title: "处理状态",
         type: schemaFieldType.Select,

@@ -328,6 +328,28 @@ class Flow extends React.PureComponent {
         )
     }
 
+    async changHistory(index) {
+        let _this = this
+
+        const { record } = this.props
+
+        _this.setState({ spinning: true })
+        localStorage.removeItem("flowCreate" + record.id)
+        localStorage.removeItem("flow" + record.id)
+
+        _this.graph.dispose()
+        await _this.initData()
+        await _this.getData(_this.state.historyList[index].config)
+        _this.graph.flowSetting = {
+            key: record.key,
+            domain_key: record.domain_key,
+        }
+        _this.setState({
+            historyIndex: index,
+            spinning: false,
+        })
+    }
+
     onHistoryChange(index) {
         let _this = this
         const { record } = this.props
@@ -340,32 +362,14 @@ class Flow extends React.PureComponent {
                 okText: "确定",
                 cancelText: "取消",
                 onOk() {
-                    _this.graph.dispose()
-                    _this.initData()
-                    _this.getData(_this.state.historyList[index].config)
-                    _this.graph.flowSetting = {
-                        key: record.key,
-                        domain_key: record.domain_key,
-                    }
-                    _this.setState({
-                        historyIndex: index,
-                    })
+                    _this.changHistory(index)
                 },
                 onCancel() {
                     console.log("Cancel")
                 },
             })
         } else {
-            _this.graph.dispose()
-            _this.initData()
-            _this.getData(_this.state.historyList[index].config)
-            _this.graph.flowSetting = {
-                key: record.key,
-                domain_key: record.domain_key,
-            }
-            _this.setState({
-                historyIndex: index,
-            })
+            _this.changHistory(index)
         }
     }
 
@@ -404,7 +408,7 @@ class Flow extends React.PureComponent {
                         {
                             name: "开始节点",
                             key: uuidv4(),
-                            allow_repeat_time: 2,
+                            allow_repeat_time: 5,
                             skip_repeat_action: false,
                             type: "begin",
                             position: {
@@ -424,7 +428,7 @@ class Flow extends React.PureComponent {
                     {
                         name: "开始节点",
                         key: uuidv4(),
-                        allow_repeat_time: 2,
+                        allow_repeat_time: 5,
                         skip_repeat_action: false,
                         type: "begin",
                         position: {
@@ -553,7 +557,7 @@ class Flow extends React.PureComponent {
                 action: [],
                 shape: "ellipse",
                 type: "global",
-                allow_repeat_time: 2,
+                allow_repeat_time: 5,
                 skip_repeat_action: false,
                 position: {
                     x: endNode.store.data.position.x,
@@ -641,7 +645,7 @@ class Flow extends React.PureComponent {
                     position: { x: args.x, y: args.y },
                     data: {
                         name: "未命名",
-                        allow_repeat_time: 2,
+                        allow_repeat_time: 5,
                         skip_repeat_action: false,
                         types: "normal",
                     },

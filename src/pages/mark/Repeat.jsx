@@ -13,6 +13,7 @@ import {
     Menu,
     AutoComplete,
     Input,
+    Tooltip,
 } from "antd"
 import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
@@ -66,63 +67,67 @@ class List extends DataList {
         })
         this.schema.project_id.dict = listToDict(project.list)
         try {
-            this.formRef.current.setFieldsValue({ status: "0" })
+            this.formRef.current.setFieldsValue({ status: "wait" })
         } catch (error) {}
         this.schema.calibration_question_standard.render = (item, data) => {
             return (
-                <div
-                    style={{
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                        maxWidth: "250px",
-                    }}
-                >
-                    <a
-                        onClick={() => {
-                            this.setState({ record: data })
-                            this.handleVisibleModal(
-                                true,
-                                {
-                                    ...data,
-                                    id: data.calibration_question_id,
-                                },
-                                "edit"
-                            )
+                <Tooltip title={item}>
+                    <div
+                        style={{
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                            maxWidth: "250px",
                         }}
                     >
-                        {item}
-                    </a>
-                </div>
+                        <a
+                            onClick={() => {
+                                this.setState({ record: data })
+                                this.handleVisibleModal(
+                                    true,
+                                    {
+                                        ...data,
+                                        id: data.calibration_question_id,
+                                    },
+                                    "edit"
+                                )
+                            }}
+                        >
+                            {item}
+                        </a>
+                    </div>
+                </Tooltip>
             )
         }
         this.schema.compare_question_standard.render = (item, data) => {
             return (
-                <div
-                    style={{
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                        maxWidth: "250px",
-                    }}
-                >
-                    <a
-                        onClick={() => {
-                            this.setState({ record: data })
-                            console.log(data)
-                            this.handleVisibleModal(
-                                true,
-                                {
-                                    ...data,
-                                    id: data.compare_question_id,
-                                },
-                                "edit"
-                            )
+                <Tooltip title={item}>
+                    <div
+                        style={{
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                            maxWidth: "250px",
                         }}
                     >
-                        {item}
-                    </a>
-                </div>
+                        <a
+                            onClick={() => {
+                                this.setState({ record: data })
+                                console.log(data)
+                                this.handleVisibleModal(
+                                    true,
+                                    {
+                                        ...data,
+                                        id: data.compare_question_id,
+                                    },
+                                    "edit"
+                                )
+                            }}
+                        >
+                            {item}
+                        </a>
+                    </div>
+                </Tooltip>
             )
         }
         super.componentDidMount()
@@ -180,7 +185,7 @@ class List extends DataList {
         const { order } = this.props
 
         this.formRef.current.resetFields()
-        this.formRef.current.setFieldsValue({ status: "0" })
+        this.formRef.current.setFieldsValue({ status: "wait" })
         this.setState(
             {
                 pagination: { ...this.state.pagination, currentPage: 1 },
@@ -201,7 +206,7 @@ class List extends DataList {
                 id: data.delete_id,
             })
             response = await this.service.patch(
-                { id: data.id, status: 1 },
+                { id: data.id, status: "end" },
                 schema
             )
         }
@@ -244,7 +249,7 @@ class List extends DataList {
                 schemas.question.schema
             )
             response = await this.service.patch(
-                { id: data.id, status: 1 },
+                { id: data.id, status: "end" },
                 schema
             )
         }
@@ -297,7 +302,7 @@ class List extends DataList {
                 id: calibration_id,
             })
             response = await this.service.patch(
-                { id: data.id, status: 1 },
+                { id: data.id, status: "end" },
                 schema
             )
             this.refreshList()
@@ -323,7 +328,7 @@ class List extends DataList {
                             const { selectedRows } = this.state
                             let idArray = []
                             selectedRows.map((item) => {
-                                if (item.status !== 1) {
+                                if (item.status !== "end") {
                                     idArray.push(item.id)
                                 }
                                 return item
@@ -506,8 +511,8 @@ class List extends DataList {
         )
         return (
             <>
-                {record.status === 0 && <Divider type="vertical" />}
-                {record.status === 0 && (
+                {record.status === "wait" && <Divider type="vertical" />}
+                {record.status === "wait" && (
                     <Dropdown overlay={moreMenu}>
                         <a
                             className="ant-dropdown-link"
@@ -532,7 +537,7 @@ class List extends DataList {
             console.log(this.state.infoData)
             console.log(this.state.record)
             await this.service.patch(
-                { id: this.state.record.id, status: 1 },
+                { id: this.state.record.id, status: "end" },
                 schema
             )
 
@@ -568,7 +573,7 @@ class List extends DataList {
                 fixed: "right",
                 render: (text, record) => (
                     <>
-                        {record.status !== 2 && record.status !== 1 && (
+                        {record.status !== "deny" && record.status !== "end" && (
                             <>
                                 <Popconfirm
                                     title="是否要丢弃此行？"
@@ -734,9 +739,9 @@ class List extends DataList {
         const filters = this.createFilters(
             {
                 create_time,
-                question,
-                project_id,
                 status,
+                project_id,
+                question,
             },
             4
         )
