@@ -42,6 +42,7 @@ class List extends ListPage {
             showDelete: false,
             readOnly: true,
             addHide: true,
+            cardProps: { title: "匹配问题详情", bordered: true },
             queryArgs: {
                 ...props.queryArgs,
                 inside: true,
@@ -550,34 +551,35 @@ class List extends ListPage {
 
         return (
             <>
-                <Card bordered={false} style={{ width: "100%" }}>
-                    <div className={styles.tableListForm}>{searchBar}</div>
-                    <div className={styles.tableList}>
-                        {this.renderSearchForm && (
+                {/* <Card bordered={false} style={{ width: "100%" }}> */}
+                {/* <div className={styles.tableListForm}>{searchBar}</div> */}
+                <div className={styles.tableList}>
+                    {/* {this.renderSearchForm && (
                             <div className={styles.tableListForm}>
                                 {this.renderSearchForm()}
                             </div>
-                        )}
-                        {operationBar}
-                        <div>
-                            匹配问题总览
-                            <Button
-                                loading={this.state.exportLoading}
-                                style={{ float: "right" }}
-                                onClick={() => {
-                                    // this.setState({ visibleExport: true })
-                                    this.handleExport({}, {})
-                                }}
-                            >
-                                导出
-                            </Button>
-                        </div>
-                        {this.renderSummary()}
-                        <div style={{ marginBottom: "10px" }}>匹配问题详情</div>
-
-                        {this.renderList()}
-                    </div>
-                </Card>
+                        )} */}
+                    {operationBar}
+                    {this.renderList(
+                        {},
+                        {
+                            renderOpeation: this.renderSummary(),
+                            renderToolbar: (
+                                <Button
+                                    loading={this.state.exportLoading}
+                                    style={{ float: "right" }}
+                                    onClick={() => {
+                                        // this.setState({ visibleExport: true })
+                                        this.handleExport({}, {})
+                                    }}
+                                >
+                                    导出
+                                </Button>
+                            ),
+                        }
+                    )}
+                </div>
+                {/* </Card> */}
                 {visibleModal && this.renderInfoModal()}
                 {visibleImport && this.renderImportModal()}
                 {this.renderExtend && this.renderExtend()}

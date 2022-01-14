@@ -6,8 +6,10 @@ import frSchema from "@/outter/fr-schema/src"
 const { decorateList } = frSchema
 const { DataList } = frSchemaUtils.components
 import EditTable from "@/components/editTable/EditTable"
-import { Button, message } from "antd"
+import { Button, message, Card } from "antd"
 import * as _ from "lodash"
+import styles from "@/outter/fr-schema-antd-utils/src/components/Page/DataList.less"
+
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 
 @autobind
@@ -102,6 +104,51 @@ class EditPage extends DataList {
                 {...otherProps}
                 {...inProps}
             />
+        )
+    }
+    render() {
+        const { visibleModal, visibleImport } = this.state
+        let {
+            renderOperationBar,
+            renderSearchBar,
+            renderOperateColumn,
+        } = this.props
+
+        // 操作栏
+        let operationBar = null
+        operationBar = this.renderOperationBar && this.renderOperationBar()
+        if (renderOperationBar) {
+            operationBar = renderOperationBar()
+        }
+
+        // 搜索栏
+        let searchBar = null
+        if (renderSearchBar) {
+            searchBar = renderSearchBar()
+        } else if (renderSearchBar !== null) {
+            searchBar = this.renderSearchBar && this.renderSearchBar()
+        }
+
+        return (
+            <Fragment>
+                <Card bordered={false} style={{ width: "100%" }}>
+                    {this.state.showSearchBar && (
+                        <div className={styles.tableListForm}>{searchBar}</div>
+                    )}
+                    <div className={styles.tableList}>
+                        {this.renderSearchForm && (
+                            <div className={styles.tableListForm}>
+                                {this.renderSearchForm()}
+                            </div>
+                        )}
+                        {this.state.showSearchBar && operationBar}
+                        {this.renderList()}
+                    </div>
+                </Card>
+                {visibleModal && this.renderInfoModal()}
+                {visibleImport && this.renderImportModal()}
+                {this.renderExtend && this.renderExtend()}
+            </Fragment>
         )
     }
 
