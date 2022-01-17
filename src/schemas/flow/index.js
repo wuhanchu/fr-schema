@@ -75,6 +75,7 @@ const schema = {
         hideInTable: true,
         props: {
             showTime: true,
+            valueType: "dateTime",
         },
         type: schemaFieldType.DatePicker,
     },
@@ -89,6 +90,7 @@ const schema = {
         hideInTable: true,
         props: {
             showTime: true,
+            valueType: "dateTime",
         },
         type: schemaFieldType.DatePicker,
     },

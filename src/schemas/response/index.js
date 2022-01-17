@@ -80,6 +80,7 @@ const schema = {
         search: false,
         props: {
             showTime: true,
+            valueType: "dateTime",
         },
         type: schemaFieldType.DatePicker,
     },

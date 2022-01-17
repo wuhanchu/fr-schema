@@ -24,6 +24,7 @@ const schema = {
         editHide: true,
         props: {
             showTime: true,
+            valueType: "dateTime",
         },
         search: false,
         type: schemaFieldType.DatePicker,

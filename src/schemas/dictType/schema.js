@@ -23,7 +23,6 @@ export default {
         title: "创建时间",
         sorter: true,
         search: false,
-
         addHide: true,
         editHide: true,
         render: (item) => {

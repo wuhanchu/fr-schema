@@ -138,8 +138,10 @@ class List extends ListPage {
 
         client_dict["null"] = {
             value: "null",
+            client_id: "null",
             remark: "未知",
         }
+        console.log(client_dict)
         this.schema.client_id.dict = client_dict
         this.meta.queryArgs = {
             ...this.meta.queryArgs,

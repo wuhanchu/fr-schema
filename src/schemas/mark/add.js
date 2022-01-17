@@ -39,6 +39,7 @@ const schema = {
         props: {
             showTime: true,
             // valueType: 'dateRange',
+            valueType: "dateTime",
         },
         renderInput: () => <RangePicker style={{ width: "100%" }} />,
         type: schemaFieldType.DatePicker,

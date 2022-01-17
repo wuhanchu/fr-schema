@@ -27,12 +27,12 @@ const schema = {
         title: "创建时间",
         required: true,
         search: false,
-
         sorter: true,
         addHide: true,
         editHide: true,
         props: {
             showTime: true,
+            valueType: "dateTime",
         },
         type: schemaFieldType.DatePicker,
     },

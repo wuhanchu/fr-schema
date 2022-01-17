@@ -7,19 +7,12 @@ const schema = {
         title: "域",
         sorter: true,
         style: { width: "500px" },
-        // addHide: true,
-        // editHide: true,
         required: true,
         type: schemaFieldType.Select,
     },
     type_key: {
         title: "类型",
         style: { width: "500px" },
-        // itemProps: {
-        //     labelCol: {
-        //         span: 4,
-        //     },
-        // },
         type: schemaFieldType.Select,
         sorter: true,
         required: true,
@@ -30,11 +23,6 @@ const schema = {
         searchPrefix: "like",
         sorter: true,
         style: { width: "500px" },
-        // itemProps: {
-        //     labelCol: {
-        //         span: 4,
-        //     },
-        // },
         required: true,
     },
 
@@ -46,6 +34,7 @@ const schema = {
         search: false,
         props: {
             showTime: true,
+            valueType: "dateTime",
         },
         type: schemaFieldType.DatePicker,
     },

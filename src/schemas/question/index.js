@@ -180,6 +180,7 @@ const schema = {
         type: schemaFieldType.DatePicker,
         props: {
             showTime: true,
+            valueType: "dateTime",
         },
         width: "135px",
     },
@@ -191,6 +192,7 @@ const schema = {
         type: schemaFieldType.DatePicker,
         props: {
             showTime: true,
+            valueType: "dateTime",
         },
         width: "135px",
     },

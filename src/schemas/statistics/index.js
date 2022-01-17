@@ -38,6 +38,9 @@ const schema = {
         hideInTable: true,
         type: schemaFieldType.Select,
         sorter: true,
+        fieldProps: {
+            allowClear: false,
+        },
         props: {
             allowClear: false,
         },
