@@ -1,5 +1,5 @@
 import React from "react"
-import { Tooltip, Select, Modal, Spin, Popconfirm, Button } from "antd"
+import { Tooltip, Select, Modal, Spin, Popconfirm, Button, message } from "antd"
 import "./Flow.less"
 import insertCss from "insert-css"
 import "./iconfont.css"
@@ -71,9 +71,22 @@ class Flow extends React.PureComponent {
         let method = null
         let key
 
+        key = "ctrl + c"
+        method = (e) => {
+            e.preventDefault()
+            console.log("复制")
+            this.copyNode()
+        }
+        keyboardJS.bind(key, method)
+        this.keyBindMethods.push({
+            key,
+            method,
+        })
+
         key = "ctrl + z"
         method = (e) => {
             e.preventDefault()
+            console.log("撤销")
             this.undoOperate()
         }
         keyboardJS.bind(key, method)
@@ -86,6 +99,17 @@ class Flow extends React.PureComponent {
         method = (e) => {
             e.preventDefault()
             this.deleteNode()
+        }
+        keyboardJS.bind(key, method)
+        this.keyBindMethods.push({
+            key,
+            method,
+        })
+
+        key = "ctrl + v"
+        method = (e) => {
+            e.preventDefault()
+            this.pasteNode()
         }
         keyboardJS.bind(key, method)
         this.keyBindMethods.push({
@@ -828,6 +852,31 @@ class Flow extends React.PureComponent {
             this.graph.removeCells(cell)
             this.setState({ chooseType: "grid" })
             this.graphChange()
+        }
+    }
+
+    copyNode() {
+        const cell = this.graph.getSelectedCells()
+        if (cell && cell[0] && cell[0].getData().types !== "begin") {
+            if (cell && cell.length) {
+                this.graph.copy(cell, this.options)
+                message.success("复制成功")
+            } else {
+                message.info("请先选中节点再复制")
+            }
+            this.setState({ chooseType: "grid" })
+            this.graphChange()
+        }
+    }
+
+    pasteNode() {
+        if (this.graph.isClipboardEmpty()) {
+            message.info("剪切板为空，不可粘贴")
+        } else {
+            const cells = this.graph.paste(this.options)
+            this.graph.cleanSelection()
+            this.graph.select(cells)
+            message.success("粘贴成功")
         }
     }
 

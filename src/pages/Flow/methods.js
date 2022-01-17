@@ -338,6 +338,7 @@ export function createEdgeFunc(args) {
 export function initGraph(expGraphData, callback, graphChange) {
     let graph = new Graph({
         container: document.getElementById("containerChart"),
+        clipboard: true,
         history: {
             enabled: true,
         },
