@@ -29,7 +29,7 @@ class Conversation extends ListPage {
             showEdit: false,
             showDelete: false,
             // showSelect: true,
-
+            searchSpan: 4,
             addHide: true,
             queryArgs: {
                 order: "create_time.desc",
@@ -153,7 +153,9 @@ class Conversation extends ListPage {
     }
 
     async componentDidMount() {
+        this.setState({ searchSpan: window.innerWidth > 1500 ? 4 : 5 })
         let { location } = this.props
+        let _this = this
         // 外链
         if (location.pathname.startsWith("/outter")) {
             let showIntentFlow =
@@ -168,9 +170,14 @@ class Conversation extends ListPage {
         const res = await intentSchema.service.get({
             limit: 1000,
             key: "not.eq.null",
+            order: "key.desc",
+        })
+        res.list.map((item) => {
+            console.log(item.key)
         })
         let list = getTree(res.list)
         this.setState({ intentList: res.list })
+        console.log(list)
         this.schema.intent_key.renderInput = (data, item, props) => {
             return (
                 <TreeSelect
@@ -189,6 +196,19 @@ class Conversation extends ListPage {
             treeList: list,
         })
         super.componentDidMount()
+        var oldresize = window.onresize
+        window.onresize = function (e) {
+            if (window.innerWidth > 1500) {
+                // this.meta.searchSpan = 4
+                _this.setState({
+                    searchSpan: 4,
+                })
+            } else {
+                _this.setState({
+                    searchSpan: 5,
+                })
+            }
+        }
     }
 
     // 搜索
@@ -286,6 +306,7 @@ class Conversation extends ListPage {
                 <Select
                     {...props}
                     options={list}
+                    placeholder="请选择流程"
                     onChange={(value) => {
                         let treeList = this.state.treeList
                         let treeData = getTree(this.state.intentList)
@@ -304,9 +325,10 @@ class Conversation extends ListPage {
                             })
                             treeData = treeData.map((items) => {
                                 return {
-                                    ...item,
+                                    ...items,
                                     value: items.key,
                                     label: items.name,
+                                    children: [],
                                 }
                             })
                         }
@@ -322,7 +344,6 @@ class Conversation extends ListPage {
                                     overflow: "auto",
                                 }}
                                 treeData={treeData}
-                                treeDefaultExpandAll
                             />
                         )
                         this.setState({ showIntent: [] })

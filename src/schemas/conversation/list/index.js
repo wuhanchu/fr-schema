@@ -69,16 +69,7 @@ const schema = {
         editHide: true,
         type: schemaFieldType.Select,
     },
-    create_time: {
-        title: "创建时间",
-        search: false,
-        sorter: true,
-        props: {
-            showTime: true,
-            valueType: "dateTime",
-        },
-        type: schemaFieldType.DatePicker,
-    },
+
     caller: {
         title: "外呼号码",
         render: (item, data) => {
@@ -90,6 +81,16 @@ const schema = {
         render: (item, data) => {
             return (data.info && data.info.CALLED) || ""
         },
+    },
+    create_time: {
+        title: "创建时间",
+        search: false,
+        sorter: true,
+        props: {
+            showTime: true,
+            valueType: "dateTime",
+        },
+        type: schemaFieldType.DatePicker,
     },
     call_id: {
         title: "类型",

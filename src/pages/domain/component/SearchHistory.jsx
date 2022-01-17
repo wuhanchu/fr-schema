@@ -74,7 +74,7 @@ class MyList extends DataList {
                 match: e.target.value,
             })
         }
-        this.setState({ projectDict: listToDict(res.list) })
+        this.setState({ projectDict: listToDict(res.list), searchSpan: 6 })
         this.schema.match_project_id.dict = listToDict(res.list)
         this.schema.project_id.dict = listToDict(res.list)
     }

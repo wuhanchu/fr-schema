@@ -36,6 +36,9 @@ class List extends DataList {
 
     async componentDidMount() {
         let { location } = this.props
+        this.setState({
+            searchSpan: 6,
+        })
         if (location && !location.query.domain_key) {
             message.error("缺少domain_key参数")
             this.setState({ listLoading: false })

@@ -42,6 +42,7 @@ class List extends DataList {
         this.schema.domain_key.dict = this.props.dict.domain
         this.schema.type_key.props = {}
         this.schema.type_key.props.typeKeyArry = res.list
+        this.schema.type_key.notRenderFormItem = true
         this.schema.type_key.renderInput = (
             item,
             tempData,
@@ -66,17 +67,19 @@ class List extends DataList {
                         return { value: item.key, label: item.name }
                     })
             } else {
-                options = props.typeKeyArry
-                    .filter((item) => {
-                        if (tempData && tempData.domain_key)
-                            return item.domain_key === tempData.domain_key
-                        else {
-                            return true
-                        }
-                    })
-                    .map((item, index) => {
-                        return { value: item.key, label: item.name }
-                    })
+                options =
+                    props &&
+                    props.typeKeyArry
+                        .filter((item) => {
+                            if (tempData && tempData.domain_key)
+                                return item.domain_key === tempData.domain_key
+                            else {
+                                return true
+                            }
+                        })
+                        .map((item, index) => {
+                            return { value: item.key, label: item.name }
+                        })
             }
             return <Select {...props} options={options} allowClear></Select>
         }

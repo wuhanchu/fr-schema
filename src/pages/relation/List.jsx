@@ -26,6 +26,22 @@ class List extends DataList {
     }
 
     async componentDidMount() {
+        this.setState({ searchSpan: window.innerWidth > 1500 ? 4 : 5 })
+        let _this = this
+        var oldresize = window.onresize
+        window.onresize = function (e) {
+            if (window.innerWidth > 1500) {
+                // this.meta.searchSpan = 4
+                _this.setState({
+                    searchSpan: 4,
+                })
+            } else {
+                _this.setState({
+                    searchSpan: 5,
+                })
+            }
+        }
+
         let res = await schemas.entity.service.get({ pageSize: 10000 })
         let typeList = utils.dict.listToDict(res.list, null, "id", "name")
         res = await schemas.relationType.service.get({ pageSize: 10000 })

@@ -39,6 +39,7 @@ class List extends DataList {
     async componentDidMount() {
         this.schema.domain_key.dict = this.props.dict.domain
         super.componentDidMount()
+        this.setState({ searchSpan: 6 })
     }
 
     async refreshList(param) {
