@@ -38,7 +38,7 @@ export default [
                 component: "../layouts/FrameLayout",
                 routes: [
                     {
-                        path: "/",
+                        path: "/frame",
                         redirect: "/frame/domain/list",
                         title: "域列表",
                     },
