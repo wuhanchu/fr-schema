@@ -350,7 +350,7 @@ export function initGraph(expGraphData, callback, graphChange) {
             clearAll: true,
             clearOnBlankMouseDown: true,
         },
-        width: 1700,
+        width: 3700,
         height: "100%",
         grid: {
             size: 20, // 网格大小 10px
