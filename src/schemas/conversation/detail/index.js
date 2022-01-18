@@ -84,7 +84,7 @@ const schema = {
                             maxWidth: "60px",
                         }}
                     >
-                        {item !== null ? item + "ms" : ""}
+                        {item !== "-" ? item + "ms" : ""}
                     </div>
                 </Tooltip>
             )
