@@ -138,7 +138,7 @@ class Flow extends React.PureComponent {
     async componentDidMount() {
         const { record } = this.props
         await this.initData()
-        this.getData()
+        await this.getData()
         await this.getIntent()
         this.getHistory()
         this.setState({
@@ -399,11 +399,11 @@ class Flow extends React.PureComponent {
 
     getData = async (config) => {
         const { record, service } = this.props
-
         let _this = this
         let res = await service.getDetail({
             id: record.id,
         })
+
         let data
         let localFlowCreateTime = parseInt(
             localStorage.getItem("flowCreate" + record.id)
