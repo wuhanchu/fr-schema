@@ -29,7 +29,10 @@ class Conversation extends ListPage {
             showEdit: false,
             showDelete: false,
             // showSelect: true,
-            searchSpan: 4,
+            searchSpan: 6,
+            search: {
+                span: 6,
+            },
             addHide: true,
             queryArgs: {
                 order: "create_time.desc",
@@ -153,7 +156,7 @@ class Conversation extends ListPage {
     }
 
     async componentDidMount() {
-        this.setState({ searchSpan: window.innerWidth > 1500 ? 4 : 5 })
+        this.setState({ searchSpan: window.innerWidth > 1500 ? 4 : 6 })
         let { location } = this.props
         let _this = this
         // 外链
@@ -205,7 +208,7 @@ class Conversation extends ListPage {
                 })
             } else {
                 _this.setState({
-                    searchSpan: 5,
+                    searchSpan: 6,
                 })
             }
         }

@@ -26,7 +26,7 @@ const schema = {
         required: true,
     },
     inside: {
-        title: "是否内部问题库",
+        title: "内部问题库",
         type: schemaFieldType.Select,
         style: { width: "500px" },
         dict: {
