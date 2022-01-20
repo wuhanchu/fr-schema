@@ -31,6 +31,7 @@ import { getTree } from "@/pages/Flow/methods"
 }))
 @autobind
 class List extends ListPage {
+    formRefs = React.createRef()
     constructor(props) {
         super(props, {
             schema: schemas.response.schema,
@@ -281,7 +282,7 @@ class List extends ListPage {
             >
                 <Spin spinning={modalLoading}>
                     <Form
-                        ref={this.formRef}
+                        ref={this.formRefs}
                         labelCol={{
                             sm: { span: 24 },
                             md: { span: 4 },
@@ -472,7 +473,7 @@ class List extends ListPage {
                         const obj = {}
                         obj[key] = res
                         try {
-                            this.formRef.current.setFieldsValue(obj)
+                            this.formRefs.current.setFieldsValue(obj)
                         } catch (error) {
                             console.info("error", error)
                         }
@@ -547,7 +548,7 @@ class List extends ListPage {
     handleSave = () => {
         const { values, infoData, action, addArgs } = this.state
         this.setState({ loadingSubmit: true })
-        this.formRef.current
+        this.formRefs.current
             .validateFields()
             .then(async (fieldsValue) => {
                 this.setState({ modalLoading: true })
@@ -562,6 +563,10 @@ class List extends ListPage {
                 }
                 let { texts, template_text, ...other } = fieldsValue
                 // 新的回复文本
+                console.log("新的回复文本")
+                console.log(fieldsValue["template_text"])
+                console.log(typeof fieldsValue["template_text"])
+
                 if (fieldsValue["texts"] && fieldsValue["texts"].length) {
                     // 判断是否需要插入
                     if (fieldsValue["template_text"])
@@ -577,9 +582,19 @@ class List extends ListPage {
                             ]
                         }
                 } else {
-                    fieldsValue["template_text"] = fieldsValue["template_text"]
-                        ? [fieldsValue["template_text"]]
-                        : []
+                    if (
+                        fieldsValue["template_text"] &&
+                        typeof fieldsValue["template_text"] === "object"
+                    ) {
+                        fieldsValue["template_text"] =
+                            fieldsValue["template_text"]
+                    } else {
+                        fieldsValue["template_text"] = fieldsValue[
+                            "template_text"
+                        ]
+                            ? [fieldsValue["template_text"]]
+                            : []
+                    }
                 }
                 param["template_text"] = fieldsValue["template_text"]
                 if (action === actions.edit) {
@@ -618,7 +633,8 @@ class List extends ListPage {
     }
 
     async findIntentByDomainKey(domainKey) {
-        this.formRef.current.setFieldsValue({ intent_key: undefined })
+        console.log(this.formRefs)
+        // this.formRefs.current.setFieldsValue({ intent_key: undefined })
         let list = await this.findIntentList(domainKey)
         let treeList = getTree(list)
         this.setState({ intentList: treeList })

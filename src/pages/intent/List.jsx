@@ -205,7 +205,11 @@ class List extends ListPage {
         }
         console.log("搜索问题")
         this.setState({ listLoading: true }, async () => {
-            let data = await this.requestList()
+            let logical_path = "not.like.*.*"
+            if (this.state.searchValues.name || this.state.searchValues.key) {
+                logical_path = undefined
+            }
+            let data = await this.requestList({ logical_path })
             let list = decorateList(data.list, this.schema)
             this.convertList && (list = this.convertList(list))
             console.log(list)
@@ -319,8 +323,12 @@ class List extends ListPage {
             expandable: {
                 onExpand: (expanded, record) => this.onExpand(expanded, record),
                 expandedRowKeys,
+
                 // defaultExpandAllRows: true
                 // defaultExpandedRowKeys: true
+            },
+            rowSelection: {
+                checkStrictly: true,
             },
         }
         return super.renderList(inProps)
@@ -346,7 +354,8 @@ class List extends ListPage {
                 return (
                     itemList.logical_path &&
                     itemList.logical_path.indexOf(record.logical_path) === 0 &&
-                    itemList.logical_path !== record.logical_path
+                    itemList.logical_path !== record.logical_path &&
+                    itemList.domain_key === record.domain_key
                 )
             })
             list = decorateList(list, this.schema)
@@ -357,9 +366,15 @@ class List extends ListPage {
             for (let i = 0; i < list.length; i++) {
                 // 获取当前意图的所有上层意图
                 arr = list.filter((value) => {
+                    console.log("list[i].domain_key === value.domain_key")
+                    console.log(list[i].domain_key, value.domain_key)
+                    console.log(list[i].domain_key === value.domain_key)
                     return (
                         value.logical_path !== list[i].logical_path &&
-                        list[i].logical_path.includes(value.logical_path + ".")
+                        list[i].logical_path.includes(
+                            value.logical_path + "."
+                        ) &&
+                        list[i].domain_key === value.domain_key
                     )
                 })
                 // 存在上层意图则标明当前遍历意图为其他意图的子意图
@@ -430,6 +445,7 @@ class List extends ListPage {
     // 搜索
     onSearch(fieldsValue) {
         //  更新列表
+        console.log("更新列表")
         const searchValues = { ...this.state.searchValues }
 
         Object.keys(fieldsValue).forEach((key) => {
