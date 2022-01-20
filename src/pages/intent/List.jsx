@@ -260,12 +260,14 @@ class List extends ListPage {
                     },
                 }}
                 errorKey={"question_standard"}
+                confirmLoading={this.state.confirmLoading}
                 title={"导入"}
                 sliceNum={1}
                 onCancel={() => this.setState({ visibleImport: false })}
                 onChange={(data) => this.setState({ importData: data })}
                 onOk={async () => {
                     // to convert
+                    this.setState({ confirmLoading: true })
                     const data = this.state.importData.map((item) => {
                         const {
                             regex,
@@ -297,7 +299,10 @@ class List extends ListPage {
                     // let postData = data.filters
 
                     await this.service.upInsert(data)
-                    this.setState({ visibleImport: false })
+                    this.setState({
+                        visibleImport: false,
+                        confirmLoading: false,
+                    })
                     this.refreshList()
                 }}
             />
@@ -327,9 +332,6 @@ class List extends ListPage {
                 // defaultExpandAllRows: true
                 // defaultExpandedRowKeys: true
             },
-            rowSelection: {
-                checkStrictly: true,
-            },
         }
         return super.renderList(inProps)
     }
@@ -346,7 +348,7 @@ class List extends ListPage {
             logical_path: undefined,
         })
         this.setState({ listLoading: true })
-        this.state.data.list.map((record) => {
+        let list = this.state.data.list.map((record) => {
             let list = res.list.filter((itemList) => {
                 if (!itemList.logical_path) {
                     console.log("itemList", itemList)
@@ -391,11 +393,13 @@ class List extends ListPage {
                 }
             }
             record.children = [...result]
+            return record
             // }
         })
+        const { data } = this.state
         let { expandedRowKeys } = this.state
         this.setState({ expandedRowKeys: [...expandedRowKeys] })
-        this.setState({ listLoading: false })
+        this.setState({ listLoading: false, data: { ...data, list } })
     }
 
     // 展开
