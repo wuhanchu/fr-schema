@@ -271,12 +271,12 @@ class List extends ListPage {
                         } = item
 
                         let regex_data =
-                            regex && regex.replace("\r", "").split("\n")
+                            regex && regex.replace(/\r/g, "").split("\n")
                         let example_data =
-                            example && example.replace("\r", "").split("\n")
+                            example && example.replace(/\r/g, "").split("\n")
                         let standard_discourse_data =
                             standard_discourse &&
-                            standard_discourse.replace("\r", "").split("\n")
+                            standard_discourse.replace(/\r/g, "").split("\n")
                         return {
                             ...this.meta.addArgs,
                             ...others,
