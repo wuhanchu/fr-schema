@@ -166,8 +166,12 @@ class List extends ListPage {
                 sliceNum={1}
                 onCancel={() => this.setState({ visibleImport: false })}
                 onChange={(data) => this.setState({ importData: data })}
+                confirmLoading={this.state.confirmLoading}
                 onOk={async () => {
                     // to convert
+                    this.setState({
+                        confirmLoading: true,
+                    })
                     let attributeAttr = []
                     const data = this.state.importData.map((item) => {
                         let extend_text = null
@@ -187,7 +191,10 @@ class List extends ListPage {
                     // let postData = data.filters
                     await this.service.upInsert(data)
                     message.success("导入成功")
-                    this.setState({ visibleImport: false })
+                    this.setState({
+                        visibleImport: false,
+                        confirmLoading: false,
+                    })
                     this.refreshList()
                 }}
             />

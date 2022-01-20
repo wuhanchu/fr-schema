@@ -467,6 +467,7 @@ class List extends ListPage {
         return (
             <ImportModal
                 importTemplateUrl={this.meta.importTemplateUrl}
+                confirmLoading={this.state.confirmLoading}
                 schema={{
                     ...this.schema,
                     config: { title: "流程配置" },
@@ -479,6 +480,7 @@ class List extends ListPage {
                 onChange={(data) => this.setState({ importData: data })}
                 onOk={async () => {
                     try {
+                        this.setState({ confirmLoading: true })
                         const data = this.state.importData.map((item) => {
                             console.log(
                                 item.intent_key
@@ -500,7 +502,10 @@ class List extends ListPage {
                         message.error(e.message)
                     }
 
-                    this.setState({ visibleImport: false })
+                    this.setState({
+                        visibleImport: false,
+                        confirmLoading: false,
+                    })
                     this.refreshList()
                 }}
             />

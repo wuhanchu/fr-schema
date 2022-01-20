@@ -280,10 +280,12 @@ class List extends DataList {
                 errorKey={"question_standard"}
                 title={"导入"}
                 sliceNum={1}
+                confirmLoading={this.state.confirmLoading}
                 onCancel={() => this.setState({ visibleImport: false })}
                 onChange={(data) => this.setState({ importData: data })}
                 onOk={async () => {
                     // to convert
+                    this.setState({ confirmLoading: true })
                     let attributeAttr = []
                     if (this.state.importData) {
                         const data = this.state.importData.map((item) => {
@@ -304,7 +306,10 @@ class List extends DataList {
                         await this.service.upInsert(data)
                         await schemas.entityAttr.service.upInsert(attributeAttr)
                         message.success("导入成功")
-                        this.setState({ visibleImport: false })
+                        this.setState({
+                            visibleImport: false,
+                            confirmLoading: false,
+                        })
                         this.refreshList()
                     }
                 }}
