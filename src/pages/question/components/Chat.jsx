@@ -244,7 +244,13 @@ class Chat extends React.PureComponent {
 
     // 聊天过程流程展现
     renderChatIntentFlow() {
-        let { roomHeight, conversationId, domain_key, flow_key } = this.state
+        let {
+            roomHeight,
+            conversationId,
+            domain_key,
+            flow_key,
+            showInput,
+        } = this.state
         return (
             <div
                 style={{
@@ -262,12 +268,13 @@ class Chat extends React.PureComponent {
                             domainKey={domain_key}
                             flowKey={flow_key}
                             onRef={this.getRef}
+                            showInput={showInput}
                             roomHeight={roomHeight}
                         />
                     }
                 </div>
 
-                <div style={styles.refreshButton}>
+                {/* <div style={styles.refreshButton}>
                     <div style={{ flex: 1 }} />
                     <Button
                         type="primary"
@@ -276,7 +283,7 @@ class Chat extends React.PureComponent {
                     >
                         刷新
                     </Button>
-                </div>
+                </div> */}
             </div>
         )
     }
