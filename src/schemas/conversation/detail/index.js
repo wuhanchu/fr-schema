@@ -3,6 +3,7 @@ import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import { Tooltip } from "antd"
 var issafariBrowser =
     /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent)
+
 const schema = {
     id: {
         title: "编号",
@@ -55,7 +56,25 @@ const schema = {
         title: "槽位",
         // width: 350,
         render: (item, record) => (
-            <Tooltip title={JSON.stringify(item)}>
+            <Tooltip
+                overlayStyle={{
+                    minWidth: "420px",
+                    width: "auto",
+                    maxHeight: "400px",
+                    overflowY: "auto",
+                }}
+                title={
+                    <pre
+                        style={{
+                            whiteSpace: "pre-wrap",
+                            wordWrap: "break-word",
+                        }}
+                    >
+                        {JSON.stringify(item, null, 2)}
+                    </pre>
+                }
+            >
+                {/* <Tooltip title={JSON.stringify(item)}> */}
                 <div
                     style={{
                         overflow: "hidden",
@@ -99,7 +118,25 @@ const schema = {
                     ? record.result.text
                     : ""
             return (
-                <Tooltip title={text}>
+                // <Tooltip overlayStyle={{minWidth:'520px', width: 'auto', maxHeight: '400px', overflowY: 'auto' }} title={<div dangerouslySetInnerHTML={{ __html: JSON.stringify(record.result, null, "\t").replace(/\n/g, '</br>').replace(/" "/g, '&nbsp')}}/>}>
+                <Tooltip
+                    overlayStyle={{
+                        minWidth: "520px",
+                        width: "auto",
+                        maxHeight: "400px",
+                        overflowY: "auto",
+                    }}
+                    title={
+                        <pre
+                            style={{
+                                whiteSpace: "pre-wrap",
+                                wordWrap: "break-word",
+                            }}
+                        >
+                            {JSON.stringify(record.result, null, 2)}
+                        </pre>
+                    }
+                >
                     <div
                         style={{
                             overflow: "hidden",

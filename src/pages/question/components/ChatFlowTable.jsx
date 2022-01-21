@@ -30,7 +30,7 @@ class ChatFlowTable extends DataList {
             mini: true,
             search: false,
             readOnly: true,
-            scroll: { y: "473px", x: "max-content" },
+            scroll: { y: "463px", x: "max-content" },
         })
     }
 
