@@ -60,14 +60,16 @@ const schema = {
                 overlayStyle={{
                     minWidth: "420px",
                     width: "auto",
-                    maxHeight: "400px",
-                    overflowY: "auto",
+                    maxHeight: "410px",
+                    overflowY: "hidden",
                 }}
                 title={
                     <pre
                         style={{
                             whiteSpace: "pre-wrap",
                             wordWrap: "break-word",
+                            maxHeight: "400px",
+                            overflowY: "auto",
                         }}
                     >
                         {JSON.stringify(item, null, 2)}
@@ -103,7 +105,7 @@ const schema = {
                             maxWidth: "60px",
                         }}
                     >
-                        {item !== "-" ? item + "ms" : ""}
+                        {item !== "-" ? item + "ms" : "-"}
                     </div>
                 </Tooltip>
             )
@@ -123,14 +125,16 @@ const schema = {
                     overlayStyle={{
                         minWidth: "520px",
                         width: "auto",
-                        maxHeight: "400px",
-                        overflowY: "auto",
+                        maxHeight: "410px",
+                        overflowY: "hidden",
                     }}
                     title={
                         <pre
                             style={{
                                 whiteSpace: "pre-wrap",
                                 wordWrap: "break-word",
+                                maxHeight: "400px",
+                                overflowY: "auto",
                             }}
                         >
                             {JSON.stringify(record.result, null, 2)}
@@ -146,7 +150,7 @@ const schema = {
                             maxWidth: "80px",
                         }}
                     >
-                        {text}
+                        {text || "-"}
                     </div>
                 </Tooltip>
             )
