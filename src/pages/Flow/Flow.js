@@ -684,10 +684,14 @@ class Flow extends React.PureComponent {
                 this.selectCell = cell
                 if (cell.isEdge()) {
                     cell.isEdge() && cell.attr("line/strokeDasharray", 5)
+                    cell.isEdge() && cell.attr("line/stroke", "#199999")
+                    cell.isEdge() && cell.attr("line/strokeWidth", 2.5)
                 }
             })
             args.removed.forEach((cell) => {
                 cell.isEdge() && cell.attr("line/strokeDasharray", 0)
+                cell.isEdge() && cell.attr("line/stroke", "#1890ff")
+                cell.isEdge() && cell.attr("line/strokeWidth", 1)
             })
         })
         this.graph.on("edge:mouseup", (args) => {
