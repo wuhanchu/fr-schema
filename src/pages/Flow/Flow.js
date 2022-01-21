@@ -40,6 +40,7 @@ class Flow extends React.PureComponent {
             spinning: true,
             currentArrow: 3,
             cell: undefined,
+            zoom: 1,
             selectCell: "",
             expGraphData: {},
         }
@@ -156,6 +157,20 @@ class Flow extends React.PureComponent {
         } catch (error) {}
     }
 
+    handleZoom(isZoom) {
+        if (isZoom) {
+            if (this.state.zoom < 5) {
+                this.graph.zoom(0.1)
+                this.setState({ zoom: this.state.zoom + 1 })
+            }
+        } else {
+            if (this.state.zoom > -4) {
+                this.graph.zoom(-0.1)
+                this.setState({ zoom: this.state.zoom - 1 })
+            }
+        }
+    }
+
     render() {
         let { chooseType, cell, intenList, expGraphData, spinning } = this.state
         const {
@@ -269,6 +284,22 @@ class Flow extends React.PureComponent {
                                 >
                                     <i className="iconfont icon-shanchu" />
                                 </div>
+                            </Tooltip>
+                            <Tooltip title="放大" placement="bottom">
+                                <img
+                                    src={require("@/assets/add.png")}
+                                    style={styles.undo}
+                                    alt=""
+                                    onClick={(_) => this.handleZoom(true)}
+                                />
+                            </Tooltip>
+                            <Tooltip title="缩小" placement="bottom">
+                                <img
+                                    src={require("@/assets/reduce.png")}
+                                    style={styles.undo}
+                                    alt=""
+                                    onClick={(_) => this.handleZoom(false)}
+                                />
                             </Tooltip>
                             <Tooltip title="撤销" placement="bottom">
                                 <img
