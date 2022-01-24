@@ -683,15 +683,95 @@ class Flow extends React.PureComponent {
             args.added.forEach((cell) => {
                 this.selectCell = cell
                 if (cell.isEdge()) {
-                    cell.isEdge() && cell.attr("line/strokeDasharray", 5)
-                    cell.isEdge() && cell.attr("line/stroke", "#199999")
-                    cell.isEdge() && cell.attr("line/strokeWidth", 2.5)
+                    cell.isEdge() &&
+                        cell.attr("line/strokeDasharray", 5, {
+                            ignoreHistory: true,
+                        })
+                    cell.isEdge() &&
+                        cell.attr("line/stroke", "#199999", {
+                            ignoreHistory: true,
+                        })
+                    cell.isEdge() &&
+                        cell.attr("line/strokeWidth", 2.5, {
+                            ignoreHistory: true,
+                        })
+                    cell.removeTools({ ignoreHistory: true })
+                    cell.addTools(
+                        [
+                            {
+                                name: "source-arrowhead",
+                                args: {
+                                    tagName: "circle",
+                                    attrs: {
+                                        r: 2,
+                                        fill: "#1890ff",
+                                        stroke: "#1890ff",
+                                        "stroke-width": 2,
+                                        cursor: "move",
+                                    },
+                                },
+                            },
+                            {
+                                name: "target-arrowhead",
+                                args: {
+                                    tagName: "path",
+                                    attrs: {
+                                        // r: 6,
+                                        d: "M -5 -4 5 0 -5 4 Z",
+                                        fill: "#199999",
+                                        stroke: "#199999",
+                                        // "stroke-width": 1,
+                                        cursor: "move",
+                                    },
+                                },
+                            },
+                        ],
+                        { ignoreHistory: true }
+                    )
                 }
             })
             args.removed.forEach((cell) => {
-                cell.isEdge() && cell.attr("line/strokeDasharray", 0)
-                cell.isEdge() && cell.attr("line/stroke", "#1890ff")
-                cell.isEdge() && cell.attr("line/strokeWidth", 1)
+                cell.isEdge() &&
+                    cell.attr("line/strokeDasharray", 0, {
+                        ignoreHistory: true,
+                    })
+                cell.isEdge() &&
+                    cell.attr("line/stroke", "#1890ff", { ignoreHistory: true })
+                cell.isEdge() &&
+                    cell.attr("line/strokeWidth", 1, { ignoreHistory: true })
+                cell.removeTools({ ignoreHistory: true })
+                cell.addTools(
+                    [
+                        {
+                            name: "source-arrowhead",
+                            args: {
+                                tagName: "circle",
+                                attrs: {
+                                    r: 2,
+                                    fill: "#1890ff",
+                                    stroke: "#1890ff",
+                                    "stroke-width": 2,
+                                    cursor: "move",
+                                },
+                            },
+                        },
+                        {
+                            name: "target-arrowhead",
+                            args: {
+                                tagName: "path",
+                                attrs: {
+                                    // r: 6,
+                                    d: "M -5 -4 5 0 -5 4 Z",
+                                    fill: "#1890ff",
+                                    stroke: "#1890ff",
+                                    // "stroke-width": 1,
+                                    cursor: "move",
+                                },
+                            },
+                        },
+                    ],
+                    { ignoreHistory: true }
+                )
             })
         })
         this.graph.on("edge:mouseup", (args) => {

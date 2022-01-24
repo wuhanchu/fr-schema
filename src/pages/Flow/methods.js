@@ -341,6 +341,11 @@ export function initGraph(expGraphData, callback, graphChange) {
         clipboard: true,
         history: {
             enabled: true,
+            beforeAddCommand(event, args) {
+                if (args.options) {
+                    return args.options.ignoreHistory !== true
+                }
+            },
         },
         panning: true,
         selecting: {
