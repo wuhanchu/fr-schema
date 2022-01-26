@@ -188,14 +188,21 @@ class List extends ListPage {
                             extend_text,
                         }
                     })
+                    try {
+                        await this.service.upInsert(data)
+                        message.success("导入成功")
+                        this.setState({
+                            visibleImport: false,
+                            confirmLoading: false,
+                        })
+                        this.refreshList()
+                    } catch (error) {
+                        message.error(error.message)
+                        this.setState({
+                            confirmLoading: false,
+                        })
+                    }
                     // let postData = data.filters
-                    await this.service.upInsert(data)
-                    message.success("导入成功")
-                    this.setState({
-                        visibleImport: false,
-                        confirmLoading: false,
-                    })
-                    this.refreshList()
                 }}
             />
         )

@@ -222,13 +222,20 @@ class List extends DataList {
                     })
                     // let postData = data.filters
                     console.log(data)
-                    await this.service.post(data)
-                    message.success("导入成功")
-                    this.setState({
-                        visibleImport: false,
-                        confirmLoading: false,
-                    })
-                    this.refreshList()
+                    try {
+                        await this.service.post(data)
+                        message.success("导入成功")
+                        this.setState({
+                            visibleImport: false,
+                            confirmLoading: false,
+                        })
+                        this.refreshList()
+                    } catch (error) {
+                        message.error(error.message)
+                        this.setState({
+                            confirmLoading: false,
+                        })
+                    }
                 }}
             />
         )

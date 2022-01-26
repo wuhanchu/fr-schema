@@ -297,13 +297,19 @@ class List extends ListPage {
                         }
                     })
                     // let postData = data.filters
-
-                    await this.service.upInsert(data)
-                    this.setState({
-                        visibleImport: false,
-                        confirmLoading: false,
-                    })
-                    this.refreshList()
+                    try {
+                        await this.service.upInsert(data)
+                        this.refreshList()
+                        this.setState({
+                            visibleImport: false,
+                            confirmLoading: false,
+                        })
+                    } catch (error) {
+                        message.error(error.message)
+                        this.setState({
+                            confirmLoading: false,
+                        })
+                    }
                 }}
             />
         )
