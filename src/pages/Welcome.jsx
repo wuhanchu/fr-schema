@@ -8,7 +8,7 @@ const CodePreview = ({ children }) => (
         style={{
             background: "#f2f4f5",
             padding: "12px 20px",
-            margin: "12px 0"
+            margin: "12px 0",
         }}
     >
         <code>
@@ -18,7 +18,7 @@ const CodePreview = ({ children }) => (
 )
 
 export default () => (
-    <PageHeaderWrapper>
+    <PageHeaderWrapper title={false}>
         <Card>
             <Alert
                 message="umi ui 现已发布，欢迎使用 npm run ui 启动体验。"
@@ -27,7 +27,7 @@ export default () => (
                 banner
                 style={{
                     margin: -12,
-                    marginBottom: 24
+                    marginBottom: 24,
                 }}
             />
             <Typography.Text strong>
@@ -46,7 +46,7 @@ export default () => (
             <Typography.Text
                 strong
                 style={{
-                    marginBottom: 12
+                    marginBottom: 12,
                 }}
             >
                 <a
@@ -65,7 +65,7 @@ export default () => (
         <p
             style={{
                 textAlign: "center",
-                marginTop: 24
+                marginTop: 24,
             }}
         >
             Want to add more pages? Please refer to{" "}

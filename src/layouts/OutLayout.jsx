@@ -12,7 +12,9 @@ import { PageHeaderWrapper } from "@ant-design/pro-layout"
 import Authorized from "../components/Authorized/Authorized"
 
 const config = SETTING
-const Page = () => <PageHeaderWrapper>this is a page</PageHeaderWrapper>
+const Page = () => (
+    <PageHeaderWrapper title={false}>this is a page</PageHeaderWrapper>
+)
 
 console.log(config)
 

@@ -33,7 +33,7 @@ class Main extends React.PureComponent {
 
         return (
             <PageHeaderWrapper
-                title="字典设置"
+                title={false}
                 tabList={Object.keys(infoType).map((key) => ({
                     key: infoType[key],
                     tab: infoType[key],

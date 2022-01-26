@@ -34,7 +34,7 @@ class Main extends React.PureComponent {
 
         return (
             <PageHeaderWrapper
-                title="实体信息"
+                title={false}
                 tabList={Object.keys(infoType).map((key) => ({
                     key: infoType[key],
                     tab: infoType[key],

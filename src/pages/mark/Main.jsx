@@ -420,7 +420,7 @@ class Main extends React.PureComponent {
         )
         return (
             <PageHeaderWrapper
-                title="问题库运维"
+                title={false}
                 tabBarExtraContent={operations}
                 tabList={Object.keys(infoType).map((key) => ({
                     key: infoType[key],
