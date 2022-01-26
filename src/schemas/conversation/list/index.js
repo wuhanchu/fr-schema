@@ -41,7 +41,8 @@ const schema = {
     },
     user_id: {
         title: "用户",
-        search: false,
+        search: true,
+        type: schemaFieldType.Select,
     },
     flow_key: {
         title: "流程",

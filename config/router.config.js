@@ -147,6 +147,25 @@ export default [
                         component: "./statistics/List",
                     },
                     {
+                        name: "system",
+                        path: "/frame/system",
+                        authority: ["system"],
+                        routes: [
+                            {
+                                path: "/frame/system/setting",
+                                name: "setting",
+                                title: "设置",
+                                component: "./system/Main",
+                            },
+                            {
+                                path: "/frame/system/config",
+                                name: "config",
+                                title: "系统配置",
+                                component: "./config/List",
+                            },
+                        ],
+                    },
+                    {
                         component: "./404",
                     },
                 ],

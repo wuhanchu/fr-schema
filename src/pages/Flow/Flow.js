@@ -355,13 +355,18 @@ class Flow extends React.PureComponent {
                             let data = this.graphChange()
                             if (isError(data, this.graph)) {
                                 this.setState({ spinning: true })
-                                await service.patch({
-                                    ...data,
-                                    id: record.id,
-                                })
-                                localStorage.removeItem("flow" + record.id)
-                                this.setState({ spinning: false })
-                                this.props.handleSetVisibleFlow(false)
+                                try {
+                                    await service.patch({
+                                        ...data,
+                                        id: record.id,
+                                    })
+                                    localStorage.removeItem("flow" + record.id)
+                                    this.setState({ spinning: false })
+                                    this.props.handleSetVisibleFlow(false)
+                                } catch (error) {
+                                    message.error(error.message)
+                                    this.setState({ spinning: false })
+                                }
                             }
                         }}
                         okText="是"

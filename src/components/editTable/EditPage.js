@@ -295,9 +295,14 @@ class EditPage extends DataList {
             this.dataExtra(item)
             this.state.editRow[i] = { ...item }
         }
-        await this.updateService()
-        this.refreshList()
-        message.success("保存成功")
+        try {
+            await this.updateService()
+            this.refreshList()
+            message.success("保存成功")
+        } catch (error) {
+            message.error(error.message)
+        }
+
         this.setState({ editRow: [], listLoading: false, updateLoading: false })
     }
 

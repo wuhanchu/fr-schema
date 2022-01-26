@@ -653,12 +653,16 @@ class List extends ListPage {
             handleVisibleModal: this.handleTTsVisibleModal.bind(this),
             handleUpdate: async (args) => {
                 console.log(args, this.state.record.domain_key)
-                await this.service.cache_tts({
-                    ...args,
-                    domain_key: this.state.record.key,
-                }),
+                try {
+                    await this.service.cache_tts({
+                        ...args,
+                        domain_key: this.state.record.key,
+                    })
                     message.success("操作成功")
-                this.setState({ visibleTTsModal: false })
+                    this.setState({ visibleTTsModal: false })
+                } catch (error) {
+                    message.error(error.message)
+                }
             },
             handleAdd: this.handleAdd.bind(this),
         }
@@ -848,6 +852,7 @@ class List extends ListPage {
                                 )
                                 e.stopPropagation()
                             } catch (error) {
+                                message.error(error.message)
                                 if (this.mysetInterval) {
                                     clearInterval(this.mysetInterval)
                                 }
@@ -935,6 +940,7 @@ class List extends ListPage {
                                     undefined
                                 )
                             } catch (error) {
+                                message.error(error.message)
                                 if (this.mysetInterval) {
                                     clearInterval(this.mysetInterval)
                                 }
