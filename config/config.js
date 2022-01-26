@@ -35,7 +35,6 @@ let config = defineConfig({
     dva: {
         hmr: true,
     },
-
     locale: {
         // default zh-CN
         default: "zh-CN",

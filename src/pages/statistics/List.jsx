@@ -192,6 +192,8 @@ class List extends ListPage {
                         width: "100%",
                         display: "flex",
                         marginTop: "20px",
+                        paddingLeft: "24px",
+                        paddingRight: "24px",
                         marginBottom: "10px",
                     }}
                 >
@@ -550,7 +552,15 @@ class List extends ListPage {
 
         return (
             <>
-                <Card bordered={false} style={{ width: "100%" }}>
+                <Card
+                    bordered={false}
+                    style={{ width: "100%" }}
+                    bodyStyle={{
+                        paddingLeft: 0,
+                        paddingRight: 0,
+                        paddingBottom: "8px",
+                    }}
+                >
                     {/* <div className={styles.tableListForm}>{searchBar}</div> */}
                     <div className={styles.tableList}>
                         {/* {this.renderSearchForm && (
@@ -591,7 +601,7 @@ class List extends ListPage {
 
         return (
             <PageHeaderWrapper
-                title={title && title + "列表"}
+                title={false}
                 content={
                     content ||
                     (this.renderHeaderContent && this.renderHeaderContent())
