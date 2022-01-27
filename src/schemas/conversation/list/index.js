@@ -125,11 +125,11 @@ const schema = {
         },
         hideInTable: true,
         dict: {
-            running: {
+            call: {
                 value: "call",
                 remark: "智能呼出",
             },
-            end: {
+            text: {
                 value: "text",
                 remark: "文本对话",
             },
