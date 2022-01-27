@@ -14,6 +14,30 @@ const schema = {
         sorter: true,
         required: true,
     },
+    public: {
+        title: "公共库",
+        // searchPrefix: "like",
+        type: schemaFieldType.Select,
+        dict: {
+            true: {
+                value: "true",
+                remark: "是",
+            },
+            false: {
+                value: "false",
+                remark: "否",
+            },
+        },
+        render: (item, props) => {
+            if (props.public) {
+                return "是"
+            } else {
+                return "否"
+            }
+        },
+
+        required: true,
+    },
     talk_service_id: {
         title: "对话服务",
         type: schemaFieldType.Select,
