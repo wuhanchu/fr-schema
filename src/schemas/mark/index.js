@@ -58,11 +58,19 @@ const schema = {
         },
         required: true,
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
     },
     project_id: {
         title: "问题库",
         style: { width: "500px" },
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
         sorter: true,
         required: true,
     },

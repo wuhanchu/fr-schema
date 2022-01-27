@@ -16,6 +16,10 @@ const schema = {
         sorter: true,
         type: schemaFieldType.Select,
         required: true,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
         style: { width: "500px" },
     },
     name: {
@@ -28,6 +32,10 @@ const schema = {
     inside: {
         title: "内部问题库",
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
         style: { width: "500px" },
         dict: {
             true: {

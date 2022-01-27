@@ -18,6 +18,10 @@ const schema = {
         title: "公共库",
         // searchPrefix: "like",
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
         props: {},
         dict: {
             true: {
@@ -42,6 +46,10 @@ const schema = {
     base_domain_key: {
         title: "基础域",
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
         search: false,
         render: (item, props) => {
             console.log(props.base_domain_key)
@@ -55,6 +63,10 @@ const schema = {
     talk_service_id: {
         title: "对话服务",
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
         // search: false
     },
     nlu_server_url: {

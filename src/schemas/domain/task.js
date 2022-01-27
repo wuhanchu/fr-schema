@@ -26,6 +26,10 @@ const schema = {
         title: "状态",
         required: true,
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
         dict: {
             running: {
                 value: "running",

@@ -9,7 +9,10 @@ const schema = {
         style: { width: "500px" },
         props: {
             autoSize: { minRows: 2, maxRows: 6 },
+            allowClear: true,
+            showSearch: true,
         },
+
         required: true,
         type: schemaFieldType.Select,
     },

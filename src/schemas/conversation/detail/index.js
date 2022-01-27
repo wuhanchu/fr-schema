@@ -12,11 +12,19 @@ const schema = {
     node_key: {
         title: "节点",
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
         width: issafariBrowser ? "50px" : undefined,
     },
     type: {
         title: "类型",
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
         width: issafariBrowser ? "50px" : undefined,
         dict: {
             receive: {
@@ -39,6 +47,10 @@ const schema = {
     intent_history_id: {
         title: "意图",
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
         width: issafariBrowser ? "50px" : undefined,
     },
     text: {
@@ -48,6 +60,10 @@ const schema = {
     action_key: {
         title: "操作",
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
         render: (item) => {
             return <div style={{ minWidth: "50px" }}>{item}</div>
         },

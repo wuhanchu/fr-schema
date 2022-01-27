@@ -48,6 +48,10 @@ const schema = {
     have_match_project_id: {
         title: "匹配情况",
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
         dict: {
             have: {
                 value: "have",
@@ -87,12 +91,20 @@ const schema = {
             )
         },
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
     },
     match_project_id: {
         title: "匹配库",
         search: false,
         required: true,
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
     },
     match_question_txt: {
         title: "匹配问题",
@@ -119,6 +131,10 @@ const schema = {
     user_confirm: {
         title: "是否评价",
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
         dict: {
             true: {
                 value: true,
@@ -141,6 +157,10 @@ const schema = {
         title: "数据范围",
         hideInTable: true,
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
         dict: {
             true: {
                 value: "true",
@@ -155,6 +175,10 @@ const schema = {
     client_id: {
         title: "搜索渠道",
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
         listHide: true,
         addHide: true,
         editHide: true,
@@ -162,6 +186,10 @@ const schema = {
     task_id: {
         title: "处理状态",
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
         dict: {
             have: {
                 value: "have",

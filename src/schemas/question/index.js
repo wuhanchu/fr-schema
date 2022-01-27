@@ -15,6 +15,10 @@ const schema = {
         render: (data, item) => {
             return item.group
         },
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
         sorter: true,
         editable: true,
         fixed: "left",

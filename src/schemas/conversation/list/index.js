@@ -38,20 +38,39 @@ const schema = {
         sorter: true,
         required: true,
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
     },
     user_id: {
         title: "用户",
         search: true,
+
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            mode: "tags",
+
+            showSearch: true,
+        },
     },
     flow_key: {
         title: "流程",
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
     },
     status: {
         title: "状态",
         sorter: true,
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
         dict: {
             running: {
                 value: "running",
@@ -69,6 +88,10 @@ const schema = {
         addHide: true,
         editHide: true,
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
     },
 
     caller: {
@@ -96,6 +119,10 @@ const schema = {
     call_id: {
         title: "类型",
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
         hideInTable: true,
         dict: {
             running: {

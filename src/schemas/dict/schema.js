@@ -4,6 +4,10 @@ export default {
     key: {
         title: "键值",
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
         search: false,
     },
     name: {

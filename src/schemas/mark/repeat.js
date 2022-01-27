@@ -75,12 +75,20 @@ const schema = {
         },
         required: true,
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
     },
     project_id: {
         title: "问题库",
         required: true,
         sorter: true,
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
     },
     calibration_question_text: {
         title: "检测文本",

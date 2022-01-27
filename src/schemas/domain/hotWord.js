@@ -56,6 +56,10 @@ const schema = {
     project_id: {
         title: "项目",
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
         hideInTable: true,
         span: 7,
     },

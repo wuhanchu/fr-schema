@@ -141,6 +141,8 @@ export default {
                 },
             },
             props: {
+                allowClear: true,
+                showSearch: true,
                 style: { width: 180 },
             },
         },

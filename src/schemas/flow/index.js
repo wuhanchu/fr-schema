@@ -8,6 +8,10 @@ const schema = {
         sorter: true,
         required: true,
         style: { width: "500px" },
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
         type: schemaFieldType.Select,
     },
     name: {
@@ -30,6 +34,8 @@ const schema = {
         type: schemaFieldType.Select,
         props: {
             mode: "tags",
+            allowClear: true,
+            showSearch: true,
         },
     },
     intent_key: {
@@ -41,6 +47,8 @@ const schema = {
         type: schemaFieldType.Select,
         props: {
             mode: "tags",
+            allowClear: true,
+            showSearch: true,
         },
     },
     intent_key_text: {

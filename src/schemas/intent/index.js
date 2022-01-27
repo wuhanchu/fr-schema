@@ -19,6 +19,10 @@ const schema = {
         sorter: true,
         required: true,
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
     },
     logical_path: {
         title: "意图路径",
@@ -36,6 +40,8 @@ const schema = {
 
         props: {
             mode: "tags",
+            allowClear: true,
+            showSearch: true,
             dropdownRender: false,
             dropdownStyle: { zIndex: -999 },
         },

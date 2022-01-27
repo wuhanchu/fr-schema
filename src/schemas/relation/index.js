@@ -10,6 +10,10 @@ const schema = {
         editHide: true,
         required: true,
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
     },
     from_entity_type_name: {
         title: "左实体类型",
@@ -19,6 +23,10 @@ const schema = {
     },
     from_entity_type_id: {
         title: "左实体类型",
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
         type: schemaFieldType.Select,
         hideInTable: true,
         editHide: true,
@@ -34,6 +42,10 @@ const schema = {
     from_entity_id: {
         title: "左实体",
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
         hideInTable: true,
         sorter: true,
         required: true,
@@ -42,6 +54,10 @@ const schema = {
     relation_key: {
         title: "关系",
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
         sorter: true,
         editable: true,
         required: true,
@@ -55,6 +71,10 @@ const schema = {
     },
     to_entity_type_id: {
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
         title: "右实体类型",
         hideInTable: true,
         editHide: true,
@@ -73,6 +93,10 @@ const schema = {
         title: "右实体",
         hideInTable: true,
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
         sorter: true,
         required: true,
     },

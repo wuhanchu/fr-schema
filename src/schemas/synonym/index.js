@@ -7,6 +7,10 @@ const schema = {
         sorter: true,
         required: true,
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
     },
     standard_text: {
         title: "标准文本",
@@ -19,8 +23,11 @@ const schema = {
         title: "扩展文本",
         sorter: true,
         type: schemaFieldType.Select,
+
         search: false,
         props: {
+            allowClear: true,
+            showSearch: true,
             mode: "tags",
             dropdownRender: false,
             dropdownStyle: { zIndex: -999 },

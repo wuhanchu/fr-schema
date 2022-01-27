@@ -12,6 +12,10 @@ const schema = {
         search: false,
         // required: true,
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
     },
     name: {
         title: "名称",
@@ -32,6 +36,10 @@ const schema = {
         searchPrefix: "like",
         search: false,
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
         dict: {
             true: {
                 value: true,
@@ -53,6 +61,8 @@ const schema = {
         type: schemaFieldType.Select,
         props: {
             mode: "tags",
+            allowClear: true,
+            showSearch: true,
         },
     },
 

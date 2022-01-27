@@ -12,6 +12,10 @@ const schema = {
         required: true,
         search: false,
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
     },
     flitter_time: {
         title: "时间",
@@ -65,6 +69,10 @@ const schema = {
         },
         required: true,
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
     },
 
     text: {

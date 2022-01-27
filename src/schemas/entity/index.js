@@ -9,11 +9,19 @@ const schema = {
         style: { width: "500px" },
         required: true,
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
     },
     type_key: {
         title: "类型",
         style: { width: "500px" },
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
         sorter: true,
         required: true,
     },

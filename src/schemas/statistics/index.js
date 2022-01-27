@@ -71,7 +71,10 @@ const schema = {
         type: schemaFieldType.Select,
         hideInTable: true,
         search: false,
-
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
         span: 7,
     },
     total: {
@@ -100,6 +103,10 @@ const schema = {
         title: "渠道",
         hideInTable: true,
         type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
     },
 }
 
