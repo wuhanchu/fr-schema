@@ -29,7 +29,7 @@ export const startDragToGraph = async (graph, type, e, callback) => {
                     },
                 },
                 body: {
-                    stroke: "#1890ff",
+                    stroke: "#a0d911",
                     strokeWidth: 1,
                     fill: "#ffffff",
                 },
