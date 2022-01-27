@@ -16,6 +16,7 @@ import {
     Progress,
     Tooltip,
     Steps,
+    Select,
 } from "antd"
 import DialogueModal from "@/pages/question/components/DialogueModal"
 import YamlEdit from "@/pages/story/yamlEdiit"
@@ -77,6 +78,7 @@ class List extends ListPage {
             limit: 10000,
         })
         this.schema.talk_service_id.dict = listToDict(aiService)
+
         let tts_service_id_dict = listToDict(ttsService)
         const data = await this.service.getUserAuthUser()
 
@@ -85,8 +87,82 @@ class List extends ListPage {
             projectList: projectList.list,
             tts_service_id_dict,
         })
-
+        this.initDict()
         super.componentDidMount()
+    }
+
+    initDict = () => {
+        this.schema.base_domain_key.dict = this.props.dict.domain
+        console.log("this.props.dict.domain_key", this.props.global.data.domain)
+        this.schema.base_domain_key.props = {
+            domainarry: this.props.global.data.domain,
+        }
+        console.log(this.props.global.data.domain)
+        const { props } = this
+        this.schema.base_domain_key.renderInput = (
+            item,
+            tempData,
+            props,
+            action,
+            form
+        ) => {
+            let options = []
+            console.log(item, tempData, props, action, form)
+            this.infoForm = props.form
+            console.log("是")
+            console.log(props)
+            if (
+                props.form &&
+                props.form.current &&
+                (props.form.current.getFieldsValue().public === "true" ||
+                    props.form.current.getFieldsValue().public === "false")
+            ) {
+                console.log(props.form.current.getFieldsValue().public)
+                console
+                options = props.domainarry
+                    .filter((item) => {
+                        console.log(item.public)
+                        console.log(props.form.current.getFieldsValue().public)
+                        let result =
+                            item.public.toString() ===
+                            props.form.current
+                                .getFieldsValue()
+                                .public.toString()
+                        // console.log(result)
+                        return result
+                    })
+                    .map((item, index) => {
+                        return { value: item.key, label: item.name }
+                    })
+            } else {
+                options = item.props.domainarry
+                    .filter((item) => {
+                        if (
+                            tempData.public === true ||
+                            tempData.public === false
+                        )
+                            return item.public === tempData.public
+                        else {
+                            return true
+                        }
+                    })
+                    .map((item, index) => {
+                        return {
+                            value: item.key,
+                            label: item.name,
+                            key: item.key,
+                        }
+                    })
+            }
+            return (
+                <Select
+                    {...props}
+                    options={options}
+                    mode="multiple"
+                    allowClear
+                ></Select>
+            )
+        }
     }
 
     handleSetYamlEditVisible = (visible) => {

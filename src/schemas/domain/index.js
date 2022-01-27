@@ -18,6 +18,7 @@ const schema = {
         title: "公共库",
         // searchPrefix: "like",
         type: schemaFieldType.Select,
+        props: {},
         dict: {
             true: {
                 value: "true",
@@ -37,6 +38,19 @@ const schema = {
         },
 
         required: true,
+    },
+    base_domain_key: {
+        title: "基础域",
+        type: schemaFieldType.Select,
+        search: false,
+        render: (item, props) => {
+            console.log(props.base_domain_key)
+            if (props.base_domain_key.length) {
+                return item
+            } else {
+                return "-"
+            }
+        },
     },
     talk_service_id: {
         title: "对话服务",
@@ -125,6 +139,18 @@ service.getUserAuthUser = async (args) => {
 service.sync = createApi("domain/train", schema, null, "eq.").post
 service.fsfundSync = createApi("domain/sync", schema, null, "eq.").post
 service.cache_tts = createApi("domain/cache_tts", schema, null, "eq.").post
+service.get = async (args) => {
+    let data = await createApi("domain", schema, null, "eq.").get(args)
+    console.log(data)
+    let { list } = data
+    list = list.map((item) => {
+        return {
+            ...item,
+            base_domain_key: item.base_domain_key || [],
+        }
+    })
+    return { ...data, list }
+}
 
 export default {
     schema,

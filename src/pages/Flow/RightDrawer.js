@@ -372,12 +372,18 @@ class RightDrawer extends React.PureComponent {
                             preserve={false}
                             layout="vertical"
                             onValuesChange={(args, data) => {
+                                let oldType = cell.getData().types
+                                console.log(oldType)
                                 cell.setData(args)
                                 cell.setAttrs({
                                     label: { text: args.name },
                                 })
                                 if (args.types) {
-                                    if (args.types === "normal") {
+                                    if (
+                                        oldType === "end" &&
+                                        (args.types === "normal" ||
+                                            args.types === "master")
+                                    ) {
                                         graph.batchUpdate("changeType", () => {
                                             cell.attr("body/rx", 0)
                                             cell.addPort({
@@ -386,12 +392,30 @@ class RightDrawer extends React.PureComponent {
                                             })
                                         })
                                     } else {
+                                        if (
+                                            (oldType === "normal" ||
+                                                oldType === "master") &&
+                                            args.types === "end"
+                                        ) {
+                                            graph.batchUpdate(
+                                                "changeType",
+                                                () => {
+                                                    cell.attr("body/rx", 20)
+                                                    cell.removePort({
+                                                        id: "port2",
+                                                        group: "bottom",
+                                                    })
+                                                }
+                                            )
+                                        }
+                                    }
+                                    if (args.types === "master") {
                                         graph.batchUpdate("changeType", () => {
-                                            cell.attr("body/rx", 20)
-                                            cell.removePort({
-                                                id: "port2",
-                                                group: "bottom",
-                                            })
+                                            cell.attr("body/stroke", "#1890ff")
+                                        })
+                                    } else {
+                                        graph.batchUpdate("changeType", () => {
+                                            cell.attr("body/stroke", "#000000")
                                         })
                                     }
                                 }
@@ -475,19 +499,39 @@ class RightDrawer extends React.PureComponent {
                                         ]}
                                     >
                                         <Select
-                                            disabled={canEditType}
-                                            options={[
-                                                {
-                                                    key: "end",
-                                                    value: "end",
-                                                    label: "结束节点",
-                                                },
-                                                {
-                                                    key: "normal",
-                                                    value: "normal",
-                                                    label: "普通节点",
-                                                },
-                                            ]}
+                                            // disabled={canEditType}
+                                            options={
+                                                !canEditType
+                                                    ? [
+                                                          {
+                                                              key: "end",
+                                                              value: "end",
+                                                              label: "结束节点",
+                                                          },
+                                                          {
+                                                              key: "master",
+                                                              value: "master",
+                                                              label: "主干节点",
+                                                          },
+                                                          {
+                                                              key: "normal",
+                                                              value: "normal",
+                                                              label: "普通节点",
+                                                          },
+                                                      ]
+                                                    : [
+                                                          {
+                                                              key: "master",
+                                                              value: "master",
+                                                              label: "主干节点",
+                                                          },
+                                                          {
+                                                              key: "normal",
+                                                              value: "normal",
+                                                              label: "普通节点",
+                                                          },
+                                                      ]
+                                            }
                                         ></Select>
                                     </FormItem>
                                 )}

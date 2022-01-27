@@ -260,6 +260,24 @@ class Flow extends React.PureComponent {
                                     ></span>
                                 </div>
                             </Tooltip>
+                            <Tooltip title="主干节点" placement="bottom">
+                                <div
+                                    className="btn"
+                                    onMouseDown={(e) =>
+                                        this.startDrag("Master", e)
+                                    }
+                                >
+                                    <span
+                                        style={{
+                                            width: "18px",
+                                            height: "18px",
+                                            marginBottom: "-2px",
+                                            border: "#1890ff 1px solid",
+                                            display: "inline-block",
+                                        }}
+                                    ></span>
+                                </div>
+                            </Tooltip>
                             <Tooltip title="全局节点" placement="bottom">
                                 <div
                                     className="btn"
@@ -552,7 +570,8 @@ class Flow extends React.PureComponent {
                         args.type === "begin" || args.type === "end"
                             ? 20
                             : undefined,
-                    stroke: "#000000",
+                    stroke: args.type === "master" ? "#1890ff" : "#000000",
+
                     strokeWidth: 1,
                     fill: "#ffffff",
                 },
