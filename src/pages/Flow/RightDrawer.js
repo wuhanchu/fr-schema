@@ -411,7 +411,7 @@ class RightDrawer extends React.PureComponent {
                                     }
                                     if (args.types === "master") {
                                         graph.batchUpdate("changeType", () => {
-                                            cell.attr("body/stroke", "#a0d911")
+                                            cell.attr("body/stroke", "#ad6800")
                                         })
                                     } else {
                                         graph.batchUpdate("changeType", () => {
