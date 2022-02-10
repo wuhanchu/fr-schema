@@ -106,6 +106,26 @@ const schema = {
             return (data.info && data.info.CALLED) || ""
         },
     },
+    user_reply: {
+        title: "用户回应",
+        type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
+        hideInTable: true,
+        dict: {
+            true: {
+                value: "true",
+                remark: "有回应",
+            },
+
+            false: {
+                value: "false",
+                remark: "全部",
+            },
+        },
+    },
     create_time: {
         title: "创建时间",
         search: false,

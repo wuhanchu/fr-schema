@@ -206,7 +206,11 @@ class List extends DataList {
                 id: data.delete_id,
             })
             response = await this.service.patch(
-                { id: data.id, status: "end" },
+                {
+                    id: data.id,
+                    status: "end",
+                    domain_key: this.state.record.domain_key,
+                },
                 schema
             )
         }
@@ -245,11 +249,19 @@ class List extends DataList {
                 question_extend = question_extend.join("\n")
             }
             response = await schemas.question.service.patch(
-                { id: data.delete_id, question_extend },
+                {
+                    id: data.delete_id,
+                    question_extend,
+                    domain_key: this.state.record.domain_key,
+                },
                 schemas.question.schema
             )
             response = await this.service.patch(
-                { id: data.id, status: "end" },
+                {
+                    id: data.id,
+                    status: "end",
+                    domain_key: this.state.record.domain_key,
+                },
                 schema
             )
         }
@@ -295,14 +307,22 @@ class List extends DataList {
             }
 
             response = await schemas.question.service.patch(
-                { id: compare_id, question_extend: unique(question_extend) },
+                {
+                    id: compare_id,
+                    question_extend: unique(question_extend),
+                    domain_key: this.state.record.domain_key,
+                },
                 schemas.question.schema
             )
             response = await schemas.question.service.delete({
                 id: calibration_id,
             })
             response = await this.service.patch(
-                { id: data.id, status: "end" },
+                {
+                    id: data.id,
+                    status: "end",
+                    domain_key: this.state.record.domain_key,
+                },
                 schema
             )
             this.refreshList()
@@ -469,6 +489,7 @@ class List extends DataList {
                             try {
                                 let res = await this.service.patch({
                                     id: record.id,
+                                    domain_key: this.state.record.domain_key,
                                     task_code: "",
                                 })
                                 this.setState({ record, listLoading: false })
@@ -533,11 +554,16 @@ class List extends DataList {
 
         let response
         try {
-            response = await schemas.question.service.patch(data, schema)
-            console.log(this.state.infoData)
-            console.log(this.state.record)
+            response = await schemas.question.service.patch(
+                { ...data, domain_key: this.state.record.domain_key },
+                schema
+            )
             await this.service.patch(
-                { id: this.state.record.id, status: "end" },
+                {
+                    id: this.state.record.id,
+                    status: "end",
+                    domain_key: this.state.record.domain_key,
+                },
                 schema
             )
 

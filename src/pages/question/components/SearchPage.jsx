@@ -493,6 +493,18 @@ function renderInfoModal(
 ) {
     const { form } = props
     const { visibleModal, infoData } = state
+    console.log(
+        "参数",
+        state,
+        meta,
+        props,
+        setState,
+        handleSearch,
+        opeation,
+        setLoading,
+        action,
+        projectList
+    )
     const updateMethods = {
         handleVisibleModal: () => {
             console.log("handleVisibleModal")
@@ -503,7 +515,7 @@ function renderInfoModal(
             let response
             try {
                 response = await schemas.question.service.patch(
-                    data,
+                    { ...data, domain_key: props.record.domain_key },
                     schemas.question.schema
                 )
                 if (props.type === "history") {

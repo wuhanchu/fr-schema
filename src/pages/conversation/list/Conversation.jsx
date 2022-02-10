@@ -12,6 +12,7 @@ import frSchema from "@/outter/fr-schema/src"
 import { getTree } from "@/pages/Flow/methods"
 import intentSchema from "@/schemas/intent"
 import Zip from "jszip"
+import clone from "clone"
 import fileSaver from "file-saver"
 import moment from "moment"
 
@@ -209,6 +210,7 @@ class Conversation extends ListPage {
                 />
             )
         }
+        console.log(list)
         this.setState({
             treeList: list,
         })
@@ -325,7 +327,8 @@ class Conversation extends ListPage {
                     options={list}
                     placeholder="请选择流程"
                     onChange={(value) => {
-                        let treeList = this.state.treeList
+                        this.formRef.current.setFieldsValue({ flow_key: value })
+                        let treeList = clone(this.state.treeList)
                         let treeData = getTree(this.state.intentList)
                         let flowIntent = []
                         this.setState({ showIntent: undefined })
@@ -345,15 +348,17 @@ class Conversation extends ListPage {
                                 )
                             })
                             treeData = treeData.map((items) => {
+                                // console.log("结果"+)
                                 return {
                                     ...items,
-                                    key: item.key,
+                                    key: items.key,
                                     value: items.key,
                                     label: items.name,
                                     children: [],
                                 }
                             })
-                            console.log("数据是", treeData)
+                        } else {
+                            treeData = clone(treeList)
                         }
                         this.schema.intent_key.renderInput = () => (
                             <TreeSelect

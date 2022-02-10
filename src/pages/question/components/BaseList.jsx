@@ -221,7 +221,12 @@ class BaseList extends EditPage {
                     options={options}
                 >
                     {/* {options} */}
-                    <Input placeholder="请输入分组"></Input>
+                    <Input
+                        placeholder="请输入分组"
+                        onPressEnter={() => {
+                            console.log("回车")
+                        }}
+                    ></Input>
                 </AutoComplete>
             )
         }

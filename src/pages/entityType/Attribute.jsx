@@ -91,7 +91,11 @@ class List extends DataList {
         try {
             if (!this.props.offline) {
                 response = await this.service[method](
-                    { ...data, alias: data.alias ? "true" : "false" },
+                    {
+                        ...data,
+                        alias: data.alias ? "true" : "false",
+                        domain_key: this.props.record.domain_key,
+                    },
                     schema
                 )
             }
