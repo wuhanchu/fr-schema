@@ -15,7 +15,7 @@ const schema = {
         required: true,
     },
     public: {
-        title: "公共库",
+        title: "公共域",
         // searchPrefix: "like",
         type: schemaFieldType.Select,
         props: {
