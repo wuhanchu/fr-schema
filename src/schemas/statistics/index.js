@@ -134,10 +134,21 @@ service.get = async (args) => {
     }
 
     // time = new Date(parseInt(args.end_time))
-    args.end_time = args.end_time
-        ? args.end_time.format("YYYY-MM-DD")
-        : undefined
-
+    // args.end_time = args.end_time
+    //     ? args.end_time.format("YYYY-MM-DD")
+    //     : undefined
+    if (typeof args.end_time === "string") {
+        time = new Date(parseInt(args.end_time))
+        args.end_time = args.end_time
+            ? moments(time).format("YYYY-MM-DD")
+            : undefined
+    } else {
+        console.log(args.end_time)
+        if (args.end_time)
+            args.end_time = args.end_time
+                ? args.end_time.format("YYYY-MM-DD")
+                : undefined
+    }
     let { currentPage, pageSize, limit, ...otherParams } = args
 
     if (args.order) {

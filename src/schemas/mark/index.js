@@ -98,8 +98,14 @@ const service = createApi("question_mark_task", schema, null, "eq.")
 service.getRepeat = async (args) => {
     console.log(args)
     if (args.flitter_time) {
-        let beginTime = args.flitter_time[0].format("YYYY-MM-DD")
-        let endTime = args.flitter_time[1].format("YYYY-MM-DD")
+        let fitter_time = args.fitter_time.split(",")
+        let time = new Date(fitter_time[0])
+        let beginTime = moment(time).format("YYYY-MM-DD")
+        time = new Date(fitter_time[1])
+        let endTime = moment(time).format("YYYY-MM-DD")
+
+        // let beginTime = args.flitter_time[0].format("YYYY-MM-DD")
+        // let endTime = args.flitter_time[1].format("YYYY-MM-DD")
         // args.and = `(create_time.gte.${beginTime},create_time.lte.${endTime})`
         args.begin_time = beginTime + "T00:00:00"
         // args.begin_time = args.create_time.split(",")[0]
@@ -151,12 +157,17 @@ service.getRepeat = async (args) => {
 service.get = async (args) => {
     if (args.flitter_time) {
         // console.log(args.create_time.split(","))
-        let beginTime = args.flitter_time[0].format("YYYY-MM-DD") + "T00:00:00"
-        let endTime = args.flitter_time[1].format("YYYY-MM-DD") + "T23:59:59"
+        let flitter_time = args.flitter_time.split(",")
+        let time = new Date(flitter_time[0])
+        let beginTime = moment(time).format("YYYY-MM-DD") + "T00:00:00"
+        time = new Date(flitter_time[1])
+        let endTime = moment(time).format("YYYY-MM-DD") + "T23:59:59"
+
+        // let beginTime = args.flitter_time[0].format("YYYY-MM-DD") + "T00:00:00"
+        // let endTime = args.flitter_time[1].format("YYYY-MM-DD") + "T23:59:59"
         args.flitter_time = undefined
         args.and = `(create_time.gte.${beginTime},create_time.lte.${endTime})`
     }
-
     if (args.order === "question_standard.desc") {
         args.order = "info->question_standard.desc"
     }
@@ -178,7 +189,6 @@ service.get = async (args) => {
             ...item.info,
             ...item,
             disabled: item.status !== "wait",
-
             text: item.info && item.info.text,
             question_standard: item.info && item.info.question_standard,
         }

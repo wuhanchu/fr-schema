@@ -17,6 +17,18 @@ import moment from "moment"
 
 const { utils } = frSchema
 
+function unique(arr, key) {
+    if (!arr) return arr
+    if (key === undefined) return [...new Set(arr)]
+    const map = {
+        string: (e) => e[key],
+        function: (e) => key(e),
+    }
+    const fn = map[typeof key]
+    const obj = arr.reduce((o, e) => ((o[fn(e)] = e), o), {})
+    return Object.values(obj)
+}
+
 @connect(({ global }) => ({
     dict: global.dict,
 }))
@@ -64,6 +76,8 @@ class Conversation extends ListPage {
                 searchValues: { order },
             },
             () => {
+                console.log("handleFormReset", this.state.pagination)
+
                 this.refreshList()
             }
         )
@@ -178,9 +192,9 @@ class Conversation extends ListPage {
         res.list.map((item) => {
             console.log(item.key)
         })
-        let list = getTree(res.list)
+        let list = getTree(unique(res.list, "key"))
         this.setState({ intentList: res.list })
-        console.log(list)
+
         this.schema.intent_key.renderInput = (data, item, props) => {
             return (
                 <TreeSelect
@@ -324,16 +338,22 @@ class Conversation extends ListPage {
                                 if (items.intent) flowIntent.push(items.intent)
                             })
                             treeData = this.state.intentList.filter((items) => {
-                                return flowIntent.indexOf(items.key) > -1
+                                return (
+                                    flowIntent.indexOf(items.key) > -1 &&
+                                    item.dict[value].domain_key ===
+                                        items.domain_key
+                                )
                             })
                             treeData = treeData.map((items) => {
                                 return {
                                     ...items,
+                                    key: item.key,
                                     value: items.key,
                                     label: items.name,
                                     children: [],
                                 }
                             })
+                            console.log("数据是", treeData)
                         }
                         this.schema.intent_key.renderInput = () => (
                             <TreeSelect

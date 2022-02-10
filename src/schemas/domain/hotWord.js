@@ -78,13 +78,36 @@ service.getRecentHotQuestion = createApi(
     ""
 ).get
 service.get = async (args) => {
-    args.begin_time = args.begin_time
-        ? args.begin_time.format("YYYY-MM-DD")
-        : undefined
-    args.end_time = args.end_time
-        ? args.end_time.format("YYYY-MM-DD")
-        : undefined
+    let time
+    if (typeof args.begin_time === "string") {
+        time = new Date(parseInt(args.begin_time))
+        args.begin_time = args.begin_time
+            ? moments(time).format("YYYY-MM-DD")
+            : undefined
+    } else {
+        console.log(args.begin_time)
+        if (args.begin_time)
+            args.begin_time = args.begin_time
+                ? args.begin_time.format("YYYY-MM-DD")
+                : undefined
+    }
 
+    // time = new Date(parseInt(args.end_time))
+    // args.end_time = args.end_time
+    //     ? args.end_time.format("YYYY-MM-DD")
+    //     : undefined
+    if (typeof args.end_time === "string") {
+        time = new Date(parseInt(args.end_time))
+        args.end_time = args.end_time
+            ? moments(time).format("YYYY-MM-DD")
+            : undefined
+    } else {
+        console.log(args.end_time)
+        if (args.end_time)
+            args.end_time = args.end_time
+                ? args.end_time.format("YYYY-MM-DD")
+                : undefined
+    }
     let { currentPage, pageSize, limit, ...otherParams } = args
     if (args.order) {
         args.sort = args.order.split(".")[1]

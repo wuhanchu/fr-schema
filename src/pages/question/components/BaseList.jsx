@@ -69,7 +69,6 @@ class BaseList extends EditPage {
                 ...schemas.question.service,
                 get: schemas.question.service.getData,
             },
-            // showEdit: false,
             allowExport: true,
             showSelect: true,
             showEdit: false,

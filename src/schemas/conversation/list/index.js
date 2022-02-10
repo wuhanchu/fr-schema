@@ -145,12 +145,38 @@ service.get = async (args) => {
     if (args.call_id === "text") {
         args.call_id = "is.null"
     }
-    args.end_time = args.end_time
-        ? args.end_time.format("YYYY-MM-DDTHH:mm:ss")
-        : undefined
-    args.begin_time = args.begin_time
-        ? args.begin_time.format("YYYY-MM-DDTHH:mm:ss")
-        : undefined
+    let time
+    if (typeof args.begin_time === "string") {
+        time = new Date(parseInt(args.begin_time))
+        args.begin_time = args.begin_time
+            ? moments(time).format("YYYY-MM-DD")
+            : undefined
+    } else {
+        console.log(args.begin_time)
+        if (args.begin_time)
+            args.begin_time = args.begin_time
+                ? args.begin_time.format("YYYY-MM-DD")
+                : undefined
+    }
+
+    if (typeof args.end_time === "string") {
+        time = new Date(parseInt(args.end_time))
+        args.end_time = args.end_time
+            ? moments(time).format("YYYY-MM-DD")
+            : undefined
+    } else {
+        console.log(args.end_time)
+        if (args.end_time)
+            args.end_time = args.end_time
+                ? args.end_time.format("YYYY-MM-DD")
+                : undefined
+    }
+    // args.end_time = args.end_time
+    //     ? args.end_time.format("YYYY-MM-DDTHH:mm:ss")
+    //     : undefined
+    // args.begin_time = args.begin_time
+    //     ? args.begin_time.format("YYYY-MM-DDTHH:mm:ss")
+    //     : undefined
 
     if (args.intent_key) {
         args.intent_key = "eq." + args.intent_key
