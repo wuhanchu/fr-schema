@@ -77,6 +77,8 @@ const schema = {
         type: schemaFieldType.Select,
         props: {
             mode: "tags",
+            allowClear: true,
+            showSearch: true,
         },
         editable: true,
         width: "120px",
@@ -146,6 +148,8 @@ const schema = {
             },
             controls: [
                 "font-size",
+                "table",
+
                 "text-color",
                 "bold",
                 "italic",
@@ -153,7 +157,6 @@ const schema = {
                 "blockquote",
                 "code",
                 "link",
-                "table",
                 {
                     key: "fullscreen",
                     text: <b>全屏</b>,

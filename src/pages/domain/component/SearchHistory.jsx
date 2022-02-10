@@ -227,6 +227,8 @@ class MyList extends DataList {
                                                 await this.service.patch(
                                                     {
                                                         id: record.id,
+                                                        domain_key:
+                                                            record.domain_key,
                                                     },
                                                     false
                                                 )
@@ -257,6 +259,8 @@ class MyList extends DataList {
                                                 await this.service.patch({
                                                     return_question: data,
                                                     id: record.id,
+                                                    domain_key:
+                                                        record.domain_key,
                                                 })
                                                 message.success("确认成功！")
                                                 this.setState({

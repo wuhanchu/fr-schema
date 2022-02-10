@@ -520,7 +520,10 @@ function renderInfoModal(
                 )
                 if (props.type === "history") {
                     await schemas.searchHistory.service.patch(
-                        { id: props.record.id },
+                        {
+                            id: props.record.id,
+                            domain_key: props.record.domain_key,
+                        },
                         undefined,
                         true
                     )
@@ -554,7 +557,10 @@ function renderInfoModal(
                 )
                 if (props.type === "history") {
                     await schemas.searchHistory.service.patch(
-                        { id: props.record.id },
+                        {
+                            id: props.record.id,
+                            domain_key: props.record.domain_key,
+                        },
                         undefined,
                         true
                     )
