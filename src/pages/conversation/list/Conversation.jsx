@@ -327,7 +327,17 @@ class Conversation extends ListPage {
                     options={list}
                     placeholder="请选择流程"
                     onChange={(value) => {
-                        this.formRef.current.setFieldsValue({ flow_key: value })
+                        console.log(value)
+                        console.log("this.state", this.state)
+                        this.formRef.current.setFieldsValue({
+                            flow_key: value || undefined,
+                        })
+                        this.setState({
+                            searchValues: {
+                                ...this.state.searchValues,
+                                flow_key: value || undefined,
+                            },
+                        })
                         let treeList = clone(this.state.treeList)
                         let treeData = getTree(this.state.intentList)
                         let flowIntent = []
