@@ -97,6 +97,7 @@ service.get = async function (args) {
             ...item,
             tier: item.logical_path ? item.logical_path.split(".").length : 0,
             children: [],
+            itemKey: item.domain_key + item.key,
             example: item.example ? item.example.join("\n") : null,
             standard_discourse: item.standard_discourse
                 ? item.standard_discourse.join("\n")

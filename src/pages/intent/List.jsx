@@ -361,7 +361,8 @@ class List extends ListPage {
                 }
                 return (
                     itemList.logical_path &&
-                    itemList.logical_path.indexOf(record.logical_path) === 0 &&
+                    itemList.logical_path.indexOf(record.logical_path + ".") ===
+                        0 &&
                     itemList.logical_path !== record.logical_path &&
                     itemList.domain_key === record.domain_key
                 )
@@ -374,9 +375,6 @@ class List extends ListPage {
             for (let i = 0; i < list.length; i++) {
                 // 获取当前意图的所有上层意图
                 arr = list.filter((value) => {
-                    console.log("list[i].domain_key === value.domain_key")
-                    console.log(list[i].domain_key, value.domain_key)
-                    console.log(list[i].domain_key === value.domain_key)
                     return (
                         value.logical_path !== list[i].logical_path &&
                         list[i].logical_path.includes(

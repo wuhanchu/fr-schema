@@ -65,7 +65,7 @@ const schema = {
     },
     project_id: {
         title: "问题库",
-        style: { width: "500px" },
+        // style: { width: "500px" },
         type: schemaFieldType.Select,
         props: {
             allowClear: true,

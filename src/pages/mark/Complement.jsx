@@ -2,13 +2,22 @@ import { connect } from "dva"
 import DataList from "@/outter/fr-schema-antd-utils/src/components/Page/DataList"
 import schemas from "@/schemas"
 import React from "react"
-import { Button, Popconfirm, Divider, message } from "antd"
+import {
+    Button,
+    Popconfirm,
+    Divider,
+    message,
+    Tooltip,
+    AutoComplete,
+    Input,
+} from "antd"
 import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
 import frSchema from "@/outter/fr-schema/src"
 import { listToDict } from "@/outter/fr-schema/src/dict"
 import { LoadingOutlined } from "@ant-design/icons"
 const { decorateList } = frSchema
+import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
 
 const { utils } = frSchema
 @connect(({ global }) => ({
@@ -23,7 +32,12 @@ class List extends DataList {
             addHide: true,
             service: schemas.mark.service,
             infoProps: {
-                width: "900px",
+                width: "1200px",
+                isCustomize: true,
+                customize: {
+                    left: 10,
+                    right: 14,
+                },
             },
             queryArgs: {
                 ...props.queryArgs,
@@ -41,6 +55,37 @@ class List extends DataList {
         try {
             this.formRef.current.setFieldsValue({ status: "wait" })
         } catch (error) {}
+        this.schema.question_standard.render = (item, data) => {
+            return (
+                <Tooltip title={item}>
+                    <div
+                        style={{
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                            maxWidth: "250px",
+                        }}
+                    >
+                        <a
+                            onClick={() => {
+                                this.setState({ record: data })
+                                console.log(data)
+                                this.handleVisibleModal(
+                                    true,
+                                    {
+                                        ...data,
+                                        id: data.question_id,
+                                    },
+                                    "edit"
+                                )
+                            }}
+                        >
+                            {item}
+                        </a>
+                    </div>
+                </Tooltip>
+            )
+        }
         super.componentDidMount()
     }
 
@@ -78,6 +123,37 @@ class List extends DataList {
         )
     }
 
+    async handleQuestionEdit(data, schema) {
+        // 更新
+        console.log(this.state.record)
+
+        let response
+        try {
+            response = await schemas.question.service.patch(
+                { ...data, domain_key: this.state.record.domain_key },
+                schema
+            )
+            await this.service.patch(
+                {
+                    id: this.state.record.id,
+                    status: "end",
+                    domain_key: this.state.record.domain_key,
+                },
+                schema
+            )
+
+            this.refreshList()
+            message.success("修改成功")
+        } catch (error) {
+            message.error(error.message)
+        }
+
+        this.handleVisibleModal()
+        this.handleChangeCallback && this.handleChangeCallback()
+        this.props.handleChangeCallback && this.props.handleChangeCallback()
+
+        return response
+    }
     renderOperationMulit() {
         return (
             <span>
@@ -316,6 +392,73 @@ class List extends DataList {
             5
         )
         return this.createSearchBar(filters)
+    }
+
+    renderInfoModal(customProps = {}) {
+        if (this.props.renderInfoModal) {
+            return this.props.renderInfoModal()
+        }
+        const { form } = this.props
+        const renderForm = this.props.renderForm || this.renderForm
+        const { resource, title, addArgs } = this.meta
+        const { visibleModal, infoData, action } = this.state
+        const updateMethods = {
+            handleVisibleModal: this.handleVisibleModal.bind(this),
+            handleUpdate: this.handleQuestionEdit.bind(this),
+            handleAdd: this.handleAdd.bind(this),
+        }
+
+        return (
+            visibleModal && (
+                <InfoModal
+                    renderForm={renderForm}
+                    title={"问题详情"}
+                    action={action}
+                    resource={resource}
+                    {...updateMethods}
+                    visible={visibleModal}
+                    values={infoData}
+                    addArgs={addArgs}
+                    meta={this.meta}
+                    service={schemas.question.service}
+                    schema={{
+                        // id: { title: "编号" },
+                        project_id: {
+                            ...this.schema.project_id,
+                            readOnly: true,
+                        },
+                        ...schemas.question.schema,
+                        group: {
+                            ...schemas.question.schema.group,
+                            renderInput: (item, data, other) => {
+                                return (
+                                    <AutoComplete
+                                        style={{
+                                            width: "100%",
+                                            maxWidth: "300px",
+                                        }}
+                                        disabled={other.disabled}
+                                        filterOption={(inputValue, option) =>
+                                            option.value
+                                                .toUpperCase()
+                                                .indexOf(
+                                                    inputValue.toUpperCase()
+                                                ) !== -1
+                                        }
+                                        options={this.state.options}
+                                    >
+                                        {/* {options} */}
+                                        <Input placeholder="请输入分组"></Input>
+                                    </AutoComplete>
+                                )
+                            },
+                        },
+                    }}
+                    {...this.meta.infoProps}
+                    {...customProps}
+                />
+            )
+        )
     }
 }
 

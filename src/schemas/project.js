@@ -39,11 +39,11 @@ const schema = {
         style: { width: "500px" },
         dict: {
             true: {
-                value: true,
+                value: "true",
                 remark: "是",
             },
             false: {
-                value: false,
+                value: "false",
                 remark: "否",
             },
         },
