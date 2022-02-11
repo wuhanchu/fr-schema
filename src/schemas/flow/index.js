@@ -56,12 +56,14 @@ const schema = {
         search: false,
 
         title: "意图匹配辅助信息",
+        extra: "意图匹配问题搜索意图附加前缀"
     },
 
     slot: {
-        title: "全局槽位",
+        title: "全局配置",
         search: false,
-
+        remark: "",
+        extra: "作用全局的配置（可配置电话渠道参数）",
         hideInTable: true,
         props: {
             style: { width: "500px" },

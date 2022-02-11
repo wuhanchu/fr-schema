@@ -435,7 +435,7 @@ class List extends ListPage {
                     key: "intent_key_text",
                 },
                 {
-                    title: "全局槽位",
+                    title: "全局配置",
                     dataIndex: "slot",
                     key: "slot",
                 },
