@@ -869,6 +869,7 @@ class Flow extends React.PureComponent {
                 action: nodeData.action,
                 allow_repeat_time: nodeData.allow_repeat_time,
                 skip_repeat_action: skip_repeat_action,
+                domain_key: this.props.record.domain_key,
                 flow_key: nodeData.flow_key,
                 type: nodeData.types,
                 position: {
@@ -889,6 +890,7 @@ class Flow extends React.PureComponent {
                 beginPort: item.store.data.source.port,
                 endPort: item.store.data.target.port,
                 key: item.id,
+                domain_key: this.props.record.domain_key,
                 end: item.store.data.target.cell,
                 name: nodeData.name,
                 lablesPosition: item.store.data.labels[0].position,
@@ -911,7 +913,10 @@ class Flow extends React.PureComponent {
                     }
                 })
                 if (isHave) {
-                    action.push(oneAction)
+                    action.push({
+                        ...oneAction,
+                        domain_key: this.props.record.domain_key,
+                    })
                 }
             })
 
@@ -929,7 +934,11 @@ class Flow extends React.PureComponent {
                     }
                 })
                 if (isHave) {
-                    condition.push({ priority: 99, ...oneCondition })
+                    condition.push({
+                        priority: 99,
+                        ...oneCondition,
+                        domain_key: this.props.record.domain_key,
+                    })
                 }
             })
 
