@@ -382,7 +382,8 @@ class RightDrawer extends React.PureComponent {
                                     if (
                                         oldType === "end" &&
                                         (args.types === "normal" ||
-                                            args.types === "master")
+                                            args.types === "master" ||
+                                            args.types === "flow")
                                     ) {
                                         graph.batchUpdate("changeType", () => {
                                             cell.attr("body/rx", 0)
@@ -394,7 +395,8 @@ class RightDrawer extends React.PureComponent {
                                     } else {
                                         if (
                                             (oldType === "normal" ||
-                                                oldType === "master") &&
+                                                oldType === "master" ||
+                                                args.types === "flow") &&
                                             args.types === "end"
                                         ) {
                                             graph.batchUpdate(
@@ -414,9 +416,27 @@ class RightDrawer extends React.PureComponent {
                                             cell.attr("body/stroke", "#ad6800")
                                         })
                                     } else {
-                                        graph.batchUpdate("changeType", () => {
-                                            cell.attr("body/stroke", "#000000")
-                                        })
+                                        if (args.types === "flow") {
+                                            graph.batchUpdate(
+                                                "changeType",
+                                                () => {
+                                                    cell.attr(
+                                                        "body/stroke",
+                                                        "#c41d7f"
+                                                    )
+                                                }
+                                            )
+                                        } else {
+                                            graph.batchUpdate(
+                                                "changeType",
+                                                () => {
+                                                    cell.attr(
+                                                        "body/stroke",
+                                                        "#000000"
+                                                    )
+                                                }
+                                            )
+                                        }
                                     }
                                 }
                             }}
@@ -486,6 +506,26 @@ class RightDrawer extends React.PureComponent {
                                     ]}
                                 ></Select>
                             </FormItem>
+
+                            {cell.getData().types === "flow" && (
+                                <FormItem
+                                    name={"flow_key"}
+                                    label={"请选择子流程"}
+                                    // extra="如已执行次数等于允许的执行次数，则跳过。"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "请输入子流程！",
+                                        },
+                                    ]}
+                                >
+                                    <Select
+                                        placeholder="请选择子流程"
+                                        options={this.props.flowList}
+                                    ></Select>
+                                </FormItem>
+                            )}
+
                             {cell.getData().types !== "begin" &&
                                 cell.getData().types !== "global" && (
                                     <FormItem
@@ -514,6 +554,11 @@ class RightDrawer extends React.PureComponent {
                                                               label: "主干节点",
                                                           },
                                                           {
+                                                              key: "flow",
+                                                              value: "flow",
+                                                              label: "流程节点",
+                                                          },
+                                                          {
                                                               key: "normal",
                                                               value: "normal",
                                                               label: "普通节点",
@@ -524,6 +569,11 @@ class RightDrawer extends React.PureComponent {
                                                               key: "master",
                                                               value: "master",
                                                               label: "主干节点",
+                                                          },
+                                                          {
+                                                              key: "flow",
+                                                              value: "flow",
+                                                              label: "流程节点",
                                                           },
                                                           {
                                                               key: "normal",

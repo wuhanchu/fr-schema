@@ -4,6 +4,8 @@ import "./Flow.less"
 import insertCss from "insert-css"
 import "./iconfont.css"
 import schema from "@/schemas/intent"
+import flowSchema from "@/schemas/flow"
+
 import { v4 as uuidv4 } from "uuid"
 import styled from "styled-components"
 import {
@@ -57,6 +59,25 @@ class Flow extends React.PureComponent {
         let list = getTree(res.list)
         this.setState({ intenList: list })
     }
+
+    getFlow = async () => {
+        const { record } = this.props
+        const res = await flowSchema.service.get({
+            limit: 1000,
+            // domain_key: record.domain_key,
+        })
+        let list = res.list.map((item) => {
+            return {
+                ...item,
+                key: item.domain_key + item.key,
+                label: item.name,
+                value: item.key,
+            }
+        })
+        this.setState({ flowList: list })
+        console.log(res.list)
+    }
+
     getHistory = async () => {
         const { record } = this.props
         const res = await schema.service.getFlowHistory({
@@ -150,6 +171,7 @@ class Flow extends React.PureComponent {
             domain_key: record.domain_key,
         }
         this.bindKey()
+        this.getFlow()
         try {
             const container = document.getElementById("containerChart")
             const ports = container.querySelectorAll(".x6-port-body")
@@ -195,6 +217,7 @@ class Flow extends React.PureComponent {
                     <div id="containerChart" />
                     {chooseType && (
                         <RightDrawer
+                            flowList={this.state.flowList}
                             projectDict={projectDict}
                             intentDict={intentDict}
                             service={service}
@@ -273,6 +296,24 @@ class Flow extends React.PureComponent {
                                             height: "18px",
                                             marginBottom: "-2px",
                                             border: "#ad6800 1px solid",
+                                            display: "inline-block",
+                                        }}
+                                    ></span>
+                                </div>
+                            </Tooltip>
+                            <Tooltip title="流程节点" placement="bottom">
+                                <div
+                                    className="btn"
+                                    onMouseDown={(e) =>
+                                        this.startDrag("Flow", e)
+                                    }
+                                >
+                                    <span
+                                        style={{
+                                            width: "18px",
+                                            height: "18px",
+                                            marginBottom: "-2px",
+                                            border: "#c41d7f 1px solid",
                                             display: "inline-block",
                                         }}
                                     ></span>
@@ -551,6 +592,7 @@ class Flow extends React.PureComponent {
                 name: args.name,
                 allow_repeat_time: args.allow_repeat_time,
                 skip_repeat_action: skip_repeat_action,
+                flow_key: args.flow_key,
                 action: args.action,
                 types: args.type,
             },
@@ -570,7 +612,12 @@ class Flow extends React.PureComponent {
                         args.type === "begin" || args.type === "end"
                             ? 20
                             : undefined,
-                    stroke: args.type === "master" ? "#ad6800" : "#000000",
+                    stroke:
+                        args.type === "master"
+                            ? "#ad6800"
+                            : args.type === "flow"
+                            ? "#c41d7f"
+                            : "#000000",
 
                     strokeWidth: 1,
                     fill: "#ffffff",
@@ -822,6 +869,7 @@ class Flow extends React.PureComponent {
                 action: nodeData.action,
                 allow_repeat_time: nodeData.allow_repeat_time,
                 skip_repeat_action: skip_repeat_action,
+                flow_key: nodeData.flow_key,
                 type: nodeData.types,
                 position: {
                     x: item.store.data.position.x,
