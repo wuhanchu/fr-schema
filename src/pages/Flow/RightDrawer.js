@@ -396,7 +396,7 @@ class RightDrawer extends React.PureComponent {
                                         if (
                                             (oldType === "normal" ||
                                                 oldType === "master" ||
-                                                args.types === "flow") &&
+                                                oldType === "flow") &&
                                             args.types === "end"
                                         ) {
                                             graph.batchUpdate(
