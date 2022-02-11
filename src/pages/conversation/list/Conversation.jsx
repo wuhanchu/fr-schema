@@ -56,6 +56,7 @@ class Conversation extends ListPage {
             showDetail: false,
             showIntent: true,
             detail: {},
+            used: [],
             showIntentFlow: true,
         }
     }
@@ -264,9 +265,25 @@ class Conversation extends ListPage {
      * 表格操作列，扩展方法
      */
     renderOperateColumnExtend(record) {
+        console.log(
+            "this.state.used.indexOf(record.id)",
+            this.state.used.indexOf(record.id)
+        )
         return (
             <Fragment>
-                <a onClick={() => this.showDetail(record)}>详情</a>
+                <span className="conversationDetail">
+                    <a
+                        style={{
+                            color:
+                                this.state.used.indexOf(record.id) > -1
+                                    ? "#ad4e00"
+                                    : "",
+                        }}
+                        onClick={() => this.showDetail(record)}
+                    >
+                        详情
+                    </a>
+                </span>
             </Fragment>
         )
     }
@@ -304,7 +321,9 @@ class Conversation extends ListPage {
 
     // 显示详情
     showDetail(record) {
-        this.setState({ showDetail: true, detail: { ...record } })
+        let used = this.state.used
+        used.push(record.id)
+        this.setState({ showDetail: true, detail: { ...record }, used })
     }
 
     // 流程列表-> 列表枚举展示
