@@ -549,7 +549,7 @@ export function isError(data, graph) {
                 isTrue = false
             } else {
                 let cell = graph.getCellById(item.key)
-                cell.attr("body/stroke", undefined)
+                // cell.attr("body/stroke", undefined)
             }
         }
     })
@@ -563,7 +563,7 @@ export function isError(data, graph) {
             isTrue = false
         } else {
             let cell = graph.getCellById(item.key)
-            cell.attr("line/stroke", "#1890ff")
+            // cell.attr("line/stroke", "#1890ff")
         }
     })
     return isTrue

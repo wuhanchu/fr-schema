@@ -75,7 +75,6 @@ class Flow extends React.PureComponent {
             }
         })
         this.setState({ flowList: list })
-        console.log(res.list)
     }
 
     getHistory = async () => {
@@ -558,12 +557,18 @@ class Flow extends React.PureComponent {
                 ]
             }
         }
+        let cells = []
         data.node.map((item) => {
-            this.addNodes(item)
+            // this.addNodes(item)
+            cells.push(this.getNodes(item))
         })
         data.connection.map((item) => {
-            this.addEdges(item)
+            // this.addEdges(item)
+            cells.push(this.getEdges(item))
         })
+
+        this.graph.fromJSON({ cells })
+
         this.graph.action = data.action
         this.graph.condition = data.condition
         this.setState({
@@ -665,7 +670,106 @@ class Flow extends React.PureComponent {
         return args.key
     }
 
+    getNodes(args) {
+        let skip_repeat_action
+        if (args.skip_repeat_action === undefined) {
+            skip_repeat_action = false
+        } else {
+            skip_repeat_action = args.skip_repeat_action
+        }
+        let node = {
+            id: args.key,
+            width: 110,
+            height: 50,
+            size: {
+                width: 110,
+                height: 50,
+            },
+            shape: args.type === "global" ? "ellipse" : args.shape || "rect",
+            position: {
+                x: args.position ? args.position.x : 300,
+                y: args.position ? args.position.y : 300,
+            },
+            data: {
+                key: args.key,
+                name: args.name,
+                allow_repeat_time: args.allow_repeat_time,
+                skip_repeat_action: skip_repeat_action,
+                flow_key: args.flow_key,
+                action: args.action,
+                types: args.type,
+            },
+            attrs: {
+                label: {
+                    text: args.name,
+                    fill: "#000000",
+                    fontSize: 15,
+                    textWrap: {
+                        width: -10,
+                        height: -10,
+                        ellipsis: true,
+                    },
+                },
+                body: {
+                    rx:
+                        args.type === "begin" || args.type === "end"
+                            ? 20
+                            : undefined,
+                    stroke:
+                        args.type === "master"
+                            ? "#ad6800"
+                            : args.type === "flow"
+                            ? "#c41d7f"
+                            : "#000000",
+
+                    strokeWidth: 1,
+                    fill: "#ffffff",
+                },
+            },
+            ports:
+                args.type === "end"
+                    ? {
+                          ...ports,
+                          items: [
+                              {
+                                  id: "port1",
+                                  group: "top",
+                              },
+                              {
+                                  id: "port3",
+                                  group: "left",
+                              },
+                              {
+                                  id: "port4",
+                                  group: "right",
+                              },
+                          ],
+                      }
+                    : args.type !== "begin" && args.type !== "global"
+                    ? ports
+                    : {
+                          ...ports,
+                          items: [
+                              {
+                                  id: "port2",
+                                  group: "bottom",
+                              },
+                              {
+                                  id: "port3",
+                                  group: "left",
+                              },
+                              {
+                                  id: "port4",
+                                  group: "right",
+                              },
+                          ],
+                      },
+        }
+        return node
+    }
+
     addEdges(args) {
+        let edges
         if (args.begin) {
             let edge = createEdgeFunc({
                 id: args.key,
@@ -699,6 +803,176 @@ class Flow extends React.PureComponent {
 
             this.graph.addEdge(edge)
         }
+    }
+
+    getEdges(args) {
+        let edges
+        if (args.begin) {
+            let edge = {
+                id: args.key,
+                attrs: {
+                    line: {
+                        stroke: "#1890ff",
+                        strokeWidth: 1,
+                        targetMarker: false,
+                        style: {
+                            animation: "ant-line 30s infinite linear",
+                        },
+                    },
+                },
+                data: { ...args },
+                source: { cell: args.begin, port: args.beginPort || "port2" },
+                target: { cell: args.end, port: args.endPort || "port1" },
+                connector: "normal",
+                // position:{
+                //     "distance": -50
+                // },
+                router: {
+                    name: "manhattan",
+                },
+                shape: "edge",
+                tools: {
+                    items: [
+                        {
+                            name: "source-arrowhead",
+                            args: {
+                                tagName: "circle",
+                                attrs: {
+                                    r: 2,
+                                    fill: "#1890ff",
+                                    stroke: "#1890ff",
+                                    "stroke-width": 2,
+                                    cursor: "move",
+                                },
+                            },
+                        },
+                        {
+                            name: "target-arrowhead",
+                            args: {
+                                tagName: "path",
+                                attrs: {
+                                    d: "M -5 -4 5 0 -5 4 Z",
+                                    fill: "#1890ff",
+                                    stroke: "#1890ff",
+                                    cursor: "move",
+                                },
+                            },
+                        },
+                    ],
+                },
+
+                labels: [
+                    {
+                        attrs: {
+                            text: {
+                                text: args.name,
+                                fontSize: 15,
+                                zIndex: 1000,
+                                fill: "#000000A6",
+                            },
+                            body: {
+                                fill: "#00000000",
+                            },
+                        },
+                        position: args.lablesPosition || {
+                            distance: -70,
+                        },
+                    },
+                ],
+                zIndex: 0,
+            }
+            edges = edge
+        } else {
+            let endNode = this.graph.getCellById(args.end)
+            let key = uuidv4()
+            this.addNodes({
+                key,
+                name: "全局节点",
+                action: [],
+                shape: "ellipse",
+                type: "global",
+                allow_repeat_time: 5,
+                skip_repeat_action: false,
+                position: {
+                    x: endNode.store.data.position.x,
+                    y: endNode.store.data.position.y - 150,
+                },
+            })
+            let edge = {
+                id: args.key,
+                data: { ...args },
+                zIndex: 0,
+                source: { cell: key, port: args.beginPort || "port2" },
+                target: { cell: args.end, port: "port1" },
+                connector: "normal",
+                // position:{
+                //     "distance": -50
+                // },
+                router: {
+                    name: "manhattan",
+                },
+                shape: "edge",
+                attrs: {
+                    line: {
+                        stroke: "#1890ff",
+                        strokeWidth: 1,
+                        targetMarker: false,
+                        style: {
+                            animation: "ant-line 30s infinite linear",
+                        },
+                    },
+                },
+                tools: {
+                    items: [
+                        {
+                            name: "source-arrowhead",
+                            args: {
+                                tagName: "circle",
+                                attrs: {
+                                    r: 2,
+                                    fill: "#1890ff",
+                                    stroke: "#1890ff",
+                                    "stroke-width": 2,
+                                    cursor: "move",
+                                },
+                            },
+                        },
+                        {
+                            name: "target-arrowhead",
+                            args: {
+                                tagName: "path",
+                                attrs: {
+                                    d: "M -5 -4 5 0 -5 4 Z",
+                                    fill: "#1890ff",
+                                    stroke: "#1890ff",
+                                    cursor: "move",
+                                },
+                            },
+                        },
+                    ],
+                },
+                labels: [
+                    {
+                        attrs: {
+                            text: {
+                                text: args.name,
+                                fontSize: 15,
+                                zIndex: 1000,
+                                fill: "#000000A6",
+                            },
+                            body: {
+                                fill: "#00000000",
+                            },
+                        },
+                        position: args.lablesPosition || {
+                            distance: -70,
+                        },
+                    },
+                ],
+            }
+            edges = edge
+        }
+        return edges
     }
 
     validateConnection(sourceView, targetView, sourceMagnet, targetMagnet) {
@@ -855,6 +1129,7 @@ class Flow extends React.PureComponent {
             condition: [],
             action: [],
         }
+        console.log("开始")
         expGraph.getNodes().map((item, index) => {
             let nodeData = item.getData()
             let skip_repeat_action
@@ -879,6 +1154,8 @@ class Flow extends React.PureComponent {
             }
             data.node.push(itemData)
         })
+        console.log("得到节点")
+
         expGraph.getEdges().map((item, index) => {
             let nodeData = item.getData()
             let begin = item.store.data.source.cell
@@ -898,6 +1175,7 @@ class Flow extends React.PureComponent {
             }
             data.connection.push(itemData)
         })
+        console.log("得到边")
 
         let action = []
         expGraph.action &&
@@ -941,7 +1219,7 @@ class Flow extends React.PureComponent {
                     })
                 }
             })
-
+        console.log("结束")
         data.action = action
         data.condition = condition
         this.setState({
