@@ -4,19 +4,29 @@ import schemas from "@/schemas/conversation/list"
 import schemaDetail from "@/schemas/conversation/detail"
 import React, { Fragment } from "react"
 import "@ant-design/compatible/assets/index.css"
-import { InputNumber, Modal, Select, TreeSelect, Button, message } from "antd"
+import {
+    InputNumber,
+    Modal,
+    Select,
+    TreeSelect,
+    Button,
+    message,
+    Divider,
+} from "antd"
 import ConversationDetail from "@/pages/outPage/ConversationDetail"
 import flowSchemas from "@/schemas/flow/index"
 import userService from "@/pages/authority/user/service"
 import frSchema from "@/outter/fr-schema/src"
 import { getTree } from "@/pages/Flow/methods"
+import { listToDict } from "@/outter/fr-schema/src/dict"
 import intentSchema from "@/schemas/intent"
 import Zip from "jszip"
 import clone from "clone"
 import fileSaver from "file-saver"
+import { exportData } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
 import moment from "moment"
 
-const { utils } = frSchema
+const { utils, decorateList } = frSchema
 
 function unique(arr, key) {
     if (!arr) return arr
@@ -283,6 +293,8 @@ class Conversation extends ListPage {
                     >
                         详情
                     </a>
+                    <Divider type="vertical" />
+                    <a onClick={() => this.exportDetail(record)}>导出</a>
                 </span>
             </Fragment>
         )
@@ -317,6 +329,96 @@ class Conversation extends ListPage {
                 />
             </Modal>
         )
+    }
+
+    async exportDetail(record) {
+        let data = await schemaDetail.service.get({
+            conversation_id: record.id,
+            order: "create_time",
+            limit: 100000,
+        })
+        let list = []
+        let nodeList = listToDict(
+            this.schema.flow_key.dict[record.flow_key].config.node,
+            "",
+            "key",
+            "name"
+        )
+        data.list.map((item) => {
+            if (
+                (item.type === "reply" || item.type === "receive") &&
+                item.text
+            ) {
+                if (item.node_key && nodeList[item.node_key]) {
+                    item.node_key_name = nodeList[item.node_key].name
+                }
+                if (
+                    item.intent_history &&
+                    item.intent_history.intent_rank &&
+                    item.intent_history.intent_rank[0].name
+                ) {
+                    item.intent_name = item.intent_history.intent_rank[0].name
+                } else {
+                    item.intent_name = "未知"
+                }
+                if (item.type === "reply") {
+                    item.type_name = "回复"
+                } else {
+                    item.type_name = "接收"
+                }
+                list.push(item)
+            }
+        })
+        let result = []
+        let oneList = {}
+        list.map((item) => {
+            console.log(item)
+            if (item.type !== "receive") {
+                oneList = {
+                    ...item,
+                    text: oneList.text
+                        ? oneList.text + "\n" + item.text
+                        : item.text,
+                }
+            } else {
+                oneList = { reply_text: oneList.text, ...item }
+                console.log("一条是", oneList)
+
+                result.push(clone(oneList))
+                oneList = {}
+            }
+        })
+        console.log(result)
+        let columns = [
+            // {
+            //     title: "类型",
+            //     dataIndex: "type_name",
+            //     key: "type_name",
+            // },
+            {
+                title: "流程节点",
+                dataIndex: "node_key_name",
+                key: "node_key_name",
+            },
+            {
+                title: "意图",
+                dataIndex: "intent_name",
+                key: "intent_name",
+            },
+            {
+                title: "AI问",
+                dataIndex: "reply_text",
+                key: "reply_text",
+            },
+            {
+                title: "用户回答",
+                dataIndex: "text",
+                key: "text",
+            },
+        ]
+        data = decorateList(result, this.schema)
+        await exportData("流程", data, columns)
+        this.setState({ exportLoading: false })
     }
 
     // 显示详情
