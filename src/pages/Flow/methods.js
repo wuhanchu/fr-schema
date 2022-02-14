@@ -675,6 +675,9 @@ export function getTree(args) {
         }
         return itemList.logical_path && itemList.logical_path.indexOf(".") < 0
     })
+    sortBy = sortBy.map((item) => {
+        return { ...item, label: item.name + "(" + item.domain_key + ")" }
+    })
     console.log("sortBy", sortBy)
     console.log("res", res)
     let list = sortBy.map((record) => {

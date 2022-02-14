@@ -558,6 +558,7 @@ class Flow extends React.PureComponent {
             }
         }
         let cells = []
+        console.time("create")
         data.node.map((item) => {
             // this.addNodes(item)
             cells.push(this.getNodes(item))
@@ -568,6 +569,7 @@ class Flow extends React.PureComponent {
         })
 
         this.graph.fromJSON({ cells })
+        console.timeEnd("create")
 
         this.graph.action = data.action
         this.graph.condition = data.condition
