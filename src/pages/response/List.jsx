@@ -247,7 +247,8 @@ class List extends ListPage {
                     let item = this.state.allIntentList.find((value) => {
                         return value.key === list[i]
                     })
-                    str += item.name + (i !== list.length - 1 ? "," : "")
+                    if (item)
+                        str += item.name + (i !== list.length - 1 ? "," : "")
                 }
             }
             return str

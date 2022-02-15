@@ -1,6 +1,8 @@
 import { connect } from "dva"
 import DataList from "@/outter/fr-schema-antd-utils/src/components/Page/DataList"
 import schemas from "@/schemas/conversation/detail/index"
+import schemaFlow from "@/schemas/flow"
+
 import React from "react"
 import "@ant-design/compatible/assets/index.css"
 import frSchema from "@/outter/fr-schema/src"
@@ -153,14 +155,16 @@ class ChatFlowTable extends DataList {
 
     async findFlowList(flow_key) {
         let { flowKey, domainKey, create_time } = this.props
-        const res = await schema.service.getFlowHistory({
-            limit: 10,
-            flow_key: flow_key || flowKey,
+        const res = await schemaFlow.service.get({
+            limit: 1000,
+            // key: flow_key || flowKey,
             config: "not.is.null",
-            domain_key: domainKey,
+            // domain_key: domainKey,
             order: "create_time.desc",
             create_time: create_time ? "lte." + create_time : undefined,
         })
+
+        let flowDict = utils.dict.listToDict(res.list, null, "key", "name")
 
         let action = []
         let node = []
@@ -170,18 +174,61 @@ class ChatFlowTable extends DataList {
         }
 
         if (res.list.length) {
-            this.schema.action_key.dict = utils.dict.listToDict(
-                action,
-                null,
-                "key",
-                "name"
-            )
-            this.schema.node_key.dict = utils.dict.listToDict(
-                node,
-                null,
-                "key",
-                "name"
-            )
+            // this.schema.action_key.dict = utils.dict.listToDict(
+            //     action,
+            //     null,
+            //     "key",
+            //     "name"
+            // )
+            this.schema.action_key.render = (item, data) => {
+                let name = "-"
+                let action_name = flowDict[data.flow_key || flowKey]
+                if (action_name) {
+                    let actionDict = utils.dict.listToDict(
+                        action_name.config.action,
+                        null,
+                        "key",
+                        "name"
+                    )
+                    if (data.action_key) {
+                        name = actionDict[data.action_key]
+                            ? actionDict[data.action_key].name
+                            : "-"
+                    }
+                }
+
+                return <>{name}</>
+            }
+            this.schema.node_key.render = (item, data) => {
+                let name = "-"
+                let flow_name = flowDict[data.flow_key || flowKey]
+                console.log(flow_name, flowDict, data.flow_key, flowKey)
+                if (flow_name) {
+                    let nodeDict = utils.dict.listToDict(
+                        flow_name.config.node,
+                        null,
+                        "key",
+                        "name"
+                    )
+                    if (data.flow_key != flowKey) {
+                        console.log(nodeDict, data.node_key)
+                        if (data.node_key)
+                            console.log("节点", nodeDict[data.node_key])
+                    }
+                    if (data.node_key)
+                        name = nodeDict[data.node_key]
+                            ? nodeDict[data.node_key].name
+                            : "-"
+                }
+
+                return <>{name}</>
+            }
+            // this.schema.node_key.dict = utils.dict.listToDict(
+            //     node,
+            //     null,
+            //     "key",
+            //     "name"
+            // )
         }
     }
 }

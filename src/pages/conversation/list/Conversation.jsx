@@ -349,6 +349,13 @@ class Conversation extends ListPage {
                 (item.type === "reply" || item.type === "receive") &&
                 item.text
             ) {
+                let nodeList = listToDict(
+                    this.schema.flow_key.dict[item.flow_key || record.flow_key]
+                        .config.node,
+                    "",
+                    "key",
+                    "name"
+                )
                 if (item.node_key && nodeList[item.node_key]) {
                     item.node_key_name = nodeList[item.node_key].name
                 }
