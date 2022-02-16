@@ -80,9 +80,9 @@ class Flow extends React.PureComponent {
     getHistory = async () => {
         const { record } = this.props
         const res = await schema.service.getFlowHistory({
-            limit: 50,
+            limit: 15,
             flow_key: record.key,
-            config: "not.is.null",
+            // config: "not.is.null",
             domain_key: record.domain_key,
         })
         this.setState({ historyList: res.list })
@@ -378,10 +378,13 @@ class Flow extends React.PureComponent {
                         </div>
                     </div>
                     <div className="operating-right">
+                        {/* <>历史数据加载中...</> */}
                         <ZSSelectStyle
                             bordered={false}
+                            loading={!this.state.historyList}
                             value={this.state.historyIndex}
                             placeholder={"选择历史版本"}
+                            notFoundContent={"数据加载中..."}
                             style={{ textAlign: "right", width: "200px" }}
                             onSelect={this.onHistoryChange.bind(this)}
                         >
