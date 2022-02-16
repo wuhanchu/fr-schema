@@ -250,7 +250,9 @@ function renderTitle(
                                 {
                                     id: item.id,
                                     question_extend: unique(question_extend),
-                                    domain_key: props.record.domain_key,
+                                    domain_key:
+                                        props.record.domain_key ||
+                                        props.record.key,
                                 },
                                 schemas.question.schema
                             )
@@ -258,7 +260,9 @@ function renderTitle(
                                 await schemas.searchHistory.service.patch(
                                     {
                                         id: props.record.id,
-                                        domain_key: props.record.domain_key,
+                                        domain_key:
+                                            props.record.domain_key ||
+                                            props.record.key,
                                     },
                                     undefined,
                                     true
@@ -519,14 +523,18 @@ function renderInfoModal(
             let response
             try {
                 response = await schemas.question.service.patch(
-                    { ...data, domain_key: props.record.domain_key },
+                    {
+                        ...data,
+                        domain_key: props.record.domain_key || props.record.key,
+                    },
                     schemas.question.schema
                 )
                 if (props.type === "history") {
                     await schemas.searchHistory.service.patch(
                         {
                             id: props.record.id,
-                            domain_key: props.record.domain_key,
+                            domain_key:
+                                props.record.domain_key || props.record.key,
                         },
                         undefined,
                         true
