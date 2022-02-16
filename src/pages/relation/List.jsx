@@ -32,9 +32,12 @@ class List extends DataList {
         let _this = this
         var oldresize = window.onresize
 
-        let res = await schemas.entity.service.get({ pageSize: 10000 })
+        let res = await schemas.entity.service.get({
+            pageSize: 10000,
+            select: "id,name, domain_key",
+        })
         let typeList = utils.dict.listToDict(res.list, null, "id", "name")
-        res = await schemas.relationType.service.get({ pageSize: 10000 })
+        res = await schemas.relationType.service.get({ pageSize: 1000 })
         let entityType = await schemas.entityType.service.get({
             pageSize: 10000,
         })
