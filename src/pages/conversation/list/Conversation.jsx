@@ -389,12 +389,14 @@ class Conversation extends ListPage {
                 }
             } else {
                 oneList = { reply_text: oneList.text, ...item }
-                console.log("一条是", oneList)
-
                 result.push(clone(oneList))
                 oneList = {}
             }
         })
+        if (oneList && oneList.text) {
+            oneList = { reply_text: oneList.text, ...oneList, text: undefined }
+            result.push(clone(oneList))
+        }
         console.log(result)
         let columns = [
             // {
