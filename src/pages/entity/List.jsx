@@ -2,17 +2,29 @@ import { connect } from "dva"
 import DataList from "@/outter/fr-schema-antd-utils/src/components/Page/DataList"
 import schemas from "@/schemas"
 import React from "react"
-import { Select, Button, message } from "antd"
+import {
+    Select,
+    Button,
+    message,
+    Descriptions,
+    Card,
+    Divider,
+    Popconfirm,
+    Tooltip,
+} from "antd"
 import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
 import frSchema from "@/outter/fr-schema/src"
+import { LoadingOutlined, InfoCircleOutlined } from "@ant-design/icons"
 
 import { exportData } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import ImportModal from "@/outter/fr-schema-antd-utils/src/components/modal/ImportModal"
+import Modal from "antd/lib/modal/Modal"
+import { listToDict } from "@/outter/fr-schema/src/dict"
 
 const { decorateList } = frSchema
-const { utils } = frSchema
+const { actions, utils } = frSchema
 @connect(({ global }) => ({
     dict: global.dict,
 }))
@@ -31,7 +43,7 @@ class List extends DataList {
             },
             showDelete: true,
             showSelect: true,
-            operateWidth: "120px",
+            operateWidth: "180px",
             importTemplateUrl,
         })
     }
@@ -135,6 +147,212 @@ class List extends DataList {
                     导出
                 </Button>
             </>
+        )
+    }
+
+    async handleGetAttr(record) {
+        let attrArry = await schemas.entityAttr.service.get({
+            entity_type_key: record.type_key,
+            limit: 1000,
+            domain_key: record.domain_key,
+        })
+        this.setState({
+            attrArry: listToDict(attrArry.list, "", "key", "name"),
+            isGetAttr: attrArry.list.length,
+        })
+        console.log(listToDict(attrArry.list, "", "key", "name"))
+    }
+
+    renderInfo() {
+        const { record, attrArry, isGetAttr } = this.state
+        let attribute = []
+        if (record.attribute) {
+            Object.keys(record.attribute).forEach((key) => {
+                attribute.push({ key: key, value: record.attribute[key] })
+            })
+        }
+        let attrDescriptions = []
+
+        console.log(attribute)
+        return (
+            <Modal
+                visible={this.state.showInfo}
+                title={"详情"}
+                width={1000}
+                footer={false}
+                onCancel={() => {
+                    this.setState({ showInfo: false })
+                }}
+            >
+                <Card
+                    title={false}
+                    style={{
+                        marginBottom: 24,
+                    }}
+                    bodyStyle={{
+                        overflowY: "auto",
+                        maxHeight: "500px",
+                    }}
+                    bordered={false}
+                >
+                    <Descriptions
+                        style={{
+                            marginBottom: 24,
+                        }}
+                    >
+                        <Descriptions.Item label="域">
+                            {
+                                this.schema.domain_key.dict[record.domain_key]
+                                    .name
+                            }
+                        </Descriptions.Item>
+                        <Descriptions.Item label="类型">
+                            {this.schema.type_key.dict[record.type_key].name}
+                        </Descriptions.Item>
+                        <Descriptions.Item label="名称">
+                            {record.name}
+                        </Descriptions.Item>
+                        {record.remark && (
+                            <Descriptions.Item label="备注">
+                                {record.remark}
+                            </Descriptions.Item>
+                        )}
+                    </Descriptions>
+                    {attribute.length ? (
+                        <Card type="inner" title={false}>
+                            <Descriptions
+                                style={{
+                                    marginBottom: 16,
+                                }}
+                                title="属性"
+                            >
+                                {attribute.map((item) => {
+                                    let value
+                                    if (
+                                        typeof item.value === "string" ||
+                                        typeof item.value === "number"
+                                    ) {
+                                        value = item.value
+                                    } else {
+                                        value = (
+                                            <pre>
+                                                {JSON.stringify(
+                                                    item.value,
+                                                    null,
+                                                    2
+                                                )}
+                                            </pre>
+                                        )
+                                    }
+                                    if (
+                                        this.state.attrArry &&
+                                        this.state.attrArry[item.key]
+                                    ) {
+                                        let label = this.state.attrArry[
+                                            item.key
+                                        ].name
+                                        return (
+                                            <Descriptions.Item
+                                                span={3}
+                                                label={label}
+                                            >
+                                                {value}
+                                            </Descriptions.Item>
+                                        )
+                                    } else {
+                                        if (this.state.attrArry) {
+                                            typeof (item.value === "string")
+                                            return (
+                                                <Descriptions.Item
+                                                    span={3}
+                                                    label={item.key}
+                                                >
+                                                    {value}
+                                                </Descriptions.Item>
+                                            )
+                                        }
+                                    }
+                                })}
+                            </Descriptions>
+                        </Card>
+                    ) : (
+                        <></>
+                    )}
+                </Card>
+            </Modal>
+        )
+    }
+
+    renderExtend() {
+        return <>{this.state.showInfo && this.renderInfo()}</>
+    }
+
+    renderOperateColumn(props = {}) {
+        const { scroll } = this.meta
+        const { inDel } = this.state
+        const { showEdit = true, showDelete = true } = {
+            ...this.meta,
+            ...props,
+        }
+        return (
+            !this.meta.readOnly &&
+            !this.props.readOnly && {
+                title: "操作",
+                width: this.meta.operateWidth,
+                fixed: "right",
+                render: (text, record) => (
+                    <>
+                        {showEdit && (
+                            <a
+                                onClick={() =>
+                                    this.handleVisibleModal(
+                                        true,
+                                        record,
+                                        actions.edit
+                                    )
+                                }
+                            >
+                                修改
+                            </a>
+                        )}
+                        <Divider type="vertical"></Divider>
+                        {
+                            <a
+                                onClick={() => {
+                                    this.setState({ showInfo: true, record })
+                                    this.handleGetAttr(record)
+                                }}
+                            >
+                                详情
+                            </a>
+                        }
+                        {showDelete && (
+                            <>
+                                {showEdit && <Divider type="vertical" />}
+                                <Popconfirm
+                                    title="是否要删除此行？"
+                                    onConfirm={async (e) => {
+                                        this.setState({ record })
+                                        await this.handleDelete(record)
+                                        e.stopPropagation()
+                                    }}
+                                >
+                                    <a>
+                                        {inDel &&
+                                            this.state.record.id &&
+                                            this.state.record.id ===
+                                                record.id && (
+                                                <LoadingOutlined />
+                                            )}
+                                        删除
+                                    </a>
+                                </Popconfirm>
+                            </>
+                        )}
+                        {this.renderOperateColumnExtend(record)}
+                    </>
+                ),
+            }
         )
     }
 
