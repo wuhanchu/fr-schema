@@ -10,7 +10,8 @@ import {
     PlaySquareOutlined,
     SyncOutlined,
 } from "@ant-design/icons"
-
+import utils from "@/outter/fr-schema-antd-utils/src"
+const { url } = utils.utils
 /**
  * 聊天窗口
  * 样式统一
@@ -428,7 +429,7 @@ const styles = {
         marginRight: "23px",
     },
     tableStyle: {
-        marginTop: "-48px",
+        marginTop: url.getUrlParams("roomHeight") ? "-24px" : "-48px",
         flex: 1,
     },
 }
