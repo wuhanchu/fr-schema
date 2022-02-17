@@ -22,6 +22,7 @@ class Dialogue extends Chat {
     constructor(props) {
         super(props)
         const { record } = props
+        console.log(url.getUrlParams("roomHeight"))
         this.state = {
             ...this.state,
             conversationId: "",
@@ -36,6 +37,9 @@ class Dialogue extends Chat {
             settingSpin: true,
             domain_key:
                 (record && record.key) || url.getUrlParams("domain_key"),
+            roomHeight: url.getUrlParams("roomHeight")
+                ? url.getUrlParams("roomHeight") + "px"
+                : "500px",
             // collapse: false,
             showIntentFlow: true,
         }
