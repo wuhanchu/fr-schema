@@ -8,8 +8,11 @@ const Minio = require("minio")
 
 const schema = {
     group: {
-        title: "分组",
+        // title: "分组",
+        title: <div style={{ width: "56px" }}>分组</div>,
+
         type: schemaFieldType.Select,
+
         searchPrefix: "like",
         // required: true,
         render: (data, item) => {

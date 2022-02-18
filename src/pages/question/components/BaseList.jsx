@@ -17,6 +17,7 @@ import {
     Empty,
     AutoComplete,
     DatePicker,
+    Select,
     Input,
 } from "antd"
 import React from "react"
@@ -241,40 +242,57 @@ class BaseList extends EditPage {
             create_time,
             update_time,
         } = this.schema
+        let groups = clone(group)
+        groups.type = schemaFieldType.Select
+        groups.renderInput = undefined
+        groups.props.placeholder = "请输入分组"
+        groups.span = 6
+        // groups.title= (<div style={{width: '60px'}}>分组</div>)
+
         const filters = this.createFilters(
             {
-                group: {
-                    ...group,
-                    type: schemaFieldType.Select,
-                    renderInput: null,
-                },
+                group: groups,
+                // group,
                 question_standard: {
                     ...question_standard,
                     type: schemaFieldType.Input,
+                    placeholder: "请输入分组",
+                    span: 6,
                 },
                 label: {
                     ...label,
                     type: schemaFieldType.Select,
+                    span: 6,
                     props: null,
                 },
                 create_time: {
                     ...create_time,
                     style: { width: "100%" },
+                    span: 6,
                     renderInput: () => {
-                        return <RangePicker />
+                        return <RangePicker style={{ width: "100%" }} />
                     },
                 },
                 update_time: {
                     ...update_time,
-                    style: { width: "100%" },
+                    // style: { width: "100%" },
+                    span: 6,
                     renderInput: () => {
-                        return <RangePicker />
+                        return <RangePicker style={{ width: "100%" }} />
                     },
                 },
             },
             5
         )
-        return this.createSearchBar(filters)
+        return this.createSearchBar(filters, {
+            position: "absolute",
+            right: "24px",
+            top: "64px",
+        })
+    }
+
+    renderSearchBarExtra() {
+        return <Col xl={12}></Col>
     }
 
     /**
