@@ -100,7 +100,7 @@ async function init(
                     props.record.base_domain_key.indexOf(item.domain_key) > -1)
             )
         } else {
-            return false
+            return true
         }
     })
     console.log(project.list)
