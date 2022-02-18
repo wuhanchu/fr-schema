@@ -79,10 +79,31 @@ async function init(
 
     setState({ ...state, options: options })
 
+    let base_domain_key = []
+    if (props.record.base_domain_key) {
+        base_domain_key = base_domain_key
+    }
     let project = await schemas.project.service.get({
-        domain_key: props.record && props.record.key,
+        // domain_key: "in.("+ props.record && props.record.key + "," + base_domain_key.join(",") + ")",
         limit: 999,
     })
+    project.list = project.list.filter((item) => {
+        if (props.record && props.record.key) {
+            console.log(
+                props.record.key,
+                item.domain_key,
+                props.record.base_domain_key
+            )
+            return (
+                props.record.key === item.domain_key ||
+                (props.record.base_domain_key &&
+                    props.record.base_domain_key.indexOf(item.domain_key) > -1)
+            )
+        } else {
+            return false
+        }
+    })
+    console.log(project.list)
     project_id = "in.("
     project.list.map((item, index) => {
         if (index !== project.list.length - 1)
@@ -395,7 +416,6 @@ function renderTitle(
     )
 }
 function renderDescription(item, props, projectDict) {
-    console.log("projectDict是", projectDict[item.project_id].name)
     return (
         <>
             <div style={{ color: "rgba(0,0,0,0.85)" }}>答案:</div>
@@ -466,7 +486,10 @@ function renderDescription(item, props, projectDict) {
                     <div
                         style={{ marginLeft: "20px", display: "inline-block" }}
                     >
-                        匹配问题库： {projectDict[item.project_id].name}
+                        匹配问题库：{" "}
+                        {projectDict[item.project_id]
+                            ? projectDict[item.project_id].name
+                            : item.project_id}
                     </div>
                 </div>
                 <div style={{ width: "130px", marginRight: "10px" }}>
