@@ -64,7 +64,7 @@ class Flow extends React.PureComponent {
         const { record } = this.props
         const res = await flowSchema.service.get({
             limit: 1000,
-            // domain_key: record.domain_key,
+            domain_key: record.domain_key,
         })
         let list = res.list.map((item) => {
             return {

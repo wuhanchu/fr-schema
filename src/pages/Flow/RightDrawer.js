@@ -506,26 +506,6 @@ class RightDrawer extends React.PureComponent {
                                     ]}
                                 ></Select>
                             </FormItem>
-
-                            {cell.getData().types === "flow" && (
-                                <FormItem
-                                    name={"flow_key"}
-                                    label={"请选择子流程"}
-                                    // extra="如已执行次数等于允许的执行次数，则跳过。"
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: "请输入子流程！",
-                                        },
-                                    ]}
-                                >
-                                    <Select
-                                        placeholder="请选择子流程"
-                                        options={this.props.flowList}
-                                    ></Select>
-                                </FormItem>
-                            )}
-
                             {cell.getData().types !== "begin" &&
                                 cell.getData().types !== "global" && (
                                     <FormItem
@@ -585,6 +565,25 @@ class RightDrawer extends React.PureComponent {
                                         ></Select>
                                     </FormItem>
                                 )}
+
+                            {cell.getData().types === "flow" && (
+                                <FormItem
+                                    name={"flow_key"}
+                                    label={"请选择子流程"}
+                                    // extra="如已执行次数等于允许的执行次数，则跳过。"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "请输入子流程！",
+                                        },
+                                    ]}
+                                >
+                                    <Select
+                                        placeholder="请选择子流程"
+                                        options={this.props.flowList}
+                                    ></Select>
+                                </FormItem>
+                            )}
                             <FormItem
                                 label={
                                     <div>
