@@ -253,24 +253,38 @@ class List extends DataList {
                                             item.key
                                         ].name
 
-                                        return (
-                                            <Descriptions.Item
-                                                span={3}
-                                                label={label}
-                                            >
-                                                {/* {value} */}
-                                                <div
-                                                    dangerouslySetInnerHTML={{
-                                                        __html: value
-                                                            ? value.replace(
-                                                                  "<br/>",
-                                                                  ""
-                                                              )
-                                                            : "",
-                                                    }}
-                                                ></div>
-                                            </Descriptions.Item>
-                                        )
+                                        if (
+                                            typeof value === "string" ||
+                                            typeof value === "number"
+                                        ) {
+                                            return (
+                                                <Descriptions.Item
+                                                    span={3}
+                                                    label={label}
+                                                >
+                                                    {/* {value} */}
+                                                    <div
+                                                        dangerouslySetInnerHTML={{
+                                                            __html: value
+                                                                ? value.replace(
+                                                                      "<br/>",
+                                                                      ""
+                                                                  )
+                                                                : "",
+                                                        }}
+                                                    ></div>
+                                                </Descriptions.Item>
+                                            )
+                                        } else {
+                                            return (
+                                                <Descriptions.Item
+                                                    span={3}
+                                                    label={label}
+                                                >
+                                                    {value}
+                                                </Descriptions.Item>
+                                            )
+                                        }
                                     } else {
                                         if (
                                             this.state.attrArry &&
