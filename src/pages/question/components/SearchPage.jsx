@@ -850,10 +850,18 @@ function SearchPage(props) {
                             value={searchProject}
                             disabled={props.type === "history" ? true : loading}
                             placeholder="请选择问题库"
+                            filterOption={(input, option) =>
+                                option &&
+                                option.children
+                                    .toLowerCase()
+                                    .indexOf(input.toLowerCase()) >= 0
+                            }
                             style={{
                                 // width: "500px",
                                 minWidth: "150px",
-                                maxHeight: "500px",
+                                maxWidth: "800px",
+                                // maxHeight: "32px",
+                                // overflow: 'hidden',
                                 marginBottom: "20px",
                                 zIndex: 99,
                                 // marginRight: '5px'
