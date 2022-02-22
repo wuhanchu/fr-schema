@@ -730,6 +730,8 @@ class BaseList extends EditPage {
                                     {
                                         id: this.state.record.id,
                                         attachment: this.state.attachment,
+                                        domain_key: this.props.record
+                                            .domain_key,
                                     },
                                     this.schema
                                 )

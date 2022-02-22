@@ -260,7 +260,17 @@ class List extends DataList {
                                             return (
                                                 <Descriptions.Item
                                                     span={3}
-                                                    label={label}
+                                                    label={
+                                                        <div
+                                                            style={{
+                                                                width: "100px",
+                                                                textAlign:
+                                                                    "right",
+                                                            }}
+                                                        >
+                                                            {label}
+                                                        </div>
+                                                    }
                                                 >
                                                     {/* {value} */}
                                                     <div
@@ -279,7 +289,17 @@ class List extends DataList {
                                             return (
                                                 <Descriptions.Item
                                                     span={3}
-                                                    label={label}
+                                                    label={
+                                                        <div
+                                                            style={{
+                                                                width: "100px",
+                                                                textAlign:
+                                                                    "right",
+                                                            }}
+                                                        >
+                                                            {label}
+                                                        </div>
+                                                    }
                                                 >
                                                     {value}
                                                 </Descriptions.Item>
@@ -296,7 +316,15 @@ class List extends DataList {
                                                 <Descriptions.Item
                                                     span={3}
                                                     label={
-                                                        <div>{item.key}</div>
+                                                        <div
+                                                            style={{
+                                                                width: "100px",
+                                                                textAlign:
+                                                                    "right",
+                                                            }}
+                                                        >
+                                                            {item.key}
+                                                        </div>
                                                     }
                                                 >
                                                     <div
@@ -316,7 +344,15 @@ class List extends DataList {
                                                 <Descriptions.Item
                                                     span={3}
                                                     label={
-                                                        <div>{item.key}</div>
+                                                        <div
+                                                            style={{
+                                                                width: "100px",
+                                                                textAlign:
+                                                                    "right",
+                                                            }}
+                                                        >
+                                                            {item.key}
+                                                        </div>
                                                     }
                                                 >
                                                     {value}
