@@ -82,13 +82,13 @@ service.get = async (args) => {
     if (typeof args.begin_time === "string") {
         time = new Date(parseInt(args.begin_time))
         args.begin_time = args.begin_time
-            ? moments(time).format("YYYY-MM-DD")
+            ? moments(time).format("YYYY-MM-DD") + "T00:00:00"
             : undefined
     } else {
         console.log(args.begin_time)
         if (args.begin_time)
             args.begin_time = args.begin_time
-                ? args.begin_time.format("YYYY-MM-DD")
+                ? args.begin_time.format("YYYY-MM-DD") + "T00:00:00"
                 : undefined
     }
 
@@ -99,13 +99,13 @@ service.get = async (args) => {
     if (typeof args.end_time === "string") {
         time = new Date(parseInt(args.end_time))
         args.end_time = args.end_time
-            ? moments(time).format("YYYY-MM-DD")
+            ? moments(time).format("YYYY-MM-DD") + "T23:59:59"
             : undefined
     } else {
         console.log(args.end_time)
         if (args.end_time)
             args.end_time = args.end_time
-                ? args.end_time.format("YYYY-MM-DD")
+                ? args.end_time.format("YYYY-MM-DD") + "T23:59:59"
                 : undefined
     }
     let { currentPage, pageSize, limit, ...otherParams } = args

@@ -219,9 +219,9 @@ service.get = async (args) => {
     if (args.fitter_time) {
         let fitter_time = args.fitter_time.split(",")
         let time = new Date(fitter_time[0])
-        let beginTime = moment(time).format("YYYY-MM-DD")
+        let beginTime = moment(time).format("YYYY-MM-DD") + "T00:00:00"
         time = new Date(fitter_time[1])
-        let endTime = moment(time).format("YYYY-MM-DD")
+        let endTime = moment(time).format("YYYY-MM-DD") + "T23:59:59"
 
         // let beginTime = args.fitter_time[0].format("YYYY-MM-DDTHH:mm:ss")
         // let endTime = args.fitter_time[1].format("YYYY-MM-DDTHH:mm:ss")

@@ -6,6 +6,10 @@ import { verifyJson } from "@/outter/fr-schema-antd-utils/src/utils/component"
 const { RangePicker } = DatePicker
 
 const schema = {
+    domain_key: {
+        title: "域",
+        type: schemaFieldType.Select,
+    },
     project_id: {
         title: "问题库",
         hideInTable: true,
@@ -32,6 +36,7 @@ const schema = {
         renderInput: () => <RangePicker style={{ width: "100%" }} />,
         type: schemaFieldType.DatePicker,
     },
+
     create_time: {
         title: "时间",
         required: true,

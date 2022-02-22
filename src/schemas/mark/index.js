@@ -6,6 +6,10 @@ import { verifyJson } from "@/outter/fr-schema-antd-utils/src/utils/component"
 const { RangePicker } = DatePicker
 
 const schema = {
+    domain_key: {
+        title: "域",
+        type: schemaFieldType.Select,
+    },
     flitter_time: {
         title: "时间",
         required: true,
@@ -21,6 +25,7 @@ const schema = {
         renderInput: () => <RangePicker style={{ width: "100%" }} />,
         type: schemaFieldType.DatePicker,
     },
+
     create_time: {
         title: "时间",
         required: true,
@@ -98,10 +103,10 @@ const service = createApi("question_mark_task", schema, null, "eq.")
 service.getRepeat = async (args) => {
     console.log(args)
     if (args.flitter_time) {
-        let fitter_time = args.fitter_time.split(",")
-        let time = new Date(fitter_time[0])
+        let flitter_time = args.flitter_time.split(",")
+        let time = new Date(flitter_time[0])
         let beginTime = moment(time).format("YYYY-MM-DD")
-        time = new Date(fitter_time[1])
+        time = new Date(flitter_time[1])
         let endTime = moment(time).format("YYYY-MM-DD")
 
         // let beginTime = args.flitter_time[0].format("YYYY-MM-DD")

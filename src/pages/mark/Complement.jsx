@@ -51,6 +51,7 @@ class List extends DataList {
         let project = await schemas.project.service.get({
             limit: 10000,
         })
+        this.schema.domain_key.dict = this.props.dict.domain
         this.schema.project_id.dict = listToDict(project.list)
         try {
             this.formRef.current.setFieldsValue({ status: "wait" })

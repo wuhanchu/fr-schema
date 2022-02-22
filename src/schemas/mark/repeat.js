@@ -38,6 +38,10 @@ const schema = {
         renderInput: () => <RangePicker style={{ width: "100%" }} />,
         type: schemaFieldType.DatePicker,
     },
+    domain_key: {
+        title: "域",
+        type: schemaFieldType.Select,
+    },
     create_time: {
         title: "时间",
         required: true,
