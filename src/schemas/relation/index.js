@@ -48,6 +48,7 @@ const schema = {
         },
         hideInTable: true,
         sorter: true,
+        search: false,
         required: true,
     },
 
@@ -85,6 +86,7 @@ const schema = {
         editHide: true,
         addHide: true,
         search: false,
+        search: false,
 
         required: true,
     },
@@ -97,6 +99,7 @@ const schema = {
             allowClear: true,
             showSearch: true,
         },
+        search: false,
         sorter: true,
         required: true,
     },
