@@ -219,7 +219,8 @@ class List extends DataList {
                         )}
                     </Descriptions>
                     {attribute.length ? (
-                        <Card type="inner" title={false}>
+                        // <Card title={false}>
+                        <div>
                             <Descriptions
                                 style={{
                                     marginBottom: 16,
@@ -251,21 +252,58 @@ class List extends DataList {
                                         let label = this.state.attrArry[
                                             item.key
                                         ].name
+
                                         return (
                                             <Descriptions.Item
                                                 span={3}
                                                 label={label}
                                             >
-                                                {value}
+                                                {/* {value} */}
+                                                <div
+                                                    dangerouslySetInnerHTML={{
+                                                        __html: value
+                                                            ? value.replace(
+                                                                  "<br/>",
+                                                                  ""
+                                                              )
+                                                            : "",
+                                                    }}
+                                                ></div>
                                             </Descriptions.Item>
                                         )
                                     } else {
-                                        if (this.state.attrArry) {
-                                            typeof (item.value === "string")
+                                        if (
+                                            this.state.attrArry &&
+                                            typeof value === "string"
+                                        ) {
+                                            console.log(item.key, value)
+
                                             return (
                                                 <Descriptions.Item
                                                     span={3}
-                                                    label={item.key}
+                                                    label={
+                                                        <div>{item.key}</div>
+                                                    }
+                                                >
+                                                    <div
+                                                        dangerouslySetInnerHTML={{
+                                                            __html: value
+                                                                ? value.replace(
+                                                                      "<br/>",
+                                                                      ""
+                                                                  )
+                                                                : "",
+                                                        }}
+                                                    ></div>
+                                                </Descriptions.Item>
+                                            )
+                                        } else {
+                                            return (
+                                                <Descriptions.Item
+                                                    span={3}
+                                                    label={
+                                                        <div>{item.key}</div>
+                                                    }
                                                 >
                                                     {value}
                                                 </Descriptions.Item>
@@ -274,7 +312,7 @@ class List extends DataList {
                                     }
                                 })}
                             </Descriptions>
-                        </Card>
+                        </div>
                     ) : (
                         <></>
                     )}
