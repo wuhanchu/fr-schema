@@ -34,7 +34,7 @@ class List extends DataList {
         var oldresize = window.onresize
 
         let res = await schemas.entity.service.get({
-            pageSize: 100000,
+            pageSize: 100,
             select: "id,name, domain_key",
         })
         this.entityDict = res.list
@@ -46,6 +46,7 @@ class List extends DataList {
                     data={data.props.data}
                     showSearch
                     form={item}
+                    defaultLabel={props && props.to_entity_name}
                     defaultValue={props && props.to_entity_id}
                     keyIndex="to_entity_id"
                     style={{ width: "100%" }}
@@ -61,6 +62,7 @@ class List extends DataList {
                     data={data.props.data}
                     showSearch
                     form={item}
+                    defaultLabel={props && props.from_entity_name}
                     defaultValue={props && props.from_entity_id}
                     keyIndex="from_entity_id"
                     style={{ width: "100%" }}
@@ -70,7 +72,7 @@ class List extends DataList {
             )
         }
         // let typeList = utils.dict.listToDict(res.list, null, "id", "name")
-        res = await schemas.relationType.service.get({ pageSize: 100000 })
+        res = await schemas.relationType.service.get({ pageSize: 10000 })
         let entityType = await schemas.entityType.service.get({
             pageSize: 10000,
         })

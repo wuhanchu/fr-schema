@@ -1,5 +1,6 @@
 import React from "react"
 import { Select } from "antd"
+import schemas from "@/schemas"
 
 function unique(arr, key) {
     if (!arr) return arr
@@ -19,27 +20,36 @@ export default class MySelect extends React.Component {
     }
     componentDidMount() {
         console.log(this.props.defaultValue)
-        let moreFundList = this.props.data.filter((item) => {
-            return item.id === this.props.defaultValue
-        })
-        console.log(moreFundList)
+        let moreFundList = []
+
+        if (this.props.defaultValue) {
+            moreFundList.push({
+                id: this.props.defaultValue,
+                name: this.props.defaultLabel,
+            })
+        }
         let fundList_ = [...this.props.data.slice(0, 100), ...moreFundList]
         fundList_ = unique(fundList_, "id")
         this.setState({
             fundList_: fundList_,
         })
     }
-    searchValue = (value) => {
+    searchValue = async (value) => {
         const datas = []
+        let res = await schemas.entity.service.get({
+            pageSize: 100,
+            select: "id,name, domain_key",
+            name: "like.*" + value + "*",
+        })
         // const {fundList} = this.state
         // 对fundList进行遍历，将符合搜索条件的数据放入datas中
-        this.props.data.forEach((item) => {
-            if (item.name.indexOf(value) > -1) {
-                datas.push(item)
-            }
-        })
+        // this.props.data.forEach((item) => {
+        //     if (item.name.indexOf(value) > -1) {
+        //         datas.push(item)
+        //     }
+        // })
         // 然后只显示符合搜索条件的所有数据中的前100条
-        this.setState({ fundList_: datas.slice(0, 100) })
+        this.setState({ fundList_: res.list })
     }
     handleOnSearch = (value) => {
         // 函数节流，防止数据频繁更新，每300毫秒才搜索一次
@@ -48,7 +58,7 @@ export default class MySelect extends React.Component {
             this.timer = setTimeout(function () {
                 that.searchValue(value)
                 that.timer = null
-            }, 300)
+            }, 100)
         }
     }
     render() {
