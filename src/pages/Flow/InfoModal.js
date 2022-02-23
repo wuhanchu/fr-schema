@@ -4,6 +4,8 @@ import "@ant-design/compatible/assets/index.css"
 import { message, Modal, Skeleton, Spin, Button, Popconfirm } from "antd"
 import InfoForm from "@/outter/fr-schema-antd-utils/src/components/Page/InfoForm"
 import frSchema from "@/outter/fr-schema/src"
+import { clone } from "lodash"
+import { v5 as uuidv5 } from "uuid"
 
 const { actions, getPrimaryKey } = frSchema
 const confirm = Modal.confirm
@@ -206,6 +208,21 @@ export class PureInfoModal extends PureComponent {
         handleVisibleModal && handleVisibleModal()
     }
 
+    handleReFollow = (key, uuidUrl) => {
+        if (key) {
+            // if(key.length> 24){
+            //     return key.slice(0,23) + time
+            // }
+            // else{
+            //     return key + time
+            // }
+            let data = uuidv5(key, uuidUrl)
+            return data
+        } else {
+            return key
+        }
+    }
+
     render() {
         const { loadingSubmit } = this.state
 
@@ -219,6 +236,11 @@ export class PureInfoModal extends PureComponent {
         // 查看模式 不需要显示 按钮
         if (action == actions.show) {
             otherProps.footer = null
+        }
+
+        let footerOther = []
+        if (otherProps.footerOther) {
+            footerOther = otherProps.footerOther
         }
 
         return (
@@ -249,6 +271,123 @@ export class PureInfoModal extends PureComponent {
                         }}
                     >
                         取消
+                    </Button>,
+                    <Button
+                        key="submit"
+                        type="primary"
+                        onClick={() => {
+                            // let time = new Date().getTime()
+                            let time = uuidv5.URL
+                            console.log(time)
+                            console.log(
+                                this.formRef.current.getFieldsValue().config
+                            )
+                            let config = this.formRef.current.getFieldsValue()
+                                .config
+                            if (config) {
+                                if (config.node) {
+                                    let node = config.node.map(
+                                        (item, index) => {
+                                            let key = this.handleReFollow(
+                                                item.key,
+                                                time
+                                            )
+                                            let action =
+                                                item.action &&
+                                                item.action.map((one) => {
+                                                    return this.handleReFollow(
+                                                        one,
+                                                        time
+                                                    )
+                                                })
+                                            return { ...item, key, action }
+                                        }
+                                    )
+                                    console.log("node", node)
+                                    config.node = node
+                                }
+                                if (config.action) {
+                                    let action = config.action.map(
+                                        (item, index) => {
+                                            let key = this.handleReFollow(
+                                                item.key,
+                                                time
+                                            )
+                                            return { ...item, key }
+                                        }
+                                    )
+                                    console.log("action", action)
+                                    config.action = action
+                                }
+                                if (config.condition) {
+                                    let condition = config.condition.map(
+                                        (item, index) => {
+                                            let key = this.handleReFollow(
+                                                item.key,
+                                                time
+                                            )
+                                            return { ...item, key }
+                                        }
+                                    )
+                                    config.condition = condition
+                                    console.log("condition", condition)
+                                }
+                                if (config.connection) {
+                                    let connection = config.connection.map(
+                                        (item, index) => {
+                                            let begin = this.handleReFollow(
+                                                item.begin,
+                                                time
+                                            )
+                                            let end = this.handleReFollow(
+                                                item.end,
+                                                time
+                                            )
+                                            let key = this.handleReFollow(
+                                                item.key,
+                                                time
+                                            )
+
+                                            let condition =
+                                                item.condition &&
+                                                item.condition.map((one) => {
+                                                    return this.handleReFollow(
+                                                        one,
+                                                        time
+                                                    )
+                                                })
+                                            return {
+                                                ...item,
+                                                key,
+                                                condition,
+                                                begin,
+                                                end,
+                                            }
+                                        }
+                                    )
+                                    config.connection = connection
+                                    console.log("connection", connection)
+                                }
+                            }
+                            this.formRef.current.setFieldsValue({
+                                config: undefined,
+                            })
+
+                            this.setState({ loadingFetch: true })
+
+                            this.formRef.current.setFieldsValue({
+                                config: clone(config),
+                            })
+                            this.setState({
+                                loadingFetch: false,
+                                values: {
+                                    ...this.state.values,
+                                    config: clone(config),
+                                },
+                            })
+                        }}
+                    >
+                        重新生成KEY
                     </Button>,
                     <Popconfirm
                         title="是否确认提交?"
