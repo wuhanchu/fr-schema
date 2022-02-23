@@ -26,6 +26,7 @@ export default class MySelect extends React.Component {
             moreFundList.push({
                 id: this.props.defaultValue,
                 name: this.props.defaultLabel,
+                type_name: this.props.type_name,
             })
         }
         let fundList_ = [...this.props.data.slice(0, 100), ...moreFundList]
@@ -38,17 +39,8 @@ export default class MySelect extends React.Component {
         const datas = []
         let res = await schemas.entity.service.get({
             pageSize: 100,
-            select: "id,name, domain_key",
             name: "like.*" + value + "*",
         })
-        // const {fundList} = this.state
-        // 对fundList进行遍历，将符合搜索条件的数据放入datas中
-        // this.props.data.forEach((item) => {
-        //     if (item.name.indexOf(value) > -1) {
-        //         datas.push(item)
-        //     }
-        // })
-        // 然后只显示符合搜索条件的所有数据中的前100条
         this.setState({ fundList_: res.list })
     }
     handleOnSearch = (value) => {
@@ -94,7 +86,16 @@ export default class MySelect extends React.Component {
                     fundList_.map((item, index) => {
                         return (
                             <Select.Option value={item.id} key={item.id}>
-                                {item.name}
+                                {item.name +
+                                    (item.type_name
+                                        ? "(" + item.type_name + ")"
+                                        : item.type_key
+                                        ? "(" +
+                                          this.props.entityTypeDict[
+                                              item.type_key
+                                          ].name +
+                                          ")"
+                                        : "")}
                             </Select.Option>
                         )
                     })}

@@ -35,15 +35,30 @@ class List extends DataList {
 
         let res = await schemas.entity.service.get({
             pageSize: 100,
-            select: "id,name, domain_key",
         })
         this.entityDict = res.list
         let fundList_ = res.list.slice(0, 100)
         this.setState({ fundList_ })
+
+        // let typeList = utils.dict.listToDict(res.list, null, "id", "name")
+        res = await schemas.relationType.service.get({ pageSize: 10000 })
+        let entityType = await schemas.entityType.service.get({
+            pageSize: 10000,
+        })
+
+        let entityTypeDict = utils.dict.listToDict(
+            entityType.list,
+            null,
+            "key",
+            "name"
+        )
+        console.log("entityTypeDict", entityTypeDict)
         this.schema.to_entity_id.renderInput = (data, props, item) => {
             return (
                 <MySelect
                     data={data.props.data}
+                    entityTypeDict={entityTypeDict}
+                    type_name={props && props.to_entity_type_name}
                     showSearch
                     form={item}
                     defaultLabel={props && props.to_entity_name}
@@ -61,7 +76,9 @@ class List extends DataList {
                 <MySelect
                     data={data.props.data}
                     showSearch
+                    entityTypeDict={entityTypeDict}
                     form={item}
+                    type_name={props && props.from_entity_type_name}
                     defaultLabel={props && props.from_entity_name}
                     defaultValue={props && props.from_entity_id}
                     keyIndex="from_entity_id"
@@ -71,11 +88,7 @@ class List extends DataList {
                 ></MySelect>
             )
         }
-        // let typeList = utils.dict.listToDict(res.list, null, "id", "name")
-        res = await schemas.relationType.service.get({ pageSize: 10000 })
-        let entityType = await schemas.entityType.service.get({
-            pageSize: 10000,
-        })
+
         this.schema.from_entity_type_id.dict = utils.dict.listToDict(
             entityType.list,
             null,
