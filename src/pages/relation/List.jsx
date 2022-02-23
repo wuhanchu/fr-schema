@@ -5,6 +5,8 @@ import React from "react"
 import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
 import frSchema from "@/outter/fr-schema/src"
+import { Select } from "antd"
+import MySelect from "./MySelect"
 
 const { utils } = frSchema
 @connect(({ global }) => ({
@@ -27,16 +29,47 @@ class List extends DataList {
             },
         })
     }
-
     async componentDidMount() {
         let _this = this
         var oldresize = window.onresize
 
         let res = await schemas.entity.service.get({
-            pageSize: 2000,
+            pageSize: 20000,
             select: "id,name, domain_key",
         })
-        let typeList = utils.dict.listToDict(res.list, null, "id", "name")
+        this.entityDict = res.list
+        let fundList_ = res.list.slice(0, 100)
+        this.setState({ fundList_ })
+        this.schema.to_entity_id.renderInput = (data, props, item) => {
+            return (
+                <MySelect
+                    data={data.props.data}
+                    showSearch
+                    form={item}
+                    defaultValue={props && props.to_entity_id}
+                    keyIndex="to_entity_id"
+                    style={{ width: "100%" }}
+                    // onSearch={(value)=>handleOnSearch(value)}
+                    placeholder="请输入右实体"
+                ></MySelect>
+            )
+        }
+
+        this.schema.from_entity_id.renderInput = (data, props, item) => {
+            return (
+                <MySelect
+                    data={data.props.data}
+                    showSearch
+                    form={item}
+                    defaultValue={props && props.from_entity_id}
+                    keyIndex="from_entity_id"
+                    style={{ width: "100%" }}
+                    // onSearch={(value)=>handleOnSearch(value)}
+                    placeholder="请输入左实体"
+                ></MySelect>
+            )
+        }
+        // let typeList = utils.dict.listToDict(res.list, null, "id", "name")
         res = await schemas.relationType.service.get({ pageSize: 100000 })
         let entityType = await schemas.entityType.service.get({
             pageSize: 10000,
@@ -60,8 +93,16 @@ class List extends DataList {
             "name"
         )
         this.schema.domain_key.dict = this.props.dict.domain
-        this.schema.from_entity_id.dict = typeList
-        this.schema.to_entity_id.dict = typeList
+        // this.schema.from_entity_id.dict = typeList
+        // this.schema.to_entity_id.dict = typeList
+        this.schema.to_entity_id.props = {
+            data: this.entityDict,
+            span: 6,
+        }
+        this.schema.from_entity_id.props = {
+            data: this.entityDict,
+            span: 6,
+        }
         this.schema.relation_key.dict = relationTypeList
         super.componentDidMount()
     }

@@ -9,6 +9,10 @@ const schema = {
         // addHide: true,
         // editHide: true,
         required: true,
+        style: {
+            maxWidth: "400px",
+            width: "100%",
+        },
         type: schemaFieldType.Select,
         props: {
             allowClear: true,
@@ -46,6 +50,10 @@ const schema = {
             allowClear: true,
             showSearch: true,
         },
+        style: {
+            maxWidth: "400px",
+            width: "100%",
+        },
         hideInTable: true,
         sorter: true,
         // search: false,
@@ -58,6 +66,10 @@ const schema = {
         props: {
             allowClear: true,
             showSearch: true,
+        },
+        style: {
+            maxWidth: "400px",
+            width: "100%",
         },
         sorter: true,
         editable: true,
@@ -124,6 +136,10 @@ const schema = {
         hideInTable: true,
         props: {
             height: "300px",
+        },
+        style: {
+            maxWidth: "400px",
+            width: "100%",
         },
         type: schemaFieldType.AceEditor,
         decoratorProps: { rules: verifyJson },
