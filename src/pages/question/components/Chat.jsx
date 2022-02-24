@@ -37,6 +37,7 @@ class Chat extends React.PureComponent {
             audio: document.createElement("AUDIO"),
             collapse: false, // 是否收缩
             loading: false,
+            buttons: [],
         }
         this.chatRef = React.createRef()
         this.inputRef = React.createRef()
