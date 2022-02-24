@@ -1,7 +1,8 @@
 import React from "react"
 import { autobind } from "core-decorators"
-import { Button, Input, Spin } from "antd"
+import { Button, Input, Spin, AutoComplete } from "antd"
 import robotSvg from "@/assets/rebot.svg"
+import schemas from "@/schemas"
 import mySvg from "@/outter/fr-schema-antd-utils/src/components/GlobalHeader/my.svg"
 import ChatFlowTable from "@/pages/question/components/ChatFlowTable"
 import {
@@ -42,6 +43,59 @@ class Chat extends React.PureComponent {
         this.tableRef = React.createRef()
     }
 
+    async componentDidMount() {
+        if (
+            !url.getUrlParams("project_id") &&
+            !url.getUrlParams("domain_key")
+        ) {
+            await schemas.hotWord.service
+                .getRecentHotQuestion({
+                    domain_key: this.props.record && this.props.record.key,
+                    project_id:
+                        this.props.record && this.props.record.project_id,
+                    limit: 500,
+                })
+                .then((response) => {
+                    let allData = []
+                    response.list.forEach((item) => {
+                        allData.push(item.question_standard)
+                    })
+
+                    this.setState({ allData, dataSource: allData })
+                })
+        } else {
+            await schemas.hotWord.service
+                .getRecentHotQuestion({
+                    domain_key: url.getUrlParams("domain_key")
+                        ? url.getUrlParams("domain_key")
+                        : undefined,
+                    project_id: url.getUrlParams("project_id")
+                        ? url.getUrlParams("project_id")
+                        : undefined,
+                    limit: 500,
+                })
+                .then((response) => {
+                    let allData = []
+                    response.list.forEach((item) => {
+                        allData.push(item.question_standard)
+                    })
+
+                    this.setState({ allData, dataSource: allData })
+                })
+        }
+    }
+    handleChange = (value) => {
+        console.log(value)
+        const { allData } = this.state
+        this.setState({
+            inputValue: value,
+            open: true,
+            dataSource:
+                value &&
+                allData &&
+                allData.filter((item) => item.indexOf(value) >= 0),
+        })
+    }
     render() {
         let { showInput, showIntentFlow, collapse, conversationId } = this.state
         return (
@@ -89,6 +143,7 @@ class Chat extends React.PureComponent {
     // 聊天内容展示
     renderChatView() {
         let { messageList, roomHeight } = this.state
+        console.log("renderChatView")
         return (
             <div
                 style={{ ...styles.leaveView, height: roomHeight }}
@@ -106,6 +161,7 @@ class Chat extends React.PureComponent {
 
     //  机器人
     renderService(item, index) {
+        console.log(item)
         return (
             <div style={styles.leaveItem} key={`leave${index}`}>
                 <img src={robotSvg} alt="" style={styles.avatar} />
@@ -139,12 +195,13 @@ class Chat extends React.PureComponent {
 
     // 客户
     renderCostumer(item, index) {
-        console.log(item)
         return (
             <div style={styles.chatRightItem} key={`leave${index}`}>
                 <div style={styles.chatRightMsgItem}>
                     <div style={styles.chatRightMsgView}>
-                        {item.content}
+                        {this.state.buttons[item.content]
+                            ? this.state.buttons[item.content].title
+                            : item.content}
                         {item.result && item.result.voice_url && (
                             <>
                                 {this.state.audioIndex !== index ? (
@@ -220,7 +277,7 @@ class Chat extends React.PureComponent {
                     onClick={(_) => this.inputRef.current.focus()}
                     style={{ width: "100%", marginTop: "15px" }}
                 >
-                    <Input
+                    {/* <Input
                         value={inputValue}
                         onChange={(e) =>
                             this.setState({ inputValue: e.target.value })
@@ -228,7 +285,37 @@ class Chat extends React.PureComponent {
                         onKeyPress={this.onInputEnter}
                         placeholder="请输入内容"
                         ref={this.inputRef}
-                    />
+                    /> */}
+                    <AutoComplete
+                        dropdownMatchSelectWidth={252}
+                        style={{ width: "100%", flex: 1 }}
+                        onChange={this.handleChange.bind(this)}
+                        backfill
+                        value={inputValue}
+                        ref={this.inputRef}
+                        open={this.state.open}
+                        onSelect={this.onInputEnter}
+                        defaultOpen={false}
+                        dataSource={this.state.dataSource}
+                    >
+                        <Input.Search
+                            placeholder="输入想要搜索的问题"
+                            enterButton
+                            value={inputValue}
+                            onFocus={() => {
+                                this.setState({
+                                    open: true,
+                                    dataSource: this.state.allData,
+                                })
+                            }}
+                            onBlur={() => {
+                                this.setState({
+                                    open: false,
+                                })
+                            }}
+                            onKeyPress={this.onInputEnter}
+                        />
+                    </AutoComplete>
                 </div>
                 {this.inputExtra()}
                 <Button
@@ -314,6 +401,7 @@ class Chat extends React.PureComponent {
 
     // 输入框点击回车
     onInputEnter = async (event) => {
+        this.setState({ open: false })
         if (event.which === 13) {
             await this.onSendMsg()
         }

@@ -241,8 +241,13 @@ class BaseList extends EditPage {
             question_standard,
             create_time,
             update_time,
+            answer,
         } = this.schema
         let groups = clone(group)
+        let question_standards = clone(question_standard)
+        ;(question_standards.type = schemaFieldType.Input),
+            (question_standards.props.placeholder = "请输入标准问")
+        question_standards.span = 6
         groups.type = schemaFieldType.Select
         groups.renderInput = undefined
         groups.props.placeholder = "请输入分组"
@@ -253,17 +258,20 @@ class BaseList extends EditPage {
             {
                 group: groups,
                 // group,
-                question_standard: {
-                    ...question_standard,
-                    type: schemaFieldType.Input,
-                    placeholder: "请输入分组",
-                    span: 6,
-                },
+                question_standard: question_standards,
+                // },
                 label: {
                     ...label,
                     type: schemaFieldType.Select,
                     span: 6,
                     props: null,
+                },
+                answer: {
+                    ...answer,
+                    type: schemaFieldType.Input,
+                    props: {},
+                    placeholder: "请输入分组",
+                    span: 6,
                 },
                 create_time: {
                     ...create_time,
@@ -719,13 +727,6 @@ class BaseList extends EditPage {
                         <Button
                             type="primary"
                             onClick={async () => {
-                                // if (!this.state.isUpload) {
-                                //     this.setState({
-                                //         showAnnex: false,
-                                //         loadingAnnex: false,
-                                //     })
-                                //     return
-                                // }
                                 await this.service.patch(
                                     {
                                         id: this.state.record.id,

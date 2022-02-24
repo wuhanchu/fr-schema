@@ -344,11 +344,20 @@ class Conversation extends ListPage {
             "key",
             "name"
         )
+        let buttons = []
         data.list.map((item) => {
             if (
                 (item.type === "reply" || item.type === "receive") &&
                 item.text
             ) {
+                if (item.result && item.result.length) {
+                    item.result.map((one) => {
+                        console.log(one)
+                        if (one.buttons && one.buttons.length) {
+                            buttons.push(...one.buttons)
+                        }
+                    })
+                }
                 let nodeList = listToDict(
                     this.schema.flow_key.dict[item.flow_key || record.flow_key]
                         .config.node,
@@ -378,8 +387,9 @@ class Conversation extends ListPage {
         })
         let result = []
         let oneList = {}
+        buttons = listToDict(buttons, "", "payload", "title")
         list.map((item) => {
-            console.log(item)
+            // console.log(item)
             if (item.type !== "receive") {
                 oneList = {
                     ...item,
@@ -388,7 +398,13 @@ class Conversation extends ListPage {
                         : item.text,
                 }
             } else {
-                oneList = { reply_text: oneList.text, ...item }
+                oneList = {
+                    reply_text: oneList.text,
+                    ...item,
+                    text: buttons[item.text]
+                        ? buttons[item.text].title
+                        : item.text,
+                }
                 result.push(clone(oneList))
                 oneList = {}
             }
@@ -397,7 +413,6 @@ class Conversation extends ListPage {
             oneList = { reply_text: oneList.text, ...oneList, text: undefined }
             result.push(clone(oneList))
         }
-        console.log(result)
         let columns = [
             // {
             //     title: "类型",

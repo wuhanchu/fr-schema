@@ -28,9 +28,9 @@ const schema = {
         width: "250px",
     },
     question_standard: {
-        title: "标准问",
+        title: <div style={{ width: "56px" }}>标准问</div>,
         required: true,
-        searchPrefix: "like",
+        // searchPrefix: "like",
         type: schemaFieldType.TextArea,
         props: {
             // 最小高度
@@ -248,6 +248,7 @@ service.get = async function (args) {
         args.and = `(update_time.gte.${updateBeginTime},update_time.lte.${updateEndTime},create_time.gte.${createBeginTime},create_time.lte.${createEndTime})`
     }
 
+    console.log("orStr")
     const res = await createApi("question", schema, null, null).get(args)
     let list = res.list.map((item) => {
         return {
@@ -311,29 +312,38 @@ service.getData = async function (args) {
         questionExtendArgs.update_time_end = updateEndTime
     }
 
-    const res = await createApi("question", schema, null, null).get(args)
-    const questionExtendCount = await createApi(
-        "question/question_extend_count",
+    let question_standardList = []
+
+    if (args.question_standard) {
+        args.question_standard.split(" ").map((item) => {
+            question_standardList.push("question_standard.like.*" + item + "*")
+        })
+        args.question_standard = undefined
+    }
+
+    if (args.answer) {
+        args.answer.split(" ").map((item) => {
+            question_standardList.push("answer.like.*" + item + "*")
+        })
+        args.answer = undefined
+    }
+
+    let orStr = question_standardList.length
+        ? "(" + question_standardList.join(",") + ")"
+        : undefined
+    args.or = orStr
+    const res = await createApi(
+        "question",
         schema,
-        null,
-        ""
-    ).getBasic({
-        ...questionExtendArgs,
-        project_id: args.project_id
-            ? args.project_id.replace("eq.", "")
-            : undefined,
-        group: args.group
-            ? args.group.substr(0, args.group.length - 1).replace("like.*", "")
-            : undefined,
-        label: args.label
-            ? args.label.substr(0, args.label.length - 1).replace("ov.{", "")
-            : undefined,
-        question_standard: args.question_standard
-            ? args.question_standard
-                  .substr(0, args.question_standard.length - 1)
-                  .replace("like.*", "")
-            : undefined,
-    })
+        {
+            headers: {
+                Prefer: "count=exact",
+                "Count-Question-Extend": true,
+            },
+        },
+        null
+    ).get(args)
+
     let list = res.list.map((item) => {
         return {
             ...item,
@@ -347,7 +357,7 @@ service.getData = async function (args) {
     return {
         ...res,
         list: list,
-        question_extend_count: questionExtendCount.data.total,
+        question_extend_count: res.other.headers.get("question-extend-count"),
     }
 }
 service.getMinioConfig = async function (args) {

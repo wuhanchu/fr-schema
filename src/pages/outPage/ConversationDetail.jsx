@@ -3,6 +3,7 @@ import { autobind } from "core-decorators"
 import Chat from "@/pages/question/components/Chat"
 import schema from "@/schemas/conversation/detail"
 import schemaConversation from "@/schemas/conversation/list"
+import { listToDict } from "@/outter/fr-schema/src/dict"
 
 @autobind
 class ConversationDetail extends Chat {
@@ -53,6 +54,7 @@ class ConversationDetail extends Chat {
                 res && res.list && res.list[0] && res.list[0].domain_key
         }
         let list = []
+        let buttons = []
         if (conversation_id) {
             let res = await schema.service.get({
                 limit: 10000,
@@ -69,6 +71,14 @@ class ConversationDetail extends Chat {
                         avatar: "http://img.binlive.cn/6.png",
                         type: "left",
                     })
+                    if (item.result) {
+                        item.result.map((one) => {
+                            console.log(one)
+                            if (one.buttons && one.buttons.length) {
+                                buttons.push(...one.buttons)
+                            }
+                        })
+                    }
                 }
                 if (item.type === "receive" && item.text && item.node_key) {
                     list.push({
@@ -81,6 +91,7 @@ class ConversationDetail extends Chat {
                     })
                 }
             })
+            console.log(listToDict(buttons, "", "payload", "title"))
             this.setState({
                 messageList: list,
                 flow_key: this.props.flow_key,
@@ -88,6 +99,7 @@ class ConversationDetail extends Chat {
                 conversationId: this.props.conversation_id,
                 showIntentFlow,
                 loading: false,
+                buttons: listToDict(buttons, "", "payload", "title"),
             })
         } else {
             this.setState({

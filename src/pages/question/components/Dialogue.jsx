@@ -48,6 +48,7 @@ class Dialogue extends Chat {
     formRef = React.createRef()
 
     async componentDidMount() {
+        super.componentDidMount()
         console.log(url.getUrlParams("showIntentFlow"))
         if (url.getUrlParams("showIntentFlow") !== undefined) {
             this.setState({
@@ -411,6 +412,7 @@ class Dialogue extends Chat {
 
     // 机器人回复扩展
     renderLeftExtra(item, index) {
+        console.log(item)
         let { messageList, resultFlowLength } = this.state
         return (
             item.buttons && (

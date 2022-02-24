@@ -2,6 +2,7 @@ import { connect } from "dva"
 import ListPage from "@/outter/fr-schema-antd-utils/src/components/Page/ListPage"
 import styles from "@/outter/fr-schema-antd-utils/src/components/Page/DataList.less"
 import { PageHeaderWrapper } from "@ant-design/pro-layout"
+import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
 
 import schemas from "@/schemas"
 import React from "react"
@@ -10,7 +11,16 @@ import "@ant-design/compatible/assets/index.css"
 import frSchema from "@/outter/fr-schema/src"
 import { listToDict } from "@/outter/fr-schema/src/dict"
 import Modal from "antd/lib/modal/Modal"
-import { Card, message, Col, Row, Button } from "antd"
+import {
+    Card,
+    message,
+    Col,
+    Row,
+    Button,
+    Tooltip,
+    AutoComplete,
+    Input,
+} from "antd"
 import {
     LikeTwoTone,
     BankTwoTone,
@@ -19,6 +29,7 @@ import {
     DislikeTwoTone,
     TagTwoTone,
     TagsTwoTone,
+    FileExcelTwoTone,
 } from "@ant-design/icons"
 import { exportData } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
 import { formatData } from "@/utils/utils"
@@ -36,7 +47,12 @@ class List extends ListPage {
             schema: schemas.statistics.schema,
             service: schemas.statistics.service,
             infoProps: {
-                width: "900px",
+                width: "1200px",
+                isCustomize: true,
+                customize: {
+                    left: 10,
+                    right: 14,
+                },
             },
             showEdit: false,
             showDelete: false,
@@ -147,16 +163,47 @@ class List extends ListPage {
         }
         try {
             this.formRef.current.setFieldsValue({ domain_key: "default" })
+            console.log("设置为default")
             this.formRef.current.setFieldsValue({
                 begin_time: moment().subtract("days", 6),
             })
         } catch (error) {}
         let project = await schemas.project.service.get({
             limit: 10000,
-            domain_key,
+            domain_key: "default",
         })
         this.schema.domain_key.dict = this.props.dict.domain
         this.schema.project_id.dict = listToDict(project.list)
+        this.schema.question_standard.render = (item, data) => {
+            return (
+                <Tooltip title={item}>
+                    <div
+                        style={{
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                            maxWidth: "250px",
+                        }}
+                    >
+                        <a
+                            onClick={() => {
+                                this.setState({ record: data })
+                                console.log(data)
+                                this.handleVisibleModal(
+                                    true,
+                                    {
+                                        ...data,
+                                    },
+                                    "edit"
+                                )
+                            }}
+                        >
+                            {item}
+                        </a>
+                    </div>
+                </Tooltip>
+            )
+        }
         super.componentDidMount()
         this.setState({
             searchValues: {
@@ -240,7 +287,50 @@ class List extends ListPage {
                             </div>
                         </div>
                     </Card>
-
+                    <div style={{ width: "20px", height: "100%" }}></div>
+                    <Card style={{ flex: 1 }} title={false}>
+                        <div style={{ display: "flex" }}>
+                            <div
+                                style={{
+                                    width: "36px",
+                                    height: "36px",
+                                    marginTop: "8.5px",
+                                    borderRadius: "20px",
+                                    background: "#1890ff",
+                                    marginRight: "24px",
+                                }}
+                            >
+                                <FileExcelTwoTone
+                                    twoToneColor="#fff"
+                                    style={{
+                                        fontSize: "20px",
+                                        marginTop: "8px",
+                                        marginLeft: "8px",
+                                    }}
+                                />
+                            </div>
+                            <div style={{ flex: 1 }}>
+                                <div
+                                    style={{
+                                        color: "#00000073",
+                                        whiteSpace: "nowrap",
+                                        textOverflow: "ellipsis",
+                                        overflow: "hidden",
+                                    }}
+                                >
+                                    总匹配数
+                                </div>
+                                <div
+                                    style={{
+                                        marginTop: "px",
+                                        fontSize: "20px",
+                                    }}
+                                >
+                                    {summary ? summary.match_total : 0}
+                                </div>
+                            </div>
+                        </div>
+                    </Card>
                     <div style={{ width: "20px", height: "100%" }}></div>
                     <Card style={{ flex: 1 }} title={false}>
                         <div style={{ display: "flex" }}>
@@ -272,7 +362,7 @@ class List extends ListPage {
                                         overflow: "hidden",
                                     }}
                                 >
-                                    总匹配数
+                                    未匹配问题数
                                 </div>
                                 <div
                                     style={{
@@ -280,7 +370,7 @@ class List extends ListPage {
                                         fontSize: "20px",
                                     }}
                                 >
-                                    {summary ? summary.match_total : 0}
+                                    {summary ? summary.not_match_total : 0}
                                 </div>
                             </div>
                         </div>
@@ -336,7 +426,17 @@ class List extends ListPage {
                             </div>
                         </div>
                     </Card>
-                    <div style={{ width: "20px", height: "100%" }}></div>
+                </div>
+                <div
+                    style={{
+                        width: "100%",
+                        display: "flex",
+                        marginTop: "20px",
+                        paddingLeft: "24px",
+                        paddingRight: "24px",
+                        marginBottom: "10px",
+                    }}
+                >
                     <Card style={{ flex: 1 }} title={false}>
                         <div style={{ display: "flex" }}>
                             <div
@@ -595,6 +695,97 @@ class List extends ListPage {
             </>
         )
     }
+
+    async handleQuestionEdit(data, schema) {
+        // 更新
+        console.log(this.state.record)
+
+        let response
+        try {
+            response = await schemas.question.service.patch(
+                { ...data, domain_key: this.state.record.domain_key },
+                schema
+            )
+            this.refreshList()
+            message.success("修改成功")
+        } catch (error) {
+            message.error(error.message)
+        }
+
+        this.handleVisibleModal()
+        this.handleChangeCallback && this.handleChangeCallback()
+        this.props.handleChangeCallback && this.props.handleChangeCallback()
+
+        return response
+    }
+
+    renderInfoModal(customProps = {}) {
+        if (this.props.renderInfoModal) {
+            return this.props.renderInfoModal()
+        }
+        const { form } = this.props
+        const renderForm = this.props.renderForm || this.renderForm
+        const { resource, title, addArgs } = this.meta
+        const { visibleModal, infoData, action } = this.state
+        const updateMethods = {
+            handleVisibleModal: this.handleVisibleModal.bind(this),
+            handleUpdate: this.handleQuestionEdit.bind(this),
+            handleAdd: this.handleAdd.bind(this),
+        }
+
+        return (
+            visibleModal && (
+                <InfoModal
+                    renderForm={renderForm}
+                    title={"问题详情"}
+                    action={action}
+                    resource={resource}
+                    {...updateMethods}
+                    visible={visibleModal}
+                    values={infoData}
+                    addArgs={addArgs}
+                    meta={this.meta}
+                    service={schemas.question.service}
+                    schema={{
+                        // id: { title: "编号" },
+                        // project_id: {
+                        //     ...this.schema.project_id,
+                        //     readOnly: true,
+                        // },
+                        ...schemas.question.schema,
+                        group: {
+                            ...schemas.question.schema.group,
+                            renderInput: (item, data, other) => {
+                                return (
+                                    <AutoComplete
+                                        style={{
+                                            width: "100%",
+                                            maxWidth: "300px",
+                                        }}
+                                        disabled={other.disabled}
+                                        filterOption={(inputValue, option) =>
+                                            option.value
+                                                .toUpperCase()
+                                                .indexOf(
+                                                    inputValue.toUpperCase()
+                                                ) !== -1
+                                        }
+                                        options={this.state.options}
+                                    >
+                                        {/* {options} */}
+                                        <Input placeholder="请输入分组"></Input>
+                                    </AutoComplete>
+                                )
+                            },
+                        },
+                    }}
+                    {...this.meta.infoProps}
+                    {...customProps}
+                />
+            )
+        )
+    }
+
     render() {
         const { title, content, tabList, onTabChange } = this.meta
         const { tabActiveKey } = this.state
