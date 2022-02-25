@@ -848,6 +848,7 @@ class List extends ListPage {
             <Menu>
                 <Menu.Item>
                     <Popconfirm
+                        overlayStyle={{ width: "270px" }}
                         title={
                             "是否训练" +
                             record.name +
@@ -942,6 +943,7 @@ class List extends ListPage {
                 <Menu.Item>
                     <Popconfirm
                         title={"是否将" + record.name + "域数据同步数据库！"}
+                        overlayStyle={{ width: "270px" }}
                         onConfirm={async (e) => {
                             try {
                                 let sync = await this.service.fsfundSync({

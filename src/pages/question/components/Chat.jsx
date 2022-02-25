@@ -263,6 +263,17 @@ class Chat extends React.PureComponent {
         )
     }
 
+    handleOnSearch = (event) => {
+        // 函数节流，防止数据频繁更新，每300毫秒才搜索一次
+        let that = this
+        if (!this.timer) {
+            this.timer = setTimeout(function () {
+                that.onInputEnter(event)
+                that.timer = null
+            }, 300)
+        }
+    }
+
     // 渲染输入框
     renderInput() {
         let { inputValue, isSpin } = this.state
@@ -296,6 +307,7 @@ class Chat extends React.PureComponent {
                         ref={this.inputRef}
                         open={this.state.open}
                         onSelect={this.onInputEnter}
+                        // onKeyPress={this.onInputEnter}
                         defaultOpen={false}
                         dataSource={this.state.dataSource}
                     >
@@ -309,6 +321,7 @@ class Chat extends React.PureComponent {
                                     dataSource: this.state.allData,
                                 })
                             }}
+                            onSearch={this.onInputEnter}
                             onBlur={() => {
                                 this.setState({
                                     open: false,

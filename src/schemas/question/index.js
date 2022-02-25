@@ -29,12 +29,14 @@ const schema = {
     },
     question_standard: {
         title: <div style={{ width: "56px" }}>标准问</div>,
+
         required: true,
         // searchPrefix: "like",
         type: schemaFieldType.TextArea,
         props: {
             // 最小高度
             autoSize: { minRows: 2, maxRows: 6 },
+            placeholder: "请输入标准问",
         },
         sorter: true,
         editable: true,
@@ -74,6 +76,35 @@ const schema = {
         width: "120px",
         addHide: true,
         showHide: true,
+    },
+    recommend_text: {
+        title: <div style={{ width: "56px" }}>推荐问</div>,
+        // type: schemaFieldType.Select,
+        type: schemaFieldType.TextArea,
+        props: {
+            autoSize: { minRows: 2, maxRows: 6 },
+            placeholder: "请输入推荐问",
+        },
+        exportConcat: true,
+        extra: "每行表示一个问题",
+        editable: true,
+        render: (item, record) => {
+            let showContent = item ? item : null
+            return (
+                <Tooltip
+                    title={
+                        <div
+                            dangerouslySetInnerHTML={{ __html: showContent }}
+                        />
+                    }
+                >
+                    {item && item.length > 20
+                        ? item.substring(0, 20) + "..."
+                        : item}
+                </Tooltip>
+            )
+        },
+        width: "260px",
     },
     label: {
         title: "标签",
@@ -256,6 +287,9 @@ service.get = async function (args) {
             question_extend: item.question_extend
                 ? item.question_extend.join("\n")
                 : null,
+            recommend_text: item.recommend_text
+                ? item.recommend_text.join("\n")
+                : null,
             ...item.info,
             info: item.info ? JSON.stringify(item.info) : "",
         }
@@ -351,6 +385,9 @@ service.getData = async function (args) {
                 ? item.question_extend.join("\n")
                 : null,
             ...item.info,
+            recommend_text: item.recommend_text
+                ? item.recommend_text.join("\n")
+                : null,
             info: item.info ? JSON.stringify(item.info) : "",
         }
     })
@@ -366,6 +403,8 @@ service.getMinioConfig = async function (args) {
 }
 service.post = async function (args, schema) {
     let question_extend = null
+    let recommend_text = null
+
     Object.keys(schema).forEach(function (key) {
         if (schema[key].isExpand) {
             if (args[key]) {
@@ -383,15 +422,20 @@ service.post = async function (args, schema) {
     if (args.question_extend) {
         question_extend = args.question_extend.split("\n")
     }
+    if (args.recommend_text) {
+        recommend_text = args.recommend_text.split("\n")
+    }
     const res = await createApi("question", schema, null, "eq.").post({
         ...args,
         question_extend: question_extend,
+        recommend_text: recommend_text,
     })
 
     return res
 }
 service.patch = async function (args, schema) {
     let question_extend = args.question_extend
+    let recommend_text = args.recommend_text
 
     Object.keys(schema).forEach(function (key) {
         if (schema[key].isExpand) {
@@ -409,9 +453,13 @@ service.patch = async function (args, schema) {
     if (args.question_extend && typeof args.question_extend === "string") {
         question_extend = args.question_extend.split("\n")
     }
+    if (args.recommend_text && typeof args.recommend_text === "string") {
+        recommend_text = args.recommend_text.split("\n")
+    }
     const res = await createApi("question", schema, null, "eq.").patch({
         ...args,
         question_extend: question_extend || null,
+        recommend_text: recommend_text || null,
     })
 
     return res
@@ -432,6 +480,9 @@ service.getDetail = async function (args) {
             : null,
         ...res.info,
         info: res.info ? JSON.stringify(res.info) : "",
+        recommend_text: res.recommend_text
+            ? res.recommend_text.join("\n")
+            : null,
         answer: res.answer && res.answer.replace(/\n/g, "<br>"),
     }
 }

@@ -245,9 +245,10 @@ class BaseList extends EditPage {
         } = this.schema
         let groups = clone(group)
         let question_standards = clone(question_standard)
-        ;(question_standards.type = schemaFieldType.Input),
-            (question_standards.props.placeholder = "请输入标准问")
+        question_standards.type = schemaFieldType.Input
+        question_standards.props.placeholder = "请输入标准问"
         question_standards.span = 6
+        // question_standards.title = (<div style={{ width: "56px" }}>分组</div>)
         groups.type = schemaFieldType.Select
         groups.renderInput = undefined
         groups.props.placeholder = "请输入分组"
@@ -259,7 +260,6 @@ class BaseList extends EditPage {
                 group: groups,
                 // group,
                 question_standard: question_standards,
-                // },
                 label: {
                     ...label,
                     type: schemaFieldType.Select,
@@ -270,7 +270,6 @@ class BaseList extends EditPage {
                     ...answer,
                     type: schemaFieldType.Input,
                     props: {},
-                    placeholder: "请输入分组",
                     span: 6,
                 },
                 create_time: {
@@ -1089,6 +1088,9 @@ class BaseList extends EditPage {
     dataExtra(item) {
         item.question_extend = item.question_extend
             ? item.question_extend.split("\n")
+            : []
+        item.recommend_text = item.recommend_text
+            ? item.recommend_text.split("\n")
             : []
     }
 }
