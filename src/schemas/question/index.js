@@ -77,35 +77,35 @@ const schema = {
         addHide: true,
         showHide: true,
     },
-    recommend_text: {
-        title: <div style={{ width: "56px" }}>推荐问</div>,
-        // type: schemaFieldType.Select,
-        type: schemaFieldType.TextArea,
-        props: {
-            autoSize: { minRows: 2, maxRows: 6 },
-            placeholder: "请输入推荐问",
-        },
-        exportConcat: true,
-        extra: "每行表示一个问题",
-        editable: true,
-        render: (item, record) => {
-            let showContent = item ? item : null
-            return (
-                <Tooltip
-                    title={
-                        <div
-                            dangerouslySetInnerHTML={{ __html: showContent }}
-                        />
-                    }
-                >
-                    {item && item.length > 20
-                        ? item.substring(0, 20) + "..."
-                        : item}
-                </Tooltip>
-            )
-        },
-        width: "260px",
-    },
+    // recommend_text: {
+    //     title: <div style={{ width: "56px" }}>推荐问</div>,
+    //     // type: schemaFieldType.Select,
+    //     type: schemaFieldType.TextArea,
+    //     props: {
+    //         autoSize: { minRows: 2, maxRows: 6 },
+    //         placeholder: "请输入推荐问",
+    //     },
+    //     exportConcat: true,
+    //     extra: "每行表示一个问题",
+    //     editable: true,
+    //     render: (item, record) => {
+    //         let showContent = item ? item : null
+    //         return (
+    //             <Tooltip
+    //                 title={
+    //                     <div
+    //                         dangerouslySetInnerHTML={{ __html: showContent }}
+    //                     />
+    //                 }
+    //             >
+    //                 {item && item.length > 20
+    //                     ? item.substring(0, 20) + "..."
+    //                     : item}
+    //             </Tooltip>
+    //         )
+    //     },
+    //     width: "260px",
+    // },
     label: {
         title: "标签",
         type: schemaFieldType.Select,
@@ -403,7 +403,7 @@ service.getMinioConfig = async function (args) {
 }
 service.post = async function (args, schema) {
     let question_extend = null
-    let recommend_text = null
+    let recommend_text = undefined
 
     Object.keys(schema).forEach(function (key) {
         if (schema[key].isExpand) {
@@ -435,7 +435,7 @@ service.post = async function (args, schema) {
 }
 service.patch = async function (args, schema) {
     let question_extend = args.question_extend
-    let recommend_text = args.recommend_text
+    let recommend_text = args.recommend_text ? args.recommend_text : undefined
 
     Object.keys(schema).forEach(function (key) {
         if (schema[key].isExpand) {
@@ -459,7 +459,7 @@ service.patch = async function (args, schema) {
     const res = await createApi("question", schema, null, "eq.").patch({
         ...args,
         question_extend: question_extend || null,
-        recommend_text: recommend_text || null,
+        recommend_text: recommend_text || undefined,
     })
 
     return res
