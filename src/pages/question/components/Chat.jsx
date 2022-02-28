@@ -312,7 +312,7 @@ class Chat extends React.PureComponent {
                     >
                         <Input.Search
                             placeholder="输入想要搜索的问题"
-                            enterButton
+                            enterButton={false}
                             value={inputValue}
                             onFocus={() => {
                                 console.log(this.state.inputValue)
@@ -329,7 +329,7 @@ class Chat extends React.PureComponent {
                                     open: false,
                                 })
                             }}
-                            onKeyPress={this.onInputEnter}
+                            onPressEnter={this.onInputEnter}
                         />
                     </AutoComplete>
                 </div>
@@ -361,6 +361,7 @@ class Chat extends React.PureComponent {
                     width: "50%",
                     height: roomHeight + 20,
                     display: "flex",
+
                     flexDirection: "column",
                 }}
             >
