@@ -350,7 +350,18 @@ class Conversation extends ListPage {
                 (item.type === "reply" || item.type === "receive") &&
                 item.text
             ) {
-                if (item.result && item.result.length) {
+                if (
+                    item.result &&
+                    item.result.buttons &&
+                    item.result.buttons.length
+                ) {
+                    buttons.push(...item.result.buttons)
+                }
+                if (
+                    item.result &&
+                    item.result.length &&
+                    Array.isArray(item.result)
+                ) {
                     item.result.map((one) => {
                         console.log(one)
                         if (one.buttons && one.buttons.length) {

@@ -1091,7 +1091,7 @@ class BaseList extends EditPage {
             : []
         item.recommend_text = item.recommend_text
             ? item.recommend_text.split("\n")
-            : undefined
+            : []
     }
 }
 

@@ -63,7 +63,12 @@ class ConversationDetail extends Chat {
             })
             res.list.map((item) => {
                 if (item.type === "reply" && item.text) {
+                    let recommend_text = []
+                    if (item.result && item.result.recommend_text) {
+                        recommend_text = item.result.recommend_text
+                    }
                     list.push({
+                        recommend_text,
                         content: item.text,
                         onlyRead: true,
                         name: "智能客服",
@@ -71,7 +76,14 @@ class ConversationDetail extends Chat {
                         avatar: "http://img.binlive.cn/6.png",
                         type: "left",
                     })
-                    if (item.result) {
+                    if (
+                        item.result &&
+                        item.result.buttons &&
+                        item.result.buttons.length
+                    ) {
+                        buttons.push(...item.result.buttons)
+                    }
+                    if (item.result && Array.isArray(item.result)) {
                         item.result.map((one) => {
                             console.log(one)
                             if (one.buttons && one.buttons.length) {

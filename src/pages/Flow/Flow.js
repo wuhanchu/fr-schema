@@ -61,10 +61,12 @@ class Flow extends React.PureComponent {
     }
 
     getFlow = async () => {
-        const { record } = this.props
+        const { record, other } = this.props
+        let base_domain_key =
+            other.dict.domain[record.domain_key].base_domain_key
         const res = await flowSchema.service.get({
             limit: 1000,
-            domain_key: record.domain_key,
+            // domain_key: record.domain_key,
         })
         let list = res.list.map((item) => {
             return {
@@ -72,6 +74,17 @@ class Flow extends React.PureComponent {
                 key: item.domain_key + item.key,
                 label: item.name,
                 value: item.key,
+            }
+        })
+        list = list.filter((item) => {
+            if (
+                item.domain_key === record.domain_key ||
+                (base_domain_key &&
+                    base_domain_key.indexOf(item.domain_key) > -1)
+            ) {
+                return true
+            } else {
+                return false
             }
         })
         this.setState({ flowList: list })

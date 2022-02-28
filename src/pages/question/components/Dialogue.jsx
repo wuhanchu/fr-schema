@@ -301,8 +301,10 @@ class Dialogue extends Chat {
         let list = []
         let { messageList } = this.state
         if (type === "left") {
-            messages.map((data) =>
+            messages.map((data) => {
+                console.log("data", data)
                 list.push({
+                    ...data,
                     content: data.text,
                     onlyRead: true,
                     buttons: data.buttons,
@@ -310,7 +312,7 @@ class Dialogue extends Chat {
                     time: new Date(),
                     type: "left",
                 })
-            )
+            })
             this.setState({ isSpin: false })
         } else {
             list.push({
@@ -629,6 +631,7 @@ class Dialogue extends Chat {
             type,
             domain_key,
         } = this.state
+        console.log("大松", value)
         // 无内容或者只存在空格 不发送
         if (!value && isSpin === true) {
             return
@@ -645,14 +648,19 @@ class Dialogue extends Chat {
             if (!value) {
                 this.arrPush({ content: inputValue }, "right")
             }
+            if (value && value[0] !== "/") {
+                this.arrPush({ content: value }, "right")
+            }
             let res
-
+            if (value === "/true") {
+                value = ""
+            }
             try {
                 res = await schemas.domain.service.message({
                     domain_key,
 
                     conversation_id: conversationId,
-                    text: inputValue,
+                    text: value || inputValue,
                 })
                 if (res.data) {
                     this.arrPush(res.data, "left")
