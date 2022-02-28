@@ -287,6 +287,7 @@ class Chat extends React.PureComponent {
                 <div
                     onClick={(_) => this.inputRef.current.focus()}
                     style={{ width: "100%", marginTop: "15px" }}
+                    className="inputWrapper"
                 >
                     {/* <Input
                         value={inputValue}
@@ -306,7 +307,7 @@ class Chat extends React.PureComponent {
                         ref={this.inputRef}
                         open={this.state.open}
                         onSelect={this.onInputEnter}
-                        // onKeyPress={this.onInputEnter}
+                        // onPressEnter={this.onInputEnter}
                         // defaultOpen={false}
                         dataSource={this.state.dataSource}
                     >
