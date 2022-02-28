@@ -241,10 +241,18 @@ class List extends ListPage {
                         marginTop: "20px",
                         paddingLeft: "24px",
                         paddingRight: "24px",
+                        overflow: "hidden",
                         marginBottom: "10px",
                     }}
                 >
-                    <Card style={{ flex: 1 }} title={false}>
+                    <Card
+                        style={{ flex: 1 }}
+                        bodyStyle={{
+                            paddingLeft: "12px",
+                            paddingRight: "12px",
+                        }}
+                        title={false}
+                    >
                         <div style={{ display: "flex" }}>
                             <div
                                 style={{
@@ -253,7 +261,7 @@ class List extends ListPage {
                                     marginTop: "8.5px",
                                     borderRadius: "20px",
                                     background: "#1890ff",
-                                    marginRight: "24px",
+                                    marginRight: "12px",
                                 }}
                             >
                                 <BankTwoTone
@@ -274,7 +282,7 @@ class List extends ListPage {
                                         overflow: "hidden",
                                     }}
                                 >
-                                    总提问数
+                                    总提问
                                 </div>
                                 <div
                                     style={{
@@ -288,7 +296,14 @@ class List extends ListPage {
                         </div>
                     </Card>
                     <div style={{ width: "20px", height: "100%" }}></div>
-                    <Card style={{ flex: 1 }} title={false}>
+                    <Card
+                        style={{ flex: 1 }}
+                        bodyStyle={{
+                            paddingLeft: "12px",
+                            paddingRight: "12px",
+                        }}
+                        title={false}
+                    >
                         <div style={{ display: "flex" }}>
                             <div
                                 style={{
@@ -297,7 +312,7 @@ class List extends ListPage {
                                     marginTop: "8.5px",
                                     borderRadius: "20px",
                                     background: "#1890ff",
-                                    marginRight: "24px",
+                                    marginRight: "12px",
                                 }}
                             >
                                 <FileExcelTwoTone
@@ -318,7 +333,7 @@ class List extends ListPage {
                                         overflow: "hidden",
                                     }}
                                 >
-                                    总匹配数
+                                    总匹配
                                 </div>
                                 <div
                                     style={{
@@ -332,7 +347,14 @@ class List extends ListPage {
                         </div>
                     </Card>
                     <div style={{ width: "20px", height: "100%" }}></div>
-                    <Card style={{ flex: 1 }} title={false}>
+                    <Card
+                        style={{ flex: 1 }}
+                        bodyStyle={{
+                            paddingLeft: "12px",
+                            paddingRight: "12px",
+                        }}
+                        title={false}
+                    >
                         <div style={{ display: "flex" }}>
                             <div
                                 style={{
@@ -341,7 +363,7 @@ class List extends ListPage {
                                     marginTop: "8.5px",
                                     borderRadius: "20px",
                                     background: "#1890ff",
-                                    marginRight: "24px",
+                                    marginRight: "12px",
                                 }}
                             >
                                 <TagsTwoTone
@@ -362,7 +384,7 @@ class List extends ListPage {
                                         overflow: "hidden",
                                     }}
                                 >
-                                    未匹配问题数
+                                    未匹配问题
                                 </div>
                                 <div
                                     style={{
@@ -376,7 +398,14 @@ class List extends ListPage {
                         </div>
                     </Card>
                     <div style={{ width: "20px", height: "100%" }}></div>
-                    <Card style={{ flex: 1 }} title={false}>
+                    <Card
+                        style={{ flex: 1 }}
+                        bodyStyle={{
+                            paddingLeft: "12px",
+                            paddingRight: "12px",
+                        }}
+                        title={false}
+                    >
                         <div style={{ display: "flex" }}>
                             <div
                                 style={{
@@ -385,7 +414,7 @@ class List extends ListPage {
                                     marginTop: "8.5px",
                                     borderRadius: "20px",
                                     background: "#1890ff",
-                                    marginRight: "24px",
+                                    marginRight: "12px",
                                 }}
                             >
                                 <TagTwoTone
@@ -426,18 +455,15 @@ class List extends ListPage {
                             </div>
                         </div>
                     </Card>
-                </div>
-                <div
-                    style={{
-                        width: "100%",
-                        display: "flex",
-                        marginTop: "20px",
-                        paddingLeft: "24px",
-                        paddingRight: "24px",
-                        marginBottom: "10px",
-                    }}
-                >
-                    <Card style={{ flex: 1 }} title={false}>
+                    <div style={{ width: "20px", height: "100%" }}></div>
+                    <Card
+                        style={{ flex: 1 }}
+                        bodyStyle={{
+                            paddingLeft: "12px",
+                            paddingRight: "12px",
+                        }}
+                        title={false}
+                    >
                         <div style={{ display: "flex" }}>
                             <div
                                 style={{
@@ -446,7 +472,7 @@ class List extends ListPage {
                                     marginTop: "8.5px",
                                     borderRadius: "20px",
                                     background: "#1890ff",
-                                    marginRight: "24px",
+                                    marginRight: "12px",
                                 }}
                             >
                                 <ThunderboltTwoTone
@@ -467,7 +493,7 @@ class List extends ListPage {
                                         overflow: "hidden",
                                     }}
                                 >
-                                    总参与评价数
+                                    总参与评价
                                 </div>
                                 <div
                                     style={{
@@ -481,7 +507,14 @@ class List extends ListPage {
                         </div>
                     </Card>
                     <div style={{ width: "20px", height: "100%" }}></div>
-                    <Card style={{ flex: 1 }} title={false}>
+                    <Card
+                        style={{ flex: 1 }}
+                        bodyStyle={{
+                            paddingLeft: "12px",
+                            paddingRight: "12px",
+                        }}
+                        title={false}
+                    >
                         <div style={{ display: "flex" }}>
                             <div
                                 style={{
@@ -490,7 +523,7 @@ class List extends ListPage {
                                     marginTop: "8.5px",
                                     borderRadius: "20px",
                                     background: "#1890ff",
-                                    marginRight: "24px",
+                                    marginRight: "12px",
                                 }}
                             >
                                 <LikeTwoTone
@@ -511,7 +544,7 @@ class List extends ListPage {
                                         overflow: "hidden",
                                     }}
                                 >
-                                    解决问题数
+                                    解决问题
                                 </div>
                                 <div
                                     style={{
@@ -525,7 +558,14 @@ class List extends ListPage {
                         </div>
                     </Card>
                     <div style={{ width: "20px", height: "100%" }}></div>
-                    <Card style={{ flex: 1 }} title={false}>
+                    <Card
+                        style={{ flex: 1 }}
+                        bodyStyle={{
+                            paddingLeft: "12px",
+                            paddingRight: "12px",
+                        }}
+                        title={false}
+                    >
                         <div style={{ display: "flex" }}>
                             <div
                                 style={{
@@ -534,7 +574,7 @@ class List extends ListPage {
                                     marginTop: "8.5px",
                                     borderRadius: "20px",
                                     background: "#1890ff",
-                                    marginRight: "24px",
+                                    marginRight: "12px",
                                 }}
                             >
                                 <DislikeTwoTone
@@ -555,7 +595,7 @@ class List extends ListPage {
                                         overflow: "hidden",
                                     }}
                                 >
-                                    未解决问题数
+                                    未解决问题
                                 </div>
                                 <div
                                     style={{
@@ -570,7 +610,14 @@ class List extends ListPage {
                     </Card>
 
                     <div style={{ width: "20px", height: "100%" }}></div>
-                    <Card style={{ flex: 1 }} title={false}>
+                    <Card
+                        style={{ flex: 1 }}
+                        bodyStyle={{
+                            paddingLeft: "12px",
+                            paddingRight: "12px",
+                        }}
+                        title={false}
+                    >
                         <div style={{ display: "flex" }}>
                             <div
                                 style={{
@@ -579,7 +626,7 @@ class List extends ListPage {
                                     marginTop: "8.5px",
                                     borderRadius: "20px",
                                     background: "#1890ff",
-                                    marginRight: "24px",
+                                    marginRight: "12px",
                                 }}
                             >
                                 <HeartTwoTone
@@ -601,7 +648,7 @@ class List extends ListPage {
                                         overflow: "hidden",
                                     }}
                                 >
-                                    满意度占比
+                                    满意度
                                 </div>
                                 <div
                                     style={{
@@ -658,7 +705,7 @@ class List extends ListPage {
                     bodyStyle={{
                         paddingLeft: 0,
                         paddingRight: 0,
-                        paddingBottom: "8px",
+                        // paddingBottom: "8px",
                     }}
                 >
                     {/* <div className={styles.tableListForm}>{searchBar}</div> */}

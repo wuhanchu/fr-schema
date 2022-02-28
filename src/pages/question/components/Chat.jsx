@@ -62,7 +62,7 @@ class Chat extends React.PureComponent {
                         allData.push(item.question_standard)
                     })
 
-                    this.setState({ allData, dataSource: allData })
+                    this.setState({ allData })
                 })
         } else {
             await schemas.hotWord.service
@@ -81,12 +81,11 @@ class Chat extends React.PureComponent {
                         allData.push(item.question_standard)
                     })
 
-                    this.setState({ allData, dataSource: allData })
+                    this.setState({ allData })
                 })
         }
     }
     handleChange = (value) => {
-        console.log(value)
         const { allData } = this.state
         this.setState({
             inputValue: value,
@@ -308,7 +307,7 @@ class Chat extends React.PureComponent {
                         open={this.state.open}
                         onSelect={this.onInputEnter}
                         // onKeyPress={this.onInputEnter}
-                        defaultOpen={false}
+                        // defaultOpen={false}
                         dataSource={this.state.dataSource}
                     >
                         <Input.Search
@@ -316,10 +315,13 @@ class Chat extends React.PureComponent {
                             enterButton
                             value={inputValue}
                             onFocus={() => {
-                                this.setState({
-                                    open: true,
-                                    dataSource: this.state.allData,
-                                })
+                                console.log(this.state.inputValue)
+                                if (this.state.inputValue) {
+                                    this.setState({
+                                        open: true,
+                                        // dataSource: this.state.allData,
+                                    })
+                                }
                             }}
                             onSearch={this.onInputEnter}
                             onBlur={() => {
