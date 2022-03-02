@@ -148,6 +148,16 @@ service.getUserAuthUser = async (args) => {
     })
     return data
 }
+
+service.patch = async function (args) {
+    Object.keys(schema).forEach(function (key) {
+        if (!args[key] && schema[key].editHide !== true) {
+            args[key] = null
+        }
+    })
+    const data = await createApi("domain", schema, null).patch(args)
+    return data
+}
 service.sync = createApi("domain/train", schema, null, "eq.").post
 service.fsfundSync = createApi("domain/sync", schema, null, "eq.").post
 service.cache_tts = createApi("domain/cache_tts", schema, null, "eq.").post
