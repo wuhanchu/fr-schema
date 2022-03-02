@@ -837,7 +837,10 @@ function SearchPage(props) {
 
     return (
         <Fragment>
-            <div style={{ display: "flex", marginTop: "3px" }}>
+            <div
+                style={{ display: "flex", marginTop: "3px" }}
+                className="projectSelect"
+            >
                 {props.type !== "project_id" &&
                     !url.getUrlParams("project_id") &&
                     !url.getUrlParams("domain_key") && (
