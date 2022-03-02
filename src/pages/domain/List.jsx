@@ -99,70 +99,63 @@ class List extends ListPage {
         }
         console.log(this.props.global.data.domain)
         const { props } = this
-        this.schema.base_domain_key.renderInput = (
-            item,
-            tempData,
-            props,
-            action,
-            form
-        ) => {
-            let options = []
-            console.log(item, tempData, props, action, form)
-            this.infoForm = props.form
-            console.log("是")
-            console.log(props)
-            if (
-                props.form &&
-                props.form.current &&
-                (props.form.current.getFieldsValue().public === "true" ||
-                    props.form.current.getFieldsValue().public === "false")
-            ) {
-                console.log(props.form.current.getFieldsValue().public)
-                console
-                options = props.domainarry
-                    .filter((item) => {
-                        console.log(item.public)
-                        console.log(props.form.current.getFieldsValue().public)
-                        let result =
-                            item.public.toString() ===
-                            props.form.current
-                                .getFieldsValue()
-                                .public.toString()
-                        // console.log(result)
-                        return result
-                    })
-                    .map((item, index) => {
-                        return { value: item.key, label: item.name }
-                    })
-            } else {
-                options = item.props.domainarry
-                    .filter((item) => {
-                        if (
-                            tempData.public === true ||
-                            tempData.public === false
-                        )
-                            return item.public === tempData.public
-                        else {
-                            return true
-                        }
-                    })
-                    .map((item, index) => {
-                        return {
-                            value: item.key,
-                            label: item.name,
-                            key: item.key,
-                        }
-                    })
-            }
-            return (
-                <Select
-                    {...props}
-                    options={options}
-                    mode="multiple"
-                    allowClear
-                ></Select>
-            )
-        }
+        // this.schema.base_domain_key.renderInput = (
+        //     item,
+        //     tempData,
+        //     props,
+        //     action,
+        //     form
+        // ) => {
+        //     let options = []
+        //     this.infoForm = props.form
+        //     if (
+        //         props.form &&
+        //         props.form.current &&
+        //         (props.form.current.getFieldsValue().public === "true" ||
+        //             props.form.current.getFieldsValue().public === "false")
+        //     ) {
+        //         options = props.domainarry
+        //             .filter((item) => {
+        //                 let result =
+        //                     item.public.toString() ===
+        //                     props.form.current
+        //                         .getFieldsValue()
+        //                         .public.toString()
+        //                 // console.log(result)
+        //                 return result
+        //             })
+        //             .map((item, index) => {
+        //                 return { value: item.key, label: item.name }
+        //             })
+        //     } else {
+        //         options = item.props.domainarry
+        //             .filter((item) => {
+        //                 if (
+        //                     tempData.public === true ||
+        //                     tempData.public === false
+        //                 )
+        //                     return item.public === tempData.public
+        //                 else {
+        //                     return true
+        //                 }
+        //             })
+        //             .map((item, index) => {
+        //                 return {
+        //                     value: item.key,
+        //                     label: item.name,
+        //                     key: item.key,
+        //                 }
+        //             })
+        //     }
+        //     return (
+        //         <Select
+        //             {...props}
+        //             options={options}
+        //             mode="multiple"
+        //             allowClear
+        //         ></Select>
+        //     )
+        // }
     }
 
     handleSetYamlEditVisible = (visible) => {
