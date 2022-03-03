@@ -381,6 +381,11 @@ class BaseList extends EditPage {
                                             dataIndex: "question_extend",
                                             key: "question_extend",
                                         }
+                                        let recommend_text = {
+                                            title: "推荐问",
+                                            dataIndex: "recommend_text",
+                                            key: "recommend_text",
+                                        }
                                         let question_standard = {
                                             title: "标准问",
                                             dataIndex: "question_standard",
@@ -414,6 +419,7 @@ class BaseList extends EditPage {
                                             global_key,
                                             answer,
                                             question_extend,
+                                            recommend_text,
                                             info,
                                         ]
                                         await exportDataByTemplate(
