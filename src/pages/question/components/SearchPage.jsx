@@ -330,13 +330,21 @@ function renderTitle(
                             await schemas.question.service.patch(
                                 {
                                     id: item.id,
+                                    domain_key:
+                                        props.record.domain_key ||
+                                        props.record.key,
                                     question_extend: unique(question_extend),
                                 },
                                 schemas.question.schema
                             )
                             if (props.type === "history") {
                                 await schemas.searchHistory.service.patch(
-                                    { id: props.record.id },
+                                    {
+                                        id: props.record.id,
+                                        domain_key:
+                                            props.record.domain_key ||
+                                            props.record.key,
+                                    },
                                     undefined,
                                     true
                                 )
