@@ -3,20 +3,33 @@ import DataList from "@/outter/fr-schema-antd-utils/src/components/Page/DataList
 import schemas from "@/schemas"
 import schema from "@/schemas/mark/add"
 import React from "react"
-import { Button, Popconfirm, Divider, message, AutoComplete, Input } from "antd"
+import {
+    Button,
+    Popconfirm,
+    Divider,
+    message,
+    AutoComplete,
+    Input,
+    List,
+    Card,
+    Tag,
+    Modal,
+} from "antd"
 import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
 import frSchema from "@/outter/fr-schema/src"
 import { listToDict } from "@/outter/fr-schema/src/dict"
 import { LoadingOutlined } from "@ant-design/icons"
 import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
+import { downloadFile } from "@/utils/minio"
+import { formatData } from "@/utils/utils"
 
 const { utils } = frSchema
 @connect(({ global }) => ({
     dict: global.dict,
 }))
 @Form.create()
-class List extends DataList {
+class Lists extends DataList {
     constructor(props) {
         super(props, {
             showSelect: true,
@@ -42,6 +55,200 @@ class List extends DataList {
         })
     }
 
+    async handleAddBefore(args) {
+        let searchData = await schemas.question.service.search({
+            compatibility: 0.9,
+            search: args.question_standard,
+            limit: 10,
+            project_id: args.project_id,
+            domain_key: this.state.infoData.domain_key,
+        })
+        // this.handleAdd(args)
+        if (
+            searchData.list &&
+            searchData.list.length &&
+            searchData.list[0].compatibility > 0.9
+        ) {
+            this.setState({
+                visibleModalAlreadyHave: true,
+                alreadyHaveLoading: false,
+                searchData: searchData.list,
+                addArgs: args,
+            })
+        } else {
+            this.handleAdd(args, this.schema)
+        }
+    }
+
+    renderTitle(item) {
+        return (
+            <div style={{ width: "100%", display: "flex" }}>
+                <span style={{ flex: 1 }}>
+                    <span style={{ fontWeight: "bold" }}>
+                        {item.question_standard}
+                    </span>
+                    {item.label && item.label.length !== 0 && (
+                        <span style={{ marginLeft: "10px" }}>
+                            {item.label.map((item) => {
+                                return (
+                                    <Tag
+                                        style={{ marginLeft: "3px" }}
+                                        color="#2db7f5"
+                                    >
+                                        {item}
+                                    </Tag>
+                                )
+                            })}
+                        </span>
+                    )}
+                </span>
+            </div>
+        )
+    }
+
+    renderContent(item) {
+        return (
+            <>
+                {/* {this.renderTitle(item)} */}
+                <div style={{ color: "rgba(0,0,0,0.85)" }}>答案:</div>
+
+                <div
+                    style={{
+                        p: {
+                            marginTop: 0,
+                            marginBottom: 0,
+                        },
+                        marginRight: "10px",
+                        verticalAlign: "top",
+                        display: "inline-block",
+                        color: "rgba(0,0,0,0.85)",
+                    }}
+                    dangerouslySetInnerHTML={{
+                        __html:
+                            item.answer &&
+                            item.answer.replace(
+                                /<p>/g,
+                                "<p style='margin:0;'>"
+                            ),
+                    }}
+                />
+                {item.attachment && item.attachment.length !== 0 && (
+                    <>
+                        <div>附件</div>
+                        {item.attachment.map((itemStr, index) => {
+                            let item = JSON.parse(itemStr)
+                            return (
+                                <a
+                                    style={{
+                                        marginRight: "20px",
+                                    }}
+                                    onClick={() => {
+                                        let href = downloadFile(
+                                            item.bucketName,
+                                            item.fileName,
+                                            item.url
+                                        )
+                                    }}
+                                >
+                                    {item.fileName}
+                                </a>
+                            )
+                        })}
+                    </>
+                )}
+                <div
+                    style={{
+                        width: "100%",
+                        marginRight: "10px",
+
+                        marginTop: "5px",
+                        display: "flex",
+                        // marginLeft: "4.2%",
+                        // color: "rgba(0,0,0,0.85)",
+                        // display: "inline-block",
+                    }}
+                >
+                    <div
+                        style={{
+                            flex: 1,
+                            display: "inline-block",
+                        }}
+                    >
+                        {item.match_question_title === item.question_standard
+                            ? "匹配标准文本："
+                            : "匹配扩展文本："}
+                        {item.match_question_title}
+                    </div>
+                    <div style={{ width: "130px", marginRight: "10px" }}>
+                        <span
+                            style={{
+                                width: "130px",
+                                textAlign: "right",
+                                display: "inline-block",
+                            }}
+                        >
+                            匹配度：
+                            {item.compatibility === 1
+                                ? "1.00000"
+                                : formatData(item.compatibility || 0, 5)}
+                        </span>
+                    </div>
+                </div>
+            </>
+        )
+    }
+
+    renderAlreadyHave() {
+        return (
+            <Modal
+                visible={this.state.visibleModalAlreadyHave}
+                // visible={true}
+                width={"800px"}
+                onCancel={() =>
+                    this.setState({ visibleModalAlreadyHave: false })
+                }
+                confirmLoading={this.state.alreadyHaveLoading}
+                onOk={async () => {
+                    this.setState({ alreadyHaveLoading: true })
+                    await this.handleAdd(this.state.addArgs, this.schema)
+                    this.setState({
+                        visibleModalAlreadyHave: false,
+                        alreadyHaveLoading: true,
+                    })
+                }}
+                title={"问题库中存在相似问，是否继续添加"}
+            >
+                <Card>
+                    <List
+                        style={{
+                            maxHeight: "600px",
+                            overflowY: "auto",
+                            position: "relative",
+                        }}
+                        itemLayout="horizontal"
+                        dataSource={this.state.searchData}
+                        renderItem={(item) => (
+                            <List.Item>
+                                <List.Item.Meta
+                                    title={this.renderTitle(item)}
+                                    description={this.renderContent(item)}
+                                />
+                                {/* <div>{renderDescription(item)}</div> */}
+                            </List.Item>
+                        )}
+                    />
+                </Card>
+            </Modal>
+        )
+    }
+
+    renderExtend() {
+        return (
+            <>
+                {this.state.visibleModalAlreadyHave && this.renderAlreadyHave()}
+            </>
+        )
+    }
     async componentDidMount() {
         let project = await schemas.project.service.get({
             limit: 10000,
@@ -172,8 +379,8 @@ class List extends DataList {
         const { visibleModal, infoData, action } = this.state
         const updateMethods = {
             handleVisibleModal: this.handleVisibleModal.bind(this),
-            handleUpdate: this.handleAdd.bind(this),
-            handleAdd: this.handleAdd.bind(this),
+            handleUpdate: this.handleAddBefore.bind(this),
+            handleAdd: this.handleAddBefore.bind(this),
         }
 
         return (
@@ -434,4 +641,4 @@ class List extends DataList {
     }
 }
 
-export default List
+export default Lists

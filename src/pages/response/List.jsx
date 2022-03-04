@@ -370,6 +370,8 @@ class List extends ListPage {
                         <Form.Item
                             label="实体范围"
                             name="expect_entity_scope"
+                            extra="预期实体范围"
+
                             // rules={[{ required: true, message: "请输入实体范围" }]}
                         >
                             <Input placeholder="请输入实体范围" />

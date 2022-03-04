@@ -56,7 +56,8 @@ const Minio = require("minio")
 class BaseList extends EditPage {
     constructor(props) {
         const importTemplateUrl = (
-            BASE_PATH + "/import/掌数_知料_知识库信息导入.xlsx"
+            window.location.href.split("project/list")[0] +
+            "/import/掌数_知料_知识库信息导入.xlsx"
         ).replace("//", "/")
         let config =
             props.record.config && props.record.config.info_schema
@@ -621,6 +622,7 @@ class BaseList extends EditPage {
         ) {
             this.setState({
                 visibleModalAlreadyHave: true,
+                alreadyHaveLoading: false,
                 searchData: searchData.list,
                 addArgs: args,
             })
@@ -638,9 +640,14 @@ class BaseList extends EditPage {
                 onCancel={() =>
                     this.setState({ visibleModalAlreadyHave: false })
                 }
+                confirmLoading={this.state.alreadyHaveLoading}
                 onOk={async () => {
+                    this.setState({ alreadyHaveLoading: true })
                     await this.handleAdd(this.state.addArgs, this.schema)
-                    this.setState({ visibleModalAlreadyHave: false })
+                    this.setState({
+                        visibleModalAlreadyHave: false,
+                        alreadyHaveLoading: false,
+                    })
                 }}
                 title={"问题库中存在相似问，是否继续添加"}
             >

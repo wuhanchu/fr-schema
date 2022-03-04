@@ -50,6 +50,7 @@ const schema = {
             autoSize: { minRows: 2, maxRows: 6 },
         },
         searchPrefix: "like",
+        extra: "预期实体范围",
         required: true,
     },
 
