@@ -627,7 +627,11 @@ class BaseList extends EditPage {
                 addArgs: args,
             })
         } else {
-            this.handleAdd(args, this.schema)
+            // this.setState({loadingSubmit: true})
+            await this.handleAdd(
+                { ...args, domain_key: this.props.record.domain_key },
+                this.schema
+            )
         }
     }
 
@@ -643,7 +647,13 @@ class BaseList extends EditPage {
                 confirmLoading={this.state.alreadyHaveLoading}
                 onOk={async () => {
                     this.setState({ alreadyHaveLoading: true })
-                    await this.handleAdd(this.state.addArgs, this.schema)
+                    await this.handleAdd(
+                        {
+                            ...this.state.addArgs,
+                            domain_key: this.props.record.domain_key,
+                        },
+                        this.schema
+                    )
                     this.setState({
                         visibleModalAlreadyHave: false,
                         alreadyHaveLoading: false,

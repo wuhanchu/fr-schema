@@ -76,7 +76,10 @@ class Lists extends DataList {
                 addArgs: args,
             })
         } else {
-            this.handleAdd(args, this.schema)
+            await this.handleAdd(
+                { ...args, domain_key: this.state.infoData.domain_key },
+                this.schema
+            )
         }
     }
 
@@ -210,7 +213,13 @@ class Lists extends DataList {
                 confirmLoading={this.state.alreadyHaveLoading}
                 onOk={async () => {
                     this.setState({ alreadyHaveLoading: true })
-                    await this.handleAdd(this.state.addArgs, this.schema)
+                    await this.handleAdd(
+                        {
+                            ...this.state.addArgs,
+                            domain_key: this.state.infoData.domain_key,
+                        },
+                        this.schema
+                    )
                     this.setState({
                         visibleModalAlreadyHave: false,
                         alreadyHaveLoading: true,
