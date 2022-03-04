@@ -10,6 +10,7 @@ import {
     MenuFoldOutlined,
     PlaySquareOutlined,
     SyncOutlined,
+    RedoOutlined,
 } from "@ant-design/icons"
 import utils from "@/outter/fr-schema-antd-utils/src"
 const { url } = utils.utils
@@ -96,41 +97,56 @@ class Chat extends React.PureComponent {
                 allData.filter((item) => item.indexOf(value) >= 0),
         })
     }
+
     render() {
-        let { showInput, showIntentFlow, collapse, conversationId } = this.state
+        let {
+            showInput,
+            showIntentFlow,
+            collapse,
+            conversationId,
+            showRedoOutlined,
+        } = this.state
         return (
             <Spin tip="加载中..." spinning={this.state.loading}>
                 <div style={styles.contentSt}>
                     <div style={styles.chatView}>
-                        {showIntentFlow && (
-                            <div
-                                style={{
-                                    display: "flex",
-                                    justifyContent: "flex-end",
-                                    width: "100%",
-                                    fontSize: "21px",
-                                    marginBottom: "10px",
-                                }}
-                            >
-                                {collapse ? (
-                                    <MenuFoldOutlined
-                                        onClick={(_) =>
-                                            this.setState({ collapse: false })
+                        <div
+                            style={{
+                                display: "flex",
+                                justifyContent: "flex-end",
+                                width: "100%",
+                                fontSize: "21px",
+                                marginBottom: "10px",
+                            }}
+                        >
+                            {showRedoOutlined && (
+                                <RedoOutlined
+                                    style={{ marginRight: "8px" }}
+                                    onClick={() => {
+                                        this.setState({ loading: true })
+                                        this.init()
+                                    }}
+                                />
+                            )}
+                            {showIntentFlow && collapse ? (
+                                <MenuFoldOutlined
+                                    onClick={(_) =>
+                                        this.setState({ collapse: false })
+                                    }
+                                />
+                            ) : (
+                                <MenuUnfoldOutlined
+                                    onClick={(_) => {
+                                        if (conversationId) {
+                                            this.setState({
+                                                collapse: true,
+                                            })
                                         }
-                                    />
-                                ) : (
-                                    <MenuUnfoldOutlined
-                                        onClick={(_) => {
-                                            if (conversationId) {
-                                                this.setState({
-                                                    collapse: true,
-                                                })
-                                            }
-                                        }}
-                                    />
-                                )}
-                            </div>
-                        )}
+                                    }}
+                                />
+                            )}
+                        </div>
+
                         {this.renderChatView()}
                         {showInput && this.renderInput()}
                     </div>
@@ -143,7 +159,6 @@ class Chat extends React.PureComponent {
     // 聊天内容展示
     renderChatView() {
         let { messageList, roomHeight } = this.state
-        console.log("renderChatView")
         return (
             <div
                 style={{ ...styles.leaveView, height: roomHeight }}
@@ -161,7 +176,6 @@ class Chat extends React.PureComponent {
 
     //  机器人
     renderService(item, index) {
-        console.log(item)
         return (
             <div style={styles.leaveItem} key={`leave${index}`}>
                 <img src={robotSvg} alt="" style={styles.avatar} />
@@ -442,6 +456,7 @@ class Chat extends React.PureComponent {
 
     // 输入框点击回车
     onInputEnter = async (event) => {
+        clearTimeout(this.timeout)
         this.setState({ open: false })
         if (event.which === 13) {
             await this.onSendMsg()

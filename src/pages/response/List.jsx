@@ -116,6 +116,11 @@ class List extends ListPage {
                     key: "intent_key",
                 },
                 {
+                    title: "实体范围",
+                    dataIndex: "expect_entity_scope",
+                    key: "expect_entity_scope",
+                },
+                {
                     title: "回复文本",
                     dataIndex: "template_text",
                     key: "template_text",
@@ -177,6 +182,9 @@ class List extends ListPage {
                     },
                     intent_key: {
                         title: "意图",
+                    },
+                    expect_entity_scope: {
+                        title: "实体范围",
                     },
                     template_text: {
                         title: "回复文本",
@@ -290,6 +298,7 @@ class List extends ListPage {
                 visible={visibleModal}
                 destroyOnClose
                 title={"回应信息"}
+                bodyStyle={{ height: "600px", overflow: "auto" }}
                 onCancel={(_) => this.setState({ visibleModal: false })}
                 onOk={(_) => this.handleSave()}
             >
@@ -357,6 +366,13 @@ class List extends ListPage {
                                 treeData={intentList}
                                 treeDefaultExpandAll
                             />
+                        </Form.Item>
+                        <Form.Item
+                            label="实体范围"
+                            name="expect_entity_scope"
+                            // rules={[{ required: true, message: "请输入实体范围" }]}
+                        >
+                            <Input placeholder="请输入实体范围" />
                         </Form.Item>
                         <Form.Item
                             colon={false}

@@ -15,6 +15,7 @@ class ConversationDetail extends Chat {
             roomHeight: this.props.roomHeight || "100vh",
             collapse: false,
             loading: true,
+            showRedoOutlined: true,
         }
     }
 

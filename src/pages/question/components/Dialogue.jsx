@@ -113,6 +113,68 @@ class Dialogue extends Chat {
         )
     }
 
+    debounce(otherObj, value) {
+        // this.timeout = null;
+        let _this = this
+        console.log(otherObj)
+        // return  ()=> {
+
+        // }
+        if (_this.timeout) {
+            clearTimeout(_this.timeout)
+        }
+        console.log("data")
+        _this.timeout = setTimeout(async () => {
+            console.log("执行")
+            let data = await schemas.entity.service.get({
+                ...otherObj,
+                name: "like.*" + value + "*",
+                select: "id,name",
+            })
+            let dataSource = []
+            data.list.map((item) => {
+                dataSource.push(item.name)
+            })
+            if (_this.state.inputValue === value) {
+                _this.setState({
+                    open: true,
+                    dataSource,
+                })
+            }
+        }, 300)
+    }
+
+    handleChange = async (value) => {
+        const { allData, messageList } = this.state
+        if (
+            messageList.length - 1 > -1 &&
+            messageList[messageList.length - 1].expect_entity_scope
+        ) {
+            this.setState({
+                inputValue: value,
+            })
+            let otherStr = messageList[
+                messageList.length - 1
+            ].expect_entity_scope
+                .replace(/&/g, '","')
+                .replace(/=/g, '":"')
+            let otherObj = JSON.parse('{"' + otherStr + '"}')
+            if (value) this.debounce(otherObj, value)
+            else {
+                this.setState({ open: false })
+            }
+        } else {
+            this.setState({
+                inputValue: value,
+                open: true,
+                dataSource:
+                    value &&
+                    allData &&
+                    allData.filter((item) => item.indexOf(value) >= 0),
+            })
+        }
+    }
+
     // 输入框扩展
     inputExtra() {
         let { defaultProject, isSpin, isFlow, slot, showSetting } = this.state
@@ -414,7 +476,6 @@ class Dialogue extends Chat {
 
     // 机器人回复扩展
     renderLeftExtra(item, index) {
-        console.log(item)
         let { messageList, resultFlowLength } = this.state
         return (
             item.buttons && (
@@ -631,7 +692,7 @@ class Dialogue extends Chat {
             type,
             domain_key,
         } = this.state
-        console.log("大松", value)
+
         // 无内容或者只存在空格 不发送
         if (!value && isSpin === true) {
             return

@@ -42,6 +42,17 @@ const schema = {
         style: { width: "500px" },
         search: false,
     },
+    expect_entity_scope: {
+        title: "实体范围",
+        sorter: true,
+        style: { width: "500px" },
+        props: {
+            autoSize: { minRows: 2, maxRows: 6 },
+        },
+        searchPrefix: "like",
+        required: true,
+    },
+
     template_text: {
         title: "回复文本",
         type: schemaFieldType.TextArea,

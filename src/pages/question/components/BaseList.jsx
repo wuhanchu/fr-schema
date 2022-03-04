@@ -19,12 +19,20 @@ import {
     DatePicker,
     Select,
     Input,
+    List,
+    Card,
+    Tag,
 } from "antd"
+
 import React from "react"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import * as _ from "lodash"
 import clone from "clone"
-import { DeleteOutlined, UploadOutlined } from "@ant-design/icons"
+import {
+    DeleteOutlined,
+    UploadOutlined,
+    ExclamationCircleOutlined,
+} from "@ant-design/icons"
 import { exportDataByTemplate } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
 import { checkedAndUpload } from "@/utils/minio"
 import frSchema from "@/outter/fr-schema/src"
@@ -33,6 +41,8 @@ import { connect } from "dva"
 import EditPage from "@/components/editTable/EditPage"
 const { actions } = frSchema
 
+import { downloadFile } from "@/utils/minio"
+import { formatData } from "@/utils/utils"
 const { RangePicker } = DatePicker
 const { decorateList } = frSchema
 const confirm = Modal.confirm
@@ -231,6 +241,124 @@ class BaseList extends EditPage {
                 </AutoComplete>
             )
         }
+    }
+
+    renderTitle(item) {
+        return (
+            <div style={{ width: "100%", display: "flex" }}>
+                <span style={{ flex: 1 }}>
+                    <span style={{ fontWeight: "bold" }}>
+                        {item.question_standard}
+                    </span>
+                    {item.label && item.label.length !== 0 && (
+                        <span style={{ marginLeft: "10px" }}>
+                            {item.label.map((item) => {
+                                return (
+                                    <Tag
+                                        style={{ marginLeft: "3px" }}
+                                        color="#2db7f5"
+                                    >
+                                        {item}
+                                    </Tag>
+                                )
+                            })}
+                        </span>
+                    )}
+                </span>
+            </div>
+        )
+    }
+
+    renderContent(item) {
+        return (
+            <>
+                {/* {this.renderTitle(item)} */}
+                <div style={{ color: "rgba(0,0,0,0.85)" }}>答案:</div>
+
+                <div
+                    style={{
+                        p: {
+                            marginTop: 0,
+                            marginBottom: 0,
+                        },
+                        marginRight: "10px",
+                        verticalAlign: "top",
+                        display: "inline-block",
+                        color: "rgba(0,0,0,0.85)",
+                    }}
+                    dangerouslySetInnerHTML={{
+                        __html:
+                            item.answer &&
+                            item.answer.replace(
+                                /<p>/g,
+                                "<p style='margin:0;'>"
+                            ),
+                    }}
+                />
+                {item.attachment && item.attachment.length !== 0 && (
+                    <>
+                        <div>附件</div>
+                        {item.attachment.map((itemStr, index) => {
+                            let item = JSON.parse(itemStr)
+                            return (
+                                <a
+                                    style={{
+                                        marginRight: "20px",
+                                    }}
+                                    onClick={() => {
+                                        let href = downloadFile(
+                                            item.bucketName,
+                                            item.fileName,
+                                            item.url
+                                        )
+                                    }}
+                                >
+                                    {item.fileName}
+                                </a>
+                            )
+                        })}
+                    </>
+                )}
+                <div
+                    style={{
+                        width: "100%",
+                        marginRight: "10px",
+
+                        marginTop: "5px",
+                        display: "flex",
+                        // marginLeft: "4.2%",
+                        // color: "rgba(0,0,0,0.85)",
+                        // display: "inline-block",
+                    }}
+                >
+                    <div
+                        style={{
+                            flex: 1,
+                            display: "inline-block",
+                        }}
+                    >
+                        {item.match_question_title === item.question_standard
+                            ? "匹配标准文本："
+                            : "匹配扩展文本："}
+                        {item.match_question_title}
+                    </div>
+                    <div style={{ width: "130px", marginRight: "10px" }}>
+                        <span
+                            style={{
+                                width: "130px",
+                                textAlign: "right",
+                                display: "inline-block",
+                            }}
+                        >
+                            匹配度：
+                            {item.compatibility === 1
+                                ? "1.00000"
+                                : formatData(item.compatibility || 0, 5)}
+                        </span>
+                    </div>
+                </div>
+            </>
+        )
     }
 
     // 搜索
@@ -477,6 +605,69 @@ class BaseList extends EditPage {
         )
     }
 
+    async handleAddBefore(args) {
+        let searchData = await schemas.question.service.search({
+            compatibility: 0.9,
+            search: args.question_standard,
+            limit: 10,
+            project_id: this.props.record.id,
+            domain_key: this.props.record.domain_key,
+        })
+        // this.handleAdd(args)
+        if (
+            searchData.list &&
+            searchData.list.length &&
+            searchData.list[0].compatibility > 0.9
+        ) {
+            this.setState({
+                visibleModalAlreadyHave: true,
+                searchData: searchData.list,
+                addArgs: args,
+            })
+        } else {
+            this.handleAdd(args, this.schema)
+        }
+    }
+
+    renderAlreadyHave() {
+        return (
+            <Modal
+                visible={this.state.visibleModalAlreadyHave}
+                // visible={true}
+                width={"800px"}
+                onCancel={() =>
+                    this.setState({ visibleModalAlreadyHave: false })
+                }
+                onOk={async () => {
+                    await this.handleAdd(this.state.addArgs, this.schema)
+                    this.setState({ visibleModalAlreadyHave: false })
+                }}
+                title={"问题库中存在相似问，是否继续添加"}
+            >
+                <Card>
+                    <List
+                        style={{
+                            maxHeight: "600px",
+                            overflowY: "auto",
+                            position: "relative",
+                        }}
+                        itemLayout="horizontal"
+                        dataSource={this.state.searchData}
+                        renderItem={(item) => (
+                            <List.Item>
+                                <List.Item.Meta
+                                    title={this.renderTitle(item)}
+                                    description={this.renderContent(item)}
+                                />
+                                {/* <div>{renderDescription(item)}</div> */}
+                            </List.Item>
+                        )}
+                    />
+                </Card>
+            </Modal>
+        )
+    }
+
     /**
      * 渲染信息弹出框
      * @param customProps 定制的属性
@@ -505,7 +696,7 @@ class BaseList extends EditPage {
                 this.editData(data)
                 this.setState({ visibleModal: false })
             },
-            handleAdd: this.handleAdd.bind(this),
+            handleAdd: this.handleAddBefore.bind(this),
         }
 
         let infoProps = {}
@@ -884,6 +1075,7 @@ class BaseList extends EditPage {
                         </Spin>
                     </Modal>
                 )}
+                {this.state.visibleModalAlreadyHave && this.renderAlreadyHave()}
                 {this.state.visibleMatchDel && this.renderMatchDelModal()}
             </>
         )
