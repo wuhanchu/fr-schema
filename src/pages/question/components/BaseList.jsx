@@ -55,12 +55,10 @@ const Minio = require("minio")
 @Form.create()
 class BaseList extends EditPage {
     constructor(props) {
-        const importTemplateUrl = (
-            window.location.href
-                .replace("/frame", "")
-                .split("project/list")[0] +
-            "/import/掌数_知料_知识库信息导入.xlsx"
-        ).replace("//", "/")
+        const importTemplateUrl = "/import/掌数_知料_知识库信息导入.xlsx".replace(
+            "//",
+            "/"
+        )
         let config =
             props.record.config && props.record.config.info_schema
                 ? props.record.config.info_schema
@@ -76,6 +74,12 @@ class BaseList extends EditPage {
                 )
             }
         })
+        console.log(
+            window.location.href
+                .replace("/frame", "")
+                .split("project/list")[0] +
+                "import/掌数_知料_知识库信息导入.xlsx"
+        )
         super(props, {
             operateWidth: 170,
             schema: clone({ ...schemas.question.schema, ...config }),
@@ -1144,8 +1148,19 @@ class BaseList extends EditPage {
                 renderInput: () => {
                     return (
                         <a
-                            href="../import/掌数_知料_知识库信息导入.xlsx"
-                            download
+                            // href={window.location.href
+                            //     .replace("/frame", "")
+                            //     .split("project/list")[0]
+                            //  +"import/掌数_知料_知识库信息导入.xlsx"}
+                            // download
+                            onClick={async () => {
+                                await exportDataByTemplate(
+                                    "掌数_知料_知识库信息导入",
+                                    [],
+                                    [],
+                                    "/import/掌数_知料_知识库信息导入.xlsx"
+                                )
+                            }}
                         >
                             <Button>下载模板文件</Button>
                         </a>
