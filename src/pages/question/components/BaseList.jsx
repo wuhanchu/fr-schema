@@ -557,7 +557,7 @@ class BaseList extends EditPage {
                                             this.props.record.name,
                                             data,
                                             columns,
-                                            this.meta.importTemplateUrl
+                                            "/import/掌数_知料_知识库信息导入.xlsx"
                                         )
                                         this.setState({ exportLoading: false })
                                     }
