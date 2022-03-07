@@ -52,7 +52,9 @@ class Chat extends React.PureComponent {
         ) {
             await schemas.hotWord.service
                 .getRecentHotQuestion({
-                    domain_key: this.props.record && this.props.record.key,
+                    domain_key:
+                        (this.props.record && this.props.record.key) ||
+                        "default",
                     project_id:
                         this.props.record && this.props.record.project_id,
                     limit: 500,
@@ -70,7 +72,7 @@ class Chat extends React.PureComponent {
                 .getRecentHotQuestion({
                     domain_key: url.getUrlParams("domain_key")
                         ? url.getUrlParams("domain_key")
-                        : undefined,
+                        : "default",
                     project_id: url.getUrlParams("project_id")
                         ? url.getUrlParams("project_id")
                         : undefined,
@@ -110,42 +112,50 @@ class Chat extends React.PureComponent {
             <Spin tip="加载中..." spinning={this.state.loading}>
                 <div style={styles.contentSt}>
                     <div style={styles.chatView}>
-                        <div
-                            style={{
-                                display: "flex",
-                                justifyContent: "flex-end",
-                                width: "100%",
-                                fontSize: "21px",
-                                marginBottom: "10px",
-                            }}
-                        >
-                            {showRedoOutlined && (
-                                <RedoOutlined
-                                    style={{ marginRight: "8px" }}
-                                    onClick={() => {
-                                        this.setState({ loading: true })
-                                        this.init()
-                                    }}
-                                />
-                            )}
-                            {showIntentFlow && collapse ? (
-                                <MenuFoldOutlined
-                                    onClick={(_) =>
-                                        this.setState({ collapse: false })
-                                    }
-                                />
-                            ) : (
-                                <MenuUnfoldOutlined
-                                    onClick={(_) => {
-                                        if (conversationId) {
-                                            this.setState({
-                                                collapse: true,
-                                            })
-                                        }
-                                    }}
-                                />
-                            )}
-                        </div>
+                        {(showRedoOutlined || showIntentFlow) && (
+                            <div
+                                style={{
+                                    display: "flex",
+                                    justifyContent: "flex-end",
+                                    width: "100%",
+                                    fontSize: "21px",
+                                    marginBottom: "10px",
+                                }}
+                            >
+                                {showRedoOutlined && (
+                                    <RedoOutlined
+                                        style={{ marginRight: "8px" }}
+                                        onClick={() => {
+                                            this.setState({ loading: true })
+                                            this.init()
+                                        }}
+                                    />
+                                )}
+                                {showIntentFlow ? (
+                                    collapse ? (
+                                        <MenuFoldOutlined
+                                            onClick={(_) =>
+                                                this.setState({
+                                                    collapse: false,
+                                                })
+                                            }
+                                        />
+                                    ) : (
+                                        <MenuUnfoldOutlined
+                                            onClick={(_) => {
+                                                if (conversationId) {
+                                                    this.setState({
+                                                        collapse: true,
+                                                    })
+                                                }
+                                            }}
+                                        />
+                                    )
+                                ) : (
+                                    <></>
+                                )}
+                            </div>
+                        )}
 
                         {this.renderChatView()}
                         {showInput && this.renderInput()}

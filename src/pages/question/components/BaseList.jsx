@@ -56,7 +56,9 @@ const Minio = require("minio")
 class BaseList extends EditPage {
     constructor(props) {
         const importTemplateUrl = (
-            window.location.href.split("project/list")[0] +
+            window.location.href
+                .replace("/frame", "")
+                .split("project/list")[0] +
             "/import/掌数_知料_知识库信息导入.xlsx"
         ).replace("//", "/")
         let config =
