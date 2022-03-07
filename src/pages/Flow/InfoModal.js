@@ -385,6 +385,7 @@ export class PureInfoModal extends PureComponent {
                                     config: clone(config),
                                 },
                             })
+                            message.success("成功")
                         }}
                     >
                         重新生成KEY

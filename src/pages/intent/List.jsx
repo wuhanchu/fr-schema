@@ -8,6 +8,9 @@ import { Modal, Button, message } from "antd"
 import frSchema from "@/outter/fr-schema/src"
 import { exportData } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
+import { getTree } from "@/pages/Flow/methods"
+// import clone from 'clone'
+
 import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
 import ImportModal from "@/outter/fr-schema-antd-utils/src/components/modal/ImportModal"
 
@@ -353,19 +356,41 @@ class List extends ListPage {
             name: undefined,
             logical_path: undefined,
         })
+        let fatherOther = []
+        res.list.map((item) => {
+            if (item.logical_path.indexOf(".") > -1) {
+                let havePath = res.list.filter((items) => {
+                    return (
+                        items.logical_path ===
+                            item.logical_path.split(".")[0] &&
+                        item.domain_key === items.domain_key
+                    )
+                })
+                // if()
+                console.log(havePath)
+                if (!havePath.length) {
+                    this.state.data.list.push({
+                        ...item,
+                        domain_key_remark: this.props.dict.domain[
+                            item.domain_key
+                        ].name,
+                    })
+                }
+                console.log("data", havePath)
+            }
+        })
+        console.log(this.state.data.list)
         this.setState({ listLoading: true })
         let list = this.state.data.list.map((record) => {
             let list = res.list.filter((itemList) => {
-                if (!itemList.logical_path) {
-                    console.log("itemList", itemList)
-                }
-                return (
+                // console.log(itemList)
+                let isTop =
                     itemList.logical_path &&
                     itemList.logical_path.indexOf(record.logical_path + ".") ===
                         0 &&
                     itemList.logical_path !== record.logical_path &&
                     itemList.domain_key === record.domain_key
-                )
+                return isTop
             })
             list = decorateList(list, this.schema)
             list = list.sort(this.sortUp)
@@ -400,6 +425,12 @@ class List extends ListPage {
             return record
             // }
         })
+        // console.log(res.list)
+        // res.list = res.list.map((item)=>{
+        //     return {...item, itemKey: item.key}
+        // })
+        // let list  = getTree(res.list)
+        // console.log(list)
         const { data } = this.state
         let { expandedRowKeys } = this.state
         this.setState({ expandedRowKeys: [...expandedRowKeys] })

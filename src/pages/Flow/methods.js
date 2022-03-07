@@ -618,73 +618,15 @@ export function getTree(args) {
             return { ...item, value: item.key, title: item.name }
         })
     let record = []
-    // res &&
-    //     res
-    //         .filter((item) => {
-    //             if (item.logical_path && item.logical_path.indexOf(".") < 0) {
-    //                 record.push(item)
-    //                 return true
-    //             }
-    //             return false
-    //         })
-    //         .map((item) => {
-    //             let data = res.filter(
-    //                 (one) =>{
-    //                     console.log(one, item)
-    //                     return one.logical_path && one.logical_path.indexOf(item.logical_path ) > -1
-    //                     // one.logical_path.indexOf(record.logical_path) === 0 &&
-    //                     // one.logical_path !== item.logical_path &&
-    //                     // one.domain_key === item.domain_key
-    //                 }
-    //             )
-    //             let list = decorateList(data, {})
-    //             list = list.sort(sortUp)
-    //             let result = []
-    //             let arr = []
-    //             for (let i = 0; i < list.length; i++) {
-    //                 // 获取当前意图的所有上层意图
-    //                 arr = list.filter((value) => {
-    //                     console.log(value.domain_key, list[i].domain_key)
-    //                     return (
-    //                         value.logical_path !== list[i].logical_path &&
-    //                         list[i].logical_path.includes(
-    //                             value.logical_path + "."
-    //                         )&&
-    //                         list[i].domain_key === value.domain_key
-    //                     )
-    //                 })
-    //                 // 存在上层意图则标明当前遍历意图为其他意图的子意图
-    //                 if (arr.length) {
-    //                     // 获取当前遍历意图的父意图 并加入其父意图的子集中
-    //                     arr = arr.sort(sortUp)
-    //                     let index = list.findIndex((value) => {
-    //                         return value.id === arr[0].id
-    //                     })
-    //                     list[index].children.push(list[i])
-    //                 } else {
-    //                     // 不存在上层意图表示当前遍历意图为最高子意图
-    //                     result.push(list[i])
-    //                 }
-    //             }
-    //             // record.push(result)
-    //             // record.children = [...result]
-    //         })
     let sortBy = res.filter((itemList) => {
-        if (!itemList.logical_path) {
-            console.log("itemList", itemList)
-        }
+        console.log(itemList)
         return itemList.logical_path && itemList.logical_path.indexOf(".") < 0
     })
     sortBy = sortBy.map((item) => {
         return { ...item, label: item.name + "(" + item.domain_key + ")" }
     })
-    console.log("sortBy", sortBy)
-    console.log("res", res)
     let list = sortBy.map((record) => {
         let list = res.filter((itemList) => {
-            if (!itemList.logical_path) {
-                console.log("itemList", itemList)
-            }
             return (
                 itemList.logical_path &&
                 itemList.logical_path.indexOf(record.logical_path + ".") ===
@@ -693,10 +635,8 @@ export function getTree(args) {
                 itemList.domain_key === record.domain_key
             )
         })
-        console.log("过滤", list)
         list = decorateList(list, {})
         list = list.sort(sortUp)
-        console.log("排序", list)
         let result = []
         let arr = []
         for (let i = 0; i < list.length; i++) {
@@ -718,15 +658,11 @@ export function getTree(args) {
                 list[index].children.push(list[i])
             } else {
                 // 不存在上层意图表示当前遍历意图为最高子意图、
-                console.log("数据, ", list[i])
                 result.push(list[i])
             }
             // record.children = [...result]
-            console.log("result是", result)
         }
-        console.log("外层的", result)
         record.children = [...result]
-        console.log(record)
         return record
         // }
     })

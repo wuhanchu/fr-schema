@@ -56,57 +56,58 @@ class List extends ListPage {
         let intentList = getTree(intent.list)
 
         let project = await schemas.project.service.get({ limit: 9999 })
+        console.log(project)
         this.schema.project_id.dict = listToDict(project.list, "", "id", "name")
         this.schema.project_id.props.projectarry = project.list
-        this.schema.project_id.renderInput = (
-            item,
-            tempData,
-            props,
-            action,
-            form
-        ) => {
-            let options = []
-            this.infoForm = props.form
-            if (
-                props.form &&
-                props.form.current &&
-                props.form.current.getFieldsValue().domain_key
-            ) {
-                options = props.projectarry
-                    .filter(
-                        (item) =>
-                            item.domain_key ===
-                            props.form.current.getFieldsValue().domain_key
-                    )
-                    .map((item, index) => {
-                        return { value: item.id, label: item.name }
-                    })
-            } else {
-                options = props.projectarry
-                    .filter((item) => {
-                        if (tempData.domain_key)
-                            return item.domain_key === tempData.domain_key
-                        else {
-                            return true
-                        }
-                    })
-                    .map((item, index) => {
-                        return {
-                            value: item.id,
-                            label: item.name,
-                            key: item.id,
-                        }
-                    })
-            }
-            return (
-                <Select
-                    {...props}
-                    options={options}
-                    mode="multiple"
-                    allowClear
-                ></Select>
-            )
-        }
+        // this.schema.project_id.renderInput = (
+        //     item,
+        //     tempData,
+        //     props,
+        //     action,
+        //     form
+        // ) => {
+        //     let options = []
+        //     this.infoForm = props.form
+        //     if (
+        //         props.form &&
+        //         props.form.current &&
+        //         props.form.current.getFieldsValue().domain_key
+        //     ) {
+        //         options = props.projectarry
+        //             .filter(
+        //                 (item) =>
+        //                     item.domain_key ===
+        //                     props.form.current.getFieldsValue().domain_key
+        //             )
+        //             .map((item, index) => {
+        //                 return { value: item.id, label: item.name }
+        //             })
+        //     } else {
+        //         options = props.projectarry
+        //             .filter((item) => {
+        //                 if (tempData.domain_key)
+        //                     return item.domain_key === tempData.domain_key
+        //                 else {
+        //                     return true
+        //                 }
+        //             })
+        //             .map((item, index) => {
+        //                 return {
+        //                     value: item.id,
+        //                     label: item.name,
+        //                     key: item.id,
+        //                 }
+        //             })
+        //     }
+        //     return (
+        //         <Select
+        //             {...props}
+        //             options={options}
+        //             mode="multiple"
+        //             allowClear
+        //         ></Select>
+        //     )
+        // }
         this.schema.intent_key.dict = listToDict(intent.list, "", "key", "name")
         this.schema.intent_key.renderInput = () => {
             return (
@@ -130,12 +131,12 @@ class List extends ListPage {
     }
 
     renderInfoModal() {
-        let onValuesChange = (data, item) => {
-            if (data.domain_key) {
-                this.infoForm.current.setFieldsValue({ project_id: [] })
-            }
-        }
-        return super.renderInfoModal({ onValuesChange })
+        // let onValuesChange = (data, item) => {
+        //     if (data.domain_key) {
+        //         this.infoForm.current.setFieldsValue({ project_id: [] })
+        //     }
+        // }
+        return super.renderInfoModal()
     }
 
     renderOperateColumn(props = {}) {

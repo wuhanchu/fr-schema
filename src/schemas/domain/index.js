@@ -47,6 +47,7 @@ const schema = {
         title: "基础域",
         type: schemaFieldType.Select,
         props: {
+            mode: "tags",
             allowClear: true,
             showSearch: true,
         },
