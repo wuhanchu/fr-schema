@@ -4,6 +4,7 @@ import schemas from "@/schemas"
 import Authorized from "@/outter/fr-schema-antd-utils/src/components/Authorized/Authorized"
 import MyInfoModal from "./InfoModal"
 import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
+import FileSaver from "file-saver"
 
 import {
     Divider,
@@ -1148,17 +1149,10 @@ class BaseList extends EditPage {
                 renderInput: () => {
                     return (
                         <a
-                            // href={window.location.href
-                            //     .replace("/frame", "")
-                            //     .split("project/list")[0]
-                            //  +"import/掌数_知料_知识库信息导入.xlsx"}
-                            // download
                             onClick={async () => {
-                                await exportDataByTemplate(
-                                    "掌数_知料_知识库信息导入",
-                                    [],
-                                    [],
-                                    "/import/掌数_知料_知识库信息导入.xlsx"
+                                FileSaver(
+                                    "/import/掌数_知料_知识库信息导入.xlsx",
+                                    "掌数_知料_知识库信息导入"
                                 )
                             }}
                         >
