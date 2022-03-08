@@ -67,6 +67,9 @@ class ChatFlowTable extends DataList {
                     data.intent_history.intent_rank &&
                     data.intent_history.intent_rank[0].name) ||
                 "未知"
+            if (data.type !== "receive") {
+                text = "-"
+            }
             return (
                 <Tooltip title={text}>
                     <div
