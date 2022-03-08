@@ -291,26 +291,7 @@ class Flow extends React.PureComponent {
                                     ></span>
                                 </div>
                             </Tooltip>
-                            <Tooltip title="结束节点" placement="bottom">
-                                <div
-                                    className="btn"
-                                    onMouseDown={(e) =>
-                                        this.startDrag("end", e)
-                                    }
-                                >
-                                    {/* <i className="iconfont icon-circle" /> */}
-                                    <span
-                                        style={{
-                                            width: "18px",
-                                            height: "18px",
-                                            marginBottom: "-2px",
-                                            border: "rgba(0,0,0,0.5) 1px solid",
-                                            display: "inline-block",
-                                            borderRadius: "5px",
-                                        }}
-                                    ></span>
-                                </div>
-                            </Tooltip>
+
                             <Tooltip title="主干节点" placement="bottom">
                                 <div
                                     className="btn"
@@ -347,6 +328,26 @@ class Flow extends React.PureComponent {
                                     ></span>
                                 </div>
                             </Tooltip>
+                            <Tooltip title="结束节点" placement="bottom">
+                                <div
+                                    className="btn"
+                                    onMouseDown={(e) =>
+                                        this.startDrag("end", e)
+                                    }
+                                >
+                                    {/* <i className="iconfont icon-circle" /> */}
+                                    <span
+                                        style={{
+                                            width: "18px",
+                                            height: "18px",
+                                            marginBottom: "-2px",
+                                            border: "rgba(0,0,0,0.5) 1px solid",
+                                            display: "inline-block",
+                                            borderRadius: "5px",
+                                        }}
+                                    ></span>
+                                </div>
+                            </Tooltip>
                             <Tooltip title="全局节点" placement="bottom">
                                 <div
                                     className="btn"
@@ -362,6 +363,7 @@ class Flow extends React.PureComponent {
                                 </div>
                             </Tooltip>
                         </div>
+
                         <div className="btn-group">
                             <Tooltip title="删除" placement="bottom">
                                 <div

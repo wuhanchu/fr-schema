@@ -1,6 +1,5 @@
 import { createApi } from "@/outter/fr-schema/src/service"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
-
 const schema = {
     name: {
         title: "名称",
@@ -70,8 +69,13 @@ const schema = {
         },
         // search: false
     },
+
     nlu_server_url: {
         title: "解析服务地址",
+        search: false,
+    },
+    text2vec_server_url: {
+        title: "向量服务地址",
         search: false,
     },
     create_time: {
@@ -156,6 +160,10 @@ service.patch = async function (args) {
             args[key] = null
         }
     })
+    const data = await createApi("domain", schema, null).patch(args)
+    return data
+}
+service.patchConfig = async function (args) {
     const data = await createApi("domain", schema, null).patch(args)
     return data
 }

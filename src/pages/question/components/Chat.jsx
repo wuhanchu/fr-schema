@@ -19,6 +19,7 @@ const { url } = utils.utils
  * 样式统一
  * 以便于复用
  */
+
 @autobind
 class Chat extends React.PureComponent {
     constructor(props) {
@@ -50,10 +51,24 @@ class Chat extends React.PureComponent {
             !url.getUrlParams("project_id") &&
             !url.getUrlParams("domain_key")
         ) {
+            let domainArray = []
+
+            let domainInfo = await schemas.domain.service.get({
+                key: this.props.record.key,
+            })
+            if (this.props.record && this.props.record.key) {
+                domainArray.push(this.props.record.key)
+            }
+            if (this.props.record && domainInfo.list[0].base_domain_key) {
+                domainArray = [
+                    ...domainArray,
+                    ...domainInfo.list[0].base_domain_key,
+                ]
+            }
             await schemas.hotWord.service
                 .getRecentHotQuestion({
                     domain_key:
-                        (this.props.record && this.props.record.key) ||
+                        (domainArray.length && domainArray.join(",")) ||
                         "default",
                     project_id:
                         this.props.record && this.props.record.project_id,
@@ -68,11 +83,25 @@ class Chat extends React.PureComponent {
                     this.setState({ allData })
                 })
         } else {
+            let domainArray = []
+
+            let domainInfo = await schemas.domain.service.get({
+                key: url.getUrlParams("domain_key"),
+            })
+            if (url.getUrlParams("domain_key")) {
+                domainArray.push(url.getUrlParams("domain_key"))
+            }
+            if (this.props.record && domainInfo.list[0].base_domain_key) {
+                domainArray = [
+                    ...domainArray,
+                    ...domainInfo.list[0].base_domain_key,
+                ]
+            }
             await schemas.hotWord.service
                 .getRecentHotQuestion({
-                    domain_key: url.getUrlParams("domain_key")
-                        ? url.getUrlParams("domain_key")
-                        : "default",
+                    domain_key:
+                        (domainArray.length && domainArray.join(",")) ||
+                        "default",
                     project_id: url.getUrlParams("project_id")
                         ? url.getUrlParams("project_id")
                         : undefined,

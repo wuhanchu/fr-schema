@@ -169,12 +169,57 @@ const GlobalModel = {
                 },
             })
         },
+        *initDomain(_, { all, call, put, select }) {
+            let dict = {}
+            let data = {}
+
+            // query data
+
+            const res = yield all({
+                domain: call(domain.service.get, { pageSize: 10000 }),
+            })
+
+            Object.keys(res).forEach((key) => (data[key] = res[key].list))
+            let dictMap = {}
+
+            Object.keys(dictMap).forEach((key) => {
+                dict[key] = utils.dict.listToDict(
+                    dictMap[key],
+                    null,
+                    "value",
+                    "name"
+                )
+            })
+            dict.domain = utils.dict.listToDict(
+                data.domain,
+                null,
+                "key",
+                "name"
+            )
+
+            // update current dict
+            yield put({
+                type: "saveDomian",
+                payload: {
+                    init: true,
+                    dict,
+                    data,
+                },
+            })
+        },
     },
     reducers: {
         save(state, action) {
             return {
                 ...state,
                 ...action.payload,
+            }
+        },
+        saveDomian(state, action) {
+            return {
+                ...state,
+                data: { ...state.data, domain: action.payload.data.domain },
+                dict: { ...state.dict, domain: action.payload.dict.domain },
             }
         },
         changeLayoutCollapsed(

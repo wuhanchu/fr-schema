@@ -349,11 +349,17 @@ class List extends ListPage {
         // 加载
         this.setState({ listLoading: true })
         // 获取子意图
+        let searchParams = this.getSearchParam()
+        const params = {
+            ...searchParams,
+        }
+
         let res = await super.requestList({
+            ...params,
             // logical_path: "like." + record.logical_path + ".*",
             // domain_key: record.domain_key,
             pageSize: 10000, // 显示所有意图,不分页
-            name: undefined,
+            // name: undefined,
             logical_path: undefined,
         })
         let fatherOther = []
@@ -404,12 +410,6 @@ class List extends ListPage {
             return record
             // }
         })
-        // console.log(res.list)
-        // res.list = res.list.map((item)=>{
-        //     return {...item, itemKey: item.key}
-        // })
-        // let list  = getTree(res.list)
-        // console.log(list)
         res.list.map((item) => {
             if (item.logical_path.indexOf(".") > -1) {
                 let havePath = res.list.filter((items) => {
@@ -421,12 +421,18 @@ class List extends ListPage {
                 })
                 // if()
                 if (!havePath.length) {
-                    list.push({
-                        ...item,
-                        domain_key_remark: this.props.dict.domain[
-                            item.domain_key
-                        ].name,
+                    let listTop = list.filter((one) => {
+                        return item.logical_path === one.logical_path
                     })
+                    if (!listTop.length) {
+                        list.push({
+                            ...item,
+                            domain_key_remark: this.props.dict.domain[
+                                item.domain_key
+                            ].name,
+                        })
+                    }
+                    // if(list.filter(item))
                 }
             }
         })
@@ -483,7 +489,6 @@ class List extends ListPage {
     // 搜索
     onSearch(fieldsValue) {
         //  更新列表
-        console.log("更新列表")
         const searchValues = { ...this.state.searchValues }
 
         Object.keys(fieldsValue).forEach((key) => {

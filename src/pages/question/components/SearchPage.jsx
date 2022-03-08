@@ -103,7 +103,6 @@ async function init(
             return true
         }
     })
-    console.log(project.list)
     project_id = "in.("
     project.list.map((item, index) => {
         if (index !== project.list.length - 1)
@@ -114,10 +113,20 @@ async function init(
     setProjectList(project.list)
 
     if (props.type !== "history") {
-        if (!url.getUrlParams("project_id") && !url.getUrlParams("domain_key"))
+        if (
+            !url.getUrlParams("project_id") &&
+            !url.getUrlParams("domain_key")
+        ) {
+            let domainArray = []
+            if (props.record && props.record.key) {
+                domainArray.push(props.record.key)
+            }
+            if (props.record && props.record.base_domain_key) {
+                domainArray = [...domainArray, ...props.record.base_domain_key]
+            }
             await schemas.hotWord.service
                 .getRecentHotQuestion({
-                    domain_key: props.record && props.record.key,
+                    domain_key: domainArray.join(","),
                     project_id: props.record && props.record.project_id,
                     limit: 500,
                 })
@@ -133,6 +142,7 @@ async function init(
                     })
                     setAllData(allData)
                 })
+        }
     } else {
         setState({
             ...state,
@@ -714,7 +724,6 @@ function SearchPage(props) {
     const [allData, setAllData] = useState([])
 
     const [projectList, setProjectList] = useState([])
-
     const [action, setAction] = useState("edit")
 
     const [opeation, setOpeation] = useState([])

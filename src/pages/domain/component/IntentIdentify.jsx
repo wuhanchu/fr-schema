@@ -93,13 +93,7 @@ class IntentIdentify extends React.Component {
                         onFinish={this.onFinish}
                         onFinishFailed={onFinishFailed}
                     >
-                        <Form.Item
-                            label="解析文本"
-                            name="text"
-                            // rules={[
-                            //     { required: true, message: "请输入对话文本" },
-                            // ]}
-                        >
+                        <Form.Item label="解析文本" name="text">
                             <Input
                                 placeholder={"请输入对话文本"}
                                 style={{ width: "400px" }}
@@ -308,6 +302,10 @@ class IntentIdentify extends React.Component {
     renderTabs() {
         const { record, text } = this.props
         console.log(record)
+        console.log(
+            "基础域是",
+            this.props.dict.domain[record.key].base_domain_key
+        )
         return (
             <Tabs defaultActiveKey="1" style={{ marginTop: "-13px" }}>
                 <TabPane
@@ -330,6 +328,8 @@ class IntentIdentify extends React.Component {
                             ...record,
                             domain_key: record.key,
                             search: text,
+                            base_domain_key: this.props.dict.domain[record.key]
+                                .base_domain_key,
                         }}
                         // data={data}
                     />

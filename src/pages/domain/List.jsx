@@ -105,6 +105,9 @@ class List extends ListPage {
     }
 
     handleUpdate = async (data, schema, method = "patch") => {
+        const { dispatch } = this.props
+        // dispatch
+
         // 更新
         if (this.state.infoData.key === data.key) {
             let response
@@ -144,6 +147,9 @@ class List extends ListPage {
                 },
             })
         }
+        dispatch({
+            type: "global/initDomain",
+        })
     }
 
     componentWillUnmount() {
@@ -152,6 +158,8 @@ class List extends ListPage {
     }
 
     async handleAdd(data, schema) {
+        const { dispatch } = this.props
+
         let response
         try {
             response = await this.service.post(data, schema)
@@ -171,7 +179,9 @@ class List extends ListPage {
 
         this.handleChangeCallback && this.handleChangeCallback()
         this.props.handleChangeCallback && this.props.handleChangeCallback()
-
+        dispatch({
+            type: "global/initDomain",
+        })
         return response
     }
 
@@ -243,7 +253,10 @@ class List extends ListPage {
                 {this.state.showYamlEdit && (
                     <YamlEdit
                         handleSetYamlEditVisible={this.handleSetYamlEditVisible}
-                        service={this.service}
+                        service={{
+                            ...this.service,
+                            patch: this.service.patchConfig,
+                        }}
                         title={
                             this.state.schemasName === "content"
                                 ? "内容"
@@ -372,8 +385,12 @@ class List extends ListPage {
                                 <Popconfirm
                                     title="是否要删除此行？"
                                     onConfirm={async (e) => {
+                                        const { dispatch } = this.props
                                         this.setState({ record })
                                         await this.handleDelete(record)
+                                        dispatch({
+                                            type: "global/initDomain",
+                                        })
                                         e.stopPropagation()
                                     }}
                                 >
