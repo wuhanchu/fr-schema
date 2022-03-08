@@ -364,16 +364,17 @@ class Dialogue extends Chat {
         let { messageList } = this.state
         if (type === "left") {
             messages.map((data) => {
-                console.log("data", data)
-                list.push({
-                    ...data,
-                    content: data.text,
-                    onlyRead: true,
-                    buttons: data.buttons,
-                    name: "智能客服",
-                    time: new Date(),
-                    type: "left",
-                })
+                if (data.text) {
+                    list.push({
+                        ...data,
+                        content: data.text,
+                        onlyRead: true,
+                        buttons: data.buttons,
+                        name: "智能客服",
+                        time: new Date(),
+                        type: "left",
+                    })
+                }
             })
             this.setState({ isSpin: false })
         } else {

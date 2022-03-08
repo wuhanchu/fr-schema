@@ -357,28 +357,7 @@ class List extends ListPage {
             logical_path: undefined,
         })
         let fatherOther = []
-        res.list.map((item) => {
-            if (item.logical_path.indexOf(".") > -1) {
-                let havePath = res.list.filter((items) => {
-                    return (
-                        items.logical_path ===
-                            item.logical_path.split(".")[0] &&
-                        item.domain_key === items.domain_key
-                    )
-                })
-                // if()
-                console.log(havePath)
-                if (!havePath.length) {
-                    this.state.data.list.push({
-                        ...item,
-                        domain_key_remark: this.props.dict.domain[
-                            item.domain_key
-                        ].name,
-                    })
-                }
-                console.log("data", havePath)
-            }
-        })
+
         console.log(this.state.data.list)
         this.setState({ listLoading: true })
         let list = this.state.data.list.map((record) => {
@@ -431,6 +410,28 @@ class List extends ListPage {
         // })
         // let list  = getTree(res.list)
         // console.log(list)
+        res.list.map((item) => {
+            if (item.logical_path.indexOf(".") > -1) {
+                let havePath = res.list.filter((items) => {
+                    return (
+                        items.logical_path ===
+                            item.logical_path.split(".")[0] &&
+                        item.domain_key === items.domain_key
+                    )
+                })
+                // if()
+                console.log(havePath)
+                if (!havePath.length) {
+                    list.push({
+                        ...item,
+                        domain_key_remark: this.props.dict.domain[
+                            item.domain_key
+                        ].name,
+                    })
+                }
+                console.log("data", havePath)
+            }
+        })
         const { data } = this.state
         let { expandedRowKeys } = this.state
         this.setState({ expandedRowKeys: [...expandedRowKeys] })
