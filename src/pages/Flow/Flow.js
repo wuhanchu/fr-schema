@@ -50,13 +50,27 @@ class Flow extends React.PureComponent {
     }
 
     getIntent = async () => {
-        const { record } = this.props
+        const { record, other } = this.props
+        let base_domain_key =
+            other.dict.domain[record.domain_key].base_domain_key
         const res = await schema.service.get({
             limit: 1000,
             key: "not.eq.null",
-            domain_key: record.domain_key,
+            // domain_key: record.domain_key,
         })
-        let list = getTree(res.list)
+
+        let list = res.list.filter((item) => {
+            if (
+                item.domain_key === record.domain_key ||
+                (base_domain_key &&
+                    base_domain_key.indexOf(item.domain_key) > -1)
+            ) {
+                return true
+            } else {
+                return false
+            }
+        })
+        list = getTree(list)
         this.setState({ intenList: list })
     }
 
@@ -223,6 +237,8 @@ class Flow extends React.PureComponent {
                     haveEnd = true
                 }
             })
+
+        console.log("意图是", intentDict)
         return (
             <Spin tip="加载中..." spinning={spinning}>
                 <div className="container_warp">

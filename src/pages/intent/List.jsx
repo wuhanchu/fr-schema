@@ -420,7 +420,6 @@ class List extends ListPage {
                     )
                 })
                 // if()
-                console.log(havePath)
                 if (!havePath.length) {
                     list.push({
                         ...item,
@@ -429,7 +428,6 @@ class List extends ListPage {
                         ].name,
                     })
                 }
-                console.log("data", havePath)
             }
         })
         const { data } = this.state

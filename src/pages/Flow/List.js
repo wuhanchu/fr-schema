@@ -53,6 +53,8 @@ class List extends ListPage {
 
     async componentDidMount() {
         let intent = await schemas.intent.service.get({ limit: 9999 })
+
+        console.log(intent)
         let intentList = getTree(intent.list)
 
         let project = await schemas.project.service.get({ limit: 9999 })
