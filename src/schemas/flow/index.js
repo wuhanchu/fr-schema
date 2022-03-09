@@ -16,12 +16,15 @@ const schema = {
     },
     name: {
         required: true,
+        sorter: true,
+
         style: { width: "500px" },
         title: "名称",
     },
     key: {
         required: true,
         style: { width: "500px" },
+        sorter: true,
 
         title: "编码",
     },
@@ -54,9 +57,10 @@ const schema = {
     intent_key_text: {
         style: { width: "500px" },
         search: false,
+        sorter: true,
 
         title: "意图匹配辅助信息",
-        extra: "意图匹配问题搜索意图附加前缀"
+        extra: "意图匹配问题搜索意图附加前缀",
     },
 
     slot: {

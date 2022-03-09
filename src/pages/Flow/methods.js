@@ -611,7 +611,7 @@ function treeForeach(tree, func) {
     }
 }
 
-export function getTree(args) {
+export function getTree(args, merge) {
     let res =
         args &&
         args.map((item) => {
@@ -655,7 +655,13 @@ export function getTree(args) {
                 let index = list.findIndex((value) => {
                     return value.id === arr[0].id
                 })
-                list[index].children.push(list[i])
+                if (
+                    !list[index].children.filter((item) => {
+                        return item.id == list[i].id
+                    }).length
+                ) {
+                    list[index].children.push(list[i])
+                }
             } else {
                 // 不存在上层意图表示当前遍历意图为最高子意图、
                 result.push(list[i])

@@ -46,6 +46,7 @@ const schema = {
     user_id: {
         title: "用户",
         search: true,
+        sorter: true,
 
         type: schemaFieldType.Select,
         props: {
@@ -57,6 +58,8 @@ const schema = {
     },
     flow_key: {
         title: "流程",
+        sorter: true,
+
         type: schemaFieldType.Select,
         props: {
             allowClear: true,
@@ -65,6 +68,7 @@ const schema = {
     },
     status: {
         title: "状态",
+
         sorter: true,
         type: schemaFieldType.Select,
         props: {
@@ -85,6 +89,8 @@ const schema = {
     intent_key: {
         title: "意图",
         hideInTable: true,
+        sorter: true,
+
         addHide: true,
         editHide: true,
         type: schemaFieldType.Select,
@@ -96,12 +102,14 @@ const schema = {
 
     caller: {
         title: "外呼号码",
+
         render: (item, data) => {
             return (data.info && data.info.CALLER) || ""
         },
     },
     called: {
         title: "被叫号码",
+
         render: (item, data) => {
             return (data.info && data.info.CALLED) || ""
         },
@@ -109,6 +117,8 @@ const schema = {
     user_reply: {
         title: "用户回应",
         type: schemaFieldType.Select,
+        sorter: true,
+
         props: {
             allowClear: true,
             showSearch: true,

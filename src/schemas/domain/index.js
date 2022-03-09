@@ -21,6 +21,8 @@ const schema = {
             allowClear: true,
             showSearch: true,
         },
+        sorter: true,
+
         props: {},
         dict: {
             true: {
@@ -44,6 +46,8 @@ const schema = {
     },
     base_domain_key: {
         title: "基础域",
+        sorter: true,
+
         type: schemaFieldType.Select,
         props: {
             mode: "tags",
@@ -61,6 +65,8 @@ const schema = {
         },
     },
     talk_service_id: {
+        sorter: true,
+
         title: "对话服务",
         type: schemaFieldType.Select,
         props: {
@@ -71,10 +77,14 @@ const schema = {
     },
 
     nlu_server_url: {
+        sorter: true,
+
         title: "解析服务地址",
         search: false,
     },
     text2vec_server_url: {
+        sorter: true,
+
         title: "向量服务地址",
         search: false,
     },

@@ -2,6 +2,18 @@ import { createApi, createBasicApi } from "@/outter/fr-schema/src/service"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 
 const schema = {
+    domain_key: {
+        title: "域",
+
+        sorter: true,
+        required: true,
+        type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            mode: "tags",
+            showSearch: true,
+        },
+    },
     name: {
         title: "名称",
         searchPrefix: "like",
@@ -11,23 +23,14 @@ const schema = {
 
     key: {
         required: true,
-
+        sorter: true,
         title: "编码",
     },
-    domain_key: {
-        title: "域",
-        sorter: true,
-        required: true,
-        type: schemaFieldType.Select,
-        props: {
-            allowClear: true,
-            showSearch: true,
-        },
-    },
+
     logical_path: {
         title: "意图路径",
         search: false,
-
+        sorter: true,
         searchPrefix: "not.like",
         required: true,
     },
@@ -91,6 +94,10 @@ const schema = {
 const service = createApi("intent", schema, null, "eq.")
 
 service.get = async function (args) {
+    args.domain_key = args.domain_key
+        ? "in.(" + args.domain_key + ")"
+        : undefined
+
     const res = await createApi("intent", schema, null, "eq.").get(args)
     let list = res.list.map((item) => {
         return {

@@ -118,7 +118,9 @@ class List extends ListPage {
             } catch (error) {
                 message.error(error.message)
             }
-
+            dispatch({
+                type: "global/initDomain",
+            })
             this.handleVisibleModal()
             return response
         } else {
@@ -138,6 +140,9 @@ class List extends ListPage {
                         response = await this.service[method](data, schema)
                         this.refreshList()
                         message.success("修改成功")
+                        dispatch({
+                            type: "global/initDomain",
+                        })
                     } catch (error) {
                         message.error(error.message)
                     }
@@ -147,9 +152,8 @@ class List extends ListPage {
                 },
             })
         }
-        dispatch({
-            type: "global/initDomain",
-        })
+
+        console.log("发烧")
     }
 
     componentWillUnmount() {

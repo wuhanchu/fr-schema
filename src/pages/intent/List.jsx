@@ -16,6 +16,20 @@ import ImportModal from "@/outter/fr-schema-antd-utils/src/components/modal/Impo
 
 const { decorateList } = frSchema
 
+function getTreeItem(data, id) {
+    let result
+    data.map((item) => {
+        if (item.id == id) {
+            result = item // 结果赋值
+        } else {
+            if (item.children) {
+                getTreeItem(item.children, id)
+            }
+        }
+    })
+    return result
+}
+
 @connect(({ global }) => ({
     dict: global.dict,
 }))
@@ -102,6 +116,47 @@ class List extends ListPage {
                     导出
                 </Button>
             </>
+        )
+    }
+
+    renderInfoModal(customProps = {}) {
+        if (this.props.renderInfoModal) {
+            return this.props.renderInfoModal()
+        }
+        const { form } = this.props
+        const renderForm = this.props.renderForm || this.renderForm
+        const { resource, title, addArgs } = this.meta
+        const { visibleModal, infoData, action } = this.state
+        const updateMethods = {
+            handleVisibleModal: this.handleVisibleModal.bind(this),
+            handleUpdate: this.handleUpdate.bind(this),
+            handleAdd: this.handleAdd.bind(this),
+        }
+
+        return (
+            visibleModal && (
+                <InfoModal
+                    renderForm={renderForm}
+                    title={title}
+                    action={action}
+                    resource={resource}
+                    {...updateMethods}
+                    visible={visibleModal}
+                    values={infoData}
+                    addArgs={addArgs}
+                    meta={this.meta}
+                    service={this.service}
+                    schema={{
+                        ...this.schema,
+                        domain_key: {
+                            ...this.schema.domain_key,
+                            props: { allowClear: true, showSearch: true },
+                        },
+                    }}
+                    {...this.meta.infoProps}
+                    {...customProps}
+                />
+            )
         )
     }
 
@@ -337,12 +392,37 @@ class List extends ListPage {
             expandable: {
                 onExpand: (expanded, record) => this.onExpand(expanded, record),
                 expandedRowKeys,
-
-                // defaultExpandAllRows: true
-                // defaultExpandedRowKeys: true
             },
         }
         return super.renderList(inProps)
+    }
+
+    filterIntent(intentList, item, record) {
+        let filterinIntent = intentList.filter((one) => {
+            return (
+                item.logical_path.split(".")[0] === one.logical_path &&
+                item.logical_path !== one.logical_path
+            )
+        })
+
+        let myDomainIntent = filterinIntent.filter((one) => {
+            return item.domain_key === one.domain_key
+        })
+
+        let baseDomainIntent = filterinIntent.filter((one) => {
+            if (this.props.dict.domain[item.domain_key].base_domain_key) {
+                return (
+                    this.props.dict.domain[
+                        item.domain_key
+                    ].base_domain_key.indexOf(one.domain_key) > -1
+                )
+            } else {
+                return false
+            }
+        })
+
+        return !myDomainIntent.length && baseDomainIntent.length
+        // console.log("filterinIntent",item.name, item.key, item.logical_path,filterinIntent)
     }
 
     async initTree() {
@@ -356,25 +436,26 @@ class List extends ListPage {
 
         let res = await super.requestList({
             ...params,
-            // logical_path: "like." + record.logical_path + ".*",
-            // domain_key: record.domain_key,
             pageSize: 10000, // 显示所有意图,不分页
             // name: undefined,
             logical_path: undefined,
         })
         let fatherOther = []
 
-        console.log(this.state.data.list)
+        let clildrenList = []
         this.setState({ listLoading: true })
         let list = this.state.data.list.map((record) => {
             let list = res.list.filter((itemList) => {
-                // console.log(itemList)
                 let isTop =
                     itemList.logical_path &&
                     itemList.logical_path.indexOf(record.logical_path + ".") ===
                         0 &&
                     itemList.logical_path !== record.logical_path &&
-                    itemList.domain_key === record.domain_key
+                    (itemList.domain_key === record.domain_key ||
+                        this.filterIntent(res.list, itemList, record))
+                if (isTop) {
+                    clildrenList.push(itemList.id)
+                }
                 return isTop
             })
             list = decorateList(list, this.schema)
@@ -387,53 +468,53 @@ class List extends ListPage {
                 arr = list.filter((value) => {
                     return (
                         value.logical_path !== list[i].logical_path &&
-                        list[i].logical_path.includes(
-                            value.logical_path + "."
-                        ) &&
-                        list[i].domain_key === value.domain_key
+                        list[i].logical_path.includes(value.logical_path + ".")
                     )
                 })
-                // 存在上层意图则标明当前遍历意图为其他意图的子意图
                 if (arr.length) {
                     // 获取当前遍历意图的父意图 并加入其父意图的子集中
                     arr = arr.sort(this.sortUp)
                     let index = list.findIndex((value) => {
                         return value.id === arr[0].id
                     })
-                    list[index].children.push(list[i])
+                    if (
+                        (list[i].domain_key === list[index].domain_key ||
+                            this.props.dict.domain[
+                                list[i].domain_key
+                            ].base_domain_key.indexOf(list[index].domain_key) >
+                                -1) &&
+                        !list[index].children.filter((item) => {
+                            return item.id == list[i].id
+                        }).length
+                    ) {
+                        list[index].children.push(list[i])
+                    }
                 } else {
                     // 不存在上层意图表示当前遍历意图为最高子意图
-                    result.push(list[i])
+                    if (
+                        list[i].domain_key === record.domain_key ||
+                        this.props.dict.domain[
+                            list[i].domain_key
+                        ].base_domain_key.indexOf(record.domain_key) > -1
+                    )
+                        // console.log(list[i])
+                        result.push(list[i])
                 }
             }
             record.children = [...result]
             return record
             // }
         })
+        this.state.data.list.map((item) => {
+            clildrenList.push(item.id)
+        })
         res.list.map((item) => {
-            if (item.logical_path.indexOf(".") > -1) {
-                let havePath = res.list.filter((items) => {
-                    return (
-                        items.logical_path ===
-                            item.logical_path.split(".")[0] &&
-                        item.domain_key === items.domain_key
-                    )
+            if (clildrenList.indexOf(item.id) == -1) {
+                list.push({
+                    ...item,
+                    domain_key_remark: this.props.dict.domain[item.domain_key]
+                        .name,
                 })
-                // if()
-                if (!havePath.length) {
-                    let listTop = list.filter((one) => {
-                        return item.logical_path === one.logical_path
-                    })
-                    if (!listTop.length) {
-                        list.push({
-                            ...item,
-                            domain_key_remark: this.props.dict.domain[
-                                item.domain_key
-                            ].name,
-                        })
-                    }
-                    // if(list.filter(item))
-                }
             }
         })
         const { data } = this.state
@@ -444,7 +525,6 @@ class List extends ListPage {
 
     // 展开
     async onExpand(expanded, record) {
-        console.log("expanded, record", expanded, record)
         let { expandedRowKeys } = this.state
         let flag = expandedRowKeys.includes(record.id) // 是否已经展开过
         // 展开

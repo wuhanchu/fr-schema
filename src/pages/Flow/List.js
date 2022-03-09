@@ -54,64 +54,126 @@ class List extends ListPage {
     async componentDidMount() {
         let intent = await schemas.intent.service.get({ limit: 9999 })
 
-        console.log(intent)
         let intentList = getTree(intent.list)
 
         let project = await schemas.project.service.get({ limit: 9999 })
-        console.log(project)
         this.schema.project_id.dict = listToDict(project.list, "", "id", "name")
         this.schema.project_id.props.projectarry = project.list
-        // this.schema.project_id.renderInput = (
-        //     item,
-        //     tempData,
-        //     props,
-        //     action,
-        //     form
-        // ) => {
-        //     let options = []
-        //     this.infoForm = props.form
-        //     if (
-        //         props.form &&
-        //         props.form.current &&
-        //         props.form.current.getFieldsValue().domain_key
-        //     ) {
-        //         options = props.projectarry
-        //             .filter(
-        //                 (item) =>
-        //                     item.domain_key ===
-        //                     props.form.current.getFieldsValue().domain_key
-        //             )
-        //             .map((item, index) => {
-        //                 return { value: item.id, label: item.name }
-        //             })
-        //     } else {
-        //         options = props.projectarry
-        //             .filter((item) => {
-        //                 if (tempData.domain_key)
-        //                     return item.domain_key === tempData.domain_key
-        //                 else {
-        //                     return true
-        //                 }
-        //             })
-        //             .map((item, index) => {
-        //                 return {
-        //                     value: item.id,
-        //                     label: item.name,
-        //                     key: item.id,
-        //                 }
-        //             })
-        //     }
-        //     return (
-        //         <Select
-        //             {...props}
-        //             options={options}
-        //             mode="multiple"
-        //             allowClear
-        //         ></Select>
-        //     )
-        // }
+        this.schema.project_id.renderInput = (
+            item,
+            tempData,
+            props,
+            action,
+            form
+        ) => {
+            let options = []
+            this.infoForm = props.form
+            if (
+                props.form &&
+                props.form.current &&
+                props.form.current.getFieldsValue().domain_key
+            ) {
+                options = props.projectarry
+                    .filter(
+                        (item) =>
+                            item.domain_key ===
+                                props.form.current.getFieldsValue()
+                                    .domain_key ||
+                            (this.props.dict.domain[
+                                props.form.current.getFieldsValue().domain_key
+                            ].base_domain_key &&
+                                this.props.dict.domain[
+                                    props.form.current.getFieldsValue()
+                                        .domain_key
+                                ].base_domain_key.indexOf(item.domain_key) > -1)
+                    )
+                    .map((item, index) => {
+                        return { value: item.id, label: item.name }
+                    })
+            } else {
+                options = props.projectarry
+                    .filter((item) => {
+                        if (tempData.domain_key)
+                            return (
+                                item.domain_key === tempData.domain_key ||
+                                (this.props.dict.domain[tempData.domain_key]
+                                    .base_domain_key &&
+                                    this.props.dict.domain[
+                                        tempData.domain_key
+                                    ].base_domain_key.indexOf(item.domain_key) >
+                                        -1)
+                            )
+                        else {
+                            return true
+                        }
+                    })
+                    .map((item, index) => {
+                        return {
+                            value: item.id,
+                            label: item.name,
+                            key: item.id,
+                        }
+                    })
+            }
+            return (
+                <Select
+                    {...props}
+                    options={options}
+                    mode="multiple"
+                    allowClear
+                ></Select>
+            )
+        }
         this.schema.intent_key.dict = listToDict(intent.list, "", "key", "name")
-        this.schema.intent_key.renderInput = () => {
+        this.schema.intent_key.renderInput = (
+            item,
+            tempData,
+            props,
+            action,
+            form
+        ) => {
+            let options = []
+            this.infoForm = props.form
+            if (
+                props.form &&
+                props.form.current &&
+                props.form.current.getFieldsValue().domain_key
+            ) {
+                options = intent.list.filter(
+                    (item) =>
+                        item.domain_key ===
+                            props.form.current.getFieldsValue().domain_key ||
+                        (this.props.dict.domain[
+                            props.form.current.getFieldsValue().domain_key
+                        ].base_domain_key &&
+                            this.props.dict.domain[
+                                props.form.current.getFieldsValue().domain_key
+                            ].base_domain_key.indexOf(item.domain_key) > -1)
+                )
+                options = getTree(options)
+                console.log(options)
+            } else {
+                options = intent.list.filter((item) => {
+                    if (tempData.domain_key)
+                        return (
+                            item.domain_key === tempData.domain_key ||
+                            (this.props.dict.domain[tempData.domain_key]
+                                .base_domain_key &&
+                                this.props.dict.domain[
+                                    tempData.domain_key
+                                ].base_domain_key.indexOf(item.domain_key) > -1)
+                        )
+                    else {
+                        return true
+                    }
+                })
+                setTimeout(() => {
+                    console.log(options)
+                }, 200)
+                console.log(options)
+                options = getTree(options)
+                console.log(getTree(options))
+            }
             return (
                 <TreeSelect
                     showSearch
@@ -123,7 +185,7 @@ class List extends ListPage {
                     style={{ width: "500px" }}
                     placeholder={"请选择意图"}
                     dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
-                    treeData={intentList}
+                    treeData={options}
                     treeDefaultExpandAll
                 />
             )
