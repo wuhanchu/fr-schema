@@ -997,6 +997,20 @@ class List extends ListPage {
                     </a>
                 </Menu.Item>
                 <Menu.Item>
+                    <Popconfirm
+                        title={"是否清除" + record.name + "域的数据缓存！"}
+                        overlayStyle={{ width: "270px" }}
+                        onConfirm={async (e) => {
+                            await schemas.domain.service.cache({
+                                domain_key: record.key,
+                            })
+                            e.stopPropagation()
+                        }}
+                    >
+                        <a>清除缓存</a>
+                    </Popconfirm>
+                </Menu.Item>
+                <Menu.Item>
                     <a
                         onClick={async () => {
                             this.setState({

@@ -460,15 +460,21 @@ class List extends ListPage {
             })
             list = decorateList(list, this.schema)
             list = list.sort(this.sortUp)
-
             let result = []
             let arr = []
             for (let i = 0; i < list.length; i++) {
+                // console.log(list[i])
                 // 获取当前意图的所有上层意图
                 arr = list.filter((value) => {
                     return (
                         value.logical_path !== list[i].logical_path &&
-                        list[i].logical_path.includes(value.logical_path + ".")
+                        list[i].logical_path.includes(
+                            value.logical_path + "."
+                        ) &&
+                        (list[i].domain_key === value.domain_key ||
+                            this.props.dict.domain[
+                                list[i].domain_key
+                            ].base_domain_key.indexOf(value.domain_key) > -1)
                     )
                 })
                 if (arr.length) {
@@ -477,6 +483,7 @@ class List extends ListPage {
                     let index = list.findIndex((value) => {
                         return value.id === arr[0].id
                     })
+
                     if (
                         (list[i].domain_key === list[index].domain_key ||
                             this.props.dict.domain[
@@ -497,7 +504,6 @@ class List extends ListPage {
                             list[i].domain_key
                         ].base_domain_key.indexOf(record.domain_key) > -1
                     )
-                        // console.log(list[i])
                         result.push(list[i])
                 }
             }

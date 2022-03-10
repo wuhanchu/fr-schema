@@ -204,7 +204,7 @@ class Conversation extends ListPage {
         res.list.map((item) => {
             console.log(item.key)
         })
-        let list = getTree(unique(res.list, "key"))
+        let list = getTree(unique(res.list, "key"), this.props.dict.domain)
         this.setState({ intentList: res.list })
 
         this.schema.intent_key.renderInput = (data, item, props) => {
@@ -483,8 +483,6 @@ class Conversation extends ListPage {
                     options={list}
                     placeholder="请选择流程"
                     onChange={(value) => {
-                        console.log(value)
-                        console.log("this.state", this.state)
                         this.formRef.current.setFieldsValue({
                             flow_key: value || undefined,
                         })
@@ -495,7 +493,10 @@ class Conversation extends ListPage {
                             },
                         })
                         let treeList = clone(this.state.treeList)
-                        let treeData = getTree(this.state.intentList)
+                        let treeData = getTree(
+                            this.state.intentList,
+                            this.props.dict.domain
+                        )
                         let flowIntent = []
                         this.setState({ showIntent: undefined })
                         if (
@@ -509,8 +510,14 @@ class Conversation extends ListPage {
                             treeData = this.state.intentList.filter((items) => {
                                 return (
                                     flowIntent.indexOf(items.key) > -1 &&
-                                    item.dict[value].domain_key ===
-                                        items.domain_key
+                                    (item.dict[value].domain_key ===
+                                        items.domain_key ||
+                                        (item.dict[value].domain_key &&
+                                            this.props.dict.domain[
+                                                item.dict[value].domain_key
+                                            ].base_domain_key.indexOf(
+                                                items.domain_key
+                                            ) > -1))
                                 )
                             })
                             treeData = treeData.map((items) => {

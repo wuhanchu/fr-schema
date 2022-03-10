@@ -54,7 +54,7 @@ class List extends ListPage {
     async componentDidMount() {
         let intent = await schemas.intent.service.get({ limit: 9999 })
 
-        let intentList = getTree(intent.list)
+        let intentList = getTree(intent.list, this.props.dict.domain)
 
         let project = await schemas.project.service.get({ limit: 9999 })
         this.schema.project_id.dict = listToDict(project.list, "", "id", "name")
@@ -150,7 +150,7 @@ class List extends ListPage {
                                 props.form.current.getFieldsValue().domain_key
                             ].base_domain_key.indexOf(item.domain_key) > -1)
                 )
-                options = getTree(options)
+                options = getTree(options, this.props.dict.domain)
                 console.log(options)
             } else {
                 options = intent.list.filter((item) => {
@@ -167,12 +167,12 @@ class List extends ListPage {
                         return true
                     }
                 })
+                console.log(options)
+                options = getTree(options, this.props.dict.domain)
                 setTimeout(() => {
                     console.log(options)
                 }, 200)
-                console.log(options)
-                options = getTree(options)
-                console.log(getTree(options))
+                // console.log(getTree(options))
             }
             return (
                 <TreeSelect
@@ -303,7 +303,11 @@ class List extends ListPage {
         return (
             <>
                 <Modal
-                    title={"流程编辑"}
+                    title={
+                        "流程编辑(" +
+                        (this.state.record && this.state.record.name) +
+                        ")"
+                    }
                     visible={visibleFlow}
                     width={"90%"}
                     keyboard={false}
@@ -425,7 +429,11 @@ class List extends ListPage {
             visibleCodeModal && (
                 <InfoModal
                     renderForm={renderForm}
-                    title={"流程代码"}
+                    title={
+                        "流程代码(" +
+                        (this.state.record && this.state.record.name) +
+                        ")"
+                    }
                     action={"edit"}
                     resource={resource}
                     {...updateMethods}

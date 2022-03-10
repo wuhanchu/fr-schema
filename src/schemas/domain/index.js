@@ -180,6 +180,8 @@ service.patchConfig = async function (args) {
 service.sync = createApi("domain/train", schema, null, "eq.").post
 service.fsfundSync = createApi("domain/sync", schema, null, "eq.").post
 service.cache_tts = createApi("domain/cache_tts", schema, null, "eq.").post
+service.cache = createApi("cache", schema, null, "").deleteBody
+
 service.get = async (args) => {
     let data = await createApi("domain", schema, null, "eq.").get(args)
     console.log(data)

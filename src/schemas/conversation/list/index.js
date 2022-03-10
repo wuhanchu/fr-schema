@@ -56,14 +56,26 @@ const schema = {
             showSearch: true,
         },
     },
-    flow_key: {
-        title: "流程",
+    user_reply: {
+        title: "客户回应",
+        type: schemaFieldType.Select,
         sorter: true,
 
-        type: schemaFieldType.Select,
         props: {
             allowClear: true,
             showSearch: true,
+        },
+        hideInTable: true,
+        dict: {
+            true: {
+                value: "true",
+                remark: "有回应",
+            },
+
+            false: {
+                value: "false",
+                remark: "全部",
+            },
         },
     },
     status: {
@@ -86,6 +98,36 @@ const schema = {
             },
         },
     },
+    call_id: {
+        title: "类型",
+        type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
+        hideInTable: true,
+        dict: {
+            call: {
+                value: "call",
+                remark: "智能呼出",
+            },
+            text: {
+                value: "text",
+                remark: "文本对话",
+            },
+        },
+    },
+    flow_key: {
+        title: "流程",
+        sorter: true,
+
+        type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
+    },
+
     intent_key: {
         title: "意图",
         hideInTable: true,
@@ -114,28 +156,7 @@ const schema = {
             return (data.info && data.info.CALLED) || ""
         },
     },
-    user_reply: {
-        title: "用户回应",
-        type: schemaFieldType.Select,
-        sorter: true,
 
-        props: {
-            allowClear: true,
-            showSearch: true,
-        },
-        hideInTable: true,
-        dict: {
-            true: {
-                value: "true",
-                remark: "有回应",
-            },
-
-            false: {
-                value: "false",
-                remark: "全部",
-            },
-        },
-    },
     create_time: {
         title: "创建时间",
         search: false,
@@ -145,25 +166,6 @@ const schema = {
             valueType: "dateTime",
         },
         type: schemaFieldType.DatePicker,
-    },
-    call_id: {
-        title: "类型",
-        type: schemaFieldType.Select,
-        props: {
-            allowClear: true,
-            showSearch: true,
-        },
-        hideInTable: true,
-        dict: {
-            call: {
-                value: "call",
-                remark: "智能呼出",
-            },
-            text: {
-                value: "text",
-                remark: "文本对话",
-            },
-        },
     },
 }
 

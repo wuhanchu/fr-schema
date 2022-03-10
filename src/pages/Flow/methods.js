@@ -1,6 +1,7 @@
 import { Addon, FunctionExt, Graph, Shape } from "@antv/x6"
 import frSchema from "@/outter/fr-schema/src"
 import clone from "clone"
+import schemas from "@/schemas"
 
 const { decorateList } = frSchema
 // 拖拽生成四边形或者圆形
@@ -444,7 +445,9 @@ export function initGraph(expGraphData, callback, graphChange) {
         // },
         interacting: function (cellView) {
             if (cellView.cell.getProp("customLinkInteractions")) {
-                return { vertexAdd: false }
+                return {
+                    vertexAdd: false,
+                }
             }
             graphChange()
             return true
@@ -510,6 +513,7 @@ export function initGraph(expGraphData, callback, graphChange) {
 
     return graph
 }
+
 function getDom(tagName, name, value) {
     var selectDom = []
     var dom = document.getElementsByTagName(tagName)
@@ -611,51 +615,102 @@ function treeForeach(tree, func) {
     }
 }
 
-export function getTree(args, merge) {
-    let res =
-        args &&
-        args.map((item) => {
-            return { ...item, value: item.key, title: item.name }
-        })
-    let record = []
+export function filterIntent(intentList, item, record, doaminDict) {
+    console.log(intentList)
+    let filterinIntent = intentList.filter((one) => {
+        return (
+            item.logical_path.split(".")[0] === one.logical_path &&
+            item.logical_path !== one.logical_path
+        )
+    })
+    console.log(filterinIntent)
+    let myDomainIntent = filterinIntent.filter((one) => {
+        return item.domain_key === one.domain_key
+    })
+    console.log(myDomainIntent)
+
+    let baseDomainIntent = filterinIntent.filter((one) => {
+        console.log(doaminDict)
+        console.log(doaminDict[item.domain_key].base_domain_key)
+        if (doaminDict[item.domain_key].base_domain_key) {
+            return (
+                doaminDict[item.domain_key].base_domain_key.indexOf(
+                    one.domain_key
+                ) > -1
+            )
+        } else {
+            return false
+        }
+    })
+    return !myDomainIntent.length && baseDomainIntent.length
+}
+export function getTree(args, doaminDict) {
+    let res = args.map((item) => {
+        return {
+            ...item,
+            label: item.name,
+            key: item.domain_key + item.key,
+            value: item.key,
+        }
+    })
+    let fatherOther = []
+
+    let clildrenList = []
     let sortBy = res.filter((itemList) => {
-        console.log(itemList)
         return itemList.logical_path && itemList.logical_path.indexOf(".") < 0
     })
     sortBy = sortBy.map((item) => {
-        return { ...item, label: item.name + "(" + item.domain_key + ")" }
+        return {
+            ...item,
+            label: item.name,
+        }
     })
+    // this.setState({ listLoading: true })
     let list = sortBy.map((record) => {
         let list = res.filter((itemList) => {
-            return (
+            let data = filterIntent(res, itemList, record, doaminDict)
+            console.log(data)
+            let isTop =
                 itemList.logical_path &&
                 itemList.logical_path.indexOf(record.logical_path + ".") ===
                     0 &&
                 itemList.logical_path !== record.logical_path &&
-                itemList.domain_key === record.domain_key
-            )
+                (itemList.domain_key === record.domain_key ||
+                    filterIntent(res, itemList, record, doaminDict))
+            if (isTop) {
+                clildrenList.push(itemList.id)
+            }
+            return isTop
         })
-        list = decorateList(list, {})
+        list = decorateList(list, schemas.intent.schema)
         list = list.sort(sortUp)
         let result = []
         let arr = []
         for (let i = 0; i < list.length; i++) {
+            // console.log(list[i])
             // 获取当前意图的所有上层意图
             arr = list.filter((value) => {
                 return (
                     value.logical_path !== list[i].logical_path &&
                     list[i].logical_path.includes(value.logical_path + ".") &&
-                    list[i].domain_key === value.domain_key
+                    (list[i].domain_key === value.domain_key ||
+                        doaminDict[list[i].domain_key].base_domain_key.indexOf(
+                            value.domain_key
+                        ) > -1)
                 )
             })
-            // 存在上层意图则标明当前遍历意图为其他意图的子意图
             if (arr.length) {
                 // 获取当前遍历意图的父意图 并加入其父意图的子集中
                 arr = arr.sort(sortUp)
                 let index = list.findIndex((value) => {
                     return value.id === arr[0].id
                 })
+
                 if (
+                    (list[i].domain_key === list[index].domain_key ||
+                        doaminDict[list[i].domain_key].base_domain_key.indexOf(
+                            list[index].domain_key
+                        ) > -1) &&
                     !list[index].children.filter((item) => {
                         return item.id == list[i].id
                     }).length
@@ -663,17 +718,94 @@ export function getTree(args, merge) {
                     list[index].children.push(list[i])
                 }
             } else {
-                // 不存在上层意图表示当前遍历意图为最高子意图、
-                result.push(list[i])
+                // 不存在上层意图表示当前遍历意图为最高子意图
+                if (
+                    list[i].domain_key === record.domain_key ||
+                    doaminDict[list[i].domain_key].base_domain_key.indexOf(
+                        record.domain_key
+                    ) > -1
+                )
+                    result.push(list[i])
             }
-            // record.children = [...result]
         }
         record.children = [...result]
         return record
         // }
     })
-    treeForeach(list, (node) => {
-        console.log(node.name)
+    sortBy.map((item) => {
+        clildrenList.push(item.id)
     })
+    res.map((item) => {
+        if (clildrenList.indexOf(item.id) == -1) {
+            list.push({
+                ...item,
+                domain_key_remark: doaminDict[item.domain_key].name,
+            })
+        }
+    })
+
+    // let res =
+    //     args &&
+    //     args.map((item) => {
+    //         return { ...item, value: item.key, title: item.name }
+    //     })
+    // let record = []
+    // let sortBy = res.filter((itemList) => {
+    //     console.log(itemList)
+    //     return itemList.logical_path && itemList.logical_path.indexOf(".") < 0
+    // })
+    // sortBy = sortBy.map((item) => {
+    //     return { ...item, label: item.name + "(" + item.domain_key + ")" }
+    // })
+    // let list = sortBy.map((record) => {
+    //     let list = res.filter((itemList) => {
+    //         return (
+    //             itemList.logical_path &&
+    //             itemList.logical_path.indexOf(record.logical_path + ".") ===
+    //                 0 &&
+    //             itemList.logical_path !== record.logical_path &&
+    //             itemList.domain_key === record.domain_key
+    //         )
+    //     })
+    //     list = decorateList(list, {})
+    //     list = list.sort(sortUp)
+    //     let result = []
+    //     let arr = []
+    //     for (let i = 0; i < list.length; i++) {
+    //         // 获取当前意图的所有上层意图
+    //         arr = list.filter((value) => {
+    //             return (
+    //                 value.logical_path !== list[i].logical_path &&
+    //                 list[i].logical_path.includes(value.logical_path + ".") &&
+    //                 list[i].domain_key === value.domain_key
+    //             )
+    //         })
+    //         // 存在上层意图则标明当前遍历意图为其他意图的子意图
+    //         if (arr.length) {
+    //             // 获取当前遍历意图的父意图 并加入其父意图的子集中
+    //             arr = arr.sort(sortUp)
+    //             let index = list.findIndex((value) => {
+    //                 return value.id === arr[0].id
+    //             })
+    //             if (
+    //                 !list[index].children.filter((item) => {
+    //                     return item.id == list[i].id
+    //                 }).length
+    //             ) {
+    //                 list[index].children.push(list[i])
+    //             }
+    //         } else {
+    //             // 不存在上层意图表示当前遍历意图为最高子意图、
+    //             result.push(list[i])
+    //         }
+    //         // record.children = [...result]
+    //     }
+    //     record.children = [...result]
+    //     return record
+    //     // }
+    // })
+    // treeForeach(list, (node) => {
+    //     console.log(node.name)
+    // })
     return clone(list)
 }

@@ -70,7 +70,7 @@ class Flow extends React.PureComponent {
                 return false
             }
         })
-        list = getTree(list)
+        list = getTree(list, other.dict.domain)
         this.setState({ intenList: list })
     }
 
@@ -91,6 +91,9 @@ class Flow extends React.PureComponent {
             }
         })
         list = list.filter((item) => {
+            if (item.id === record.id) {
+                return false
+            }
             if (
                 item.domain_key === record.domain_key ||
                 (base_domain_key &&
