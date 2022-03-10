@@ -10,7 +10,11 @@ import {
 } from "antd"
 import "./RightDrawer.less"
 import { handleCFmName } from "./methods"
-import { CloseOutlined, QuestionCircleOutlined } from "@ant-design/icons"
+import {
+    CloseOutlined,
+    QuestionCircleOutlined,
+    InfoCircleOutlined,
+} from "@ant-design/icons"
 import { ActionModal } from "./actionModal"
 import { ConditionModal } from "./conditionModal"
 import Sortable from "sortablejs/modular/sortable.complete.esm.js"
@@ -365,7 +369,19 @@ class RightDrawer extends React.PureComponent {
                 <div>
                     <div className="drawer_title">
                         节点设置
-                        <span style={{ fontSize: "12px" }}>({cell.id})</span>
+                        <Tooltip
+                            title={
+                                <div>
+                                    {"编号："} {cell.id}
+                                </div>
+                            }
+                        >
+                            <a>
+                                <InfoCircleOutlined
+                                    style={{ marginLeft: "5px" }}
+                                />
+                            </a>
+                        </Tooltip>
                     </div>
                     <div className="drawer_wrap">
                         <Form
@@ -675,7 +691,20 @@ class RightDrawer extends React.PureComponent {
                 <div>
                     <div className="drawer_title">
                         连线设置
-                        <span style={{ fontSize: "12px" }}>({cell.id})</span>
+                        <Tooltip
+                            title={
+                                <div>
+                                    {"编号："}
+                                    {cell.id}
+                                </div>
+                            }
+                        >
+                            <a>
+                                <InfoCircleOutlined
+                                    style={{ marginLeft: "5px" }}
+                                />
+                            </a>
+                        </Tooltip>
                     </div>
                     <div className="drawer_wrap">
                         <Form
