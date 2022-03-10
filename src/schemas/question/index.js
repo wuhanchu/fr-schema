@@ -28,7 +28,7 @@ const schema = {
         width: "250px",
     },
     question_standard: {
-        title: <div style={{ width: "56px" }}>标准问</div>,
+        title: "标准问",
 
         required: true,
         // searchPrefix: "like",
@@ -78,7 +78,7 @@ const schema = {
         showHide: true,
     },
     recommend_text: {
-        title: <div style={{ width: "56px" }}>推荐问</div>,
+        title: <div style={{ width: "56px" }}>推荐信息</div>,
         // type: schemaFieldType.Select,
         type: schemaFieldType.TextArea,
         props: {

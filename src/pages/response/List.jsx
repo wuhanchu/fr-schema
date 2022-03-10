@@ -651,11 +651,26 @@ class List extends ListPage {
 
     // 获取意图列表
     async findIntentList(domainKey) {
-        let res = await schemas.intent.service.get({
-            domain_key: domainKey,
-            pageSize: 10000,
-        })
-        return res.list
+        if (domainKey) {
+            let domainArray = []
+            domainArray.push(domainKey)
+            console.log(this.props.dict.domain[domainKey].base_domain_key)
+            let base_domain_key = this.props.dict.domain[domainKey]
+                .base_domain_key
+            if (base_domain_key) {
+                domainArray = [...domainArray, ...base_domain_key]
+            }
+            let res = await schemas.intent.service.get({
+                domain_key: domainArray.join(","),
+                pageSize: 10000,
+            })
+            return res.list
+        } else {
+            let res = await schemas.intent.service.get({
+                pageSize: 10000,
+            })
+            return res.list
+        }
     }
 
     async findAllIntent() {

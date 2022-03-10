@@ -352,6 +352,7 @@ class RightDrawer extends React.PureComponent {
     renderNode() {
         let { chooseType, cell, graph } = this.props
         let { isShow, showAction } = this.state
+        console.log(cell)
         let canEditType = false
         graph &&
             graph.getEdges().map((item) => {
@@ -368,7 +369,7 @@ class RightDrawer extends React.PureComponent {
                             ref={this.formNode}
                             labelAlign="left"
                             colon={false}
-                            initialValues={cell.getData()}
+                            initialValues={{ ...cell.getData() }}
                             preserve={false}
                             layout="vertical"
                             onValuesChange={(args, data) => {
@@ -441,6 +442,25 @@ class RightDrawer extends React.PureComponent {
                                 }
                             }}
                         >
+                            <FormItem
+                            // name={"key"}
+                            // label={"编号"}
+                            // extra="节点唯一编号"
+                            // rules={[
+                            //     {
+                            //         required: true,
+                            //         message: "请输入节点唯一编号！",
+                            //     },
+                            // ]}
+                            >
+                                <Input
+                                    disabled={true}
+                                    defaultValue={cell.id}
+                                    style={{ width: "100%" }}
+                                    min="1"
+                                    placeholder="请输入节点唯一编号"
+                                />
+                            </FormItem>
                             <FormItem
                                 label="名称"
                                 name={"name"}
@@ -675,7 +695,7 @@ class RightDrawer extends React.PureComponent {
                             ref={this.formEdge}
                             labelAlign="left"
                             colon={false}
-                            initialValues={cell.getData()}
+                            initialValues={{ ...cell.getData(), key: cell.key }}
                             layout="vertical"
                             onValuesChange={(args) => {
                                 cell.setData(args)
@@ -695,6 +715,25 @@ class RightDrawer extends React.PureComponent {
                                 })
                             }}
                         >
+                            <FormItem
+                            // name={"key"}
+                            // label={"编号"}
+                            // extra="节点唯一编号"
+                            // rules={[
+                            //     {
+                            //         required: true,
+                            //         message: "请输入节点唯一编号！",
+                            //     },
+                            // ]}
+                            >
+                                <Input
+                                    disabled={true}
+                                    defaultValue={cell.id}
+                                    style={{ width: "100%" }}
+                                    // min="1"
+                                    placeholder="请输入节点唯一编号"
+                                />
+                            </FormItem>
                             <FormItem
                                 label="名称"
                                 name="name"

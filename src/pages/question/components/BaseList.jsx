@@ -82,7 +82,7 @@ class BaseList extends EditPage {
                 "import/掌数_知料_知识库信息导入.xlsx"
         )
         super(props, {
-            operateWidth: 170,
+            operateWidth: 150,
             schema: clone({ ...schemas.question.schema, ...config }),
             service: {
                 ...schemas.question.service,

@@ -70,7 +70,7 @@ class Flow extends React.PureComponent {
                 return false
             }
         })
-        list = getTree(list, other.dict.domain)
+        list = getTree(clone(list), other.dict.domain)
         this.setState({ intenList: list })
     }
 

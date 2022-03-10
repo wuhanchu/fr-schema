@@ -24,6 +24,7 @@ import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import { async } from "@antv/x6/lib/registry/marker/main"
 import { listToDict } from "@/outter/fr-schema/src/dict"
 import { LoadingOutlined } from "@ant-design/icons"
+import clone from "clone"
 const { decorateList } = frSchema
 
 @connect(({ global }) => ({
@@ -54,7 +55,7 @@ class List extends ListPage {
     async componentDidMount() {
         let intent = await schemas.intent.service.get({ limit: 9999 })
 
-        let intentList = getTree(intent.list, this.props.dict.domain)
+        let intentList = getTree(clone(intent.list), this.props.dict.domain)
 
         let project = await schemas.project.service.get({ limit: 9999 })
         this.schema.project_id.dict = listToDict(project.list, "", "id", "name")
@@ -150,7 +151,8 @@ class List extends ListPage {
                                 props.form.current.getFieldsValue().domain_key
                             ].base_domain_key.indexOf(item.domain_key) > -1)
                 )
-                options = getTree(options, this.props.dict.domain)
+
+                options = getTree(clone(options), this.props.dict.domain)
                 console.log(options)
             } else {
                 options = intent.list.filter((item) => {
@@ -167,11 +169,12 @@ class List extends ListPage {
                         return true
                     }
                 })
-                console.log(options)
-                options = getTree(options, this.props.dict.domain)
-                setTimeout(() => {
-                    console.log(options)
-                }, 200)
+                // console.log(options)
+                options = getTree(clone(options), this.props.dict.domain)
+                // setTimeout(() => {
+                //     console.log(options)
+                // }, 200)
+                // options = clone(options)
                 // console.log(getTree(options))
             }
             return (

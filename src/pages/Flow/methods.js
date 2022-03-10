@@ -616,22 +616,17 @@ function treeForeach(tree, func) {
 }
 
 export function filterIntent(intentList, item, record, doaminDict) {
-    console.log(intentList)
     let filterinIntent = intentList.filter((one) => {
         return (
             item.logical_path.split(".")[0] === one.logical_path &&
             item.logical_path !== one.logical_path
         )
     })
-    console.log(filterinIntent)
     let myDomainIntent = filterinIntent.filter((one) => {
         return item.domain_key === one.domain_key
     })
-    console.log(myDomainIntent)
 
     let baseDomainIntent = filterinIntent.filter((one) => {
-        console.log(doaminDict)
-        console.log(doaminDict[item.domain_key].base_domain_key)
         if (doaminDict[item.domain_key].base_domain_key) {
             return (
                 doaminDict[item.domain_key].base_domain_key.indexOf(
@@ -669,7 +664,6 @@ export function getTree(args, doaminDict) {
     let list = sortBy.map((record) => {
         let list = res.filter((itemList) => {
             let data = filterIntent(res, itemList, record, doaminDict)
-            console.log(data)
             let isTop =
                 itemList.logical_path &&
                 itemList.logical_path.indexOf(record.logical_path + ".") ===
