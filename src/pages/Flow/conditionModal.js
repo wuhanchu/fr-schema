@@ -343,7 +343,7 @@ export const ConditionModal = ({
 
     return (
         <Modal
-            title={"条件配置"}
+            title={"条件配置(" + cell.id + ")"}
             visible={visible}
             destroyOnClose={true}
             width={"700px"}

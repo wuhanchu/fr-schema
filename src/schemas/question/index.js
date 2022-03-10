@@ -28,7 +28,7 @@ const schema = {
         width: "250px",
     },
     question_standard: {
-        title: "标准问",
+        title: "标准问句",
 
         required: true,
         // searchPrefix: "like",
@@ -36,7 +36,7 @@ const schema = {
         props: {
             // 最小高度
             autoSize: { minRows: 2, maxRows: 6 },
-            placeholder: "请输入标准问",
+            placeholder: "请输入标准问句",
         },
         sorter: true,
         editable: true,

@@ -363,7 +363,10 @@ class RightDrawer extends React.PureComponent {
         return (
             chooseType === "node" && (
                 <div>
-                    <div className="drawer_title">节点设置</div>
+                    <div className="drawer_title">
+                        节点设置
+                        <span style={{ fontSize: "12px" }}>({cell.id})</span>
+                    </div>
                     <div className="drawer_wrap">
                         <Form
                             ref={this.formNode}
@@ -442,25 +445,6 @@ class RightDrawer extends React.PureComponent {
                                 }
                             }}
                         >
-                            <FormItem
-                            // name={"key"}
-                            // label={"编号"}
-                            // extra="节点唯一编号"
-                            // rules={[
-                            //     {
-                            //         required: true,
-                            //         message: "请输入节点唯一编号！",
-                            //     },
-                            // ]}
-                            >
-                                <Input
-                                    disabled={true}
-                                    defaultValue={cell.id}
-                                    style={{ width: "100%" }}
-                                    min="1"
-                                    placeholder="请输入节点唯一编号"
-                                />
-                            </FormItem>
                             <FormItem
                                 label="名称"
                                 name={"name"}
@@ -689,7 +673,10 @@ class RightDrawer extends React.PureComponent {
         return (
             chooseType === "edge" && (
                 <div>
-                    <div className="drawer_title">连线设置</div>
+                    <div className="drawer_title">
+                        连线设置
+                        <span style={{ fontSize: "12px" }}>({cell.id})</span>
+                    </div>
                     <div className="drawer_wrap">
                         <Form
                             ref={this.formEdge}
@@ -715,25 +702,6 @@ class RightDrawer extends React.PureComponent {
                                 })
                             }}
                         >
-                            <FormItem
-                            // name={"key"}
-                            // label={"编号"}
-                            // extra="节点唯一编号"
-                            // rules={[
-                            //     {
-                            //         required: true,
-                            //         message: "请输入节点唯一编号！",
-                            //     },
-                            // ]}
-                            >
-                                <Input
-                                    disabled={true}
-                                    defaultValue={cell.id}
-                                    style={{ width: "100%" }}
-                                    // min="1"
-                                    placeholder="请输入节点唯一编号"
-                                />
-                            </FormItem>
                             <FormItem
                                 label="名称"
                                 name="name"

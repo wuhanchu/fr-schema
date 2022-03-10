@@ -236,7 +236,7 @@ export const ActionModal = ({
 
     return (
         <Modal
-            title={"操作配置"}
+            title={"操作配置(" + cell.id + ")"}
             visible={visible}
             destroyOnClose={true}
             width={"700px"}

@@ -1004,6 +1004,7 @@ class List extends ListPage {
                             await schemas.domain.service.cache({
                                 domain_key: record.key,
                             })
+                            message.success("操作成功")
                             e.stopPropagation()
                         }}
                     >
