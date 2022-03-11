@@ -62,18 +62,18 @@ const schema = {
         exportConcat: true,
         extra: "一行一个数据，用于相似度比对，不建议包含重复的相似文本。",
     },
-    example: {
-        title: "例子",
-        search: false,
+    // example: {
+    //     title: "例子",
+    //     search: false,
 
-        type: schemaFieldType.TextArea,
-        props: {
-            autoSize: { minRows: 2, maxRows: 6 },
-        },
-        hideInTable: true,
-        exportConcat: true,
-        extra: "一行一个数据，用于模型训练，建议包含重复的相似文本",
-    },
+    //     type: schemaFieldType.TextArea,
+    //     props: {
+    //         autoSize: { minRows: 2, maxRows: 6 },
+    //     },
+    //     hideInTable: true,
+    //     exportConcat: true,
+    //     extra: "一行一个数据，用于模型训练，建议包含重复的相似文本",
+    // },
     create_time: {
         title: "创建时间",
         // required: true,

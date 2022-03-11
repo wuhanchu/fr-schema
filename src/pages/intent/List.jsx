@@ -245,11 +245,11 @@ class List extends ListPage {
                     dataIndex: "standard_discourse",
                     key: "standard_discourse",
                 },
-                {
-                    title: "例子",
-                    dataIndex: "example",
-                    key: "example",
-                },
+                // {
+                //     title: "例子",
+                //     dataIndex: "example",
+                //     key: "example",
+                // },
             ]
             let data = await this.requestList({
                 pageSize: 1000000,
@@ -314,9 +314,9 @@ class List extends ListPage {
                         title: "意图路径",
                         require: true,
                     },
-                    example: {
-                        title: "例子",
-                    },
+                    // example: {
+                    //     title: "例子",
+                    // },
                     regex: {
                         title: "正则表达式",
                     },
@@ -336,15 +336,15 @@ class List extends ListPage {
                     const data = this.state.importData.map((item) => {
                         const {
                             regex,
-                            example,
+                            // example,
                             standard_discourse,
                             ...others
                         } = item
 
                         let regex_data =
                             regex && regex.replace(/\r/g, "").split("\n")
-                        let example_data =
-                            example && example.replace(/\r/g, "").split("\n")
+                        // let example_data =
+                        //     example && example.replace(/\r/g, "").split("\n")
                         let standard_discourse_data =
                             standard_discourse &&
                             standard_discourse.replace(/\r/g, "").split("\n")
@@ -352,7 +352,7 @@ class List extends ListPage {
                             ...this.meta.addArgs,
                             ...others,
                             regex: regex_data ? regex_data : [],
-                            example: example_data ? example_data : [],
+                            // example: example_data ? example_data : [],
                             standard_discourse: standard_discourse_data
                                 ? standard_discourse_data
                                 : [],
@@ -453,6 +453,7 @@ class List extends ListPage {
                 return (
                     itemList.logical_path &&
                     itemList.logical_path.indexOf(".") < 0
+                    // (itemList.logical_path.indexOf(".") < 0 || (res.list.filter((item)=>{return item.logical_path.indexOf(".") < 0 && itemList.logical_path.split('.')[0]===item.logical_path}).length))
                 )
             })
             .map((item) => {

@@ -37,6 +37,8 @@ class List extends ListPage {
             schema: schemas.response.schema,
             service: schemas.response.service,
             operateWidth: "120px",
+            showSelect: true,
+            showDelete: true,
             infoProps: {
                 width: "900px",
             },
@@ -585,8 +587,6 @@ class List extends ListPage {
                 this.setState({ modalLoading: true })
                 let param = addArgs ? { ...addArgs } : {}
                 const idKey = getPrimaryKey(this.schema)
-                console.log(param)
-                console.log(values, infoData, action, addArgs, fieldsValue)
                 // set the id value
                 if (values) {
                     const idValue = values[idKey || "id"]
@@ -594,9 +594,6 @@ class List extends ListPage {
                 }
                 let { texts, template_text, ...other } = fieldsValue
                 // 新的回复文本
-                console.log("新的回复文本")
-                console.log(fieldsValue["template_text"])
-                console.log(typeof fieldsValue["template_text"])
 
                 if (fieldsValue["texts"] && fieldsValue["texts"].length) {
                     // 判断是否需要插入

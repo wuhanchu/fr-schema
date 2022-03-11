@@ -806,6 +806,7 @@ function SearchPage(props) {
         try {
             const response = await schemas.question.service.search({
                 search: value,
+                limit: 15,
                 ...args,
                 domain_key: haveProjectDomainKey
                     ? haveProjectDomainKey
