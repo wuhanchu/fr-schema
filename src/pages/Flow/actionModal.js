@@ -6,6 +6,7 @@ import clone from "clone"
 import AceEditor from "react-ace"
 import { v4 as uuidv4 } from "uuid"
 import { verifyJsonORString } from "@/outter/fr-schema-antd-utils/src/utils/component"
+import { InfoCircleOutlined } from "@ant-design/icons"
 import "ace-builds/src-noconflict/mode-json"
 import "ace-builds/src-noconflict/theme-github"
 import "ace-builds/src-noconflict/ext-language_tools"
@@ -236,7 +237,23 @@ export const ActionModal = ({
 
     return (
         <Modal
-            title={"操作配置(" + cell.id + ")"}
+            title={
+                <>
+                    行为配置
+                    <Tooltip
+                        title={
+                            <div>
+                                {"编号："}
+                                {isImport || defaultValue.key}
+                            </div>
+                        }
+                    >
+                        <a>
+                            <InfoCircleOutlined style={{ marginLeft: "5px" }} />
+                        </a>
+                    </Tooltip>
+                </>
+            }
             visible={visible}
             destroyOnClose={true}
             width={"700px"}

@@ -6,6 +6,7 @@ import {
     Select,
     Divider,
     TreeSelect,
+    Tooltip,
     message,
     InputNumber,
 } from "antd"
@@ -14,6 +15,7 @@ import Modal from "antd/lib/modal/Modal"
 import clone from "clone"
 import AceEditor from "react-ace"
 import "ace-builds/src-noconflict/mode-json"
+import { InfoCircleOutlined } from "@ant-design/icons"
 import { v4 as uuidv4 } from "uuid"
 import {
     verifyJson,
@@ -343,7 +345,23 @@ export const ConditionModal = ({
 
     return (
         <Modal
-            title={"条件配置(" + cell.id + ")"}
+            title={
+                <>
+                    条件配置
+                    <Tooltip
+                        title={
+                            <div>
+                                {"编号："}
+                                {isImport || defaultValue.key}
+                            </div>
+                        }
+                    >
+                        <a>
+                            <InfoCircleOutlined style={{ marginLeft: "5px" }} />
+                        </a>
+                    </Tooltip>
+                </>
+            }
             visible={visible}
             destroyOnClose={true}
             width={"700px"}
