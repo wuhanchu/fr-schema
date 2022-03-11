@@ -16,6 +16,13 @@ import ImportModal from "@/outter/fr-schema-antd-utils/src/components/modal/Impo
 
 const { decorateList } = frSchema
 
+function treeForeach(tree, func) {
+    tree.forEach((data) => {
+        func(data.id)
+        return data.children && treeForeach(data.children, func) // 遍历子树
+    })
+}
+
 function getTreeItem(data, id) {
     let result
     data.map((item) => {
@@ -441,10 +448,23 @@ class List extends ListPage {
             logical_path: undefined,
         })
         let fatherOther = []
-
+        let sortBy = res.list
+            .filter((itemList) => {
+                return (
+                    itemList.logical_path &&
+                    itemList.logical_path.indexOf(".") < 0
+                )
+            })
+            .map((item) => {
+                return {
+                    ...item,
+                    domain_key_remark: this.props.dict.domain[item.domain_key]
+                        .name,
+                }
+            })
         let clildrenList = []
         this.setState({ listLoading: true })
-        let list = this.state.data.list.map((record) => {
+        let list = sortBy.map((record) => {
             let list = res.list.filter((itemList) => {
                 let isTop =
                     itemList.logical_path &&
@@ -454,7 +474,6 @@ class List extends ListPage {
                     (itemList.domain_key === record.domain_key ||
                         this.filterIntent(res.list, itemList, record))
                 if (isTop) {
-                    clildrenList.push(itemList.id)
                 }
                 return isTop
             })
@@ -511,9 +530,12 @@ class List extends ListPage {
             return record
             // }
         })
-        this.state.data.list.map((item) => {
-            clildrenList.push(item.id)
+
+        clildrenList = []
+        treeForeach(list, (id) => {
+            clildrenList.push(id)
         })
+
         res.list.map((item) => {
             if (clildrenList.indexOf(item.id) == -1) {
                 list.push({
