@@ -165,7 +165,7 @@ const schema = {
         },
         props: {
             style: {
-                height: "304px",
+                height: "324px",
                 border: "1px solid #d9d9d9",
                 width: "530px",
             },
