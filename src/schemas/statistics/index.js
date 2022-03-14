@@ -104,6 +104,7 @@ const schema = {
         hideInTable: true,
         type: schemaFieldType.Select,
         props: {
+            mode: "tags",
             allowClear: true,
             showSearch: true,
         },

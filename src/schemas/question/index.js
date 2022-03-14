@@ -7,6 +7,22 @@ import { Tooltip } from "antd"
 const Minio = require("minio")
 
 const schema = {
+    question_standard: {
+        title: "标准问句",
+
+        required: true,
+        // searchPrefix: "like",
+        type: schemaFieldType.TextArea,
+        props: {
+            // 最小高度
+            autoSize: { minRows: 5, maxRows: 5 },
+            placeholder: "请输入标准问句",
+        },
+        sorter: true,
+        editable: true,
+        // width: "260px",
+        fixed: "left",
+    },
     group: {
         // title: "分组",
         title: <div style={{ width: "56px" }}>分组</div>,
@@ -21,94 +37,19 @@ const schema = {
         props: {
             allowClear: true,
             showSearch: true,
+            style: { minWidth: "150px" },
         },
         sorter: true,
         editable: true,
-        fixed: "left",
-        width: "250px",
-    },
-    question_standard: {
-        title: "标准问句",
-
-        required: true,
-        // searchPrefix: "like",
-        type: schemaFieldType.TextArea,
-        props: {
-            // 最小高度
-            autoSize: { minRows: 2, maxRows: 6 },
-            placeholder: "请输入标准问句",
-        },
-        sorter: true,
-        editable: true,
-        width: "260px",
-    },
-    question_extend: {
-        title: "扩展问",
-        // type: schemaFieldType.Select,
-        type: schemaFieldType.TextArea,
-        props: {
-            autoSize: { minRows: 2, maxRows: 6 },
-        },
-        exportConcat: true,
-        extra: "每行表示一个问题",
-        editable: true,
-        render: (item, record) => {
-            let showContent = item ? item : null
-            return (
-                <Tooltip
-                    title={
-                        <div
-                            dangerouslySetInnerHTML={{ __html: showContent }}
-                        />
-                    }
-                >
-                    {item && item.length > 20
-                        ? item.substring(0, 20) + "..."
-                        : item}
-                </Tooltip>
-            )
-        },
-        width: "260px",
-    },
-    question_extend_number: {
-        title: "扩展问数量",
-        editHide: true,
-        width: "120px",
-        addHide: true,
-        showHide: true,
-    },
-    recommend_text: {
-        title: <div style={{ width: "56px" }}>推荐信息</div>,
-        // type: schemaFieldType.Select,
-        type: schemaFieldType.TextArea,
-        props: {
-            autoSize: { minRows: 2, maxRows: 6 },
-            placeholder: "请输入推荐问",
-        },
-        exportConcat: true,
-        extra: "每行表示一个问题",
-        editable: true,
-        render: (item, record) => {
-            let showContent = item ? item : null
-            return (
-                <Tooltip
-                    title={
-                        <div
-                            dangerouslySetInnerHTML={{ __html: showContent }}
-                        />
-                    }
-                >
-                    {item && item.length > 20
-                        ? item.substring(0, 20) + "..."
-                        : item}
-                </Tooltip>
-            )
-        },
-        width: "260px",
+        minWidth: "150px",
     },
     label: {
         title: "标签",
+        // searchPrefix: "like",
+
         type: schemaFieldType.Select,
+        // sorter: true,
+
         props: {
             mode: "tags",
             allowClear: true,
@@ -117,24 +58,73 @@ const schema = {
         editable: true,
         width: "120px",
     },
-    answer_text: {
-        title: "摘要",
+    question_extend: {
+        title: "扩展问",
+        // type: schemaFieldType.Select,
         type: schemaFieldType.TextArea,
         props: {
-            // 最小高度
-            autoSize: { minRows: 2, maxRows: 6 },
+            autoSize: { minRows: 6, maxRows: 6 },
         },
+        style: {
+            height: "100px",
+            width: "300px",
+        },
+        exportConcat: true,
+        extra: "每行表示一个问题",
         editable: true,
-        width: "250px",
+        render: (item, record) => {
+            let showContent = item ? item : null
+            return (
+                <Tooltip
+                    title={
+                        <div
+                            dangerouslySetInnerHTML={{ __html: showContent }}
+                        />
+                    }
+                >
+                    {item && item.length > 20
+                        ? item.substring(0, 20) + "..."
+                        : item}
+                </Tooltip>
+            )
+        },
+        width: "260px",
     },
+    question_extend_count: {
+        title: "扩展问数量",
+        editHide: true,
+        sorter: true,
+
+        width: "120px",
+        addHide: true,
+        showHide: true,
+    },
+
     global_key: {
-        title: "全局变量",
+        title: "内部编号",
+        sorter: true,
         extra: "作为对话机器人的匹配主键",
         editable: true,
         render: (item) => {
             return <div style={{ minWidth: "60px" }}>{item}</div>
         },
         width: "80px",
+    },
+    external_id: {
+        title: "外部编号",
+        addHide: true,
+        sorter: true,
+
+        editHide: true,
+        showHide: true,
+        render: (item) => {
+            return item ? (
+                <div style={{ minWidth: "300px" }}>{item}</div>
+            ) : (
+                <div></div>
+            )
+        },
+        width: "120px",
     },
     answer: {
         title: "答案",
@@ -148,7 +138,8 @@ const schema = {
             },
         },
         id: "answer",
-        width: 450,
+        listHide: true,
+        // width: 450,
         lineWidth: "480px",
         render: (item, record) => {
             return (
@@ -162,7 +153,11 @@ const schema = {
                     }
                 >
                     <div
-                        style={{ maxHeight: "40px", overflow: "hidden" }}
+                        style={{
+                            maxHeight: "40px",
+                            overflow: "hidden",
+                            maxWidth: "450px",
+                        }}
                         dangerouslySetInnerHTML={{ __html: item }}
                     />
                 </Tooltip>
@@ -170,7 +165,7 @@ const schema = {
         },
         props: {
             style: {
-                height: "470px",
+                height: "304px",
                 border: "1px solid #d9d9d9",
                 width: "530px",
             },
@@ -180,10 +175,10 @@ const schema = {
                 marginLeft: "-34px",
                 marginTop: "20px",
             },
+
             controls: [
                 "font-size",
                 "table",
-
                 "text-color",
                 "bold",
                 "italic",
@@ -198,24 +193,67 @@ const schema = {
             ],
         },
     },
-    external_id: {
-        title: "外部编号",
-        addHide: true,
-        editHide: true,
-        showHide: true,
-        render: (item) => {
-            return item ? (
-                <div style={{ minWidth: "300px" }}>{item}</div>
-            ) : (
-                <div></div>
+    answer_text: {
+        title: "概要",
+        position: "right",
+        style: { width: "530px" },
+        type: schemaFieldType.TextArea,
+        props: {
+            // 最小高度
+            autoSize: { minRows: 2, maxRows: 6 },
+        },
+        itemProps: {
+            labelCol: {
+                span: 4,
+            },
+        },
+        listHide: true,
+        editable: true,
+        // width: "250px",
+    },
+    recommend_text: {
+        title: <div style={{ width: "56px" }}>推荐信息</div>,
+        // type: schemaFieldType.Select,
+        type: schemaFieldType.TextArea,
+        props: {
+            autoSize: { minRows: 2, maxRows: 6 },
+            placeholder: "请输入推荐问",
+        },
+        style: { width: "530px" },
+        itemProps: {
+            labelCol: {
+                span: 4,
+            },
+        },
+        position: "right",
+        exportConcat: true,
+        extra: "每行表示一个问题",
+        listHide: true,
+        editable: true,
+        render: (item, record) => {
+            let showContent = item ? item : null
+            return (
+                <Tooltip
+                    title={
+                        <div
+                            dangerouslySetInnerHTML={{ __html: showContent }}
+                        />
+                    }
+                >
+                    {item && item.length > 20
+                        ? item.substring(0, 20) + "..."
+                        : item}
+                </Tooltip>
             )
         },
-        width: "120px",
+        // width: "260px",
     },
+
     create_time: {
         title: "创建时间",
         addHide: true,
         showHide: true,
+        sorter: true,
 
         editHide: true,
         type: schemaFieldType.DatePicker,
@@ -223,10 +261,12 @@ const schema = {
             showTime: true,
             valueType: "dateTime",
         },
-        width: "135px",
+        // width: "135px",
     },
     update_time: {
         title: "更新时间",
+        sorter: true,
+
         addHide: true,
         showHide: true,
         editHide: true,
@@ -235,7 +275,7 @@ const schema = {
             showTime: true,
             valueType: "dateTime",
         },
-        width: "135px",
+        // width: "135px",
     },
 }
 
@@ -279,7 +319,6 @@ service.get = async function (args) {
         args.and = `(update_time.gte.${updateBeginTime},update_time.lte.${updateEndTime},create_time.gte.${createBeginTime},create_time.lte.${createEndTime})`
     }
 
-    console.log("orStr")
     const res = await createApi("question", schema, null, null).get(args)
     let list = res.list.map((item) => {
         return {
@@ -298,7 +337,6 @@ service.get = async function (args) {
 }
 
 service.getData = async function (args) {
-    console.log(args)
     let questionExtendArgs = {}
     if (args.create_time && !args.update_time) {
         let beginTime =
@@ -367,7 +405,7 @@ service.getData = async function (args) {
         : undefined
     args.or = orStr
     const res = await createApi(
-        "question",
+        "question_query_view",
         schema,
         {
             headers: {
@@ -396,6 +434,10 @@ service.getData = async function (args) {
         list: list,
         question_extend_count: res.other.headers.get("question-extend-count"),
     }
+}
+service.getGroup = async function (args) {
+    const res = await createApi("question", schema, null, "").get(args)
+    return res
 }
 service.getMinioConfig = async function (args) {
     const res = await createApi("minio", schema, null, "").get(args)

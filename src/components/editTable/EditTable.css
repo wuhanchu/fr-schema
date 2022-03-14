@@ -3,6 +3,9 @@
 }
 
 .editable-cell-value-wrap {
+    min-height: 32px;
+    max-width: 300px;
+    min-width: 100px;
     padding: 5px 12px;
     cursor: pointer;
 }

@@ -190,7 +190,7 @@ class BaseList extends EditPage {
     }
 
     async getDict() {
-        const response = await this.service.get({
+        const response = await this.service.getGroup({
             ...this.meta.queryArgs,
             select: "label,group",
             limit: 9999,
@@ -281,7 +281,7 @@ class BaseList extends EditPage {
         return (
             <>
                 {/* {this.renderTitle(item)} */}
-                <div style={{ color: "rgba(0,0,0,0.85)" }}>答案:</div>
+                <div style={{ color: "rgba(0,0,0,0.85)" }}>回复:</div>
 
                 <div
                     style={{
@@ -393,9 +393,9 @@ class BaseList extends EditPage {
 
         const filters = this.createFilters(
             {
+                question_standard: question_standards,
                 group: groups,
                 // group,
-                question_standard: question_standards,
                 label: {
                     ...label,
                     type: schemaFieldType.Select,
@@ -594,7 +594,7 @@ class BaseList extends EditPage {
                         this.handleVisibleModal(true, record, actions.edit)
                     }
                 >
-                    答案
+                    回复
                 </a>
                 <Divider type="vertical" />
                 <a
@@ -736,8 +736,9 @@ class BaseList extends EditPage {
                 visibleModal && (
                     <InfoModal
                         renderForm={renderForm}
-                        title={action !== "edit" ? title : "答案"}
+                        title={action !== "edit" ? title : "回复"}
                         action={action}
+                        width={"800px"}
                         resource={resource}
                         {...updateMethods}
                         visible={visibleModal}
@@ -749,23 +750,24 @@ class BaseList extends EditPage {
                             action !== "edit"
                                 ? this.schema
                                 : {
-                                      answer: {
-                                          ...this.schema.answer,
-                                          isNoTitle: true,
-                                          props: {
-                                              ...this.schema.answer.props,
-                                              style: {
-                                                  ...this.schema.answer.props
-                                                      .style,
-                                                  width: "700px",
-                                                  marginTop: "-24px",
-                                                  marginLeft: "-24px",
-                                                  height: "436px",
-                                                  marginBottom: "-48px",
-                                                  border: false,
+                                      answer: this.schema.answer,
+                                      answer_text: {
+                                          ...this.schema.answer_text,
+                                          itemProps: {
+                                              labelCol: {
+                                                  span: 4,
                                               },
                                           },
-                                          span: 24,
+                                          lineWidth: "480px",
+                                      },
+                                      recommend_text: {
+                                          ...this.schema.recommend_text,
+                                          itemProps: {
+                                              labelCol: {
+                                                  span: 4,
+                                              },
+                                          },
+                                          lineWidth: "480px",
                                       },
                                   }
                         }
@@ -791,12 +793,13 @@ class BaseList extends EditPage {
                             >
                                 {action !== "edit"
                                     ? title
-                                    : "答案(" +
+                                    : "回复(" +
                                       infoData.question_standard +
                                       ")"}
                             </div>
                         }
                         action={action}
+                        width={"800px"}
                         resource={resource}
                         {...updateMethods}
                         visible={visibleModal}
@@ -808,23 +811,24 @@ class BaseList extends EditPage {
                             action !== "edit"
                                 ? this.schema
                                 : {
-                                      answer: {
-                                          ...this.schema.answer,
-                                          isNoTitle: true,
-                                          props: {
-                                              ...this.schema.answer.props,
-                                              style: {
-                                                  ...this.schema.answer.props
-                                                      .style,
-                                                  width: "700px",
-                                                  marginTop: "-24px",
-                                                  marginLeft: "-24px",
-                                                  height: "436px",
-                                                  marginBottom: "-48px",
-                                                  border: false,
+                                      answer: this.schema.answer,
+                                      answer_text: {
+                                          ...this.schema.answer_text,
+                                          itemProps: {
+                                              labelCol: {
+                                                  span: 4,
                                               },
                                           },
-                                          span: 24,
+                                          lineWidth: "480px",
+                                      },
+                                      recommend_text: {
+                                          ...this.schema.recommend_text,
+                                          itemProps: {
+                                              labelCol: {
+                                                  span: 4,
+                                              },
+                                          },
+                                          lineWidth: "480px",
                                       },
                                   }
                         }
