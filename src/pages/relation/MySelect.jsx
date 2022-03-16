@@ -40,6 +40,7 @@ export default class MySelect extends React.Component {
         let res = await schemas.entity.service.get({
             pageSize: 100,
             name: "like.*" + value + "*",
+            domain_key: localStorage.getItem("domain_key"),
         })
         this.setState({ fundList_: res.list })
     }

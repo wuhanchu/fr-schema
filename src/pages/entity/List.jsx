@@ -57,13 +57,17 @@ class List extends DataList {
                 ...this.meta.queryArgs,
                 domain_key: nextProps.domain_key,
             }
+            this.initTypeList()
             this.refreshList()
         }
     }
-    async componentDidMount() {
-        const res = await schemas.entityType.service.get({ pageSize: 10000 })
+
+    async initTypeList() {
+        const res = await schemas.entityType.service.get({
+            pageSize: 10000,
+            domain_key: this.meta.queryArgs.domain_key,
+        })
         let typeList = utils.dict.listToDict(res.list, null, "key", "name")
-        this.schema.domain_key.dict = this.props.dict.domain
         this.schema.type_key.props = {}
         this.schema.type_key.props.typeKeyArry = res.list
         this.schema.type_key.notRenderFormItem = true
@@ -108,6 +112,11 @@ class List extends DataList {
             return <Select {...props} options={options} allowClear></Select>
         }
         this.schema.type_key.dict = typeList
+    }
+
+    async componentDidMount() {
+        this.initTypeList()
+        this.schema.domain_key.dict = this.props.dict.domain
         super.componentDidMount()
     }
 

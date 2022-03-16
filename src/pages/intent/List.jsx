@@ -4,12 +4,14 @@ import schemas from "@/schemas"
 import React from "react"
 import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
-import { Modal, Button, message } from "antd"
+import { Modal, Button, message, Divider, Popconfirm } from "antd"
 import frSchema from "@/outter/fr-schema/src"
 import { exportData } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
+import { LoadingOutlined } from "@ant-design/icons"
 import { getTree } from "@/pages/Flow/methods"
 // import clone from 'clone'
+const { actions } = frSchema
 
 import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
 import ImportModal from "@/outter/fr-schema-antd-utils/src/components/modal/ImportModal"
@@ -37,6 +39,20 @@ function getTreeItem(data, id) {
     return result
 }
 
+function unique(arr) {
+    if (!Array.isArray(arr)) {
+        console.log("type error!")
+        return
+    }
+    var array = []
+    for (var i = 0; i < arr.length; i++) {
+        if (array.indexOf(arr[i]) === -1) {
+            array.push(arr[i])
+        }
+    }
+    return array
+}
+
 @connect(({ global }) => ({
     dict: global.dict,
 }))
@@ -56,7 +72,6 @@ class List extends ListPage {
                 ...props.dict.domain[localStorageDomainKey].base_domain_key,
             ]
         }
-        console.log("domainArray.join('.')", domainArray.join("."))
         super(props, {
             schema: schemas.intent.schema,
             service: schemas.intent.service,
@@ -64,6 +79,7 @@ class List extends ListPage {
             queryArgs: {
                 pageSize: 10000,
                 limit: 10000,
+                order: "domain_key",
                 domain_key: domainArray.join(","),
             },
             mini: true,
@@ -115,7 +131,68 @@ class List extends ListPage {
                 }
             }
         }
-        console.log(this.meta)
+    }
+
+    renderOperateColumn(props = {}) {
+        const { scroll } = this.meta
+        const { inDel } = this.state
+        const { showEdit = true, showDelete = true } = {
+            ...this.meta,
+            ...props,
+        }
+        return (
+            !this.meta.readOnly &&
+            !this.props.readOnly && {
+                title: "操作",
+                width: this.meta.operateWidth,
+                fixed: "right",
+                render: (text, record) => (
+                    <>
+                        {showEdit &&
+                            record.domain_key ===
+                                this.state.localStorageDomainKey && (
+                                <a
+                                    onClick={() =>
+                                        this.handleVisibleModal(
+                                            true,
+                                            record,
+                                            actions.edit
+                                        )
+                                    }
+                                >
+                                    修改
+                                </a>
+                            )}
+                        {showDelete &&
+                            record.domain_key ===
+                                this.state.localStorageDomainKey && (
+                                <>
+                                    {showEdit && <Divider type="vertical" />}
+                                    <Popconfirm
+                                        title="是否要删除此行？"
+                                        onConfirm={async (e) => {
+                                            this.setState({ record })
+                                            await this.handleDelete(record)
+                                            e.stopPropagation()
+                                        }}
+                                    >
+                                        <a>
+                                            {inDel &&
+                                                this.state.record.id &&
+                                                this.state.record.id ===
+                                                    record.id && (
+                                                    <LoadingOutlined />
+                                                )}
+                                            删除
+                                        </a>
+                                    </Popconfirm>
+                                </>
+                            )}
+                        {this.renderOperateColumnExtend(record)}
+                    </>
+                ),
+            }
+        )
     }
 
     /**
@@ -277,16 +354,12 @@ class List extends ListPage {
                     dataIndex: "standard_discourse",
                     key: "standard_discourse",
                 },
-                // {
-                //     title: "例子",
-                //     dataIndex: "example",
-                //     key: "example",
-                // },
             ]
             let data = await this.requestList({
                 pageSize: 1000000,
                 offset: 0,
                 ...args,
+                domain_key: this.state.localStorageDomainKey,
                 logical_path: undefined,
             })
             data = decorateList(data.list, this.schema)
@@ -383,10 +456,9 @@ class List extends ListPage {
                         return {
                             ...this.meta.addArgs,
                             ...others,
-                            regex: regex_data ? regex_data : [],
-                            // example: example_data ? example_data : [],
+                            regex: regex_data ? unique(regex_data) : [],
                             standard_discourse: standard_discourse_data
-                                ? standard_discourse_data
+                                ? unique(standard_discourse_data)
                                 : [],
                             id: parseInt(others.id)
                                 ? parseInt(others.id)
@@ -478,6 +550,12 @@ class List extends ListPage {
             pageSize: 10000, // 显示所有意图,不分页
             // name: undefined,
             logical_path: undefined,
+        })
+        res.list = res.list.map((item) => {
+            return {
+                ...item,
+                disabled: item.domain_key !== this.state.localStorageDomainKey,
+            }
         })
         let fatherOther = []
         let sortBy = res.list

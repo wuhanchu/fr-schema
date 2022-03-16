@@ -1,4 +1,4 @@
-import { createApi } from "@/outter/fr-schema/src/service"
+import { createApi } from "@/components/ListPage/service"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 
 const schema = {
@@ -6,6 +6,8 @@ const schema = {
         title: "域",
         search: false,
         sorter: true,
+        editHide: true,
+        addHide: true,
         required: true,
         type: schemaFieldType.Select,
         props: {

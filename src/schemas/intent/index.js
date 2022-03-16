@@ -1,10 +1,12 @@
-import { createApi, createBasicApi } from "@/outter/fr-schema/src/service"
+import { createApi, createBasicApi } from "@/components/ListPage/service"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 
 const schema = {
     domain_key: {
         title: "域",
-
+        addHide: true,
+        editHide: true,
+        search: false,
         sorter: true,
         required: true,
         type: schemaFieldType.Select,

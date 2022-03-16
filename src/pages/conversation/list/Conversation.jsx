@@ -45,6 +45,8 @@ function unique(arr, key) {
 }))
 class Conversation extends ListPage {
     constructor(props) {
+        const localStorageDomainKey = localStorage.getItem("domain_key")
+
         super(props, {
             schema: schemas.schema,
             service: schemas.service,
@@ -59,6 +61,8 @@ class Conversation extends ListPage {
             },
             addHide: true,
             queryArgs: {
+                ...props.queryArgs,
+                domain_key: localStorageDomainKey,
                 order: "create_time.desc",
             },
         })
@@ -122,6 +126,7 @@ class Conversation extends ListPage {
             return item.id
         })
         let details = await schemaDetail.service.get({
+            ...this.meta.queryArgs,
             conversation_id: "in.(" + ids.join(",") + ")",
             limit: 100000,
             order: "create_time",
@@ -334,6 +339,7 @@ class Conversation extends ListPage {
 
     async exportDetail(record) {
         let data = await schemaDetail.service.get({
+            ...this.meta.queryArgs,
             conversation_id: record.id,
             order: "create_time",
             limit: 100000,

@@ -422,11 +422,99 @@ class Main extends React.PureComponent {
             </Menu>
         )
         const operations = (
-            <Dropdown overlay={menu} placement="bottomLeft">
-                <Button>
-                    {this.state.isLoading && <LoadingOutlined />}创建分析
-                </Button>
-            </Dropdown>
+            <Button
+                onClick={async () => {
+                    let item = this.state.localStorageDomainKey
+                    try {
+                        this.setState({ isLoading: true })
+                        let sync = await schemas.mark.service.mark_task({
+                            domain_key: item.key,
+                        })
+                        if (this.mysetIntervals) {
+                            clearInterval(this.mysetIntervals)
+                        }
+                        if (this.mysetInterval) {
+                            clearInterval(this.mysetInterval)
+                        }
+                        this.handleGetTask(
+                            { ...item, key: item.key },
+                            sync.data.task_id,
+                            undefined
+                        )
+
+                        this.setState({ isLoading: false })
+                        // message.success("创建成功，请查看进度！")
+                        this.mysetInterval = setInterval(async () => {
+                            let data
+                            try {
+                                data = await schemas.task.service.getDetail({
+                                    domain_key: item.key,
+                                    id: sync.data.task_id,
+                                })
+                            } catch (error) {
+                                if (this.mysetInterval) {
+                                    clearInterval(this.mysetInterval)
+                                }
+                            }
+
+                            if (data) {
+                                if (data.status === "end") {
+                                    const args = {
+                                        message: (
+                                            <span>
+                                                <span>
+                                                    {data.name + "已完成"}
+                                                </span>
+                                                <Tooltip title="查看详情">
+                                                    <a
+                                                        onClick={() => {
+                                                            this.handleTaskInfo(
+                                                                item,
+                                                                data.id
+                                                            )
+                                                        }}
+                                                    >
+                                                        <InfoCircleOutlined
+                                                            style={{
+                                                                marginLeft:
+                                                                    "5px",
+                                                            }}
+                                                        />
+                                                    </a>
+                                                </Tooltip>
+                                            </span>
+                                        ),
+                                        key: "process",
+                                        description: (
+                                            <Progress
+                                                strokeColor={{
+                                                    "0%": "#108ee9",
+                                                    "100%": "#87d068",
+                                                }}
+                                                percent={100}
+                                            />
+                                        ),
+                                        duration: 0,
+                                    }
+                                    clearInterval(this.mysetInterval)
+                                    notification.open(args)
+                                }
+                            } else {
+                                clearInterval(this.mysetInterval)
+                            }
+                        }, 10000)
+                        console.log("handleGetTask")
+                    } catch (error) {
+                        message.error(error.message)
+                        if (this.mysetInterval) {
+                            clearInterval(this.mysetInterval)
+                        }
+                        this.setState({ isLoading: false })
+                    }
+                }}
+            >
+                {this.state.isLoading && <LoadingOutlined />}创建分析
+            </Button>
         )
 
         const { dict, data } = this.props

@@ -264,6 +264,7 @@ class List extends ListPage {
             }
             return str
         }
+        await this.findIntentByDomainKey(this.state.localStorageDomainKey)
         super.componentDidMount()
     }
 
@@ -315,7 +316,7 @@ class List extends ListPage {
                         wrapperCol={globalStyle.form.wrapperCol}
                         initialValues={infoData}
                     >
-                        <Form.Item
+                        {/* <Form.Item
                             label="域"
                             name="domain_key"
                             rules={[{ required: true, message: "请选择域" }]}
@@ -335,7 +336,7 @@ class List extends ListPage {
                                     </Select.Option>
                                 ))}
                             </Select>
-                        </Form.Item>
+                        </Form.Item> */}
                         <Form.Item
                             label="名称"
                             name="name"
@@ -576,6 +577,16 @@ class List extends ListPage {
         })
     }
 
+    handleDomainChange = (item) => {
+        if (this.meta.initLocalStorageDomainKey) {
+            this.meta.queryArgs = {
+                ...this.meta.queryArgs,
+                domain_key: item.key,
+            }
+            this.findIntentByDomainKey(item.key)
+            this.refreshList()
+        }
+    }
     /**
      * 确认保存
      */
@@ -652,7 +663,6 @@ class List extends ListPage {
         if (domainKey) {
             let domainArray = []
             domainArray.push(domainKey)
-            console.log(this.props.dict.domain[domainKey].base_domain_key)
             let base_domain_key = this.props.dict.domain[domainKey]
                 .base_domain_key
             if (base_domain_key) {
@@ -677,7 +687,6 @@ class List extends ListPage {
     }
 
     async findIntentByDomainKey(domainKey) {
-        console.log(this.formRefs)
         // this.formRefs.current.setFieldsValue({ intent_key: undefined })
         let list = await this.findIntentList(domainKey)
         let treeList = getTree(list, this.props.dict.domain)

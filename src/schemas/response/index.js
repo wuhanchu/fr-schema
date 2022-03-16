@@ -1,4 +1,4 @@
-import { createApi } from "@/outter/fr-schema/src/service"
+import { createApi } from "@/components/ListPage/service"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import { verifyJson } from "@/outter/fr-schema-antd-utils/src/utils/component"
 
@@ -7,6 +7,8 @@ const schema = {
         title: "域",
         sorter: true,
         style: { width: "500px" },
+        addHide: true,
+        editHide: true,
         props: {
             autoSize: { minRows: 2, maxRows: 6 },
             allowClear: true,

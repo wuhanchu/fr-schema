@@ -15,6 +15,9 @@ export const DataList = tempDataList
  */
 class ListPage extends DataList {
     constructor(props, meta) {
+        if (!localStorage.getItem("domain_key")) {
+            localStorage.setItem("domain_key", "default")
+        }
         const localStorageDomainKey = localStorage.getItem("domain_key")
         super(props, {
             queryArgs: {

@@ -48,6 +48,7 @@ class List extends DataList {
         var oldresize = window.onresize
 
         let res = await schemas.entity.service.get({
+            domain_key: localStorage.getItem("domain_key"),
             pageSize: 100,
         })
         this.entityDict = res.list

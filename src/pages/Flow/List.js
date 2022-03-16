@@ -127,63 +127,24 @@ class List extends ListPage {
             )
         }
         this.schema.intent_key.dict = listToDict(intent.list, "", "key", "name")
-        this.schema.intent_key.renderInput = (
-            item,
-            tempData,
-            props,
-            action,
-            form
-        ) => {
+        this.schema.intent_key.renderInput = () => {
             let options = []
-            this.infoForm = props.form
-            if (
-                props.form &&
-                props.form.current &&
-                props.form.current.getFieldsValue().domain_key
-            ) {
-                options = intent.list.filter(
-                    (item) =>
-                        item.domain_key ===
-                            props.form.current.getFieldsValue().domain_key ||
-                        (this.props.dict.domain[
-                            props.form.current.getFieldsValue().domain_key
-                        ].base_domain_key &&
-                            this.props.dict.domain[
-                                props.form.current.getFieldsValue().domain_key
-                            ].base_domain_key.indexOf(item.domain_key) > -1)
+            options = intent.list.filter((item) => {
+                // if (tempData.domain_key)
+                return (
+                    item.domain_key === this.state.localStorageDomainKey ||
+                    (this.props.dict.domain[this.state.localStorageDomainKey]
+                        .base_domain_key &&
+                        this.props.dict.domain[
+                            this.state.localStorageDomainKey
+                        ].base_domain_key.indexOf(item.domain_key) > -1)
                 )
-
-                options = getTree(clone(options), this.props.dict.domain)
-                console.log(options)
-            } else {
-                options = intent.list.filter((item) => {
-                    if (tempData.domain_key)
-                        return (
-                            item.domain_key === tempData.domain_key ||
-                            (this.props.dict.domain[tempData.domain_key]
-                                .base_domain_key &&
-                                this.props.dict.domain[
-                                    tempData.domain_key
-                                ].base_domain_key.indexOf(item.domain_key) > -1)
-                        )
-                    else {
-                        return true
-                    }
-                })
-                // console.log(options)
-                options = getTree(clone(options), this.props.dict.domain)
-                // setTimeout(() => {
-                //     console.log(options)
-                // }, 200)
-                // options = clone(options)
-                // console.log(getTree(options))
-            }
+            })
+            options = getTree(clone(options), this.props.dict.domain)
             return (
                 <TreeSelect
                     showSearch
                     allowClear
-                    // treeCheckable="true"
-                    // showCheckedStrategy="SHOW_PARENT"
                     multiple
                     treeNodeFilterProp="name"
                     style={{ width: "500px" }}
@@ -199,11 +160,6 @@ class List extends ListPage {
     }
 
     renderInfoModal() {
-        // let onValuesChange = (data, item) => {
-        //     if (data.domain_key) {
-        //         this.infoForm.current.setFieldsValue({ project_id: [] })
-        //     }
-        // }
         return super.renderInfoModal()
     }
 

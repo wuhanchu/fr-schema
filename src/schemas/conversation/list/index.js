@@ -1,4 +1,5 @@
-import { createApi } from "@/outter/fr-schema/src/service"
+// import { createApi } from "@/outter/fr-schema/src/service"
+import { createApi } from "@/components/ListPage/service"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import moments from "moment"
 import { render } from "mustache"

@@ -1,4 +1,6 @@
-import { createApi, createBasicApi } from "@/outter/fr-schema/src/service"
+// import { createApi, createBasicApi } from "@/outter/fr-schema/src/service"
+import { createApi, createBasicApi } from "@/components/ListPage/service"
+
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import { verifyJson } from "@/outter/fr-schema-antd-utils/src/utils/component"
 
@@ -6,6 +8,8 @@ const schema = {
     domain_key: {
         title: "域",
         sorter: true,
+        addHide: true,
+        editHide: true,
         required: true,
         style: { width: "500px" },
         props: {

@@ -1,4 +1,4 @@
-import { createApi, createBasicApi } from "@/outter/fr-schema/src/service"
+import { createApi, createBasicApi } from "@/components/ListPage/service"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import projectService from "./../project"
 import moment from "moment"
