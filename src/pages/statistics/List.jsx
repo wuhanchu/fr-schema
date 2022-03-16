@@ -33,7 +33,9 @@ import {
     TagTwoTone,
     TagsTwoTone,
     FileExcelTwoTone,
+    DownOutlined,
 } from "@ant-design/icons"
+
 import { exportData } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
 import { formatData } from "@/utils/utils"
 import clientService from "@/pages/authority/clientList/service"
@@ -121,7 +123,6 @@ class List extends ListPage {
             let column = this.getColumns(false).filter((item) => {
                 return !item.hideInTable
             })
-            console.log(columns)
             let columns = column
             let data = await this.requestList({
                 pageSize: 1000000,
@@ -881,6 +882,7 @@ class List extends ListPage {
                         dict &&
                         dict.domain[this.state.localStorageDomainKey].name) ||
                         "选择数据域"}
+                    <DownOutlined />
                 </Button>
             </Dropdown>
         )

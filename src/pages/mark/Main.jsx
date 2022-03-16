@@ -22,6 +22,7 @@ import {
     InfoCircleOutlined,
     SyncOutlined,
     WarningOutlined,
+    DownOutlined,
 } from "@ant-design/icons"
 
 const { Step } = Steps
@@ -555,6 +556,7 @@ class Main extends React.PureComponent {
                         dict &&
                         dict.domain[this.state.localStorageDomainKey].name) ||
                         "选择数据域"}
+                    <DownOutlined />
                 </Button>
             </Dropdown>
         )

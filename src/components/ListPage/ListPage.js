@@ -4,6 +4,7 @@ import { connect } from "dva"
 import { default as tempDataList } from "@/outter/fr-schema-antd-utils/src/components/Page/DataList"
 import { Dropdown, Menu, Button } from "antd"
 export const DataList = tempDataList
+import { DownOutlined } from "@ant-design/icons"
 
 /**
  * meta 包含
@@ -84,6 +85,7 @@ class ListPage extends DataList {
                         dict &&
                         dict.domain[this.state.localStorageDomainKey].name) ||
                         "选择数据域"}
+                    <DownOutlined />
                 </Button>
             </Dropdown>
         )

@@ -5,6 +5,7 @@ import { connect } from "dva"
 import Entity from "./List"
 import EntityType from "../entityType/List"
 import { Dropdown, Menu, Button } from "antd"
+import { DownOutlined } from "@ant-design/icons"
 
 // 微信信息类型
 export const infoType = {
@@ -79,6 +80,7 @@ class Main extends React.PureComponent {
                         dict &&
                         dict.domain[this.state.localStorageDomainKey].name) ||
                         "选择数据域"}
+                    <DownOutlined />
                 </Button>
             </Dropdown>
         )
