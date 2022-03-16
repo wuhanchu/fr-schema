@@ -22,6 +22,9 @@ export const infoType = {
  */
 class Main extends React.PureComponent {
     constructor(props) {
+        if (!localStorage.getItem("domain_key")) {
+            localStorage.setItem("domain_key", "default")
+        }
         const localStorageDomainKey = localStorage.getItem("domain_key")
         super(props)
         const { query } = this.props.location
