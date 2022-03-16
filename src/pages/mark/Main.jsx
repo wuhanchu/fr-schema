@@ -1,4 +1,4 @@
-import ListPage from "@/outter/fr-schema-antd-utils/src/components/Page/ListPage"
+import ListPage from "@/components/ListPage/ListPage"
 import React from "react"
 import { PageHeaderWrapper } from "@ant-design/pro-layout"
 import { connect } from "dva"
@@ -44,11 +44,14 @@ export const infoType = {
 class Main extends React.PureComponent {
     constructor(props) {
         super(props)
+        const localStorageDomainKey = localStorage.getItem("domain_key")
+
         const { query } = this.props.location
         const tabActiveKey =
             query && query.type ? query.type : infoType.Complement
         this.state = {
             tabActiveKey,
+            localStorageDomainKey,
         }
     }
 
@@ -308,6 +311,13 @@ class Main extends React.PureComponent {
         clearInterval(this.mysetIntervals)
     }
 
+    handleDomainChange = (item) => {
+        let otherTabActiveKey = this.state.tabActiveKey
+        this.setState({
+            localStorageDomainKey: item.key,
+        })
+    }
+
     render() {
         const { tabActiveKey, domian } = this.state
         const menu = (
@@ -418,9 +428,49 @@ class Main extends React.PureComponent {
                 </Button>
             </Dropdown>
         )
+
+        const { dict, data } = this.props
+        let domain = []
+        if (dict) {
+            Object.keys(dict.domain).forEach((key) => {
+                domain.push(dict.domain[key])
+            })
+        }
+        const extraMenu = (
+            <Menu
+                onClick={async (item) => {
+                    console.log(item)
+                    localStorage.setItem("domain_key", item.key)
+                    this.setState({
+                        localStorageDomainKey: item.key,
+                    })
+                    this.handleDomainChange(item)
+                }}
+            >
+                {domain &&
+                    domain.map((item) => {
+                        return (
+                            <Menu.Item key={item.key}>
+                                <a>{item.name}</a>
+                            </Menu.Item>
+                        )
+                    })}
+            </Menu>
+        )
+        const extra = (
+            <Dropdown overlay={extraMenu} placement="bottomLeft">
+                <Button style={{ top: "-35px", float: "right" }}>
+                    {(this.state.localStorageDomainKey &&
+                        dict &&
+                        dict.domain[this.state.localStorageDomainKey].name) ||
+                        "选择数据域"}
+                </Button>
+            </Dropdown>
+        )
         return (
             <PageHeaderWrapper
                 title={false}
+                extra={extra}
                 tabBarExtraContent={operations}
                 tabList={Object.keys(infoType).map((key) => ({
                     key: infoType[key],
@@ -431,9 +481,15 @@ class Main extends React.PureComponent {
                 }
                 tabActiveKey={tabActiveKey}
             >
-                {tabActiveKey === infoType.Complement && <Complement />}
-                {tabActiveKey === infoType.Add && <Add />}
-                {tabActiveKey === infoType.Repeat && <Repeat />}
+                {tabActiveKey === infoType.Complement && (
+                    <Complement domain_key={this.state.localStorageDomainKey} />
+                )}
+                {tabActiveKey === infoType.Add && (
+                    <Add domain_key={this.state.localStorageDomainKey} />
+                )}
+                {tabActiveKey === infoType.Repeat && (
+                    <Repeat domain_key={this.state.localStorageDomainKey} />
+                )}
             </PageHeaderWrapper>
         )
     }

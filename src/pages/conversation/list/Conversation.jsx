@@ -1,5 +1,5 @@
 import { connect } from "dva"
-import ListPage from "@/outter/fr-schema-antd-utils/src/components/Page/ListPage"
+import ListPage from "@/components/ListPage/ListPage"
 import schemas from "@/schemas/conversation/list"
 import schemaDetail from "@/schemas/conversation/detail"
 import React, { Fragment } from "react"
@@ -49,6 +49,7 @@ class Conversation extends ListPage {
             schema: schemas.schema,
             service: schemas.service,
             operateWidth: "170px",
+            initLocalStorageDomainKey: true,
             showEdit: false,
             showDelete: false,
             // showSelect: true,

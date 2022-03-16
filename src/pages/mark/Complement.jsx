@@ -41,6 +41,7 @@ class List extends DataList {
             },
             queryArgs: {
                 ...props.queryArgs,
+                domain_key: props.domain_key,
                 type: "add_question_extend",
             },
             operateWidth: "150px",
@@ -89,7 +90,17 @@ class List extends DataList {
         }
         super.componentDidMount()
     }
-
+    componentWillReceiveProps(nextProps, nextContents) {
+        super.componentWillReceiveProps(nextProps, nextContents)
+        if (nextProps.domain_key !== this.props.domain_key) {
+            // sth值发生改变下一步工作
+            this.meta.queryArgs = {
+                ...this.meta.queryArgs,
+                domain_key: nextProps.domain_key,
+            }
+            this.refreshList()
+        }
+    }
     async requestList(tempArgs = {}) {
         const { queryArgs } = this.meta
 

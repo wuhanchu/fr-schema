@@ -40,8 +40,10 @@ class Lists extends DataList {
                 ...props.queryArgs,
                 type: "add_question",
                 status: "eq.wait",
+                domain_key: "eq." + props.domain_key,
             },
             scroll: { x: "max-content", y: "50vh" },
+
             operateWidth: "150px",
             infoProps: {
                 offline: true,
@@ -55,6 +57,17 @@ class Lists extends DataList {
         })
     }
 
+    componentWillReceiveProps(nextProps, nextContents) {
+        super.componentWillReceiveProps(nextProps, nextContents)
+        if (nextProps.domain_key !== this.props.domain_key) {
+            // sth值发生改变下一步工作
+            this.meta.queryArgs = {
+                ...this.meta.queryArgs,
+                domain_key: "eq." + nextProps.domain_key,
+            }
+            this.refreshList()
+        }
+    }
     async handleAddBefore(args) {
         let searchData = await schemas.question.service.search({
             compatibility: 0.9,

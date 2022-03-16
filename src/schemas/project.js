@@ -13,6 +13,7 @@ const schema = {
     },
     domain_key: {
         title: "域",
+        search: false,
         sorter: true,
         type: schemaFieldType.Select,
         required: true,

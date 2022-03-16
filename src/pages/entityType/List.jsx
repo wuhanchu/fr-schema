@@ -30,11 +30,23 @@ class List extends DataList {
             operateWidth: "180px",
             importTemplateUrl,
             showDelete: true,
+            queryArgs: { domain_key: props.domain_key },
             showSelect: true,
         })
         this.schema.domain_key.dict = this.props.dict.domain
     }
 
+    componentWillReceiveProps(nextProps, nextContents) {
+        super.componentWillReceiveProps(nextProps, nextContents)
+        if (nextProps.domain_key !== this.props.domain_key) {
+            // sth值发生改变下一步工作
+            this.meta.queryArgs = {
+                ...this.meta.queryArgs,
+                domain_key: nextProps.domain_key,
+            }
+            this.refreshList()
+        }
+    }
     async handleAdd(data, schema) {
         // 更新
         let response

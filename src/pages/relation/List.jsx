@@ -20,6 +20,9 @@ class List extends DataList {
             service: schemas.relation.service,
             // readOnly: true,
             operateWidth: "120px",
+            queryArgs: {
+                domain_key: props.domain_key,
+            },
             search: {
                 span: 6,
             },
@@ -28,6 +31,17 @@ class List extends DataList {
                 offline: true,
             },
         })
+    }
+    componentWillReceiveProps(nextProps, nextContents) {
+        super.componentWillReceiveProps(nextProps, nextContents)
+        if (nextProps.domain_key !== this.props.domain_key) {
+            // sth值发生改变下一步工作
+            this.meta.queryArgs = {
+                ...this.meta.queryArgs,
+                domain_key: nextProps.domain_key,
+            }
+            this.refreshList()
+        }
     }
     async componentDidMount() {
         let _this = this
@@ -52,7 +66,6 @@ class List extends DataList {
             "key",
             "name"
         )
-        console.log("entityTypeDict", entityTypeDict)
         this.schema.to_entity_id.renderInput = (data, props, item) => {
             return (
                 <MySelect

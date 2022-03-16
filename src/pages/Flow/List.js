@@ -1,5 +1,5 @@
 import { connect } from "dva"
-import ListPage from "@/outter/fr-schema-antd-utils/src/components/Page/ListPage"
+import ListPage from "@/components/ListPage/ListPage"
 import InfoModal from "./InfoModal"
 import { getTree } from "./methods"
 import schemas from "@/schemas"
@@ -42,6 +42,7 @@ class List extends ListPage {
             schema: schemas.flow.schema,
             service: schemas.flow.service,
             importTemplateUrl,
+            initLocalStorageDomainKey: true,
             operateWidth: "320px",
             showDelete: true,
             showSelect: true,

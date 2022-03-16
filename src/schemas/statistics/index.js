@@ -36,6 +36,7 @@ const schema = {
     domain_key: {
         title: "域",
         hideInTable: true,
+        search: false,
         type: schemaFieldType.Select,
         sorter: true,
         fieldProps: {

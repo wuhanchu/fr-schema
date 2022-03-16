@@ -20,6 +20,18 @@ class List extends DataList {
         this.schema.domain_key.dict = this.props.dict.domain
     }
 
+    componentWillReceiveProps(nextProps, nextContents) {
+        super.componentWillReceiveProps(nextProps, nextContents)
+        if (nextProps.domain_key !== this.props.domain_key) {
+            // sth值发生改变下一步工作
+            this.meta.queryArgs = {
+                ...this.meta.queryArgs,
+                domain_key: nextProps.domain_key,
+            }
+            this.refreshList()
+        }
+    }
+
     handleUpdate = async (data, schema, method = "patch") => {
         // 更新
         if (this.state.infoData.key === data.key) {

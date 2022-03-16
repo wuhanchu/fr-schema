@@ -1,5 +1,6 @@
 import { connect } from "dva"
-import ListPage from "@/outter/fr-schema-antd-utils/src/components/Page/ListPage"
+import ListPage from "@/components/ListPage/ListPage"
+
 import styles from "@/outter/fr-schema-antd-utils/src/components/Page/DataList.less"
 import { PageHeaderWrapper } from "@ant-design/pro-layout"
 import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
@@ -20,6 +21,8 @@ import {
     Tooltip,
     AutoComplete,
     Input,
+    Dropdown,
+    Menu,
 } from "antd"
 import {
     LikeTwoTone,
@@ -43,9 +46,12 @@ const { utils, decorateList } = frSchema
 @Form.create()
 class List extends ListPage {
     constructor(props) {
+        const localStorageDomainKey = localStorage.getItem("domain_key")
+
         super(props, {
             schema: schemas.statistics.schema,
             service: schemas.statistics.service,
+            initLocalStorageDomainKey: true,
             infoProps: {
                 width: "1200px",
                 isCustomize: true,
@@ -62,6 +68,7 @@ class List extends ListPage {
             queryArgs: {
                 ...props.queryArgs,
                 inside: true,
+                domain_key: localStorageDomainKey,
             },
         })
     }
@@ -76,18 +83,12 @@ class List extends ListPage {
             ...searchParams,
             ...(this.state.pagination || {}),
             ...tempArgs,
-            domain_key:
-                tempArgs.domain_key ||
-                searchParams.domain_key ||
-                this.formRef.current.getFieldsValue().domain_key,
             begin_time:
                 searchParams.begin_time ||
                 tempArgs.begin_time ||
                 this.formRef.current.getFieldsValue().begin_time ||
                 undefined,
-            // begin_time: undefined
         }
-        // console.log(this.searchValues())
         let data = await this.service.get(params)
         data = this.dataConvert(data)
         return data
@@ -97,7 +98,6 @@ class List extends ListPage {
         const { order } = this.props
 
         this.formRef.current.resetFields()
-        this.formRef.current.setFieldsValue({ domain_key: "default" })
         this.formRef.current.setFieldsValue({
             begin_time: moment().subtract("days", 6),
         })
@@ -162,7 +162,7 @@ class List extends ListPage {
             sort: "desc",
         }
         try {
-            this.formRef.current.setFieldsValue({ domain_key: "default" })
+            // this.formRef.current.setFieldsValue({ domain_key: "default" })
             console.log("设置为default")
             this.formRef.current.setFieldsValue({
                 begin_time: moment().subtract("days", 6),
@@ -170,7 +170,7 @@ class List extends ListPage {
         } catch (error) {}
         let project = await schemas.project.service.get({
             limit: 10000,
-            domain_key: "default",
+            // domain_key: "default",
         })
         this.schema.domain_key.dict = this.props.dict.domain
         this.schema.project_id.dict = listToDict(project.list)
@@ -207,7 +207,7 @@ class List extends ListPage {
         super.componentDidMount()
         this.setState({
             searchValues: {
-                domain_key: "default",
+                // domain_key: "default",
                 begin_time: moment().subtract("days", 6),
             },
         })
@@ -833,10 +833,57 @@ class List extends ListPage {
         )
     }
 
+    handleDomainChange = (item) => {
+        if (this.meta.initLocalStorageDomainKey) {
+            this.meta.queryArgs = {
+                ...this.meta.queryArgs,
+                domain_key: item.key,
+            }
+            console.log(this.props, this.meta)
+            this.refreshList()
+        }
+    }
     render() {
         const { title, content, tabList, onTabChange } = this.meta
         const { tabActiveKey } = this.state
-
+        const { dict, data } = this.props
+        let domain = []
+        if (dict) {
+            Object.keys(dict.domain).forEach((key) => {
+                domain.push(dict.domain[key])
+            })
+        }
+        const menu = (
+            <Menu
+                onClick={async (item) => {
+                    console.log(item)
+                    localStorage.setItem("domain_key", item.key)
+                    this.setState({
+                        localStorageDomainKey: item.key,
+                    })
+                    this.handleDomainChange(item)
+                }}
+            >
+                {domain &&
+                    domain.map((item) => {
+                        return (
+                            <Menu.Item key={item.key}>
+                                <a>{item.name}</a>
+                            </Menu.Item>
+                        )
+                    })}
+            </Menu>
+        )
+        const operations = (
+            <Dropdown overlay={menu} placement="bottomLeft">
+                <Button style={{ top: "-35px", float: "right" }}>
+                    {(this.state.localStorageDomainKey &&
+                        dict &&
+                        dict.domain[this.state.localStorageDomainKey].name) ||
+                        "选择数据域"}
+                </Button>
+            </Dropdown>
+        )
         return (
             <PageHeaderWrapper
                 title={false}
@@ -847,6 +894,7 @@ class List extends ListPage {
                 tabList={tabList}
                 onTabChange={onTabChange}
                 tabActiveKey={tabActiveKey}
+                extra={operations}
             >
                 {this.renderDataList()}
             </PageHeaderWrapper>
@@ -887,7 +935,7 @@ class List extends ListPage {
             {
                 begin_time,
                 end_time,
-                domain_key,
+                // domain_key,
                 client_id,
             },
             5

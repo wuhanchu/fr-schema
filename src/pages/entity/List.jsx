@@ -41,6 +41,7 @@ class List extends DataList {
             infoProps: {
                 width: "900px",
             },
+            queryArgs: { domain_key: props.domain_key },
             showDelete: true,
             showSelect: true,
             operateWidth: "180px",
@@ -48,6 +49,17 @@ class List extends DataList {
         })
     }
 
+    componentWillReceiveProps(nextProps, nextContents) {
+        super.componentWillReceiveProps(nextProps, nextContents)
+        if (nextProps.domain_key !== this.props.domain_key) {
+            // sth值发生改变下一步工作
+            this.meta.queryArgs = {
+                ...this.meta.queryArgs,
+                domain_key: nextProps.domain_key,
+            }
+            this.refreshList()
+        }
+    }
     async componentDidMount() {
         const res = await schemas.entityType.service.get({ pageSize: 10000 })
         let typeList = utils.dict.listToDict(res.list, null, "key", "name")

@@ -6,6 +6,7 @@ const schema = {
         title: "域",
         sorter: true,
         required: true,
+        search: false,
         type: schemaFieldType.Select,
         props: {
             allowClear: true,

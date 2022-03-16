@@ -12,7 +12,7 @@ const schema = {
             allowClear: true,
             showSearch: true,
         },
-
+        search: false,
         required: true,
         type: schemaFieldType.Select,
     },

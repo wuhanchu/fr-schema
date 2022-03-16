@@ -40,6 +40,7 @@ const schema = {
     },
     domain_key: {
         title: "域",
+        search: false,
         type: schemaFieldType.Select,
     },
     create_time: {

@@ -12,7 +12,7 @@ import {
 import { connect } from "dva"
 import { DownOutlined } from "@ant-design/icons"
 
-import ListPage from "@/outter/fr-schema-antd-utils/src/components/Page/ListPage"
+import ListPage from "@/components/ListPage/ListPage"
 import schemas from "@/schemas"
 import React, { Fragment } from "react"
 import { Form } from "@ant-design/compatible"
@@ -30,6 +30,7 @@ class List extends ListPage {
             operateWidth: 340,
             schema: schemas.project.schema,
             service: schemas.project.service,
+            initLocalStorageDomainKey: true,
             infoProps: {
                 width: "900px",
             },

@@ -8,6 +8,7 @@ const { RangePicker } = DatePicker
 const schema = {
     domain_key: {
         title: "域",
+        search: false,
         type: schemaFieldType.Select,
     },
     project_id: {

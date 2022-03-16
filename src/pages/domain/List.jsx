@@ -1,5 +1,5 @@
 import { connect } from "dva"
-import ListPage from "@/outter/fr-schema-antd-utils/src/components/Page/ListPage"
+import ListPage from "@/components/ListPage/ListPage"
 import schemas from "@/schemas"
 import React, { Fragment } from "react"
 import { Form } from "@ant-design/compatible"

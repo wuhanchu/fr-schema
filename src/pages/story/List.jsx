@@ -1,5 +1,5 @@
 import { connect } from "dva"
-import ListPage from "@/outter/fr-schema-antd-utils/src/components/Page/ListPage"
+import ListPage from "@/components/ListPage/ListPage"
 import schemas from "@/schemas"
 import React from "react"
 import { Divider } from "antd"
@@ -16,6 +16,7 @@ class List extends ListPage {
         super(props, {
             schema: schemas.story.schema,
             service: schemas.story.service,
+            initLocalStorageDomainKey: true,
             operateWidth: "170px",
         })
     }

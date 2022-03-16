@@ -1,5 +1,5 @@
 import { connect } from "dva"
-import ListPage from "@/outter/fr-schema-antd-utils/src/components/Page/ListPage"
+import ListPage from "@/components/ListPage/ListPage"
 import schemas from "@/schemas"
 import React from "react"
 import "@ant-design/compatible/assets/index.css"
@@ -37,6 +37,7 @@ class List extends ListPage {
             schema: schemas.response.schema,
             service: schemas.response.service,
             operateWidth: "120px",
+            initLocalStorageDomainKey: true,
             showSelect: true,
             showDelete: true,
             infoProps: {

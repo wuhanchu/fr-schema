@@ -1,5 +1,5 @@
 import { connect } from "dva"
-import ListPage from "@/outter/fr-schema-antd-utils/src/components/Page/ListPage"
+import ListPage from "@/components/ListPage/ListPage"
 import schemas from "@/schemas"
 import React from "react"
 import { Form } from "@ant-design/compatible"
@@ -47,11 +47,25 @@ class List extends ListPage {
             "//",
             "/"
         )
+        const localStorageDomainKey = localStorage.getItem("domain_key")
+        let domainArray = []
+        domainArray.push(localStorageDomainKey)
+        if (props.dict.domain[localStorageDomainKey].base_domain_key) {
+            domainArray = [
+                ...domainArray,
+                ...props.dict.domain[localStorageDomainKey].base_domain_key,
+            ]
+        }
+        console.log("domainArray.join('.')", domainArray.join("."))
         super(props, {
             schema: schemas.intent.schema,
             service: schemas.intent.service,
             importTemplateUrl,
-            queryArgs: { pageSize: 10000, limit: 10000 },
+            queryArgs: {
+                pageSize: 10000,
+                limit: 10000,
+                domain_key: domainArray.join(","),
+            },
             mini: true,
             showDelete: true,
             showSelect: true,
@@ -60,10 +74,27 @@ class List extends ListPage {
         this.schema.domain_key.dict = this.props.dict.domain
         this.state = {
             ...this.state,
-            // tableType: 'old',
             searchValues: { logical_path: "." },
             expandedRowKeys: [],
         }
+    }
+
+    handleDomainChange = (item) => {
+        // if(this.meta.initLocalStorageDomainKey){
+        let domainArray = []
+        domainArray.push(item.key)
+        if (this.props.dict.domain[item.key].base_domain_key) {
+            domainArray = [
+                ...domainArray,
+                ...this.props.dict.domain[item.key].base_domain_key,
+            ]
+        }
+        this.meta.queryArgs = {
+            ...this.meta.queryArgs,
+            domain_key: domainArray.join(","),
+        }
+        this.refreshList()
+        // }
     }
 
     async componentDidMount() {
@@ -84,6 +115,7 @@ class List extends ListPage {
                 }
             }
         }
+        console.log(this.meta)
     }
 
     /**

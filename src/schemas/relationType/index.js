@@ -4,6 +4,7 @@ import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 const schema = {
     domain_key: {
         title: "域",
+        search: false,
         sorter: true,
         required: true,
         type: schemaFieldType.Select,

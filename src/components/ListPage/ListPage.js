@@ -1,16 +1,9 @@
-import ListPage from "@/components/ListPage/ListPage"
 import React from "react"
 import { PageHeaderWrapper } from "@ant-design/pro-layout"
 import { connect } from "dva"
-import Entity from "./List"
-import EntityType from "../entityType/List"
+import { default as tempDataList } from "@/outter/fr-schema-antd-utils/src/components/Page/DataList"
 import { Dropdown, Menu, Button } from "antd"
-
-// 微信信息类型
-export const infoType = {
-    entity: "信息",
-    entityType: "类型",
-}
+export const DataList = tempDataList
 
 /**
  * meta 包含
@@ -20,26 +13,38 @@ export const infoType = {
  * selectedRows
  * scroll table whether can scroll
  */
-class Main extends React.PureComponent {
-    constructor(props) {
+class ListPage extends DataList {
+    constructor(props, meta) {
         const localStorageDomainKey = localStorage.getItem("domain_key")
-        super(props)
-        const { query } = this.props.location
-        const tabActiveKey = query && query.type ? query.type : infoType.entity
-        this.state = {
-            tabActiveKey,
-            localStorageDomainKey,
-        }
+        super(props, {
+            queryArgs: {
+                domain_key: meta.initLocalStorageDomainKey
+                    ? localStorageDomainKey || undefined
+                    : undefined,
+            },
+            ...meta,
+        })
+        this.state = { ...this.state, localStorageDomainKey }
+        this.meta = { ...(this.meta || {}), ...this.props.meta }
+    }
+
+    renderDataList() {
+        return super.render()
     }
 
     handleDomainChange = (item) => {
-        let otherTabActiveKey = this.state.tabActiveKey
-        this.setState({
-            localStorageDomainKey: item.key,
-        })
+        if (this.meta.initLocalStorageDomainKey) {
+            this.meta.queryArgs = {
+                ...this.meta.queryArgs,
+                domain_key: item.key,
+            }
+            console.log(this.props, this.meta)
+            this.refreshList()
+        }
     }
 
     render() {
+        const { title, content, tabList, onTabChange } = this.meta
         const { tabActiveKey } = this.state
         const { dict, data } = this.props
         let domain = []
@@ -79,30 +84,24 @@ class Main extends React.PureComponent {
                 </Button>
             </Dropdown>
         )
+
         return (
             <PageHeaderWrapper
-                title={false}
-                tabList={Object.keys(infoType).map((key) => ({
-                    key: infoType[key],
-                    tab: infoType[key],
-                }))}
-                onTabChange={(tabKey) =>
-                    this.setState({ tabActiveKey: tabKey })
+                title={title && title + "列表"}
+                content={
+                    content ||
+                    (this.renderHeaderContent && this.renderHeaderContent())
                 }
+                title={false}
+                // tabList={tabList}
+                onTabChange={onTabChange}
                 tabActiveKey={tabActiveKey}
                 extra={operations}
             >
-                {tabActiveKey === infoType.entity && (
-                    <Entity domain_key={this.state.localStorageDomainKey} />
-                )}
-                {tabActiveKey === infoType.entityType && (
-                    <EntityType domain_key={this.state.localStorageDomainKey} />
-                )}
+                {this.renderDataList()}
             </PageHeaderWrapper>
         )
     }
 }
 
-export default connect(({ global }) => ({
-    dict: global.dict,
-}))(Main)
+export default ListPage
