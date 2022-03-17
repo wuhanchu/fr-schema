@@ -21,7 +21,7 @@ import clone from "clone"
 import keyboardJS from "keyboardjs"
 import Ellipse from "./ellipse.svg"
 import RightDrawer from "./RightDrawer"
-import { ExclamationCircleOutlined } from "@ant-design/icons"
+import { ExclamationCircleOutlined, CloseOutlined } from "@ant-design/icons"
 
 const { Option } = Select
 const { confirm } = Modal
@@ -419,7 +419,11 @@ class Flow extends React.PureComponent {
                             value={this.state.historyIndex}
                             placeholder={"选择历史版本"}
                             notFoundContent={"数据加载中..."}
-                            style={{ textAlign: "right", width: "200px" }}
+                            style={{
+                                textAlign: "right",
+                                width: "200px",
+                                right: "30px",
+                            }}
                             onSelect={this.onHistoryChange.bind(this)}
                         >
                             {this.state.historyList &&
@@ -434,6 +438,7 @@ class Flow extends React.PureComponent {
                                 })}
                         </ZSSelectStyle>
                     </div>
+                    {/* <div><CloseOutlined></CloseOutlined></div> */}
                 </div>
                 <div className="operation">
                     <Popconfirm

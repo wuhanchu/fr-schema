@@ -273,6 +273,7 @@ class List extends ListPage {
                     keyboard={false}
                     style={{ top: 20, bottom: 20 }}
                     footer={null}
+                    maskClosable={false}
                     destroyOnClose={true}
                     onOk={() => {
                         console.log(window.__isReactDndBackendSetUp)
@@ -281,7 +282,7 @@ class List extends ListPage {
                     onCancel={() => {
                         this.setState({ visibleFlow: false })
                     }}
-                    closable={false}
+                    // closable={false}
                 >
                     <ChartModal
                         visibleRelease={false}
