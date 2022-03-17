@@ -538,11 +538,19 @@ class Conversation extends ListPage {
                             .toLowerCase()
                             .indexOf(input.toLowerCase()) >= 0
                     }
-                    options={options}
+                    // options={options}
                     placeholder="请选择"
                     // mode="multiple"
                     allowClear
-                ></Select>
+                >
+                    {options.map((item) => {
+                        return (
+                            <Select.Option value={item.key}>
+                                {item.name}
+                            </Select.Option>
+                        )
+                    })}
+                </Select>
             )
         }
     }
