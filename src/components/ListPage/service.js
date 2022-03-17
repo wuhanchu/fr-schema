@@ -395,7 +395,6 @@ export function createApi(
             args = args.map((item) => {
                 return { domain_key: localStorageDomainKey, ...item }
             })
-            console.log(args)
             return request(
                 {
                     method: "POST",
