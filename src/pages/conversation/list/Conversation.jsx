@@ -92,6 +92,7 @@ class Conversation extends ListPage {
                 intent_key: undefined,
                 node_key: undefined,
             })
+            this.setState({ flow_key: undefined, node_key: undefined })
             this.findFlowList(item.key)
 
             this.meta.queryArgs = {
@@ -109,7 +110,11 @@ class Conversation extends ListPage {
     handleFormReset = () => {
         const { order } = this.props
         let treeList = this.state.treeList
-        this.setState({ showIntent: false })
+        this.setState({
+            showIntent: false,
+            flow_key: undefined,
+            node_key: undefined,
+        })
 
         // let list = getTree(this.state.intentList)
 
@@ -120,8 +125,6 @@ class Conversation extends ListPage {
                 searchValues: { order },
             },
             () => {
-                console.log("handleFormReset", this.state.pagination)
-
                 this.refreshList()
             }
         )
@@ -177,7 +180,6 @@ class Conversation extends ListPage {
         this.setState({ exportLoading: false })
 
         message.success("导出成功")
-        console.log(conversation)
     }
 
     renderOperationButtons() {
@@ -221,13 +223,9 @@ class Conversation extends ListPage {
             key: "not.eq.null",
             order: "key.desc",
         })
-        res.list.map((item) => {
-            console.log(item.key)
-        })
         let list = getTree(unique(res.list, "key"), this.props.dict.domain)
         this.setState({ intentList: res.list })
 
-        console.log(list)
         this.setState({
             treeList: list,
         })
@@ -281,10 +279,6 @@ class Conversation extends ListPage {
      * 表格操作列，扩展方法
      */
     renderOperateColumnExtend(record) {
-        console.log(
-            "this.state.used.indexOf(record.id)",
-            this.state.used.indexOf(record.id)
-        )
         return (
             <Fragment>
                 <span className="conversationDetail">
@@ -370,7 +364,6 @@ class Conversation extends ListPage {
                     Array.isArray(item.result)
                 ) {
                     item.result.map((one) => {
-                        console.log(one)
                         if (one.buttons && one.buttons.length) {
                             buttons.push(...one.buttons)
                         }
@@ -487,11 +480,20 @@ class Conversation extends ListPage {
         let FlowKeyArr = clone(res.list)
         this.setState({ FlowKeyArr: list })
         this.schema.flow_key.dict = dict
-        this.schema.flow_key.renderInput = () => {
+
+        this.schema.flow_key.renderInput = (item, data, props) => {
             return (
                 <Select
                     allowClear
                     showSearch
+                    onChange={(value) => {
+                        this.setState({ flow_key: value })
+                        props.setFieldsValue({
+                            intent_key: undefined,
+                            flow_key: value,
+                            node_key: undefined,
+                        })
+                    }}
                     filterOption={(input, option) =>
                         option.children
                             .toLowerCase()
@@ -517,10 +519,10 @@ class Conversation extends ListPage {
         this.schema.node_key.renderInput = (item, tempData, props) => {
             let options = []
             this.infoForm = props.form
-            if (props.getFieldsValue() && props.getFieldsValue().flow_key) {
-                let node = this.schema.flow_key.dict[
-                    props.getFieldsValue().flow_key
-                ].config.node
+            // console.log(props.getFieldsValue().flow_key)
+            if (this.state.flow_key) {
+                let node = this.schema.flow_key.dict[this.state.flow_key].config
+                    .node
 
                 options = node.map((item) => {
                     return { ...item, label: item.name, value: item.key }
@@ -538,6 +540,13 @@ class Conversation extends ListPage {
                             .toLowerCase()
                             .indexOf(input.toLowerCase()) >= 0
                     }
+                    onChange={(value) => {
+                        this.setState({ node_key: value })
+                        props.setFieldsValue({
+                            intent_key: undefined,
+                            node_key: value,
+                        })
+                    }}
                     // options={options}
                     placeholder="请选择"
                     // mode="multiple"
@@ -561,27 +570,21 @@ class Conversation extends ListPage {
             let treeData = []
             let flowIntent = []
             this.infoForm = props.form
-            if (
-                props.getFieldsValue &&
-                props.getFieldsValue().flow_key &&
-                props.getFieldsValue().node_key
-            ) {
-                let condition = this.schema.flow_key.dict[
-                    props.getFieldsValue().flow_key
-                ].config.condition
+            if (this.state.node_key) {
+                let condition = this.schema.flow_key.dict[this.state.flow_key]
+                    .config.condition
                 let node = this.schema.flow_key.dict[
-                    props.getFieldsValue().flow_key
+                    this.state.flow_key
                 ].config.node.filter((item) => {
-                    return item.key === props.getFieldsValue().node_key
+                    return item.key === this.state.node_key
                 })
-                let connection = this.schema.flow_key.dict[
-                    props.getFieldsValue().flow_key
-                ].config.connection
+                let connection = this.schema.flow_key.dict[this.state.flow_key]
+                    .config.connection
 
                 let conditionkey = []
                 if (node.length) {
                     connection = connection.filter((item) => {
-                        if (item.begin === props.getFieldsValue().node_key) {
+                        if (item.begin === this.state.node_key) {
                             if (item.condition) {
                                 conditionkey = [
                                     ...conditionkey,
@@ -589,7 +592,7 @@ class Conversation extends ListPage {
                                 ]
                             }
                         }
-                        return item.bigin == props.getFieldsValue().node_key
+                        return item.bigin == this.state.node_key
                     })
                 }
                 condition.map((items) => {
@@ -600,9 +603,9 @@ class Conversation extends ListPage {
                     return flowIntent.indexOf(items.key) > -1
                 })
             } else {
-                if (props.getFieldsValue && props.getFieldsValue().flow_key) {
+                if (this.state.flow_key) {
                     let condition = this.schema.flow_key.dict[
-                        props.getFieldsValue().flow_key
+                        this.state.flow_key
                     ].config.condition
                     condition.map((items) => {
                         if (items.intent) flowIntent.push(items.intent)
