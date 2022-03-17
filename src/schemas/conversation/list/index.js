@@ -129,6 +129,18 @@ const schema = {
             showSearch: true,
         },
     },
+    node_key: {
+        title: "节点",
+        sorter: true,
+        editHide: true,
+        addHide: true,
+        hideInTable: true,
+        type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
+    },
 
     intent_key: {
         title: "意图",

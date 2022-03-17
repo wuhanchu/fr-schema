@@ -16,8 +16,14 @@ import { DownOutlined } from "@ant-design/icons"
  */
 class ListPage extends DataList {
     constructor(props, meta) {
-        if (!localStorage.getItem("domain_key")) {
+        let domain_key = localStorage.getItem("domain_key")
+        if (!domain_key) {
             localStorage.setItem("domain_key", "default")
+        } else {
+            if (domain_key && !props.dict.domain[domain_key]) {
+                localStorage.setItem("domain_key", "default")
+                domain_key = "default"
+            }
         }
         const localStorageDomainKey = localStorage.getItem("domain_key")
         super(props, {
@@ -42,7 +48,6 @@ class ListPage extends DataList {
                 ...this.meta.queryArgs,
                 domain_key: item.key,
             }
-            console.log(this.props, this.meta)
             this.refreshList()
         }
     }

@@ -45,6 +45,15 @@ function unique(arr, key) {
 }))
 class Conversation extends ListPage {
     constructor(props) {
+        let domain_key = localStorage.getItem("domain_key")
+        if (!domain_key) {
+            localStorage.setItem("domain_key", "default")
+        } else {
+            if (domain_key && !props.dict.domain[domain_key]) {
+                localStorage.setItem("domain_key", "default")
+                domain_key = "default"
+            }
+        }
         const localStorageDomainKey = localStorage.getItem("domain_key")
 
         super(props, {
@@ -76,6 +85,24 @@ class Conversation extends ListPage {
         }
     }
 
+    handleDomainChange = (item) => {
+        if (this.meta.initLocalStorageDomainKey) {
+            this.formRef.current.setFieldsValue({
+                flow_key: undefined,
+                intent_key: undefined,
+                node_key: undefined,
+            })
+            this.findFlowList(item.key)
+
+            this.meta.queryArgs = {
+                ...this.meta.queryArgs,
+                domain_key: item.key,
+            }
+
+            this.refreshList()
+        }
+    }
+
     /**
      * 重置查询
      */
@@ -98,20 +125,7 @@ class Conversation extends ListPage {
                 this.refreshList()
             }
         )
-        this.schema.intent_key.renderInput = (data, item, props) => {
-            return (
-                <TreeSelect
-                    showSearch
-                    allowClear
-                    treeNodeFilterProp="name"
-                    style={{ width: "100%" }}
-                    placeholder={"请选择意图"}
-                    dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
-                    treeData={treeList}
-                    treeDefaultExpandAll
-                />
-            )
-        }
+
         this.setState({ showIntent: true })
     }
 
@@ -213,20 +227,6 @@ class Conversation extends ListPage {
         let list = getTree(unique(res.list, "key"), this.props.dict.domain)
         this.setState({ intentList: res.list })
 
-        this.schema.intent_key.renderInput = (data, item, props) => {
-            return (
-                <TreeSelect
-                    showSearch
-                    allowClear
-                    treeNodeFilterProp="name"
-                    style={{ width: "100%" }}
-                    placeholder={"请选择意图"}
-                    dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
-                    treeData={list}
-                    treeDefaultExpandAll
-                />
-            )
-        }
         console.log(list)
         this.setState({
             treeList: list,
@@ -471,9 +471,11 @@ class Conversation extends ListPage {
     }
 
     // 流程列表-> 列表枚举展示
-    async findFlowList() {
-        let res = await flowSchemas.service.get({ pageSize: 10000 })
-        console.log(res)
+    async findFlowList(domain_key) {
+        let res = await flowSchemas.service.get({
+            pageSize: 10000,
+            domain_key: domain_key || this.state.localStorageDomainKey,
+        })
         let dict = utils.dict.listToDict(res.list, null, "key", "name")
         let list = res.list.map((item) => {
             return {
@@ -482,82 +484,154 @@ class Conversation extends ListPage {
                 value: item.key,
             }
         })
+        let FlowKeyArr = clone(res.list)
+        this.setState({ FlowKeyArr: list })
         this.schema.flow_key.dict = dict
-        this.schema.flow_key.renderInput = (item, data, props) => {
+        this.schema.flow_key.renderInput = () => {
+            return (
+                <Select
+                    allowClear
+                    showSearch
+                    filterOption={(input, option) =>
+                        option.children
+                            .toLowerCase()
+                            .indexOf(input.toLowerCase()) >= 0
+                    }
+                    placeholder="请选择"
+                >
+                    {this.state.FlowKeyArr.map((item) => {
+                        return (
+                            <Select.Option value={item.key}>
+                                {item.name}
+                            </Select.Option>
+                        )
+                    })}
+                </Select>
+            )
+        }
+        this.renderNodeInput()
+        this.renderIntentInput()
+    }
+
+    renderNodeInput() {
+        this.schema.node_key.renderInput = (item, tempData, props) => {
+            let options = []
+            this.infoForm = props.form
+            if (props.getFieldsValue() && props.getFieldsValue().flow_key) {
+                let node = this.schema.flow_key.dict[
+                    props.getFieldsValue().flow_key
+                ].config.node
+
+                options = node.map((item) => {
+                    return { ...item, label: item.name, value: item.key }
+                })
+            } else {
+                options = []
+            }
             return (
                 <Select
                     {...props}
-                    options={list}
-                    placeholder="请选择流程"
-                    onChange={(value) => {
-                        this.formRef.current.setFieldsValue({
-                            flow_key: value || undefined,
-                        })
-                        this.setState({
-                            searchValues: {
-                                ...this.state.searchValues,
-                                flow_key: value || undefined,
-                            },
-                        })
-                        let treeList = clone(this.state.treeList)
-                        let treeData = getTree(
-                            this.state.intentList,
-                            this.props.dict.domain
-                        )
-                        let flowIntent = []
-                        this.setState({ showIntent: undefined })
-                        if (
-                            value &&
-                            item.dict[value].config &&
-                            item.dict[value].config.condition
-                        ) {
-                            item.dict[value].config.condition.map((items) => {
-                                if (items.intent) flowIntent.push(items.intent)
-                            })
-                            treeData = this.state.intentList.filter((items) => {
-                                return (
-                                    flowIntent.indexOf(items.key) > -1 &&
-                                    (item.dict[value].domain_key ===
-                                        items.domain_key ||
-                                        (item.dict[value].domain_key &&
-                                            this.props.dict.domain[
-                                                item.dict[value].domain_key
-                                            ].base_domain_key.indexOf(
-                                                items.domain_key
-                                            ) > -1))
-                                )
-                            })
-                            treeData = treeData.map((items) => {
-                                // console.log("结果"+)
-                                return {
-                                    ...items,
-                                    key: items.key,
-                                    value: items.key,
-                                    label: items.name,
-                                    children: [],
-                                }
-                            })
-                        } else {
-                            treeData = clone(treeList)
-                        }
-                        this.schema.intent_key.renderInput = () => (
-                            <TreeSelect
-                                showSearch
-                                allowClear
-                                treeNodeFilterProp="name"
-                                style={{ width: "100%" }}
-                                placeholder={"请选择意图"}
-                                dropdownStyle={{
-                                    maxHeight: 400,
-                                    overflow: "auto",
-                                }}
-                                treeData={treeData}
-                            />
-                        )
-                        this.setState({ showIntent: [] })
-                    }}
+                    allowClear
+                    showSearch
+                    filterOption={(input, option) =>
+                        option.children
+                            .toLowerCase()
+                            .indexOf(input.toLowerCase()) >= 0
+                    }
+                    options={options}
+                    placeholder="请选择"
+                    // mode="multiple"
                     allowClear
                 ></Select>
+            )
+        }
+    }
+
+    renderIntentInput() {
+        this.schema.intent_key.renderInput = (item, tempData, props) => {
+            let options = []
+            let treeData = []
+            let flowIntent = []
+            this.infoForm = props.form
+            if (
+                props.getFieldsValue &&
+                props.getFieldsValue().flow_key &&
+                props.getFieldsValue().node_key
+            ) {
+                let condition = this.schema.flow_key.dict[
+                    props.getFieldsValue().flow_key
+                ].config.condition
+                let node = this.schema.flow_key.dict[
+                    props.getFieldsValue().flow_key
+                ].config.node.filter((item) => {
+                    return item.key === props.getFieldsValue().node_key
+                })
+                let connection = this.schema.flow_key.dict[
+                    props.getFieldsValue().flow_key
+                ].config.connection
+
+                let conditionkey = []
+                if (node.length) {
+                    connection = connection.filter((item) => {
+                        if (item.begin === props.getFieldsValue().node_key) {
+                            if (item.condition) {
+                                conditionkey = [
+                                    ...conditionkey,
+                                    ...item.condition,
+                                ]
+                            }
+                        }
+                        return item.bigin == props.getFieldsValue().node_key
+                    })
+                }
+                condition.map((items) => {
+                    if (items.intent && conditionkey.indexOf(items.key) > -1)
+                        flowIntent.push(items.intent)
+                })
+                treeData = this.state.intentList.filter((items) => {
+                    return flowIntent.indexOf(items.key) > -1
+                })
+            } else {
+                if (props.getFieldsValue && props.getFieldsValue().flow_key) {
+                    let condition = this.schema.flow_key.dict[
+                        props.getFieldsValue().flow_key
+                    ].config.condition
+                    condition.map((items) => {
+                        if (items.intent) flowIntent.push(items.intent)
+                    })
+                    treeData = this.state.intentList.filter((items) => {
+                        return flowIntent.indexOf(items.key) > -1
+                    })
+                } else {
+                    // options = this.state.intentList
+                    treeData = this.state.intentList
+                }
+            }
+
+            treeData = treeData.map((items) => {
+                // console.log("结果"+)
+                return {
+                    ...items,
+                    key: items.key,
+                    value: items.key,
+                    label: items.name,
+                    children: [],
+                }
+            })
+            treeData = unique(treeData, "key")
+            return (
+                <TreeSelect
+                    showSearch
+                    allowClear
+                    treeNodeFilterProp="name"
+                    style={{ width: "100%" }}
+                    placeholder={"请选择"}
+                    dropdownStyle={{
+                        maxHeight: 400,
+                        overflow: "auto",
+                    }}
+                    treeData={treeData}
+                />
             )
         }
     }

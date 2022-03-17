@@ -44,11 +44,17 @@ export const infoType = {
  */
 class Main extends React.PureComponent {
     constructor(props) {
-        if (!localStorage.getItem("domain_key")) {
+        let domain_key = localStorage.getItem("domain_key")
+        if (!domain_key) {
             localStorage.setItem("domain_key", "default")
+        } else {
+            if (domain_key && !props.dict.domain[domain_key]) {
+                localStorage.setItem("domain_key", "default")
+                domain_key = "default"
+            }
         }
-        super(props)
         const localStorageDomainKey = localStorage.getItem("domain_key")
+        super(props)
 
         const { query } = this.props.location
         const tabActiveKey =

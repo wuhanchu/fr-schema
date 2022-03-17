@@ -65,13 +65,21 @@ class Chat extends React.PureComponent {
                     ...domainInfo.list[0].base_domain_key,
                 ]
             }
+            console.log(
+                "this.props.record.project_id",
+                this.props.record.project_id
+            )
             await schemas.hotWord.service
                 .getRecentHotQuestion({
                     domain_key:
                         (domainArray.length && domainArray.join(",")) ||
                         "default",
                     project_id:
-                        this.props.record && this.props.record.project_id,
+                        (this.props.record &&
+                            this.props.record.project_id &&
+                            this.props.record.project_id.length &&
+                            this.props.record.project_id.join(",")) ||
+                        undefined,
                     limit: 500,
                 })
                 .then((response) => {
@@ -353,6 +361,7 @@ class Chat extends React.PureComponent {
     // 渲染输入框
     renderInput() {
         let { inputValue, isSpin } = this.state
+        let _this = this
         return (
             <div
                 style={{
@@ -383,7 +392,19 @@ class Chat extends React.PureComponent {
                         value={inputValue}
                         ref={this.inputRef}
                         open={this.state.open}
-                        onSelect={this.onInputEnter}
+                        // onSelect={this.onInputEnter}
+                        onSelect={async (value) => {
+                            this.setState({
+                                inputValue: value,
+                            })
+                            if (!this.state.isSpin) {
+                                clearTimeout(this.timeout)
+                                this.setState({ open: false })
+                                if (event.which === 13) {
+                                    await this.onSendMsg(value)
+                                }
+                            }
+                        }}
                         // onPressEnter={this.onInputEnter}
                         // defaultOpen={false}
                         dataSource={this.state.dataSource}
@@ -393,7 +414,6 @@ class Chat extends React.PureComponent {
                             // enterButton={fa}
                             value={inputValue}
                             onFocus={() => {
-                                console.log(this.state.inputValue)
                                 if (this.state.inputValue) {
                                     this.setState({
                                         open: true,
@@ -406,6 +426,16 @@ class Chat extends React.PureComponent {
                                 this.setState({
                                     open: false,
                                 })
+                            }}
+                            onPressEnter={() => {
+                                if (!this.state.isSpin) {
+                                    _this.setState({
+                                        open: false,
+                                    })
+                                    setTimeout(() => {
+                                        _this.onSendMsg(_this.state.inputValue)
+                                    }, 100)
+                                }
                             }}
                             onKeyPress={this.onInputEnter}
                         />
