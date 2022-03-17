@@ -441,7 +441,7 @@ class List extends ListPage {
                 return !item.isExpand && item.key !== "external_id"
             })
             let columns = [
-                column[0],
+                // column[0],
                 {
                     title: "名称",
                     dataIndex: "name",

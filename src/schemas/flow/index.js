@@ -10,7 +10,7 @@ const schema = {
         sorter: true,
         addHide: true,
         editHide: true,
-        required: true,
+        // required: true,
         style: { width: "500px" },
         props: {
             allowClear: true,

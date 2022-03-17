@@ -168,7 +168,8 @@ class List extends DataList {
                 return (
                     !item.isExpand &&
                     item.key !== "depend_on" &&
-                    item.key != "create_time"
+                    item.key != "create_time" &&
+                    item.key != "domain_key"
                 )
             })
             let columns = [
@@ -209,12 +210,6 @@ class List extends DataList {
                 importTemplateUrl={this.meta.importTemplateUrl}
                 schema={{
                     ...this.schema,
-                    domain_key: {
-                        title: "域",
-                        required: true,
-                        type: "Select",
-                        dict: this.props.dict.domain,
-                    },
                     depend_on: {
                         title: "依赖字段",
                     },

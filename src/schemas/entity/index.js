@@ -11,7 +11,7 @@ const schema = {
         editHide: true,
         search: false,
         style: { width: "500px" },
-        required: true,
+        // required: true,
         type: schemaFieldType.Select,
         props: {
             allowClear: true,

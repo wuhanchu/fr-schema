@@ -15,7 +15,7 @@ const schema = {
             showSearch: true,
         },
         search: false,
-        required: true,
+        // required: true,
         type: schemaFieldType.Select,
     },
     name: {

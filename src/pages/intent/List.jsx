@@ -332,7 +332,7 @@ class List extends ListPage {
             console.log(column)
             let columns = [
                 column[2],
-                column[0],
+                // column[0],
                 {
                     title: "名称",
                     dataIndex: "name",
@@ -398,13 +398,13 @@ class List extends ListPage {
             <ImportModal
                 importTemplateUrl={this.meta.importTemplateUrl}
                 schema={{
-                    domain_key: {
-                        title: "域",
-                        required: true,
-                        rules: (rule, value) => value,
-                        type: schemaFieldType.Select,
-                        dict: this.props.dict.domain,
-                    },
+                    // domain_key: {
+                    //     title: "域",
+                    //     required: true,
+                    //     rules: (rule, value) => value,
+                    //     type: schemaFieldType.Select,
+                    //     dict: this.props.dict.domain,
+                    // },
                     name: {
                         title: "名称",
                         rules: (rule, value) => value,

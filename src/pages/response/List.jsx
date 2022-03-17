@@ -102,7 +102,7 @@ class List extends ListPage {
                 return !item.isExpand && item.key !== "external_id"
             })
             let columns = [
-                column[0],
+                // column[0],
                 {
                     title: "名称",
                     dataIndex: "name",
@@ -167,12 +167,12 @@ class List extends ListPage {
             <ImportModal
                 importTemplateUrl={this.meta.importTemplateUrl}
                 schema={{
-                    domain_key: {
-                        title: "域",
-                        required: true,
-                        type: "Select",
-                        dict: this.props.dict.domain,
-                    },
+                    // domain_key: {
+                    //     title: "域",
+                    //     required: true,
+                    //     type: "Select",
+                    //     dict: this.props.dict.domain,
+                    // },
                     name: {
                         title: "名称",
                         rules: (rule, value) => value,

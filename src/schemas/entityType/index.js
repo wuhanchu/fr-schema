@@ -8,7 +8,7 @@ const schema = {
         search: false,
         addHide: true,
         editHide: true,
-        required: true,
+        // required: true,
         type: schemaFieldType.Select,
         props: {
             allowClear: true,

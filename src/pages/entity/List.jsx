@@ -479,7 +479,7 @@ class List extends DataList {
                 return !item.isExpand && item.key !== "external_id"
             })
             let columns = [
-                column[0],
+                // column[0],
                 {
                     title: "名称",
                     dataIndex: "name",
@@ -521,7 +521,12 @@ class List extends DataList {
         return (
             <ImportModal
                 importTemplateUrl={this.meta.importTemplateUrl}
-                schema={this.schema}
+                schema={{
+                    type_key: this.schema.type_key,
+                    name: this.schema.name,
+                    remark: this.schema.remark,
+                    attribute: this.schema.attribute,
+                }}
                 errorKey={"question_standard"}
                 title={"导入"}
                 sliceNum={1}
@@ -541,9 +546,11 @@ class List extends DataList {
                                 message.error("请检查属性字段")
                             }
                         }
+
                         return {
                             ...this.meta.addArgs,
                             ...item,
+                            domain_key: this.meta.queryArgs.domain_key,
                             attribute,
                         }
                     })
