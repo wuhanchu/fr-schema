@@ -592,7 +592,9 @@ class Dialogue extends Chat {
                     type: "flow",
                     domain_key,
                     flow_key,
-                    slot: slotObj,
+                    slot: slotObj
+                        ? { env: "testing", ...slotObj }
+                        : { env: "testing" },
                 })
                 param.conversationId = res.data.id
                 param.isFlow = true
@@ -615,6 +617,7 @@ class Dialogue extends Chat {
                     slot: {
                         domain_key: domain_key,
                         project_id: url.getUrlParams("project_id") || undefined,
+                        // env: "testing"
                     },
                 })
                 try {
@@ -670,7 +673,9 @@ class Dialogue extends Chat {
                 type: "flow",
                 domain_key,
                 flow_key,
-                slot: slotObj,
+                slot: slotObj
+                    ? { env: "testing", ...slotObj }
+                    : { env: "testing" },
             })
             this.setState({
                 conversationId: res.data.id,
@@ -753,6 +758,7 @@ class Dialogue extends Chat {
             slot: {
                 domain_key: domain_key,
                 project_id: url.getUrlParams("project_id") || undefined,
+                // env: "testing"
             },
         })
 
