@@ -6,25 +6,26 @@ import { render } from "mustache"
 
 const schema = {
     begin_time: {
-        title: "开始时间",
+        title: "创建时间",
         type: schemaFieldType.DatePicker,
         props: {
             showTime: true,
             style: { width: "100%" },
-            valueType: "dateTime",
+            // valueType: "dateTime",
+            valueType: "dateTimeRange",
         },
         hideInTable: true,
     },
-    end_time: {
-        title: "结束时间",
-        type: schemaFieldType.DatePicker,
-        props: {
-            showTime: true,
-            style: { width: "100%" },
-            valueType: "dateTime",
-        },
-        hideInTable: true,
-    },
+    // end_time: {
+    //     title: "结束时间",
+    //     type: schemaFieldType.DatePicker,
+    //     props: {
+    //         showTime: true,
+    //         style: { width: "100%" },
+    //         valueType: "dateTime",
+    //     },
+    //     hideInTable: true,
+    // },
 
     id: {
         title: "编号",
@@ -67,7 +68,7 @@ const schema = {
             allowClear: true,
             showSearch: true,
         },
-        hideInTable: true,
+        // hideInTable: true,
         dict: {
             true: {
                 value: "true",
@@ -76,8 +77,22 @@ const schema = {
 
             false: {
                 value: "false",
-                remark: "全部",
+                remark: "无回应",
             },
+        },
+    },
+    caller: {
+        title: "外呼号码",
+
+        render: (item, data) => {
+            return (data.info && data.info.CALLER) || ""
+        },
+    },
+    called: {
+        title: "客户号码",
+
+        render: (item, data) => {
+            return (data.info && data.info.CALLED) || ""
         },
     },
     status: {
@@ -107,7 +122,8 @@ const schema = {
             allowClear: true,
             showSearch: true,
         },
-        hideInTable: true,
+        sorter: true,
+        // hideInTable: true,
         dict: {
             call: {
                 value: "call",
@@ -117,6 +133,13 @@ const schema = {
                 value: "text",
                 remark: "文本对话",
             },
+        },
+        render: (item, data) => {
+            if (data.call_id) {
+                return "智能呼出"
+            } else {
+                return "文本对话"
+            }
         },
     },
     flow_key: {
@@ -156,21 +179,6 @@ const schema = {
         },
     },
 
-    caller: {
-        title: "外呼号码",
-
-        render: (item, data) => {
-            return (data.info && data.info.CALLER) || ""
-        },
-    },
-    called: {
-        title: "被叫号码",
-
-        render: (item, data) => {
-            return (data.info && data.info.CALLED) || ""
-        },
-    },
-
     create_time: {
         title: "创建时间",
         search: false,
@@ -191,39 +199,15 @@ service.get = async (args) => {
     if (args.call_id === "text") {
         args.call_id = "is.null"
     }
-    let time
-    if (typeof args.begin_time === "string") {
-        time = new Date(parseInt(args.begin_time))
-        args.begin_time = args.begin_time
-            ? moments(time).format("YYYY-MM-DDTHH:mm:ss")
-            : undefined
-    } else {
-        console.log(args.begin_time)
-        if (args.begin_time)
-            args.begin_time = args.begin_time
-                ? args.begin_time.format("YYYY-MM-DDTHH:mm:ss")
-                : undefined
+    if (args.begin_time) {
+        let fitter_time = args.begin_time.split(",")
+        let time = new Date(fitter_time[0])
+        let beginTime = moments(time).format("YYYY-MM-DDTHH:mm:ss")
+        time = new Date(fitter_time[1])
+        let endTime = moments(time).format("YYYY-MM-DDTHH:mm:ss")
+        args.end_time = endTime
+        args.begin_time = beginTime
     }
-
-    if (typeof args.end_time === "string") {
-        time = new Date(parseInt(args.end_time))
-        args.end_time = args.end_time
-            ? moments(time).format("YYYY-MM-DDTHH:mm:ss")
-            : undefined
-    } else {
-        console.log(args.end_time)
-        if (args.end_time)
-            args.end_time = args.end_time
-                ? args.end_time.format("YYYY-MM-DDTHH:mm:ss")
-                : undefined
-    }
-    // args.end_time = args.end_time
-    //     ? args.end_time.format("YYYY-MM-DDTHH:mm:ss")
-    //     : undefined
-    // args.begin_time = args.begin_time
-    //     ? args.begin_time.format("YYYY-MM-DDTHH:mm:ss")
-    //     : undefined
-
     if (args.intent_key) {
         args.intent_key = "eq." + args.intent_key
     }

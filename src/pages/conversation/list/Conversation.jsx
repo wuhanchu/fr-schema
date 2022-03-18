@@ -524,9 +524,13 @@ class Conversation extends ListPage {
                 let node = this.schema.flow_key.dict[this.state.flow_key].config
                     .node
 
-                options = node.map((item) => {
-                    return { ...item, label: item.name, value: item.key }
-                })
+                options = node
+                    .filter((item) => {
+                        return item.type != "normal" && item.type != "flow"
+                    })
+                    .map((item) => {
+                        return { ...item, label: item.name, value: item.key }
+                    })
             } else {
                 options = []
             }
