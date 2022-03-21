@@ -22,7 +22,6 @@ const schema = {
             showSearch: true,
         },
         sorter: true,
-
         props: {},
         dict: {
             true: {
@@ -31,6 +30,7 @@ const schema = {
             },
             false: {
                 value: "false",
+                default: true,
                 remark: "否",
             },
         },
@@ -41,13 +41,12 @@ const schema = {
                 return "否"
             }
         },
-
+        extra: "只有公共域可以作为其他域的基础域",
         required: true,
     },
     base_domain_key: {
         title: "基础域",
         sorter: true,
-
         type: schemaFieldType.Select,
         props: {
             mode: "tags",
@@ -63,30 +62,32 @@ const schema = {
                 return "-"
             }
         },
+        extra: "基础域的问题和意图，可在当前域进行使用",
     },
     talk_service_id: {
         sorter: true,
-
-        title: "对话服务",
+        title: "闲聊服务",
         type: schemaFieldType.Select,
         props: {
             allowClear: true,
             showSearch: true,
         },
-        // search: false
+        extra: "选择AI网关配置的对话服务（作为闲聊支撑）",
     },
 
     nlu_server_url: {
         sorter: true,
-
         title: "解析服务地址",
         search: false,
+        extra: "文本进行实体提取的服务地址",
     },
     text2vec_server_url: {
         sorter: true,
 
         title: "向量服务地址",
         search: false,
+        extra:
+            "对文本进行向量生成的服务地址（不填写，使用默认的环境变量TEXT2VEC_URL）",
     },
     create_time: {
         title: "创建时间",
@@ -105,7 +106,6 @@ const schema = {
     remark: {
         title: "备注",
         search: false,
-
         type: schemaFieldType.TextArea,
         sorter: true,
     },

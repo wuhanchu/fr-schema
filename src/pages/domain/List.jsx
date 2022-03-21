@@ -57,7 +57,7 @@ class List extends ListPage {
             infoProps: {
                 offline: true,
             },
-            operateWidth: "450px",
+            operateWidth: "380px",
         })
     }
 
@@ -1004,6 +1004,7 @@ class List extends ListPage {
                             await schemas.domain.service.cache({
                                 domain_key: record.key,
                             })
+
                             message.success("操作成功")
                             e.stopPropagation()
                         }}
@@ -1110,7 +1111,7 @@ class List extends ListPage {
                         })
                     }}
                 >
-                    人员分配
+                    分配
                 </a>
                 <Divider type="vertical" />
                 <Dropdown overlay={testMenu}>
@@ -1128,7 +1129,7 @@ class List extends ListPage {
                         className="ant-dropdown-link"
                         onClick={(e) => e.preventDefault()}
                     >
-                        {"RASA "}
+                        {"闲聊 "}
                         <DownOutlined />
                     </a>
                 </Dropdown>
@@ -1138,7 +1139,7 @@ class List extends ListPage {
                         className="ant-dropdown-link"
                         onClick={(e) => e.preventDefault()}
                     >
-                        {"任务进度 "}
+                        {"进度 "}
                         <DownOutlined />
                     </a>
                 </Dropdown>
