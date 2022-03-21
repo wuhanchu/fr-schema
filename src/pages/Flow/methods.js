@@ -544,12 +544,16 @@ export function isError(data, graph) {
             item.type !== "global"
         ) {
             let cell = graph.getCellById(item.key)
-            cell.attr("body/stroke", "#ff4d4f")
+            cell.attr("body/stroke", "#ff4d4f", {
+                ignoreHistory: true,
+            })
             isTrue = false
         } else {
             if (item.type === "flow" && !item.flow_key) {
                 let cell = graph.getCellById(item.key)
-                cell.attr("body/stroke", "#ff4d4f")
+                cell.attr("body/stroke", "#ff4d4f", {
+                    ignoreHistory: true,
+                })
                 isTrue = false
             } else {
                 let cell = graph.getCellById(item.key)
@@ -563,7 +567,9 @@ export function isError(data, graph) {
     data.config.connection.map((item) => {
         if (!item.name || !item.begin) {
             let cell = graph.getCellById(item.key)
-            cell.attr("line/stroke", "#ff4d4f")
+            cell.attr("line/stroke", "#ff4d4f", {
+                ignoreHistory: true,
+            })
             isTrue = false
         } else {
             let cell = graph.getCellById(item.key)
