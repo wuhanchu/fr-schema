@@ -413,7 +413,12 @@ class BaseList extends EditPage {
                     style: { width: "100%" },
                     span: 6,
                     renderInput: () => {
-                        return <RangePicker style={{ width: "100%" }} />
+                        return (
+                            <RangePicker
+                                allowEmpty={[true, true]}
+                                style={{ width: "100%" }}
+                            ></RangePicker>
+                        )
                     },
                 },
                 update_time: {
@@ -421,7 +426,12 @@ class BaseList extends EditPage {
                     // style: { width: "100%" },
                     span: 6,
                     renderInput: () => {
-                        return <RangePicker style={{ width: "100%" }} />
+                        return (
+                            <RangePicker
+                                allowEmpty={[true, true]}
+                                style={{ width: "100%" }}
+                            ></RangePicker>
+                        )
                     },
                 },
             },

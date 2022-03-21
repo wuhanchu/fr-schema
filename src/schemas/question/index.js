@@ -2,10 +2,10 @@ import { createApi, createBasicApi } from "@/components/ListPage/service"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import projectService from "./../project"
 import moment from "moment"
-import { Tooltip } from "antd"
-
+import { Tooltip, DatePicker } from "antd"
+// import { RangePicker } from "antd";
 const Minio = require("minio")
-
+const { RangePicker } = DatePicker
 const schema = {
     question_standard: {
         title: "标准问句",
@@ -251,15 +251,23 @@ const schema = {
 
     create_time: {
         title: "创建时间",
+
         addHide: true,
         showHide: true,
         sorter: true,
 
         editHide: true,
         type: schemaFieldType.DatePicker,
+        allowEmpty: [true, true],
         props: {
             showTime: true,
+            allowEmpty: [true, true],
             valueType: "dateTime",
+        },
+        renderInput: () => {
+            return (
+                <RangePicker allowEmpty={[true, true]} showTime></RangePicker>
+            )
         },
         // width: "135px",
     },
@@ -274,6 +282,7 @@ const schema = {
         props: {
             showTime: true,
             valueType: "dateTime",
+            allowEmpty: [true, true],
         },
         // width: "135px",
     },
@@ -281,43 +290,51 @@ const schema = {
 
 const service = createApi("question", schema, null, "eq.")
 service.get = async function (args) {
-    if (args.create_time && !args.update_time) {
-        let beginTime =
-            moment(args.create_time.split(",")[0]).format("YYYY-MM-DD") +
-            "T00:00:00"
-        let endTime =
-            moment(args.create_time.split(",")[1]).format("YYYY-MM-DD") +
-            "T23:59:59"
-        args.create_time = undefined
-        args.and = `(create_time.gte.${beginTime},create_time.lte.${endTime})`
+    let andArray = []
+    if (args.create_time) {
+        if (args.create_time.split(",")[0]) {
+            andArray.push(
+                `create_time.gte.${
+                    moment(args.create_time.split(",")[0]).format(
+                        "YYYY-MM-DD"
+                    ) + "T00:00:00"
+                }`
+            )
+        }
+        if (args.create_time.split(",")[1]) {
+            andArray.push(
+                `create_time.lte.${
+                    moment(args.create_time.split(",")[1]).format(
+                        "YYYY-MM-DD"
+                    ) + "T00:00:00"
+                }`
+            )
+        }
     }
-    if (args.update_time && !args.create_time) {
-        let beginTime =
-            moment(args.update_time.split(",")[0]).format("YYYY-MM-DD") +
-            "T00:00:00"
-        let endTime =
-            moment(args.update_time.split(",")[1]).format("YYYY-MM-DD") +
-            "T23:59:59"
-        args.update_time = undefined
-        args.and = `(update_time.gte.${beginTime},update_time.lte.${endTime})`
+    if (args.update_time) {
+        if (args.update_time.split(",")[0]) {
+            andArray.push(
+                `update_time.gte.${
+                    moment(args.update_time.split(",")[0]).format(
+                        "YYYY-MM-DD"
+                    ) + "T00:00:00"
+                }`
+            )
+        }
+        if (args.update_time.split(",")[1]) {
+            andArray.push(
+                `update_time.lte.${
+                    moment(args.update_time.split(",")[1]).format(
+                        "YYYY-MM-DD"
+                    ) + "T00:00:00"
+                }`
+            )
+        }
     }
-    if (args.update_time && args.create_time) {
-        let updateBeginTime =
-            moment(args.update_time.split(",")[0]).format("YYYY-MM-DD") +
-            "T00:00:00"
-        let updateEndTime =
-            moment(args.update_time.split(",")[1]).format("YYYY-MM-DD") +
-            "T23:59:59"
-        args.update_time = undefined
-        let createBeginTime =
-            moment(args.create_time.split(",")[0]).format("YYYY-MM-DD") +
-            "T00:00:00"
-        let createEndTime =
-            moment(args.create_time.split(",")[1]).format("YYYY-MM-DD") +
-            "T23:59:59"
-        args.create_time = undefined
-        args.and = `(update_time.gte.${updateBeginTime},update_time.lte.${updateEndTime},create_time.gte.${createBeginTime},create_time.lte.${createEndTime})`
-    }
+
+    args.create_time = undefined
+    args.update_time = undefined
+    args.and = "(" + andArray.join(",") + ")"
 
     const res = await createApi("question", schema, null, null).get(args)
     let list = res.list.map((item) => {
@@ -337,52 +354,51 @@ service.get = async function (args) {
 }
 
 service.getData = async function (args) {
-    let questionExtendArgs = {}
-    if (args.create_time && !args.update_time) {
-        let beginTime =
-            moment(args.create_time.split(",")[0]).format("YYYY-MM-DD") +
-            "T00:00:00"
-        let endTime =
-            moment(args.create_time.split(",")[1]).format("YYYY-MM-DD") +
-            "T23:59:59"
-        args.create_time = undefined
-        args.and = `(create_time.gte.${beginTime},create_time.lte.${endTime})`
-        questionExtendArgs.create_time_begin = beginTime
-        questionExtendArgs.create_time_end = endTime
+    let andArray = []
+    if (args.create_time) {
+        if (args.create_time.split(",")[0]) {
+            andArray.push(
+                `create_time.gte.${
+                    moment(args.create_time.split(",")[0]).format(
+                        "YYYY-MM-DD"
+                    ) + "T00:00:00"
+                }`
+            )
+        }
+        if (args.create_time.split(",")[1]) {
+            andArray.push(
+                `create_time.lte.${
+                    moment(args.create_time.split(",")[1]).format(
+                        "YYYY-MM-DD"
+                    ) + "T00:00:00"
+                }`
+            )
+        }
     }
-    if (args.update_time && !args.create_time) {
-        let beginTime =
-            moment(args.update_time.split(",")[0]).format("YYYY-MM-DD") +
-            "T00:00:00"
-        let endTime =
-            moment(args.update_time.split(",")[1]).format("YYYY-MM-DD") +
-            "T23:59:59"
-        args.update_time = undefined
-        args.and = `(update_time.gte.${beginTime},update_time.lte.${endTime})`
-        questionExtendArgs.update_time_begin = beginTime
-        questionExtendArgs.update_time_end = endTime
+    if (args.update_time) {
+        if (args.update_time.split(",")[0]) {
+            andArray.push(
+                `update_time.gte.${
+                    moment(args.update_time.split(",")[0]).format(
+                        "YYYY-MM-DD"
+                    ) + "T00:00:00"
+                }`
+            )
+        }
+        if (args.update_time.split(",")[1]) {
+            andArray.push(
+                `update_time.lte.${
+                    moment(args.update_time.split(",")[1]).format(
+                        "YYYY-MM-DD"
+                    ) + "T00:00:00"
+                }`
+            )
+        }
     }
-    if (args.update_time && args.create_time) {
-        let updateBeginTime =
-            moment(args.update_time.split(",")[0]).format("YYYY-MM-DD") +
-            "T00:00:00"
-        let updateEndTime =
-            moment(args.update_time.split(",")[1]).format("YYYY-MM-DD") +
-            "T23:59:59"
-        args.update_time = undefined
-        let createBeginTime =
-            moment(args.create_time.split(",")[0]).format("YYYY-MM-DD") +
-            "T00:00:00"
-        let createEndTime =
-            moment(args.create_time.split(",")[1]).format("YYYY-MM-DD") +
-            "T23:59:59"
-        args.create_time = undefined
-        args.and = `(update_time.gte.${updateBeginTime},update_time.lte.${updateEndTime},create_time.gte.${createBeginTime},create_time.lte.${createEndTime})`
-        questionExtendArgs.create_time_begin = createBeginTime
-        questionExtendArgs.create_time_end = createEndTime
-        questionExtendArgs.update_time_begin = updateBeginTime
-        questionExtendArgs.update_time_end = updateEndTime
-    }
+
+    args.create_time = undefined
+    args.update_time = undefined
+    args.and = andArray.length ? "(" + andArray.join(",") + ")" : undefined
 
     let question_standardList = []
 
