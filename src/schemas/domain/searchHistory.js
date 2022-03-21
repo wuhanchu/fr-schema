@@ -1,8 +1,9 @@
 import { createApi } from "@/outter/fr-schema/src/service"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import moment from "moment"
-import { Tooltip } from "antd"
+import { Tooltip, DatePicker } from "antd"
 import { isNull } from "lodash"
+const { RangePicker } = DatePicker
 
 const schema = {
     fitter_time: {
@@ -12,6 +13,11 @@ const schema = {
         props: {
             showTime: true,
             valueType: "dateRange",
+        },
+        renderInput: () => {
+            return (
+                <RangePicker allowEmpty={[true, true]} showTime></RangePicker>
+            )
         },
         type: schemaFieldType.DatePicker,
     },
@@ -216,17 +222,46 @@ const service = createApi("search_history", schema, null)
 service.get = async (args) => {
     console.log(args.fitter_time)
 
+    // if (args.fitter_time) {
+    //     let fitter_time = args.fitter_time.split(",")
+    //     let time = new Date(fitter_time[0])
+    //     let beginTime = moment(time).format("YYYY-MM-DD") + "T00:00:00"
+    //     time = new Date(fitter_time[1])
+    //     let endTime = moment(time).format("YYYY-MM-DD") + "T23:59:59"
+
+    //     // let beginTime = args.fitter_time[0].format("YYYY-MM-DDTHH:mm:ss")
+    //     // let endTime = args.fitter_time[1].format("YYYY-MM-DDTHH:mm:ss")
+    //     args.fitter_time = undefined
+    //     args.and = `(create_time.gte.${beginTime},create_time.lte.${endTime})`
+    // }
+
     if (args.fitter_time) {
         let fitter_time = args.fitter_time.split(",")
         let time = new Date(fitter_time[0])
-        let beginTime = moment(time).format("YYYY-MM-DD") + "T00:00:00"
+        let beginTime = moment(time).format("YYYY-MM-DDTHH:mm:ss")
         time = new Date(fitter_time[1])
-        let endTime = moment(time).format("YYYY-MM-DD") + "T23:59:59"
-
-        // let beginTime = args.fitter_time[0].format("YYYY-MM-DDTHH:mm:ss")
-        // let endTime = args.fitter_time[1].format("YYYY-MM-DDTHH:mm:ss")
+        let endTime = moment(time).format("YYYY-MM-DDTHH:mm:ss")
+        if (fitter_time[0]) {
+            beginTime = beginTime
+        } else {
+            beginTime = undefined
+        }
+        if (fitter_time[1]) {
+            endTime = endTime
+        } else {
+            endTime = undefined
+        }
         args.fitter_time = undefined
-        args.and = `(create_time.gte.${beginTime},create_time.lte.${endTime})`
+        if (beginTime && endTime) {
+            args.and = `(create_time.gte.${beginTime},create_time.lte.${endTime})`
+        } else {
+            if (beginTime && !endTime) {
+                args.and = `(create_time.gte.${beginTime})`
+            }
+            if (!beginTime && endTime) {
+                args.and = `(create_time.lte.${endTime})`
+            }
+        }
     }
     if (args.have_match_project_id) {
         if (args.have_match_project_id === "have") {

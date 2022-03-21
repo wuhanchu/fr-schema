@@ -61,7 +61,7 @@ export const startDragToGraph = async (graph, type, e, callback) => {
                         },
                     },
                     body: {
-                        stroke: "#c41d7f",
+                        stroke: "#5b8c00",
                         strokeWidth: 1,
                         fill: "#ffffff",
                     },

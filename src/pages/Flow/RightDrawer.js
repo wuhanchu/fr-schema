@@ -442,7 +442,7 @@ class RightDrawer extends React.PureComponent {
                                                 () => {
                                                     cell.attr(
                                                         "body/stroke",
-                                                        "#c41d7f"
+                                                        "#5b8c00"
                                                     )
                                                 }
                                             )

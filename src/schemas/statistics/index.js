@@ -4,30 +4,37 @@ import {
     schemaFieldType,
 } from "@/outter/fr-schema/src/schema"
 import moments from "moment"
+import { DatePicker } from "antd"
 import { request } from "@/outter/fr-schema/src"
 import queryString from "query-string"
 const config = SETTING
+const { RangePicker } = DatePicker
 
 const schema = {
     begin_time: {
-        title: "开始时间",
+        title: "时间区间",
         type: schemaFieldType.DatePicker,
         props: {
             format: "YYYY-MM-DD",
             style: { width: "100%" },
         },
         // listHide: true,
-        hideInTable: true,
-    },
-    end_time: {
-        title: "结束时间",
-        type: schemaFieldType.DatePicker,
-        props: {
-            format: "YYYY-MM-DD",
-            style: { width: "100%" },
+        renderInput: () => {
+            return (
+                <RangePicker allowEmpty={[true, true]} showTime></RangePicker>
+            )
         },
         hideInTable: true,
     },
+    // end_time: {
+    //     title: "结束时间",
+    //     type: schemaFieldType.DatePicker,
+    //     props: {
+    //         format: "YYYY-MM-DD",
+    //         style: { width: "100%" },
+    //     },
+    //     hideInTable: true,
+    // },
     id: {
         title: "编号",
         sorter: true,
@@ -120,37 +127,56 @@ service.getRecentHotQuestion = createApi(
     ""
 ).get
 service.get = async (args) => {
-    console.log(args.end_time)
-    let time
-    if (typeof args.begin_time === "string") {
-        time = new Date(parseInt(args.begin_time))
-        args.begin_time = args.begin_time
-            ? moments(time).format("YYYY-MM-DD")
-            : undefined
-    } else {
-        console.log(args.begin_time)
-        if (args.begin_time)
-            args.begin_time = args.begin_time
-                ? args.begin_time.format("YYYY-MM-DD")
-                : undefined
+    // console.log(args.end_time)
+    // let time
+    // if (typeof args.begin_time === "string") {
+    //     time = new Date(parseInt(args.begin_time))
+    //     args.begin_time = args.begin_time
+    //         ? moments(time).format("YYYY-MM-DD")
+    //         : undefined
+    // } else {
+    //     console.log(args.begin_time)
+    //     if (args.begin_time)
+    //         args.begin_time = args.begin_time
+    //             ? args.begin_time.format("YYYY-MM-DD")
+    //             : undefined
+    // }
+
+    // // time = new Date(parseInt(args.end_time))
+    // // args.end_time = args.end_time
+    // //     ? args.end_time.format("YYYY-MM-DD")
+    // //     : undefined
+    // if (typeof args.end_time === "string") {
+    //     time = new Date(parseInt(args.end_time))
+    //     args.end_time = args.end_time
+    //         ? moments(time).format("YYYY-MM-DD")
+    //         : undefined
+    // } else {
+    //     console.log(args.end_time)
+    //     if (args.end_time)
+    //         args.end_time = args.end_time
+    //             ? args.end_time.format("YYYY-MM-DD")
+    //             : undefined
+    // }
+
+    if (args.begin_time) {
+        let fitter_time = args.begin_time.split(",")
+        let time = new Date(fitter_time[0])
+        let beginTime = moments(time).format("YYYY-MM-DDTHH:mm:ss")
+        time = new Date(fitter_time[1])
+        let endTime = moments(time).format("YYYY-MM-DDTHH:mm:ss")
+        if (fitter_time[0]) {
+            args.begin_time = beginTime
+        } else {
+            args.begin_time = undefined
+        }
+        if (fitter_time[1]) {
+            args.end_time = endTime
+        } else {
+            args.end_time = undefined
+        }
     }
 
-    // time = new Date(parseInt(args.end_time))
-    // args.end_time = args.end_time
-    //     ? args.end_time.format("YYYY-MM-DD")
-    //     : undefined
-    if (typeof args.end_time === "string") {
-        time = new Date(parseInt(args.end_time))
-        args.end_time = args.end_time
-            ? moments(time).format("YYYY-MM-DD")
-            : undefined
-    } else {
-        console.log(args.end_time)
-        if (args.end_time)
-            args.end_time = args.end_time
-                ? args.end_time.format("YYYY-MM-DD")
-                : undefined
-    }
     let { currentPage, pageSize, limit, ...otherParams } = args
 
     if (args.order) {

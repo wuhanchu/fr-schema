@@ -119,6 +119,9 @@ class Conversation extends ListPage {
         // let list = getTree(this.state.intentList)
 
         this.formRef.current.resetFields()
+        this.formRef.current.setFieldsValue({
+            begin_time: [moment().subtract("days", 6), undefined],
+        })
         this.setState(
             {
                 pagination: { ...this.state.pagination, currentPage: 1 },
@@ -208,6 +211,9 @@ class Conversation extends ListPage {
         let { location } = this.props
         let _this = this
         // 外链
+        this.formRef.current.setFieldsValue({
+            begin_time: [moment().subtract("days", 6), undefined],
+        })
         if (location.pathname.startsWith("/outter")) {
             let showIntentFlow =
                 location.query &&

@@ -101,7 +101,7 @@ class List extends ListPage {
 
         this.formRef.current.resetFields()
         this.formRef.current.setFieldsValue({
-            begin_time: moment().subtract("days", 6),
+            begin_time: [moment().subtract("days", 6), undefined],
         })
 
         this.setState(
@@ -164,9 +164,8 @@ class List extends ListPage {
         }
         try {
             // this.formRef.current.setFieldsValue({ domain_key: "default" })
-            console.log("设置为default")
             this.formRef.current.setFieldsValue({
-                begin_time: moment().subtract("days", 6),
+                begin_time: [moment().subtract("days", 6), undefined],
             })
         } catch (error) {}
         let project = await schemas.project.service.get({

@@ -325,7 +325,7 @@ class Flow extends React.PureComponent {
                                             width: "18px",
                                             height: "18px",
                                             marginBottom: "-2px",
-                                            border: "#c41d7f 1px solid",
+                                            border: "#5b8c00 1px solid",
                                             display: "inline-block",
                                         }}
                                     ></span>
@@ -665,7 +665,7 @@ class Flow extends React.PureComponent {
                         args.type === "master"
                             ? "#ad6800"
                             : args.type === "flow"
-                            ? "#c41d7f"
+                            ? "#5b8c00"
                             : "#000000",
 
                     strokeWidth: 1,
@@ -763,7 +763,7 @@ class Flow extends React.PureComponent {
                         args.type === "master"
                             ? "#ad6800"
                             : args.type === "flow"
-                            ? "#c41d7f"
+                            ? "#5b8c00"
                             : "#000000",
 
                     strokeWidth: 1,

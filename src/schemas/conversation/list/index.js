@@ -1,8 +1,11 @@
 // import { createApi } from "@/outter/fr-schema/src/service"
 import { createApi } from "@/components/ListPage/service"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
+import { DatePicker } from "antd"
 import moments from "moment"
 import { render } from "mustache"
+
+const { RangePicker } = DatePicker
 
 const schema = {
     begin_time: {
@@ -12,20 +15,16 @@ const schema = {
             showTime: true,
             style: { width: "100%" },
             // valueType: "dateTime",
+            allowEmpty: [false, true],
             valueType: "dateTimeRange",
+        },
+        renderInput: () => {
+            return (
+                <RangePicker allowEmpty={[true, true]} showTime></RangePicker>
+            )
         },
         hideInTable: true,
     },
-    // end_time: {
-    //     title: "结束时间",
-    //     type: schemaFieldType.DatePicker,
-    //     props: {
-    //         showTime: true,
-    //         style: { width: "100%" },
-    //         valueType: "dateTime",
-    //     },
-    //     hideInTable: true,
-    // },
 
     id: {
         title: "编号",
@@ -205,9 +204,18 @@ service.get = async (args) => {
         let beginTime = moments(time).format("YYYY-MM-DDTHH:mm:ss")
         time = new Date(fitter_time[1])
         let endTime = moments(time).format("YYYY-MM-DDTHH:mm:ss")
-        args.end_time = endTime
-        args.begin_time = beginTime
+        if (fitter_time[0]) {
+            args.begin_time = beginTime
+        } else {
+            args.begin_time = undefined
+        }
+        if (fitter_time[1]) {
+            args.end_time = endTime
+        } else {
+            args.end_time = undefined
+        }
     }
+
     if (args.intent_key) {
         args.intent_key = "eq." + args.intent_key
     }
