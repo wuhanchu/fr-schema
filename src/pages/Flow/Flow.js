@@ -51,7 +51,6 @@ class Flow extends React.PureComponent {
 
     getIntent = async () => {
         const { record, other } = this.props
-        console.time("getData")
 
         let base_domain_key =
             other.dict.domain[record.domain_key].base_domain_key || []
@@ -61,7 +60,6 @@ class Flow extends React.PureComponent {
 
             domain_key: [record.domain_key, ...base_domain_key].join(","),
         })
-        console.timeEnd("getData")
 
         let list = res.list.filter((item) => {
             if (
@@ -76,10 +74,8 @@ class Flow extends React.PureComponent {
         })
         // console.timeEnd("getData")
 
-        console.timeEnd("create")
-
         list = getTree(clone(list), other.dict.domain)
-        this.setState({ intenList: [] })
+        this.setState({ intenList: list })
     }
 
     getFlow = async () => {
