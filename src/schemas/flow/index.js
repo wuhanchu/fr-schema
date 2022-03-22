@@ -69,10 +69,10 @@ const schema = {
     },
 
     slot: {
-        title: "全局配置",
+        title: "话术配置",
         search: false,
         remark: "",
-        extra: "作用全局的配置（可配置电话渠道参数）",
+        extra: "可配置电话渠道参数和相关参数(意图识别阈值:intent_identify_threshold)",
         hideInTable: true,
         props: {
             style: { width: "500px" },
