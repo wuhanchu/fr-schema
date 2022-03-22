@@ -334,7 +334,7 @@ service.get = async function (args) {
 
     args.create_time = undefined
     args.update_time = undefined
-    args.and = "(" + andArray.join(",") + ")"
+    args.and = andArray.length ? "(" + andArray.join(",") + ")" : undefined
 
     const res = await createApi("question", schema, null, null).get(args)
     let list = res.list.map((item) => {
