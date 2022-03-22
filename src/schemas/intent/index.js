@@ -64,18 +64,6 @@ const schema = {
         exportConcat: true,
         extra: "一行一个数据，用于相似度比对，不建议包含重复的相似文本。",
     },
-    // example: {
-    //     title: "例子",
-    //     search: false,
-
-    //     type: schemaFieldType.TextArea,
-    //     props: {
-    //         autoSize: { minRows: 2, maxRows: 6 },
-    //     },
-    //     hideInTable: true,
-    //     exportConcat: true,
-    //     extra: "一行一个数据，用于模型训练，建议包含重复的相似文本",
-    // },
     create_time: {
         title: "创建时间",
         // required: true,
@@ -100,7 +88,12 @@ service.get = async function (args) {
         ? "in.(" + args.domain_key + ")"
         : undefined
 
+    args.select = "id,name,key,logical_path,domain_key"
+    console.time("转换")
+
     const res = await createApi("intent", schema, null, "eq.").get(args)
+    console.timeEnd("转换")
+
     let list = res.list.map((item) => {
         return {
             ...item,
@@ -114,6 +107,7 @@ service.get = async function (args) {
             regex: item.regex ? item.regex.join("\n") : null,
         }
     })
+
     return { ...res, list: list }
 }
 

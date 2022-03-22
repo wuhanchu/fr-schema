@@ -47,12 +47,12 @@ class Chat extends React.PureComponent {
     }
 
     async componentDidMount() {
+        let domainArray = []
+
         if (
             !url.getUrlParams("project_id") &&
             !url.getUrlParams("domain_key")
         ) {
-            let domainArray = []
-
             let domainInfo = await schemas.domain.service.get({
                 key: this.props.record.key,
             })
@@ -91,8 +91,6 @@ class Chat extends React.PureComponent {
                     this.setState({ allData })
                 })
         } else {
-            let domainArray = []
-
             let domainInfo = await schemas.domain.service.get({
                 key: url.getUrlParams("domain_key"),
             })
@@ -124,7 +122,23 @@ class Chat extends React.PureComponent {
                     this.setState({ allData })
                 })
         }
+
+        this.initFlow(domainArray)
     }
+
+    async initFlow(domainArray) {
+        const res = await schemas.flow.service.get({
+            limit: 1000,
+            // key: flow_key || flowKey,
+            config: "not.is.null",
+            domain_key: domainArray,
+            // domain_key: domainKey,
+            order: "create_time.desc",
+        })
+        console.log(res)
+        this.setState({ tableFlowList: res.list })
+    }
+
     handleChange = (value) => {
         const { allData } = this.state
         this.setState({
@@ -462,6 +476,7 @@ class Chat extends React.PureComponent {
             domain_key,
             flow_key,
             showInput,
+            tableFlowList,
         } = this.state
         return (
             <div
@@ -479,6 +494,7 @@ class Chat extends React.PureComponent {
                             conversationId={conversationId}
                             domainKey={domain_key}
                             flowKey={flow_key}
+                            tableFlowList={tableFlowList}
                             onRef={this.getRef}
                             showInput={showInput}
                             roomHeight={roomHeight}

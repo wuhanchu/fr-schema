@@ -51,13 +51,17 @@ class Flow extends React.PureComponent {
 
     getIntent = async () => {
         const { record, other } = this.props
+        console.time("getData")
+
         let base_domain_key =
-            other.dict.domain[record.domain_key].base_domain_key
+            other.dict.domain[record.domain_key].base_domain_key || []
         const res = await schema.service.get({
             limit: 1000,
             key: "not.eq.null",
-            // domain_key: record.domain_key,
+
+            domain_key: [record.domain_key, ...base_domain_key].join(","),
         })
+        console.timeEnd("getData")
 
         let list = res.list.filter((item) => {
             if (
@@ -70,8 +74,12 @@ class Flow extends React.PureComponent {
                 return false
             }
         })
+        // console.timeEnd("getData")
+
+        console.timeEnd("create")
+
         list = getTree(clone(list), other.dict.domain)
-        this.setState({ intenList: list })
+        this.setState({ intenList: [] })
     }
 
     getFlow = async () => {
@@ -125,7 +133,6 @@ class Flow extends React.PureComponent {
         key = "ctrl + c"
         method = (e) => {
             e.preventDefault()
-            console.log("复制")
             this.copyNode()
         }
         keyboardJS.bind(key, method)
@@ -190,7 +197,7 @@ class Flow extends React.PureComponent {
         const { record } = this.props
         await this.initData()
         await this.getData()
-        await this.getIntent()
+        this.getIntent()
         this.getHistory()
         this.setState({
             spinning: false,
@@ -241,7 +248,6 @@ class Flow extends React.PureComponent {
                 }
             })
 
-        console.log("意图是", intentDict)
         return (
             <Spin tip="加载中..." spinning={spinning}>
                 <div className="container_warp">
@@ -600,7 +606,8 @@ class Flow extends React.PureComponent {
             }
         }
         let cells = []
-        console.time("create")
+        console.time("data")
+
         data.node.map((item) => {
             // this.addNodes(item)
             cells.push(this.getNodes(item))
@@ -609,9 +616,9 @@ class Flow extends React.PureComponent {
             // this.addEdges(item)
             cells.push(this.getEdges(item))
         })
-
+        console.timeEnd("data")
+        console.time("create")
         this.graph.fromJSON({ cells })
-        console.timeEnd("create")
 
         this.graph.action = data.action
         this.graph.condition = data.condition
@@ -1173,7 +1180,6 @@ class Flow extends React.PureComponent {
             condition: [],
             action: [],
         }
-        console.log("开始")
         expGraph.getNodes().map((item, index) => {
             let nodeData = item.getData()
             let skip_repeat_action
@@ -1198,7 +1204,6 @@ class Flow extends React.PureComponent {
             }
             data.node.push(itemData)
         })
-        console.log("得到节点")
 
         expGraph.getEdges().map((item, index) => {
             let nodeData = item.getData()
@@ -1219,7 +1224,6 @@ class Flow extends React.PureComponent {
             }
             data.connection.push(itemData)
         })
-        console.log("得到边")
 
         let action = []
         expGraph.action &&
@@ -1263,7 +1267,6 @@ class Flow extends React.PureComponent {
                     })
                 }
             })
-        console.log("结束")
         data.action = action
         data.condition = condition
         this.setState({

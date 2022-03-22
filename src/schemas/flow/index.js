@@ -130,6 +130,15 @@ const schema = {
 }
 
 const service = createApi("flow", schema, null, "eq.")
+service.get = async (args) => {
+    if (args.domain_key instanceof Array) {
+        args.domain_key = "in.(" + args.domain_key.join(",") + ")"
+    }
+    // if(!args.select){
+    //     args.select = 'id,name,key,domain_key,intent_key,intent_key_text, project_id, slot'
+    // }
+    return await createApi("flow", schema, null, "eq.").get(args)
+}
 service.upInsert = createApi(
     "flow?on_conflict=key",
     schema,

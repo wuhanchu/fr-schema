@@ -784,6 +784,7 @@ class Dialogue extends Chat {
         let flow
         flow = await schemas.flow.service.get({
             limit: 10000,
+            select: "id,name,key,domain_key",
             domain_key: domain_key,
         })
         let defaultProject = []

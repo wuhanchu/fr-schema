@@ -325,6 +325,7 @@ export const ports = {
 }
 // 连线
 export function createEdgeFunc(args) {
+    console.log("创建边")
     return new Shape.Edge({
         attrs: {
             line: {
@@ -414,6 +415,7 @@ export function initGraph(expGraphData, callback, graphChange) {
                 }
             },
         },
+        // async: true,
         panning: true,
         selecting: {
             enabled: true,

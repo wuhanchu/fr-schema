@@ -1,9 +1,10 @@
 import React, { useContext, useState, useEffect, useRef, Fragment } from "react"
-import { Table, Button, Form, Alert } from "antd"
+import { Table, Button, Form, Alert, Tooltip } from "antd"
 import "./EditTable.css"
 import { autobind } from "core-decorators"
 import StandardTable from "@/outter/fr-schema-antd-utils/src/components/StandardTable"
 import styles from "@/outter/fr-schema-antd-utils/src/components/StandardTable/index.less"
+import { QuestionCircleOutlined } from "@ant-design/icons"
 
 const EditableContext = React.createContext(null)
 import { createComponent } from "@/outter/fr-schema-antd-utils/src/utils/component"
@@ -54,7 +55,7 @@ const EditableCell = ({
         if (item.type !== "BraftEditor") {
             setEditing(!editing)
             form.setFieldsValue({
-                [dataIndex]: record[dataIndex] || undefined
+                [dataIndex]: record[dataIndex] || undefined,
             })
         }
     }
@@ -166,11 +167,23 @@ class EditableTable extends StandardTable {
             },
         }
         const columnsRes = columns.map((col) => {
+            if (col.extra) {
+                col.title = (
+                    <div>
+                        {" "}
+                        {col.title} &nbsp;
+                        <Tooltip placement="top" title={col.extra}>
+                            <QuestionCircleOutlined />
+                        </Tooltip>
+                    </div>
+                )
+            }
             if (!col.editable) {
-                return col
+                return { ...col, showSorterTooltip: false }
             }
             return {
                 ...col,
+                showSorterTooltip: false,
                 onCell: (record) => ({
                     record,
                     editable: true,

@@ -76,6 +76,7 @@ class List extends ListPage {
 
         let projectList = await schemas.project.service.get({
             limit: 10000,
+            select: "id, name, domain_key",
         })
         this.schema.talk_service_id.dict = listToDict(aiService)
 

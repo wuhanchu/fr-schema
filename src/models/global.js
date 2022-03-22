@@ -124,7 +124,10 @@ const GlobalModel = {
             // query data
 
             const res = yield all({
-                domain: call(domain.service.get, { pageSize: 10000 }),
+                domain: call(domain.service.get, {
+                    pageSize: 10000,
+                    select: "id, name, key, base_domain_key",
+                }),
                 config: call(configService.get, { pageSize: 10000 }),
                 dict: call(dictService.get, { pageSize: 10000 }),
             })
@@ -176,7 +179,10 @@ const GlobalModel = {
             // query data
 
             const res = yield all({
-                domain: call(domain.service.get, { pageSize: 10000 }),
+                domain: call(domain.service.get, {
+                    pageSize: 10000,
+                    select: "id, name, key, base_domain_key",
+                }),
             })
 
             Object.keys(res).forEach((key) => (data[key] = res[key].list))
