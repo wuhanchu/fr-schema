@@ -88,7 +88,7 @@ service.get = async function (args) {
         ? "in.(" + args.domain_key + ")"
         : undefined
 
-    args.select = "id,name,key,logical_path,domain_key"
+    // args.select = "id,name,key,logical_path,domain_key"
     console.time("转换")
 
     const res = await createApi("intent", schema, null, "eq.").get(args)
