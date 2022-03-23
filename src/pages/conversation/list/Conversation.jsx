@@ -581,7 +581,7 @@ class Conversation extends ListPage {
             let treeData = []
             let flowIntent = []
             this.infoForm = props.form
-            if (this.state.node_key) {
+            if (this.state.node_key && this.state.flow_key) {
                 let condition = this.schema.flow_key.dict[this.state.flow_key]
                     .config.condition
                 let node = this.schema.flow_key.dict[

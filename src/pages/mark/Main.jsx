@@ -14,6 +14,7 @@ import {
     Steps,
 } from "antd"
 import Add from "./Add"
+import Intent from "./Intent"
 import Complement from "./Complement"
 import Repeat from "./Repeat"
 import schemas from "@/schemas"
@@ -32,6 +33,7 @@ export const infoType = {
     Complement: "补充扩展问",
     Add: "问题新增",
     Repeat: "重复问题",
+    Intent: "意图矛盾检测",
 }
 
 /**
@@ -588,6 +590,9 @@ class Main extends React.PureComponent {
                 )}
                 {tabActiveKey === infoType.Repeat && (
                     <Repeat domain_key={this.state.localStorageDomainKey} />
+                )}
+                {tabActiveKey === infoType.Intent && (
+                    <Intent domain_key={this.state.localStorageDomainKey} />
                 )}
             </PageHeaderWrapper>
         )
