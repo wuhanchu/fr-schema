@@ -345,23 +345,7 @@ export const ConditionModal = ({
 
     return (
         <Modal
-            title={
-                <>
-                    条件配置
-                    <Tooltip
-                        title={
-                            <div>
-                                {"编号："}
-                                {isImport || defaultValue.key}
-                            </div>
-                        }
-                    >
-                        <a>
-                            <InfoCircleOutlined style={{ marginLeft: "5px" }} />
-                        </a>
-                    </Tooltip>
-                </>
-            }
+            title={<div keys={isImport || defaultValue.key}>条件配置</div>}
             visible={visible}
             destroyOnClose={true}
             width={"700px"}

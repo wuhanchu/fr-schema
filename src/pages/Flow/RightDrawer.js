@@ -366,21 +366,8 @@ class RightDrawer extends React.PureComponent {
         return (
             chooseType === "node" && (
                 <div>
-                    <div className="drawer_title">
+                    <div className="drawer_title" keys={cell.id}>
                         节点设置
-                        <Tooltip
-                            title={
-                                <div>
-                                    {"编号："} {cell.id}
-                                </div>
-                            }
-                        >
-                            <a>
-                                <InfoCircleOutlined
-                                    style={{ marginLeft: "5px" }}
-                                />
-                            </a>
-                        </Tooltip>
                     </div>
                     <div className="drawer_wrap">
                         <Form
@@ -688,22 +675,8 @@ class RightDrawer extends React.PureComponent {
         return (
             chooseType === "edge" && (
                 <div>
-                    <div className="drawer_title">
+                    <div className="drawer_title" keys={cell.id}>
                         连线设置
-                        <Tooltip
-                            title={
-                                <div>
-                                    {"编号："}
-                                    {cell.id}
-                                </div>
-                            }
-                        >
-                            <a>
-                                <InfoCircleOutlined
-                                    style={{ marginLeft: "5px" }}
-                                />
-                            </a>
-                        </Tooltip>
                     </div>
                     <div className="drawer_wrap">
                         <Form

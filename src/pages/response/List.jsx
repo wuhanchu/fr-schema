@@ -347,6 +347,7 @@ class List extends ListPage {
                         <Form.Item
                             label="编码"
                             name="key"
+                            extra="域中的唯一编码,可用中文。初始化好了以后，请不要随意修改。"
                             rules={[{ required: true, message: "请输入编码" }]}
                         >
                             <Input placeholder="请输入编码" />
@@ -354,7 +355,7 @@ class List extends ListPage {
                         <Form.Item
                             label="意图"
                             name="intent_key"
-                            extra="设置回应对应的意图，例如 问候的意图，需要回复 您好。"
+                            extra="需要回复回应的对应意图。"
                         >
                             <TreeSelect
                                 showSearch
@@ -374,7 +375,7 @@ class List extends ListPage {
                         <Form.Item
                             label="实体范围"
                             name="expect_entity_scope"
-                            extra="预期实体范围"
+                            extra="当前回应返回后，希望客户选择配置的实体范围。"
 
                             // rules={[{ required: true, message: "请输入实体范围" }]}
                         >
@@ -391,7 +392,7 @@ class List extends ListPage {
                                 </div>
                             }
                             name="template_text"
-                            extra="相关的回复文本，可配置多个，增加回复的多样性。"
+                            extra="可配置多个，会按照顺序进行回复。"
                         >
                             <Input.TextArea placeholder="请输入回复文本" />
                         </Form.Item>
@@ -457,7 +458,7 @@ class List extends ListPage {
                         </Form.List>
                         <Form.Item
                             colon={false}
-                            extra="针对机器闲聊的配置。"
+                            extra="回复文本没配置时生效，用于更复杂的回复方式。"
                             label={
                                 <div>
                                     <div>回复模板:</div>

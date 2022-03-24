@@ -66,7 +66,8 @@ const schema = {
         title: "话术配置",
         search: false,
         remark: "",
-        extra: "可配置电话渠道参数和相关参数(意图识别阈值:intent_identify_threshold)",
+        extra:
+            "可配置电话渠道参数和相关参数(意图识别阈值:intent_identify_threshold)",
         hideInTable: true,
         props: {
             style: { width: "500px" },
@@ -100,7 +101,21 @@ const schema = {
             valueType: "dateTime",
         },
         type: schemaFieldType.DatePicker,
-    }
+    },
+    config: {
+        title: "流程代码",
+        // required: true,
+        search: false,
+        editHide: true,
+        addHide: true,
+        hideInTable: true,
+        props: {
+            style: { width: "900px" },
+            height: "500px",
+        },
+        type: schemaFieldType.AceEditor,
+        decoratorProps: { rules: verifyJson },
+    },
 }
 
 const service = createApi("flow", schema, null, "eq.")
