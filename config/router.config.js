@@ -343,18 +343,18 @@ export default [
                             },
                         ],
                     },
-                    {
-                        path: "/outboundTask",
-                        name: "outboundTask",
-                        routes: [
-                            {
-                                path: "/outboundTask/list",
-                                name: "taskList",
-                                component: "./outboundTask/List.jsx",
-                                title: "任务列表",
-                            },
-                        ],
-                    },
+                    // {
+                    //     path: "/outboundTask",
+                    //     name: "outboundTask",
+                    //     routes: [
+                    //         {
+                    //             path: "/outboundTask/list",
+                    //             name: "taskList",
+                    //             component: "./outboundTask/List.jsx",
+                    //             title: "任务列表",
+                    //         },
+                    //     ],
+                    // },
                     {
                         path: "/statistics",
                         name: "statistics",
