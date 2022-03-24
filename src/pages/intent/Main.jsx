@@ -13,9 +13,8 @@ import {
     Tooltip,
     Steps,
 } from "antd"
-import Add from "./Add"
-import Complement from "./Complement"
-import Repeat from "./Repeat"
+import List from "./List"
+import Intent from "./Intent"
 import schemas from "@/schemas"
 import {
     LoadingOutlined,
@@ -29,9 +28,8 @@ const { Step } = Steps
 
 // 微信信息类型
 export const infoType = {
-    Complement: "补充扩展问",
-    Add: "问题新增",
-    Repeat: "重复问题",
+    List: "意图列表",
+    Intent: "意图矛盾检测",
 }
 
 /**
@@ -57,8 +55,7 @@ class Main extends React.PureComponent {
         super(props)
 
         const { query } = this.props.location
-        const tabActiveKey =
-            query && query.type ? query.type : infoType.Complement
+        const tabActiveKey = query && query.type ? query.type : infoType.List
         this.state = {
             tabActiveKey,
             localStorageDomainKey,
@@ -137,7 +134,6 @@ class Main extends React.PureComponent {
                 }, 700)
             } else {
                 this.setState({ process: data.process })
-                console.log("有数据返回", data.process)
                 const args = {
                     message: (
                         <span>
@@ -437,7 +433,7 @@ class Main extends React.PureComponent {
                     let item = this.state.localStorageDomainKey
                     try {
                         this.setState({ isLoading: true })
-                        let sync = await schemas.mark.service.mark_task({
+                        let sync = await schemas.mark.service.intent_mark_task({
                             domain_key: item.key,
                         })
                         if (this.mysetIntervals) {
@@ -523,7 +519,7 @@ class Main extends React.PureComponent {
                     }
                 }}
             >
-                {this.state.isLoading && <LoadingOutlined />}创建分析
+                {this.state.isLoading && <LoadingOutlined />}创建检测
             </Button>
         )
 
@@ -580,14 +576,11 @@ class Main extends React.PureComponent {
                 }
                 tabActiveKey={tabActiveKey}
             >
-                {tabActiveKey === infoType.Complement && (
-                    <Complement domain_key={this.state.localStorageDomainKey} />
+                {tabActiveKey === infoType.List && (
+                    <List domain_key={this.state.localStorageDomainKey} />
                 )}
-                {tabActiveKey === infoType.Add && (
-                    <Add domain_key={this.state.localStorageDomainKey} />
-                )}
-                {tabActiveKey === infoType.Repeat && (
-                    <Repeat domain_key={this.state.localStorageDomainKey} />
+                {tabActiveKey === infoType.Intent && (
+                    <Intent domain_key={this.state.localStorageDomainKey} />
                 )}
             </PageHeaderWrapper>
         )

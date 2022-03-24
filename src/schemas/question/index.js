@@ -64,6 +64,7 @@ const schema = {
         type: schemaFieldType.TextArea,
         props: {
             autoSize: { minRows: 6, maxRows: 6 },
+            placeholder: "请输入扩展问",
         },
         style: {
             height: "100px",
@@ -531,6 +532,7 @@ service.upload = createBasicApi("file").post
 
 service.getDetail = async function (args) {
     const res = await createApi("question", schema, null, "eq.").getDetail(args)
+
     return {
         ...res,
         question_extend: res.question_extend

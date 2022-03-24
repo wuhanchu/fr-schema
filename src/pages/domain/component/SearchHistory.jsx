@@ -196,6 +196,7 @@ class MyList extends DataList {
                 {showAnswer && (
                     <SearchPageModal
                         type={"history"}
+                        dict={this.props.dict}
                         searchProject={
                             record.project_id && record.project_id.length
                                 ? record.project_id

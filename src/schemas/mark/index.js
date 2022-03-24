@@ -231,6 +231,12 @@ service.mark_task = async (args) => {
     let data = await createApi("mark_task", schema, null, "eq.").post(args)
     return { ...data }
 }
+service.intent_mark_task = async (args) => {
+    let data = await createApi("intent/mark_task", schema, null, "eq.").post(
+        args
+    )
+    return { ...data }
+}
 export default {
     schema,
     service,

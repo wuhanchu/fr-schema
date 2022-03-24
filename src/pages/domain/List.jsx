@@ -240,6 +240,7 @@ class List extends ListPage {
                         onCancel={() => {
                             this.setState({ visibleSearch: false })
                         }}
+                        dict={this.props.dict}
                         title={"知识搜索" + "(" + record.name + ")"}
                         record={record}
                     />
@@ -1080,6 +1081,19 @@ class List extends ListPage {
                         }}
                     >
                         分析进度
+                    </a>
+                </Menu.Item>
+                <Menu.Item key="1">
+                    <a
+                        onClick={async () => {
+                            this.handleGetTask(
+                                record,
+                                undefined,
+                                "意图分析任务"
+                            )
+                        }}
+                    >
+                        意图进度
                     </a>
                 </Menu.Item>
             </Menu>

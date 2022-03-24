@@ -89,18 +89,30 @@ const schema = {
         sorter: true,
         required: true,
     },
-    project_id: {
-        title: "问题库",
-        // style: { width: "500px" },
-        type: schemaFieldType.Select,
-        props: {
-            allowClear: true,
-            showSearch: true,
-        },
-        sorter: true,
-        required: true,
+    calibration_intent_text: {
+        title: "检测重复文本",
+        search: false,
     },
+    compare_intent_text: {
+        title: "对比重复文本",
+        search: false,
+    },
+    // project_id: {
+    //     title: "问题库",
+    //     // style: { width: "500px" },
+    //     type: schemaFieldType.Select,
+    //     props: {
+    //         allowClear: true,
+    //         showSearch: true,
+    //     },
+    //     sorter: true,
+    //     required: true,
+    // },
 
+    regex: {
+        title: "重复表达式",
+        search: false,
+    },
     intent_id: {
         title: "意图",
         search: false,
@@ -116,6 +128,7 @@ const schema = {
     calibration_intent_id: {
         title: "检测意图",
         type: schemaFieldType.Select,
+        search: false,
         props: {
             allowClear: true,
             showSearch: true,
@@ -125,6 +138,7 @@ const schema = {
     },
     compare_intent_id: {
         title: "对比意图",
+        search: false,
         type: schemaFieldType.Select,
         props: {
             allowClear: true,
@@ -132,16 +146,6 @@ const schema = {
         },
         sorter: true,
         required: true,
-    },
-    calibration_intent_id: {
-        title: "检测重复文本",
-    },
-    compare_intent_text: {
-        title: "对比重复文本",
-    },
-    regex: {
-        title: "重复表达式",
-        search: false,
     },
 }
 

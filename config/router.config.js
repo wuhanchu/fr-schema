@@ -265,7 +265,7 @@ export default [
                             {
                                 path: "/domain/intent",
                                 name: "intent",
-                                component: "./intent/List",
+                                component: "./intent/Main",
                                 title: "意图",
                             },
                             // response

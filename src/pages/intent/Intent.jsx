@@ -25,8 +25,24 @@ class List extends DataList {
             showSelect: true,
             service: schemas.service,
             initLocalStorageDomainKey: true,
-            operateWidth: "270px",
+            operateWidth: "200px",
+            queryArgs: {
+                ...props.queryArgs,
+                domain_key: props.domain_key,
+            },
         })
+    }
+
+    componentWillReceiveProps(nextProps, nextContents) {
+        super.componentWillReceiveProps(nextProps, nextContents)
+        if (nextProps.domain_key !== this.props.domain_key) {
+            // sth值发生改变下一步工作
+            this.meta.queryArgs = {
+                ...this.meta.queryArgs,
+                domain_key: nextProps.domain_key,
+            }
+            this.refreshList()
+        }
     }
 
     async componentDidMount() {
@@ -34,6 +50,7 @@ class List extends DataList {
             limit: "10000",
             select: "id, key, name",
         })
+
         let intentDict = listToDict(intent.list, "", "id", "name")
         this.schema.intent_id.dict = intentDict
         this.schema.calibration_intent_id.dict = intentDict
@@ -180,7 +197,7 @@ class List extends DataList {
             )
 
             this.refreshList()
-            message.success("修改成功")
+            message.success("操作成功")
         } catch (error) {
             message.error(error.message)
         }
@@ -265,7 +282,7 @@ class List extends DataList {
             )
 
             this.refreshList()
-            message.success("修改成功")
+            message.success("操作成功")
         } catch (error) {
             message.error(error.message)
         }
@@ -286,14 +303,28 @@ class List extends DataList {
         }
         // 更新
         let response
-        data.regex = data.regex && data.regex.split(",")
+        console.log(data.standard_discourse)
+        console.log(data.regex)
+        data.regex = data.regex
+            ? typeof data.regex === "string"
+                ? data.regex.split(",")
+                : data.regex
+            : undefined
         data.standard_discourse =
-            data.standard_discourse && data.standard_discourse.split("\n")
+            data.standard_discourse && data.standard_discourse
 
         try {
             if (!this.props.offline) {
                 response = await intentSchemas.service[method](data, schema)
             }
+            response = await this.service.patch(
+                {
+                    id: this.state.record.id,
+                    status: "end",
+                    domain_key: this.state.record.domain_key,
+                },
+                schema
+            )
             this.refreshList()
             message.success("修改成功")
             this.handleVisibleModal()
@@ -455,9 +486,21 @@ class List extends DataList {
         )
         return (
             <>
+                {<Divider type="vertical" />}
+                <Popconfirm
+                    title="是否要删除此行？"
+                    onConfirm={async (e) => {
+                        this.setState({ record })
+                        await this.handleDelete(record)
+                        e.stopPropagation()
+                    }}
+                >
+                    <a>删除</a>
+                </Popconfirm>
                 <Divider type="vertical" />
                 <a
                     onClick={() => {
+                        this.setState({ record })
                         this.handleVisibleModal(
                             true,
                             {
