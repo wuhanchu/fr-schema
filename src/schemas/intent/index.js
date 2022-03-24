@@ -8,7 +8,6 @@ const schema = {
         editHide: true,
         search: false,
         sorter: true,
-        // required: true,
         type: schemaFieldType.Select,
         props: {
             allowClear: true,
@@ -22,27 +21,26 @@ const schema = {
         sorter: true,
         required: true,
     },
-
     key: {
         required: true,
         sorter: true,
         title: "编码",
+        extra: "域中的唯一编码,可用中文。初始化好了以后，请不要随意修改。",
     },
-
     logical_path: {
         title: "意图路径",
         search: false,
         sorter: true,
         searchPrefix: "not.like",
         required: true,
+        extra: "意图的上下级关系设计,下级的意图是上级的子集",
     },
     regex: {
         title: "正则表达式",
         type: schemaFieldType.Select,
-        extra: "建议配置5个字符，2个词汇之内的表达式。",
+        extra: "用于短文本匹配(5个字符内)",
         hideInTable: true,
         search: false,
-
         props: {
             mode: "tags",
             allowClear: true,
@@ -60,15 +58,12 @@ const schema = {
         props: {
             autoSize: { minRows: 2, maxRows: 6 },
         },
-        // hideInTable: true,
         exportConcat: true,
-        extra: "一行一个数据，用于相似度比对，不建议包含重复的相似文本。",
+        extra: "用于长文本匹配。一行一个数据，相似的文本无需重复配置。",
     },
     create_time: {
         title: "创建时间",
-        // required: true,
         search: false,
-
         sorter: true,
         addHide: true,
         editHide: true,
@@ -119,7 +114,6 @@ service.getDetail = async function (args) {
         standard_discourse: res.standard_discourse
             ? res.standard_discourse.join("\n")
             : null,
-        // regex: res.regex ? res.regex.join("\n") : null,
     }
 }
 
@@ -136,7 +130,6 @@ service.post = async function (args, schema) {
         ...args,
         example: example,
         standard_discourse,
-        // regex
     })
     return res
 }

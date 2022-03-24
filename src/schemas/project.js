@@ -39,6 +39,7 @@ const schema = {
             allowClear: true,
             showSearch: true,
         },
+        required: true,
         style: { width: "500px" },
         dict: {
             true: {
@@ -48,13 +49,14 @@ const schema = {
             false: {
                 value: "false",
                 remark: "否",
+                default: true
             },
         },
+        extra: "内部问题库的数据不用于智能提示(一般问题包含变量或者占位符)",
     },
     remark: {
         title: "备注",
         search: false,
-
         type: schemaFieldType.TextArea,
         style: { width: "500px" },
         props: {
@@ -62,7 +64,7 @@ const schema = {
         },
     },
     config: {
-        title: "配置",
+        title: "自定义字段配置",
         search: false,
         hideInTable: true,
         props: {
@@ -71,6 +73,7 @@ const schema = {
         },
         type: schemaFieldType.AceEditor,
         decoratorProps: { rules: verifyJson },
+        extra: "用于定义当前问题库对应问题的个性化字段",
     },
 }
 

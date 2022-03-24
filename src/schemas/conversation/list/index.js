@@ -50,7 +50,7 @@ const schema = {
         },
     },
     user_id: {
-        title: "用户",
+        title: "操作用户",
         search: true,
         sorter: true,
 
@@ -71,7 +71,6 @@ const schema = {
             allowClear: true,
             showSearch: true,
         },
-        // hideInTable: true,
         dict: {
             true: {
                 value: "true",
@@ -84,15 +83,41 @@ const schema = {
             },
         },
     },
+    call_id: {
+        title: "类型",
+        type: schemaFieldType.Select,
+        props: {
+            allowClear: true,
+            showSearch: true,
+        },
+        sorter: true,
+        dict: {
+            call: {
+                value: "call",
+                remark: "智能呼出",
+            },
+            text: {
+                value: "text",
+                remark: "文本对话",
+            },
+        },
+        render: (item, data) => {
+            if (data.call_id) {
+                return "智能呼出"
+            } else {
+                return "文本对话"
+            }
+        },
+    },
     caller: {
-        title: "外呼号码",
+        title: "拨出号码",
 
         render: (item, data) => {
             return (data.info && data.info.CALLER) || ""
         },
     },
     called: {
-        title: "客户号码",
+        title: "呼叫号码",
 
         render: (item, data) => {
             return (data.info && data.info.CALLED) || ""
@@ -118,33 +143,7 @@ const schema = {
             },
         },
     },
-    call_id: {
-        title: "类型",
-        type: schemaFieldType.Select,
-        props: {
-            allowClear: true,
-            showSearch: true,
-        },
-        sorter: true,
-        // hideInTable: true,
-        dict: {
-            call: {
-                value: "call",
-                remark: "智能呼出",
-            },
-            text: {
-                value: "text",
-                remark: "文本对话",
-            },
-        },
-        render: (item, data) => {
-            if (data.call_id) {
-                return "智能呼出"
-            } else {
-                return "文本对话"
-            }
-        },
-    },
+    
     flow_key: {
         title: "流程",
         sorter: true,
