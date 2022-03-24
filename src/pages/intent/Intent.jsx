@@ -303,8 +303,6 @@ class List extends DataList {
         }
         // 更新
         let response
-        console.log(data.standard_discourse)
-        console.log(data.regex)
         data.regex = data.regex
             ? typeof data.regex === "string"
                 ? data.regex.split(",")
