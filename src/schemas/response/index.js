@@ -57,6 +57,7 @@ const schema = {
     },
     template_text: {
         title: "回复文本",
+        hideInTable:true,
         type: schemaFieldType.TextArea,
         style: { width: "500px" },
         search: false,

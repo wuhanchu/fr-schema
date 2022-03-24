@@ -1,4 +1,3 @@
-// import { createApi, createBasicApi } from "@/outter/fr-schema/src/service"
 import { createApi, createBasicApi } from "@/components/ListPage/service"
 
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
@@ -10,7 +9,6 @@ const schema = {
         sorter: true,
         addHide: true,
         editHide: true,
-        // required: true,
         style: { width: "500px" },
         props: {
             allowClear: true,
@@ -22,19 +20,17 @@ const schema = {
     name: {
         required: true,
         sorter: true,
-
         style: { width: "500px" },
         title: "名称",
     },
     key: {
+        title: "编码",
         required: true,
         style: { width: "500px" },
         sorter: true,
-
-        title: "编码",
+        extra: "域中的唯一编码,可用中文。初始化好了以后，请不要随意修改。",
     },
     project_id: {
-        // required: true,
         style: { width: "500px" },
         title: "相关问题库",
         search: false,
@@ -45,12 +41,11 @@ const schema = {
             allowClear: true,
             showSearch: true,
         },
+        extra: "用于支持搜索问题库(意图)的识别。",
     },
     intent_key: {
-        // required: true,
         style: { width: "500px" },
         search: false,
-
         title: "匹配意图",
         type: schemaFieldType.Select,
         props: {
@@ -58,16 +53,15 @@ const schema = {
             allowClear: true,
             showSearch: true,
         },
+        extra: "没有制定话术流程的对话中触发进入流程的意图。",
     },
     intent_key_text: {
+        title: "意图匹配辅助信息",
         style: { width: "500px" },
         search: false,
         sorter: true,
-
-        title: "意图匹配辅助信息",
-        extra: "意图匹配问题搜索意图附加前缀",
+        extra: "拼接传入文本，用于支持搜索问题库(意图)的识别。",
     },
-
     slot: {
         title: "话术配置",
         search: false,
@@ -78,16 +72,12 @@ const schema = {
             style: { width: "500px" },
             height: "300px",
         },
-        // // required: true,
         type: schemaFieldType.AceEditor,
         decoratorProps: { rules: verifyJson },
     },
-
     create_time: {
         title: "创建时间",
         search: false,
-
-        // required: true,
         sorter: true,
         addHide: true,
         editHide: true,
@@ -100,9 +90,7 @@ const schema = {
     },
     update_time: {
         title: "更新时间",
-        // required: true,
         search: false,
-
         sorter: true,
         addHide: true,
         editHide: true,
@@ -112,21 +100,7 @@ const schema = {
             valueType: "dateTime",
         },
         type: schemaFieldType.DatePicker,
-    },
-    config: {
-        title: "流程代码",
-        // required: true,
-        search: false,
-        editHide: true,
-        addHide: true,
-        hideInTable: true,
-        props: {
-            style: { width: "900px" },
-            height: "500px",
-        },
-        type: schemaFieldType.AceEditor,
-        decoratorProps: { rules: verifyJson },
-    },
+    }
 }
 
 const service = createApi("flow", schema, null, "eq.")
@@ -134,9 +108,6 @@ service.get = async (args) => {
     if (args.domain_key instanceof Array) {
         args.domain_key = "in.(" + args.domain_key.join(",") + ")"
     }
-    // if(!args.select){
-    //     args.select = 'id,name,key,domain_key,intent_key,intent_key_text, project_id, slot'
-    // }
     return await createApi("flow", schema, null, "eq.").get(args)
 }
 service.upInsert = createApi(

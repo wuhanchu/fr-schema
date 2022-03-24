@@ -8,7 +8,6 @@ const schema = {
         search: false,
         addHide: true,
         editHide: true,
-        // required: true,
         type: schemaFieldType.Select,
         props: {
             allowClear: true,
@@ -27,12 +26,14 @@ const schema = {
         searchPrefix: "like",
         sorter: true,
         required: true,
+        extra: "域中的唯一编码,可用中文。初始化好了以后，请不要随意修改。",
     },
-
     regex: {
         title: "正则表达式",
         searchPrefix: "like",
         sorter: true,
+        extra: "实体类型提取的统一正则表达式。",
+
     },
     create_time: {
         title: "创建时间",

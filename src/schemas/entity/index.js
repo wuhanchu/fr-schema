@@ -11,7 +11,6 @@ const schema = {
         editHide: true,
         search: false,
         style: { width: "500px" },
-        // required: true,
         type: schemaFieldType.Select,
         props: {
             allowClear: true,
@@ -67,7 +66,6 @@ const schema = {
             style: { width: "500px" },
             height: "300px",
         },
-        // // required: true,
         type: schemaFieldType.AceEditor,
         decoratorProps: { rules: verifyJson },
     },
