@@ -15,7 +15,6 @@ const schema = {
             showSearch: true,
         },
         search: false,
-        // required: true,
         type: schemaFieldType.Select,
     },
     name: {
@@ -37,12 +36,14 @@ const schema = {
         },
         searchPrefix: "like",
         required: true,
+        extra: "域中的唯一编码,可用中文。初始化好了以后，请不要随意修改。",
     },
     intent_key: {
         title: "意图",
         type: schemaFieldType.MultiSelect,
         style: { width: "500px" },
         search: false,
+        extra: "需要回复回应的对应意图。",
     },
     expect_entity_scope: {
         title: "实体范围",
@@ -52,10 +53,8 @@ const schema = {
             autoSize: { minRows: 2, maxRows: 6 },
         },
         searchPrefix: "like",
-        extra: "预期实体范围",
-        required: true,
+        extra: "当前回应返回后，希望客户选择配置的实体范围。",
     },
-
     template_text: {
         title: "回复文本",
         type: schemaFieldType.TextArea,
@@ -64,7 +63,7 @@ const schema = {
         props: {
             autoSize: { minRows: 3, maxRows: 6 },
         },
-        extra: "相关的回复文本，可配置多个，增加回复的多样性。",
+        extra: "可配置多个，会按照顺序进行回复。",
         render: (item) => (
             <span>
                 {item &&
@@ -74,6 +73,7 @@ const schema = {
             </span>
         ),
     },
+    // todo 需要附带 模版说明格式
     template: {
         title: "回复模板",
         hideInTable: true,
@@ -81,10 +81,8 @@ const schema = {
             style: { width: "500px" },
             height: "400px",
         },
-        extra: "针对机器闲聊的配置。",
+        extra: "回复文本没配置时生效，用于更复杂的回复方式。",
         search: false,
-
-        // // required: true,
         type: schemaFieldType.AceEditor,
         decoratorProps: { rules: verifyJson },
     },

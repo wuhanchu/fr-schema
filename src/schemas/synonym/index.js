@@ -20,6 +20,7 @@ const schema = {
         sorter: true,
         searchPrefix: "like",
         required: true,
+        extra:"词汇的标准名称",
     },
 
     extend_text: {
@@ -28,6 +29,7 @@ const schema = {
         type: schemaFieldType.Select,
 
         search: false,
+        extra:"词汇的相似名称",
         props: {
             allowClear: true,
             showSearch: true,
