@@ -13,6 +13,8 @@ export default {
     "menu.project.mark": "问题库运维",
     "menu.statistics": "统计",
     "menu.domain": "域",
+    "menu.outboundTask": "外呼任务",
+    "menu.outboundTask.taskList": "任务列表",
     "menu.domain.domainList": "域信息",
     "menu.domain.story": "故事",
     "menu.domain.flow": "话术",

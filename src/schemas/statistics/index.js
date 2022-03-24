@@ -30,15 +30,6 @@ const schema = {
         },
         hideInTable: true,
     },
-    // end_time: {
-    //     title: "结束时间",
-    //     type: schemaFieldType.DatePicker,
-    //     props: {
-    //         format: "YYYY-MM-DD",
-    //         style: { width: "100%" },
-    //     },
-    //     hideInTable: true,
-    // },
     id: {
         title: "编号",
         sorter: true,
@@ -131,38 +122,6 @@ service.getRecentHotQuestion = createApi(
     ""
 ).get
 service.get = async (args) => {
-    // console.log(args.end_time)
-    // let time
-    // if (typeof args.begin_time === "string") {
-    //     time = new Date(parseInt(args.begin_time))
-    //     args.begin_time = args.begin_time
-    //         ? moments(time).format("YYYY-MM-DD")
-    //         : undefined
-    // } else {
-    //     console.log(args.begin_time)
-    //     if (args.begin_time)
-    //         args.begin_time = args.begin_time
-    //             ? args.begin_time.format("YYYY-MM-DD")
-    //             : undefined
-    // }
-
-    // // time = new Date(parseInt(args.end_time))
-    // // args.end_time = args.end_time
-    // //     ? args.end_time.format("YYYY-MM-DD")
-    // //     : undefined
-    // if (typeof args.end_time === "string") {
-    //     time = new Date(parseInt(args.end_time))
-    //     args.end_time = args.end_time
-    //         ? moments(time).format("YYYY-MM-DD")
-    //         : undefined
-    // } else {
-    //     console.log(args.end_time)
-    //     if (args.end_time)
-    //         args.end_time = args.end_time
-    //             ? args.end_time.format("YYYY-MM-DD")
-    //             : undefined
-    // }
-
     if (args.begin_time) {
         let fitter_time = args.begin_time.split(",")
         let time = new Date(fitter_time[0])
@@ -234,7 +193,6 @@ service.get = async (args) => {
         null,
         ""
     ).get(args)
-    console.log(summary)
     return {
         list,
         pagination: { current: currentPage, pageSize, total },

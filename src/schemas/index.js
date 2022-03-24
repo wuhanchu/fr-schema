@@ -11,7 +11,7 @@ import entityAttr from "./entityType/attribute"
 import entityType from "./entityType"
 import hotWord from "./domain/hotWord"
 import task from "./domain/task"
-
+import outboundTask from "./outboundTask/index"
 import response from "./response"
 
 import searchHistory from "./domain/searchHistory"
@@ -40,4 +40,5 @@ export default {
     flow,
     mark,
     searchHistory,
+    outboundTask,
 }

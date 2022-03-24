@@ -75,15 +75,19 @@ class BaseList extends EditPage {
                 )
             }
         })
-        console.log(
-            window.location.href
-                .replace("/frame", "")
-                .split("project/list")[0] +
-                "import/掌数_知料_知识库信息导入.xlsx"
-        )
+        let beforeSchema = {}
+        let endSchema = {}
+        Object.keys(schemas.question.schema).forEach(function (key) {
+            if (schemas.question.schema[key].before) {
+                beforeSchema[key] = schemas.question.schema[key]
+            } else {
+                endSchema[key] = schemas.question.schema[key]
+            }
+        })
+        console.log(beforeSchema, endSchema)
         super(props, {
             operateWidth: 150,
-            schema: clone({ ...schemas.question.schema, ...config }),
+            schema: clone({ ...beforeSchema, ...config, ...endSchema }),
             service: {
                 ...schemas.question.service,
                 get: schemas.question.service.getData,

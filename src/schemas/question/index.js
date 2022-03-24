@@ -9,7 +9,7 @@ const { RangePicker } = DatePicker
 const schema = {
     question_standard: {
         title: "标准问句",
-
+        before: true,
         required: true,
         // searchPrefix: "like",
         type: schemaFieldType.TextArea,
@@ -26,6 +26,7 @@ const schema = {
     group: {
         // title: "分组",
         title: <div style={{ width: "56px" }}>分组</div>,
+        before: true,
 
         type: schemaFieldType.Select,
 
@@ -46,6 +47,7 @@ const schema = {
     label: {
         title: "标签",
         // searchPrefix: "like",
+        before: true,
 
         type: schemaFieldType.Select,
         // sorter: true,
@@ -61,6 +63,8 @@ const schema = {
     question_extend: {
         title: "扩展问",
         // type: schemaFieldType.Select,
+        before: true,
+
         type: schemaFieldType.TextArea,
         props: {
             autoSize: { minRows: 6, maxRows: 6 },
@@ -95,8 +99,9 @@ const schema = {
         title: "扩展问数量",
         editHide: true,
         sorter: true,
+        before: true,
 
-        width: "120px",
+        width: "100px",
         addHide: true,
         showHide: true,
     },
@@ -104,6 +109,10 @@ const schema = {
     global_key: {
         title: "内部编号",
         sorter: true,
+        before: true,
+        props: {
+            placeholder: "请输入",
+        },
         extra: "作为对话机器人的匹配主键",
         editable: true,
         render: (item) => {

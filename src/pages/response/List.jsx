@@ -687,7 +687,6 @@ class List extends ListPage {
     }
 
     async findIntentByDomainKey(domainKey) {
-        // this.formRefs.current.setFieldsValue({ intent_key: undefined })
         let list = await this.findIntentList(domainKey)
         let treeList = getTree(list, this.props.dict.domain)
         this.setState({ intentList: treeList })
