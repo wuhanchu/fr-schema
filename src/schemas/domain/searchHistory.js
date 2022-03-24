@@ -16,7 +16,11 @@ const schema = {
         },
         renderInput: () => {
             return (
-                <RangePicker allowEmpty={[true, true]} showTime></RangePicker>
+                <RangePicker
+                    allowEmpty={[true, true]}
+                    format="MM-DD HH:mm:ss"
+                    showTime
+                ></RangePicker>
             )
         },
         type: schemaFieldType.DatePicker,

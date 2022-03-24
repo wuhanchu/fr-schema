@@ -259,15 +259,17 @@ const schema = {
 
         editHide: true,
         type: schemaFieldType.DatePicker,
-        allowEmpty: [true, true],
         props: {
             showTime: true,
-            allowEmpty: [true, true],
             valueType: "dateTime",
         },
         renderInput: () => {
             return (
-                <RangePicker allowEmpty={[true, true]} showTime></RangePicker>
+                <RangePicker
+                    allowEmpty={[true, true]}
+                    format="MM-DD HH:mm:ss"
+                    showTime
+                ></RangePicker>
             )
         },
         // width: "135px",
@@ -284,6 +286,7 @@ const schema = {
             showTime: true,
             valueType: "dateTime",
             allowEmpty: [true, true],
+            format: "MM-DD HH:mm:ss",
         },
         // width: "135px",
     },

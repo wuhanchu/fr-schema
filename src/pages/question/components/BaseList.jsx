@@ -417,6 +417,7 @@ class BaseList extends EditPage {
                             <RangePicker
                                 allowEmpty={[true, true]}
                                 style={{ width: "100%" }}
+                                format="MM-DD HH:mm:ss"
                             ></RangePicker>
                         )
                     },
@@ -430,6 +431,7 @@ class BaseList extends EditPage {
                             <RangePicker
                                 allowEmpty={[true, true]}
                                 style={{ width: "100%" }}
+                                format="MM-DD HH:mm:ss"
                             ></RangePicker>
                         )
                     },
