@@ -211,7 +211,10 @@ class Chat extends React.PureComponent {
                         {this.renderChatView()}
                         {showInput && this.renderInput()}
                     </div>
-                    {collapse && showIntentFlow && this.renderChatIntentFlow()}
+                    {collapse &&
+                        showIntentFlow &&
+                        this.state.tableFlowList &&
+                        this.renderChatIntentFlow()}
                 </div>
             </Spin>
         )
