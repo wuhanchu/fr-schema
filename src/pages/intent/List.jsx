@@ -5,6 +5,7 @@ import React from "react"
 import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
 import { Modal, Button, message, Divider, Popconfirm } from "antd"
+import DataList from "@/outter/fr-schema-antd-utils/src/components/Page/DataList"
 import frSchema from "@/outter/fr-schema/src"
 import { exportData } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
@@ -57,7 +58,7 @@ function unique(arr) {
     dict: global.dict,
 }))
 @Form.create()
-class List extends ListPage {
+class List extends DataList {
     constructor(props) {
         const importTemplateUrl = (BASE_PATH + "/import/意图.xlsx").replace(
             "//",
@@ -114,6 +115,9 @@ class List extends ListPage {
     }
 
     async componentDidMount() {
+        this.setState({
+            localStorageDomainKey: this.props.domain_key,
+        })
         super.componentDidMount()
         this.schema.regex.props.onChange = (data) => {
             this.setState({ regex: data })
@@ -534,6 +538,30 @@ class List extends ListPage {
 
         return !myDomainIntent.length && baseDomainIntent.length
         // console.log("filterinIntent",item.name, item.key, item.logical_path,filterinIntent)
+    }
+
+    componentWillReceiveProps(nextProps, nextContents) {
+        super.componentWillReceiveProps(nextProps, nextContents)
+        if (nextProps.domain_key !== this.props.domain_key) {
+            // sth值发生改变下一步工作
+            let domainArray = []
+            domainArray.push(nextProps.domain_key)
+            if (this.props.dict.domain[nextProps.domain_key].base_domain_key) {
+                domainArray = [
+                    ...domainArray,
+                    ...this.props.dict.domain[nextProps.domain_key]
+                        .base_domain_key,
+                ]
+            }
+            this.meta.queryArgs = {
+                ...this.meta.queryArgs,
+                domain_key: domainArray.join(","),
+            }
+            this.setState({
+                localStorageDomainKey: nextProps.domain_key,
+            })
+            this.refreshList()
+        }
     }
 
     async initTree() {

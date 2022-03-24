@@ -222,7 +222,7 @@ class Conversation extends ListPage {
             this.setState({ showIntentFlow })
         }
         this.schema.domain_key.dict = this.props.dict.domain
-        await this.findFlowList()
+        this.findFlowList()
         await this.findUserList()
         const res = await intentSchema.service.get({
             limit: 1000,
@@ -473,6 +473,7 @@ class Conversation extends ListPage {
     async findFlowList(domain_key) {
         let res = await flowSchemas.service.get({
             pageSize: 10000,
+            select: "*",
             domain_key: domain_key || this.state.localStorageDomainKey,
         })
         let dict = utils.dict.listToDict(res.list, null, "key", "name")
@@ -580,7 +581,7 @@ class Conversation extends ListPage {
             let treeData = []
             let flowIntent = []
             this.infoForm = props.form
-            if (this.state.node_key) {
+            if (this.state.node_key && this.state.flow_key) {
                 let condition = this.schema.flow_key.dict[this.state.flow_key]
                     .config.condition
                 let node = this.schema.flow_key.dict[
@@ -659,7 +660,7 @@ class Conversation extends ListPage {
 
     // 流程列表-> 列表枚举展示
     async findUserList() {
-        let res = await userService.get({ pageSize: 10000 })
+        let res = await userService.get({ pageSize: 10000, select: "id, name" })
         this.schema.user_id.dict = utils.dict.listToDict(
             res.list,
             null,

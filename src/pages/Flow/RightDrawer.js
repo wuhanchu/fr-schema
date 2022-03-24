@@ -18,7 +18,6 @@ import {
 import { ActionModal } from "./actionModal"
 import { ConditionModal } from "./conditionModal"
 import Sortable from "sortablejs/modular/sortable.complete.esm.js"
-import node from "@/schemas/flow/node"
 import { ItemName } from "@/components/item-name"
 
 let FormItem = Form.Item

@@ -21,7 +21,11 @@ const schema = {
         // listHide: true,
         renderInput: () => {
             return (
-                <RangePicker allowEmpty={[true, true]} showTime></RangePicker>
+                <RangePicker
+                    allowEmpty={[true, true]}
+                    format="MM-DD HH:mm:ss"
+                    showTime
+                ></RangePicker>
             )
         },
         hideInTable: true,

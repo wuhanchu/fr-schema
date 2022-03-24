@@ -113,7 +113,13 @@ const schema = {
 
 const service = createApi("domain", schema, null, "eq.")
 // 得到服务列表
-service.getServices = createApi("z_ai_service/service", schema, null, "eq.").get
+service.getServices = async (args) => {
+    return await createApi("z_ai_service/service", schema, null, "eq.").get({
+        ...args,
+        select: "id, name, ai_type",
+        ai_type: "chat",
+    })
+}
 // 创建会话
 service.conversation = createApi("chat/conversation", schema, null, "eq.").post
 // 发送消息

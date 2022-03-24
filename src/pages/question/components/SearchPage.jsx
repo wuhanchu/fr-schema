@@ -42,43 +42,6 @@ async function init(
     setAllData,
     setProjectList
 ) {
-    const response = await schemas.question.service.get({
-        // ...this.meta.queryArgs,
-        type: undefined,
-        select: "label,group",
-        limit: 9999,
-        status: undefined,
-    })
-
-    let labelDictList = {}
-    let groupDictList = {}
-
-    response.list.forEach((item) => {
-        if (!_.isNil(item.label)) {
-            item.label.forEach((value) => {
-                labelDictList[value] = {
-                    value: value,
-                    remark: value,
-                }
-            })
-        }
-        if (!_.isNil(item.group)) {
-            groupDictList[item.group] = {
-                value: item.group,
-                remark: item.group,
-            }
-        }
-    })
-    let options = []
-    Object.keys(groupDictList).forEach(function (key) {
-        options.push({
-            key: groupDictList[key].value,
-            value: groupDictList[key].value,
-        })
-    })
-
-    setState({ ...state, options: options })
-
     let base_domain_key = []
     if (props.record.base_domain_key) {
         base_domain_key = base_domain_key
@@ -113,54 +76,90 @@ async function init(
     setProjectList(project.list)
 
     if (props.type !== "history") {
-        if (
-            !url.getUrlParams("project_id") &&
-            !url.getUrlParams("domain_key")
-        ) {
-            let domainArray = []
-            if (props.record && props.record.key) {
-                domainArray.push(props.record.key)
-            }
-            if (props.record && props.record.base_domain_key) {
-                domainArray = [...domainArray, ...props.record.base_domain_key]
-            }
-            await schemas.hotWord.service
-                .getRecentHotQuestion({
-                    domain_key: domainArray.join(","),
-                    project_id: props.record && props.record.project_id,
-                    limit: 500,
-                })
-                .then((response) => {
-                    let allData = []
-                    response.list.forEach((item) => {
-                        allData.push(item.question_standard)
-                    })
-                    setState({
-                        ...state,
-                        options: options,
-                        allData,
-                    })
-                    setAllData(allData)
-                })
-        }
+        getHotWord(props, setAllData)
     } else {
         setState({
             ...state,
-            options: options,
+            // options: options,
             data: props.data,
         })
         setLoading(false)
     }
-    setOpeation(options)
     callback({
         ...state,
-        options: options,
+        // options: options,
         data: props.data,
     })
     if (props.record && props.record.search) {
         return
     }
     setLoading(false)
+    setOptions(setOpeation)
+}
+
+async function getHotWord(props, setAllData) {
+    if (!url.getUrlParams("project_id") && !url.getUrlParams("domain_key")) {
+        let domainArray = []
+        if (props.record && props.record.key) {
+            domainArray.push(props.record.key)
+        }
+        if (props.record && props.record.base_domain_key) {
+            domainArray = [...domainArray, ...props.record.base_domain_key]
+        }
+        await schemas.hotWord.service
+            .getRecentHotQuestion({
+                domain_key: domainArray.join(","),
+                project_id: props.record && props.record.project_id,
+                limit: 500,
+            })
+            .then((response) => {
+                let allData = []
+                response.list.forEach((item) => {
+                    allData.push(item.question_standard)
+                })
+                setAllData(allData)
+            })
+    }
+}
+
+async function setOptions(setOpeation) {
+    const response = await schemas.question.service.get({
+        // ...this.meta.queryArgs,
+        type: undefined,
+        select: "label,group",
+        limit: 999,
+        status: undefined,
+    })
+
+    let labelDictList = {}
+    let groupDictList = {}
+
+    response.list.forEach((item) => {
+        if (!_.isNil(item.label)) {
+            item.label.forEach((value) => {
+                labelDictList[value] = {
+                    value: value,
+                    remark: value,
+                }
+            })
+        }
+        if (!_.isNil(item.group)) {
+            groupDictList[item.group] = {
+                value: item.group,
+                remark: item.group,
+            }
+        }
+    })
+    let options = []
+    Object.keys(groupDictList).forEach(function (key) {
+        options.push({
+            key: groupDictList[key].value,
+            value: groupDictList[key].value,
+        })
+    })
+
+    // setState({ ...state, options: options })
+    setOpeation(options)
 }
 
 function renderTitle(
@@ -271,6 +270,7 @@ function renderTitle(
                         let data = await schemas.question.service.getDetail(
                             item
                         )
+                        console.log(data)
                         let question_extend = []
                         if (data.question_extend) {
                             question_extend = data.question_extend.split("\n")
@@ -281,9 +281,7 @@ function renderTitle(
                                 {
                                     id: item.id,
                                     question_extend: unique(question_extend),
-                                    domain_key:
-                                        props.record.domain_key ||
-                                        props.record.key,
+                                    domain_key: data.domain_key,
                                 },
                                 schemas.question.schema
                             )
@@ -340,9 +338,7 @@ function renderTitle(
                             await schemas.question.service.patch(
                                 {
                                     id: item.id,
-                                    domain_key:
-                                        props.record.domain_key ||
-                                        props.record.key,
+                                    domain_key: data.domain_key,
                                     question_extend: unique(question_extend),
                                 },
                                 schemas.question.schema
@@ -561,12 +557,13 @@ function renderInfoModal(
         },
         handleUpdate: async (data, schema, method = "patch") => {
             // 更新
+            console.log(data)
             let response
             try {
                 response = await schemas.question.service.patch(
                     {
                         ...data,
-                        domain_key: props.record.domain_key || props.record.key,
+                        // domain_key: props.record.domain_key || props.record.key,
                     },
                     schemas.question.schema
                 )
@@ -630,6 +627,7 @@ function renderInfoModal(
         },
     }
 
+    console.log(props, "props是")
     return (
         visibleModal && (
             <InfoModal
@@ -657,6 +655,12 @@ function renderInfoModal(
                 values={state.listItem}
                 service={schemas.question.service}
                 schema={{
+                    domain_key: {
+                        title: "域",
+                        readOnly: true,
+                        type: "Select",
+                        dict: props.dict.domain,
+                    },
                     project_id:
                         action === "add"
                             ? {

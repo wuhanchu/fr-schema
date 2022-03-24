@@ -64,6 +64,7 @@ const schema = {
         type: schemaFieldType.TextArea,
         props: {
             autoSize: { minRows: 6, maxRows: 6 },
+            placeholder: "请输入扩展问",
         },
         style: {
             height: "100px",
@@ -258,15 +259,17 @@ const schema = {
 
         editHide: true,
         type: schemaFieldType.DatePicker,
-        allowEmpty: [true, true],
         props: {
             showTime: true,
-            allowEmpty: [true, true],
             valueType: "dateTime",
         },
         renderInput: () => {
             return (
-                <RangePicker allowEmpty={[true, true]} showTime></RangePicker>
+                <RangePicker
+                    allowEmpty={[true, true]}
+                    format="MM-DD HH:mm:ss"
+                    showTime
+                ></RangePicker>
             )
         },
         // width: "135px",
@@ -283,6 +286,7 @@ const schema = {
             showTime: true,
             valueType: "dateTime",
             allowEmpty: [true, true],
+            format: "MM-DD HH:mm:ss",
         },
         // width: "135px",
     },
@@ -531,6 +535,7 @@ service.upload = createBasicApi("file").post
 
 service.getDetail = async function (args) {
     const res = await createApi("question", schema, null, "eq.").getDetail(args)
+
     return {
         ...res,
         question_extend: res.question_extend
