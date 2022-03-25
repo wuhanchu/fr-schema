@@ -120,10 +120,23 @@ class List extends ListPage {
             return (
                 <Select
                     {...props}
-                    options={options}
+                    // options={options}
                     mode="multiple"
+                    filterOption={(input, option) =>
+                        option.children
+                            .toLowerCase()
+                            .indexOf(input.toLowerCase()) >= 0
+                    }
                     allowClear
-                ></Select>
+                >
+                    {options.map((item) => {
+                        return (
+                            <Select.Option value={item.value}>
+                                {item.label}
+                            </Select.Option>
+                        )
+                    })}
+                </Select>
             )
         }
         this.schema.intent_key.dict = listToDict(intent.list, "", "key", "name")

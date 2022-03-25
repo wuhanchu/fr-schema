@@ -299,10 +299,10 @@ class RightDrawer extends React.PureComponent {
                             <FormItem name={"key"} label="编码">
                                 <Input disabled placeholder="请输入编码" />
                             </FormItem>
-                            <FormItem name={"intent_key"} label="意图">
+                            <FormItem name={"intent_key"} label="匹配意图">
                                 <Select
                                     showSearch
-                                    placeholder={"暂无意图!"}
+                                    placeholder={"暂无匹配意图!"}
                                     disabled
                                     mode="tags"
                                 >
@@ -319,7 +319,7 @@ class RightDrawer extends React.PureComponent {
                                         })}
                                 </Select>
                             </FormItem>
-                            <FormItem name={"project_id"} label="相关项目">
+                            <FormItem name={"project_id"} label="相关问题库">
                                 <Select
                                     showSearch
                                     placeholder={"暂无项目!"}
@@ -339,10 +339,10 @@ class RightDrawer extends React.PureComponent {
                                         })}
                                 </Select>
                             </FormItem>
-                            <FormItem name={"slot"} label="相关槽位">
+                            <FormItem name={"slot"} label="话术配置">
                                 <Input.TextArea
                                     disabled
-                                    placeholder="暂无相关槽位"
+                                    placeholder="暂无话术配置"
                                 />
                             </FormItem>
                         </Form>

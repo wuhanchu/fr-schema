@@ -92,10 +92,12 @@ const schema = {
     calibration_intent_text: {
         title: "检测重复文本",
         search: false,
+        sorter: true,
     },
     compare_intent_text: {
         title: "对比重复文本",
         search: false,
+        sorter: true,
     },
     // project_id: {
     //     title: "问题库",
@@ -112,6 +114,7 @@ const schema = {
     regex: {
         title: "重复表达式",
         search: false,
+        sorter: true,
     },
     intent_id: {
         title: "意图",
@@ -152,6 +155,7 @@ const schema = {
 const service = createApi("intent_mark_task", schema, null, "eq.")
 
 service.get = async (args) => {
+    let order = args.order
     if (args.flitter_time) {
         // console.log(args.create_time.split(","))
         let flitter_time = args.flitter_time.split(",")
@@ -164,6 +168,24 @@ service.get = async (args) => {
         // let endTime = args.flitter_time[1].format("YYYY-MM-DD") + "T23:59:59"
         args.flitter_time = undefined
         args.and = `(create_time.gte.${beginTime},create_time.lte.${endTime})`
+    }
+    if (order) {
+        if (
+            args.order.split(".")[0] === "compare_intent_id" ||
+            args.order.split(".")[0] === "calibration_intent_id" ||
+            args.order.split(".")[0] === "calibration_intent_text" ||
+            args.order.split(".")[0] === "compare_intent_text" ||
+            args.order.split(".")[0] === "regex"
+        ) {
+            args.order =
+                "info->>" + order.split(".")[0] + "." + order.split(".")[1]
+        } else {
+            args.order = order.split(".")[0] + "." + order.split(".")[1]
+        }
+        // args.sort = order.split(".")[1]
+    } else {
+        args.order = "create_time.desc"
+        // args.sort = "desc"
     }
     // order: 'info->question_standard.desc'
     let data = await createApi("intent_mark_task", schema, null, "eq.").get({
@@ -189,20 +211,7 @@ service.deny = async (args) => {
     }
     return { msg: "没有可丢弃的数据!" }
 }
-// service.append = async (args) => {
-//     let data = await createApi(
-//         "question/mark_additional",
-//         schema,
-//         null,
-//         "eq."
-//     ).patch(args)
-//     return { ...data, msg: "补充成功" }
-// }
 
-// service.mark_task = async (args) => {
-//     let data = await createApi("mark_task", schema, null, "eq.").post(args)
-//     return { ...data }
-// }
 export default {
     schema,
     service,

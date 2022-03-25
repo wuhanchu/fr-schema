@@ -8,10 +8,102 @@ import { v4 as uuidv4 } from "uuid"
 import { verifyJsonORString } from "@/outter/fr-schema-antd-utils/src/utils/component"
 import { InfoCircleOutlined } from "@ant-design/icons"
 import "ace-builds/src-noconflict/mode-json"
+import "ace-builds/src-noconflict/mode-python"
 import "ace-builds/src-noconflict/theme-github"
 import "ace-builds/src-noconflict/ext-language_tools"
 import { uuid } from "@antv/x6/lib/util/string/uuid"
 import { values } from "lodash"
+
+const completers = [
+    {
+        name: "skip_execute",
+        value: "skip_execute",
+        score: 100,
+        meta: "是否跳过下一个节点的执行",
+    },
+    {
+        name: "question_limit",
+        value: "question_limit",
+        score: 100,
+        meta: "问题搜索数量。",
+    },
+    {
+        name: "new_message",
+        value: "new_message",
+        score: 100,
+        meta: "当前会话状态新消息是否被节点执行",
+    },
+    {
+        name: "last_master_node",
+        value: "last_master_node",
+        score: 100,
+        meta: "当前会话中最后停留主节点",
+    },
+    {
+        name: "receive_text",
+        value: "receive_text",
+        score: 100,
+        meta: "会话中接收到的所有文本",
+    },
+    {
+        name: "reply_text",
+        value: "reply_text",
+        score: 100,
+        meta: "会话中最后回复的文本",
+    },
+    {
+        name: "search_result",
+        value: "search_result",
+        score: 100,
+        meta: "问题库是否返回数据",
+    },
+    {
+        name: "repeat_out_of_limit",
+        value: "repeat_out_of_limit",
+        score: 100,
+        meta: "是否有节点操过了重复次数",
+    },
+    {
+        name: "user_silent",
+        value: "user_silent",
+        score: 100,
+        meta: "是否静默，每次客户回答重新设置",
+    },
+    {
+        name: "user_silent_num",
+        value: "user_silent_num",
+        score: 100,
+        meta: "用户连续静默次数",
+    },
+    {
+        name: "user_interrupt",
+        value: "user_interrupt",
+        score: 100,
+        meta: "是否打断，每次客户回答重新设置",
+    },
+    {
+        name: "user_interrupt_num",
+        value: "user_interrupt_num",
+        score: 100,
+        meta: "用户连续打断次数",
+    },
+    {
+        name: "tts_play",
+        value: "tts_play",
+        score: 100,
+        meta: "回复文本tts合成的音频客户聆听秒数",
+    },
+]
+
+const complete = (editor) => {
+    editor.completers = [
+        {
+            getCompletions: function (editors, session, pos, prefix, callback) {
+                callback(null, completers)
+            },
+        },
+    ]
+}
 
 export const ActionModal = ({
     visible,
@@ -351,7 +443,7 @@ export const ActionModal = ({
                     <div style={{ width: "489px" }}>
                         <AceEditor
                             placeholder={`请输入${"参数"}`}
-                            mode="json"
+                            mode={"json"}
                             // theme="tomorrow"
                             name="blah2"
                             wrapEnabled={true}
@@ -368,7 +460,10 @@ export const ActionModal = ({
                             width={"489px"}
                             height={"200px"}
                             highlightActiveLine
+                            enableBasicAutocompletion={true}
+                            enableLiveAutocompletion={true}
                             value={AceEditorValue}
+                            onLoad={complete}
                             markers={[
                                 {
                                     startRow: 0,

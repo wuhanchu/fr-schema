@@ -25,21 +25,6 @@ import {
 import "ace-builds/src-noconflict/theme-github"
 import "ace-builds/src-noconflict/ext-language_tools"
 
-// ● skip_execute(true/false)：是否跳过下一个节点的执行。
-// ● question_limit: 问题搜索数量。
-// 运行时:
-// ● new_message(true/false)：当前会话状态中新消息是否被节点执行过
-// ● last_master_node：当前会话过程中最后一次停留的主节点
-// ● receive_text(list)：会话中接收到的所有文本
-// ● reply_text(list)：会话中最后回复的文本
-// 结果：
-// ● search_result(true/false)：问题库是否返回数据，每次问题库查询重新设置。
-// ● repeat_out_of_limit(true/false)：是否有节点操过了重复次数。
-// ● user_silent(true/false)：是否静默，每次客户回答重新设置。
-// ● user_silent_num：用户连续静默次数
-// ● user_interrupt(true/false)：是否打断，每次客户回答重新设置。
-// ● user_interrupt_num：用户连续打断次数
-// ● tts_play(int)：回复文本tts合成的音频客户聆听秒数
 const completers = [
     {
         name: "skip_execute",
@@ -122,11 +107,13 @@ const completers = [
 ]
 
 const complete = (editor) => {
-    editor.completers.push({
-        getCompletions: function (editors, session, pos, prefix, callback) {
-            callback(null, completers)
+    editor.completers = [
+        {
+            getCompletions: function (editors, session, pos, prefix, callback) {
+                callback(null, completers)
+            },
         },
-    })
+    ]
 }
 
 export const ConditionModal = ({
@@ -471,7 +458,7 @@ export const ConditionModal = ({
                             height={"200px"}
                             highlightActiveLine
                             value={AceEditorValue}
-                            enableBasicAutocompletion={true}
+                            // enableBasicAutocompletion={true}
                             enableLiveAutocompletion={true}
                             markers={[
                                 {
@@ -485,9 +472,9 @@ export const ConditionModal = ({
                             ]}
                             onLoad={complete}
                             setOptions={{
-                                enableBasicAutocompletion: true,
+                                // enableBasicAutocompletion: true,
                                 enableLiveAutocompletion: true,
-                                enableSnippets: true,
+                                // enableSnippets: true,
                                 showLineNumbers: true,
                                 tabSize: 2,
                                 useWorker: false,
