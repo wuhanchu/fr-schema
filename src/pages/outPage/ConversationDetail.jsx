@@ -2,6 +2,7 @@ import React from "react"
 import { autobind } from "core-decorators"
 import Chat from "@/pages/question/components/Chat"
 import schema from "@/schemas/conversation/detail"
+import domainSchema from "@/schemas/domain/index"
 import schemaConversation from "@/schemas/conversation/list"
 import { listToDict } from "@/outter/fr-schema/src/dict"
 
@@ -21,6 +22,7 @@ class ConversationDetail extends Chat {
 
     async componentDidMount() {
         this.init()
+        this.initFlow()
     }
 
     async init() {
