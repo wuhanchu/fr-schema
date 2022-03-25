@@ -321,6 +321,7 @@ class IntentIdentify extends React.Component {
                         onCancel={() => {
                             this.setState({ showAnswer: false })
                         }}
+                        dict={this.props.dict}
                         searchProject={this.props.searchProject}
                         height={"600px"}
                         title={"数据搜索" + "(" + text + ")"}
