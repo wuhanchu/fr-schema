@@ -3,6 +3,8 @@ import ListPage from "@/components/ListPage/ListPage"
 import schemas from "@/schemas"
 import React from "react"
 import "@ant-design/compatible/assets/index.css"
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
+import { dark } from "react-syntax-highlighter/dist/esm/styles/prism"
 import {
     Form,
     Select,
@@ -12,12 +14,14 @@ import {
     Spin,
     TreeSelect,
     message,
+    Tooltip,
 } from "antd"
 import { autobind } from "core-decorators"
 import { globalStyle } from "@/outter/fr-schema-antd-utils/src/styles/global"
 import AceEditor from "react-ace"
 import frSchema from "@/outter/fr-schema/src"
 import ImportModal from "@/outter/fr-schema-antd-utils/src/components/modal/ImportModal"
+import { InfoCircleOutlined } from "@ant-design/icons"
 import { exportData } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
 const { actions, getPrimaryKey, decorateList } = frSchema
 import "ace-builds/src-noconflict/mode-json"
@@ -25,7 +29,7 @@ import "ace-builds/src-noconflict/theme-github"
 import "ace-builds/src-noconflict/ext-language_tools"
 import { PlusOutlined, MinusCircleOutlined } from "@ant-design/icons"
 import { getTree } from "@/pages/Flow/methods"
-
+import ReactMarkdown from "react-markdown"
 @connect(({ global }) => ({
     dict: global.dict,
 }))
@@ -296,6 +300,23 @@ class List extends ListPage {
             domainList,
             modalLoading,
         } = this.state
+
+        const markdown = `**参考配置**
+        
+         [
+            {
+                "text": "对不起，您的内容小数还在努力学习中。",
+                "buttons": [
+                    {
+                        "title": "展示文本",
+                        "payload": "/set_slot{\"templates\":\"t\"}"
+                    }]
+            }
+        ]
+         `
+
+        console.log(markdown)
+
         return (
             <Modal
                 width={700}
@@ -461,7 +482,28 @@ class List extends ListPage {
                             extra="回复文本没配置时生效，用于更复杂的回复方式。"
                             label={
                                 <div>
-                                    <div>回复模板:</div>
+                                    <div>
+                                        回复模板:
+                                        <Tooltip
+                                            overlayStyle={{ width: "500px" }}
+                                            overlayInnerStyle={{
+                                                width: "500px",
+                                            }}
+                                            title={
+                                                <ReactMarkdown>
+                                                    {markdown}
+                                                </ReactMarkdown>
+                                            }
+                                        >
+                                            <a>
+                                                <InfoCircleOutlined
+                                                    style={{
+                                                        marginLeft: "5px",
+                                                    }}
+                                                />
+                                            </a>
+                                        </Tooltip>
+                                    </div>
                                     <div style={{ color: "#00000073" }}>
                                         机器闲聊回复
                                     </div>

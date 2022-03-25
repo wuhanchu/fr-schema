@@ -19,6 +19,7 @@ import searchHistory from "./domain/searchHistory"
 import relation from "./relation"
 import relationType from "./relationType"
 import flow from "./flow"
+import customer from "./customer"
 import statistics from "./statistics"
 
 export default {
@@ -41,4 +42,5 @@ export default {
     mark,
     searchHistory,
     outboundTask,
+    customer,
 }
