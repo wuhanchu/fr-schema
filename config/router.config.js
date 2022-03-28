@@ -343,24 +343,24 @@ export default [
                             },
                         ],
                     },
-                    {
-                        path: "/outboundTask",
-                        name: "outboundTask",
-                        routes: [
-                            {
-                                path: "/outboundTask/list",
-                                name: "taskList",
-                                component: "./outboundTask/List.jsx",
-                                title: "任务列表",
-                            },
-                            {
-                                path: "/outboundTask/customer",
-                                name: "taskCustomer",
-                                component: "./customer/List.jsx",
-                                title: "客户管理",
-                            },
-                        ],
-                    },
+                    // {
+                    //     path: "/outboundTask",
+                    //     name: "outboundTask",
+                    //     routes: [
+                    //         {
+                    //             path: "/outboundTask/list",
+                    //             name: "taskList",
+                    //             component: "./outboundTask/List.jsx",
+                    //             title: "任务列表",
+                    //         },
+                    //         {
+                    //             path: "/outboundTask/customer",
+                    //             name: "taskCustomer",
+                    //             component: "./customer/List.jsx",
+                    //             title: "客户管理",
+                    //         },
+                    //     ],
+                    // },
                     {
                         path: "/statistics",
                         name: "statistics",

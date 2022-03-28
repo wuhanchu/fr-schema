@@ -240,7 +240,10 @@ class IntentIdentify extends React.Component {
                                     const { list } = this.state
                                     list[index] = {
                                         ...record,
-                                        isDel: value.target.checked,
+                                        isDel:
+                                            value.target.checked === true
+                                                ? true
+                                                : undefined,
                                     }
                                     this.setState({
                                         list: list,
