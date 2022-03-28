@@ -284,7 +284,7 @@ class IntentIdentify extends React.Component {
             return {
                 domain_key: this.props.record.key,
                 intent_key: item.key,
-                add_text: item.addTxt,
+                add_text: !item.isDel ? item.addTxt : undefined,
                 remove_text:
                     item.isDel &&
                     (item.match_standard_discourse || item.match_regex),
