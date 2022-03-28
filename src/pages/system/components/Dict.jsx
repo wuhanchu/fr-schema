@@ -12,7 +12,7 @@ class List extends DataList {
             operateWidth: 250,
             schema,
             service,
-            // readOnly: true,
+            readOnly: true,
             addHide: true,
         })
     }
