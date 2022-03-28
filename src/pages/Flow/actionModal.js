@@ -13,96 +13,42 @@ import "ace-builds/src-noconflict/theme-github"
 import "ace-builds/src-noconflict/ext-language_tools"
 import { uuid } from "@antv/x6/lib/util/string/uuid"
 import { values } from "lodash"
+import { listToDict } from "@/outter/fr-schema/src/dict"
 
-const completers = [
-    {
-        name: "skip_execute",
-        value: "skip_execute",
-        score: 100,
-        meta: "是否跳过下一个节点的执行",
-    },
-    {
-        name: "question_limit",
-        value: "question_limit",
-        score: 100,
-        meta: "问题搜索数量。",
-    },
-    {
-        name: "new_message",
-        value: "new_message",
-        score: 100,
-        meta: "当前会话状态新消息是否被节点执行",
-    },
-    {
-        name: "last_master_node",
-        value: "last_master_node",
-        score: 100,
-        meta: "当前会话中最后停留主节点",
-    },
-    {
-        name: "receive_text",
-        value: "receive_text",
-        score: 100,
-        meta: "会话中接收到的所有文本",
-    },
-    {
-        name: "reply_text",
-        value: "reply_text",
-        score: 100,
-        meta: "会话中最后回复的文本",
-    },
-    {
-        name: "search_result",
-        value: "search_result",
-        score: 100,
-        meta: "问题库是否返回数据",
-    },
-    {
-        name: "repeat_out_of_limit",
-        value: "repeat_out_of_limit",
-        score: 100,
-        meta: "是否有节点操过了重复次数",
-    },
-    {
-        name: "user_silent",
-        value: "user_silent",
-        score: 100,
-        meta: "是否静默，每次客户回答重新设置",
-    },
-    {
-        name: "user_silent_num",
-        value: "user_silent_num",
-        score: 100,
-        meta: "用户连续静默次数",
-    },
-    {
-        name: "user_interrupt",
-        value: "user_interrupt",
-        score: 100,
-        meta: "是否打断，每次客户回答重新设置",
-    },
-    {
-        name: "user_interrupt_num",
-        value: "user_interrupt_num",
-        score: 100,
-        meta: "用户连续打断次数",
-    },
-    {
-        name: "tts_play",
-        value: "tts_play",
-        score: 100,
-        meta: "回复文本tts合成的音频客户聆听秒数",
-    },
-]
+function initCompleter(actionParam, record, formRef) {
+    console.log(formRef.current)
+    let init_slot = JSON.parse(
+        localStorage.getItem("flow" + record.id + "init_slot")
+    )
+    let slot = JSON.parse(localStorage.getItem("flow" + record.id + "slot"))
+    let completers = []
+    actionParam.map((item) => {
+        completers.push({
+            name: item.key,
+            value: item.key,
+            score: 100,
+            meta: item.remark,
+            action_type_key: item.action_type_key,
+        })
+    })
 
-const complete = (editor) => {
-    editor.completers = [
-        {
-            getCompletions: function (editors, session, pos, prefix, callback) {
-                callback(null, completers)
-            },
-        },
-    ]
+    Object.keys(slot).forEach((key) => {
+        completers.push({
+            name: slot[key].value,
+            value: slot[key].value,
+            score: 100,
+            meta: slot[key].remark,
+        })
+    })
+    Object.keys(init_slot).forEach((key) => {
+        completers.push({
+            name: init_slot[key].value,
+            value: init_slot[key].value,
+            score: 100,
+            meta: init_slot[key].remark,
+        })
+    })
+    return completers
 }
 
 export const ActionModal = ({
@@ -117,7 +63,16 @@ export const ActionModal = ({
     graphChange,
     expGraphData,
     other,
+    actionTypeList,
+    actionParam,
+    record,
 }) => {
+    console.log(actionTypeList)
+    console.log(record)
+    let completers = []
+    let formRef = React.createRef()
+
+    // console
     const expGraph = graph
     let initialValues = clone(defaultValue)
     let actionList = []
@@ -277,16 +232,18 @@ export const ActionModal = ({
         console.log("Failed:", errorInfo)
     }
 
-    const dict = other.dict.action_type || {}
-    let formRef = React.createRef()
+    if (record) {
+        completers = initCompleter(actionParam, record, formRef)
+    }
+
+    const dict = actionTypeList
+        ? listToDict(actionTypeList, "", "key", "name")
+        : {}
 
     let options = []
     Object.keys(dict).forEach((key) => {
         options.push(
             <Select.Option value={key} key={key}>
-                {/* <Tooltip title={dict[key].remarks || ""}>
-                    <div style={{ width: "100%" }}>{dict[key].remark}</div>
-                </Tooltip> */}
                 {dict[key].remark}
             </Select.Option>
         )
@@ -463,7 +420,34 @@ export const ActionModal = ({
                             enableBasicAutocompletion={true}
                             enableLiveAutocompletion={true}
                             value={AceEditorValue}
-                            onLoad={complete}
+                            onLoad={(editor) => {
+                                editor.completers = [
+                                    {
+                                        getCompletions: function (
+                                            editors,
+                                            session,
+                                            pos,
+                                            prefix,
+                                            callback
+                                        ) {
+                                            let type =
+                                                formRef.current &&
+                                                formRef.current.getFieldsValue()
+                                                    .type
+                                            console.log(type)
+                                            callback(
+                                                null,
+                                                completers.filter((item) => {
+                                                    return item.action_type_key
+                                                        ? item.action_type_key ===
+                                                              type
+                                                        : true
+                                                })
+                                            )
+                                        },
+                                    },
+                                ]
+                            }}
                             markers={[
                                 {
                                     startRow: 0,

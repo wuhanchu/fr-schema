@@ -208,18 +208,6 @@ class List extends ListPage {
             />
         )
     }
-
-    renderSearchBar() {
-        const { standard_text, domain_key } = this.schema
-        const filters = this.createFilters(
-            {
-                domain_key,
-                standard_text,
-            },
-            5
-        )
-        return this.createSearchBar(filters)
-    }
 }
 
 export default List

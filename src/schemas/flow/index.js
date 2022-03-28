@@ -66,7 +66,8 @@ const schema = {
         title: "全局槽位",
         search: false,
         remark: "",
-        extra: "可配置电话渠道参数和相关参数(意图识别阈值:intent_identify_threshold)",
+        extra:
+            "可配置电话渠道参数和相关参数(意图识别阈值:intent_identify_threshold)",
         hideInTable: true,
         props: {
             style: { width: "500px" },
@@ -144,6 +145,21 @@ service.upInsert = createApi(
     null,
     "eq."
 ).upInsert
+
+service.getActionType = async (args) => {
+    let data = await createApi("action_type", schema, null, "eq.").get(args)
+    let list = data.list.map((item) => {
+        return { ...item, remarks: item.remark }
+    })
+    return { ...data, list }
+}
+service.getActionParam = async (args) => {
+    let data = await createApi("action_param", schema, null, "eq.").get(args)
+    let list = data.list.map((item) => {
+        return { ...item, remarks: item.remark }
+    })
+    return { ...data, list }
+}
 
 service.patch = async (args) => {
     await createApi("flow", schema, null, "eq.").patch(args)

@@ -3,6 +3,16 @@ import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import { verifyJson } from "@/outter/fr-schema-antd-utils/src/utils/component"
 
 const schema = {
+    start_time: {
+        title: "开始时间",
+        type: schemaFieldType.DatePicker,
+        hideInTable: true,
+    },
+    finish_time: {
+        title: "结束时间",
+        type: schemaFieldType.DatePicker,
+        hideInTable: true,
+    },
     domain_key: {
         title: "域",
         sorter: true,
@@ -21,6 +31,12 @@ const schema = {
         sorter: true,
         searchPrefix: "like",
         required: true,
+    },
+    caller_group_id: {
+        title: "号码组",
+        hideInTable: true,
+        search: false,
+        type: schemaFieldType.Select,
     },
     flow_key: {
         title: "流程",
@@ -61,6 +77,9 @@ const schema = {
 }
 
 const service = createApi("outbound_task", schema, null, "eq.")
+service.getDict = async (args) => {
+    return createApi("outbound/dictionary", schema, null, "").getBasic(args)
+}
 
 export default {
     schema,

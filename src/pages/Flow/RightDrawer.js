@@ -15,10 +15,16 @@ import {
     QuestionCircleOutlined,
     InfoCircleOutlined,
 } from "@ant-design/icons"
+import { verifyJsonORString } from "@/outter/fr-schema-antd-utils/src/utils/component"
 import { ActionModal } from "./actionModal"
 import { ConditionModal } from "./conditionModal"
 import Sortable from "sortablejs/modular/sortable.complete.esm.js"
 import { ItemName } from "@/components/item-name"
+import AceEditor from "react-ace"
+import "ace-builds/src-noconflict/mode-json"
+import "ace-builds/src-noconflict/mode-python"
+import "ace-builds/src-noconflict/theme-github"
+import "ace-builds/src-noconflict/ext-language_tools"
 
 let FormItem = Form.Item
 
@@ -77,6 +83,9 @@ class RightDrawer extends React.PureComponent {
                         handleVisible={(args) => {
                             this.setState({ visible: args })
                         }}
+                        actionTypeList={this.props.actionType}
+                        actionParam={this.props.actionParam}
+                        record={this.props.record}
                     />
                 )}
                 {conditionVisible && (
@@ -239,6 +248,9 @@ class RightDrawer extends React.PureComponent {
             intentDict,
             projectDict,
         } = this.props
+        let init_slot = localStorage.getItem("flow" + record.id + "init_slot")
+        let slot = localStorage.getItem("flow" + record.id + "slot")
+
         return (
             chooseType === "grid" && (
                 <div>
@@ -248,102 +260,141 @@ class RightDrawer extends React.PureComponent {
                             labelAlign="left"
                             colon={false}
                             initialValues={{
-                                ...record,
-                                slot:
-                                    record.slot && JSON.stringify(record.slot),
-                                project_id:
-                                    record.project_id &&
-                                    record.project_id.length
-                                        ? record.project_id
-                                        : [],
-                                intent_key:
-                                    record.intent_key &&
-                                    record.intent_key.length
-                                        ? record.intent_key
-                                        : [],
+                                slot: slot,
+                                init_slot: init_slot,
                             }}
-                            onValuesChange={(args) => {
-                                graph.flowSetting = args
-                            }}
+                            // onValuesChange={(args) => {
+                            //     graph.flowSetting = args
+                            // }}
                             layout="vertical"
                         >
-                            <FormItem name={"domain_key"} label="域">
-                                <Select
-                                    showSearch
-                                    placeholder={"请选择域!"}
-                                    disabled
-                                    defaultActiveFirstOption={false}
-                                    filterOption={(input, option) =>
-                                        option.children
-                                            .toLowerCase()
-                                            .indexOf(input.toLowerCase()) >= 0
-                                    }
-                                    notFoundContent={null}
-                                >
-                                    {dict.domain &&
-                                        dict.domain.map((item) => {
-                                            return (
-                                                <Select.Option
-                                                    value={item.key}
-                                                    key={item.key}
-                                                >
-                                                    {item.name}
-                                                </Select.Option>
-                                            )
-                                        })}
-                                </Select>
+                            <FormItem
+                                label="全局槽位"
+                                name={"slot"}
+                                // extra="全局槽位"
+                                rules={verifyJsonORString}
+                            >
+                                <div style={{ width: "309px" }}>
+                                    <AceEditor
+                                        placeholder={`请输入${"全局槽位"}`}
+                                        mode={"json"}
+                                        // theme="tomorrow"
+                                        name="blah2"
+                                        wrapEnabled={true}
+                                        onChange={(res) => {
+                                            let isError = false
+                                            try {
+                                                JSON.parse(res)
+                                            } catch (error) {
+                                                isError = true
+                                            }
+                                            if (res === "" || !isError) {
+                                                if (res === "") {
+                                                    localStorage.setItem(
+                                                        "flow" +
+                                                            record.id +
+                                                            "slot",
+                                                        ""
+                                                    )
+                                                } else {
+                                                    localStorage.setItem(
+                                                        "flow" +
+                                                            record.id +
+                                                            "slot",
+                                                        res
+                                                    )
+                                                }
+                                            }
+                                        }}
+                                        fontSize={14}
+                                        showPrintMargin
+                                        showGutter
+                                        width={"309px"}
+                                        height={"200px"}
+                                        highlightActiveLine
+                                        value={slot}
+                                        markers={[
+                                            {
+                                                startRow: 0,
+                                                startCol: 2,
+                                                endRow: 1,
+                                                endCol: 20,
+                                                className: "error-marker",
+                                                type: "background",
+                                            },
+                                        ]}
+                                        setOptions={{
+                                            enableSnippets: true,
+                                            showLineNumbers: true,
+                                            tabSize: 2,
+                                            useWorker: false,
+                                        }}
+                                    />
+                                </div>
                             </FormItem>
-                            <FormItem name={"name"} label="名称">
-                                <Input disabled placeholder="请输入名称" />
-                            </FormItem>
-                            <FormItem name={"key"} label="编码">
-                                <Input disabled placeholder="请输入编码" />
-                            </FormItem>
-                            <FormItem name={"intent_key"} label="匹配意图">
-                                <Select
-                                    showSearch
-                                    placeholder={"暂无匹配意图!"}
-                                    disabled
-                                    mode="tags"
-                                >
-                                    {intentDict &&
-                                        intentDict.map((item) => {
-                                            return (
-                                                <Select.Option
-                                                    value={item.key}
-                                                    key={item.key}
-                                                >
-                                                    {item.name}
-                                                </Select.Option>
-                                            )
-                                        })}
-                                </Select>
-                            </FormItem>
-                            <FormItem name={"project_id"} label="相关问题库">
-                                <Select
-                                    showSearch
-                                    placeholder={"暂无项目!"}
-                                    disabled
-                                    mode="tags"
-                                >
-                                    {projectDict &&
-                                        projectDict.map((item) => {
-                                            return (
-                                                <Select.Option
-                                                    value={item.id}
-                                                    key={item.id}
-                                                >
-                                                    {item.name}
-                                                </Select.Option>
-                                            )
-                                        })}
-                                </Select>
-                            </FormItem>
-                            <FormItem name={"slot"} label="话术配置">
-                                <Input.TextArea
-                                    disabled
-                                    placeholder="暂无话术配置"
-                                />
+                            <FormItem
+                                label="初始化槽位"
+                                name={"init_slot"}
+                                // extra="初始化槽位"
+                                rules={verifyJsonORString}
+                            >
+                                <div style={{ width: "309px" }}>
+                                    <AceEditor
+                                        placeholder={`请输入${"初始号槽位"}`}
+                                        mode={"json"}
+                                        // theme="tomorrow"
+                                        name="blah2"
+                                        wrapEnabled={true}
+                                        onChange={(res) => {
+                                            let isError = false
+                                            try {
+                                                JSON.parse(res)
+                                            } catch (error) {
+                                                isError = true
+                                            }
+                                            if (res === "" || !isError) {
+                                                if (res === "") {
+                                                    localStorage.setItem(
+                                                        "flow" +
+                                                            record.id +
+                                                            "init_slot",
+                                                        ""
+                                                    )
+                                                } else {
+                                                    localStorage.setItem(
+                                                        "flow" +
+                                                            record.id +
+                                                            "init_slot",
+                                                        res
+                                                    )
+                                                }
+                                            }
+                                        }}
+                                        fontSize={14}
+                                        showPrintMargin
+                                        showGutter
+                                        width={"309px"}
+                                        height={"200px"}
+                                        highlightActiveLine
+                                        value={init_slot}
+                                        markers={[
+                                            {
+                                                startRow: 0,
+                                                startCol: 2,
+                                                endRow: 1,
+                                                endCol: 20,
+                                                className: "error-marker",
+                                                type: "background",
+                                            },
+                                        ]}
+                                        setOptions={{
+                                            enableSnippets: true,
+                                            showLineNumbers: true,
+                                            tabSize: 2,
+                                            useWorker: false,
+                                        }}
+                                    />
+                                </div>
                             </FormItem>
                         </Form>
                     </div>
@@ -355,7 +406,6 @@ class RightDrawer extends React.PureComponent {
     renderNode() {
         let { chooseType, cell, graph } = this.props
         let { isShow, showAction } = this.state
-        console.log(cell)
         let canEditType = false
         graph &&
             graph.getEdges().map((item) => {

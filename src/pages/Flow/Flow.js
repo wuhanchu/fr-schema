@@ -189,12 +189,36 @@ class Flow extends React.PureComponent {
         })
     }
 
+    async initActionType() {
+        let actionType = await flowSchema.service.getActionType({
+            limit: 1000,
+            order: "name",
+        })
+        this.setState({
+            actionType: actionType.list,
+        })
+    }
+
+    async initActionParam() {
+        let actionParam = await flowSchema.service.getActionParam({
+            limit: 1000,
+            order: "name",
+        })
+        this.setState({
+            actionParam: actionParam.list,
+        })
+    }
+
     async componentDidMount() {
         const { record } = this.props
         await this.initData()
         await this.getData()
         this.getIntent()
         this.getHistory()
+
+        this.initActionType()
+        this.initActionParam()
+
         this.setState({
             spinning: false,
         })
@@ -202,6 +226,7 @@ class Flow extends React.PureComponent {
             key: record.key,
             domain_key: record.domain_key,
         }
+
         this.bindKey()
         this.getFlow()
         try {
@@ -251,6 +276,7 @@ class Flow extends React.PureComponent {
                     {chooseType && (
                         <RightDrawer
                             flowList={this.state.flowList}
+                            actionParam={this.state.actionParam}
                             projectDict={projectDict}
                             intentDict={intentDict}
                             service={service}
@@ -273,6 +299,7 @@ class Flow extends React.PureComponent {
                             setChooseType={(args) => {
                                 this.setState({ chooseType: args })
                             }}
+                            actionType={this.state.actionType}
                             changeGridBack={this.onChangeGridBack}
                         />
                     )}
@@ -460,6 +487,16 @@ class Flow extends React.PureComponent {
                                 try {
                                     await service.patch({
                                         ...data,
+                                        slot: JSON.parse(
+                                            localStorage.getItem(
+                                                "flow" + record.id + "slot"
+                                            )
+                                        ),
+                                        init_slot: JSON.parse(
+                                            localStorage.getItem(
+                                                "flow" + record.id + "init_slot"
+                                            )
+                                        ),
                                         id: record.id,
                                     })
                                     localStorage.removeItem("flow" + record.id)
@@ -498,6 +535,8 @@ class Flow extends React.PureComponent {
         _this.setState({ spinning: true })
         localStorage.removeItem("flowCreate" + record.id)
         localStorage.removeItem("flow" + record.id)
+        localStorage.removeItem("flow" + record.id + "slot")
+        localStorage.removeItem("flow" + record.id + "init_slot")
 
         _this.graph.dispose()
         await _this.initData()
@@ -561,7 +600,14 @@ class Flow extends React.PureComponent {
                 (res.update_time && res.update_time.valueOf()) ||
                     res.create_time.valueOf()
             )
-
+            localStorage.setItem(
+                "flow" + record.id + "slot",
+                JSON.stringify(res.slot, "\t")
+            )
+            localStorage.setItem(
+                "flow" + record.id + "init_slot",
+                JSON.stringify(res.init_slot, "\t")
+            )
             if (res.config && res.config.node && res.config.node.length) {
                 data = res.config
             } else {
@@ -602,7 +648,6 @@ class Flow extends React.PureComponent {
             }
         }
         let cells = []
-        console.time("data")
 
         data.node.map((item) => {
             // this.addNodes(item)
@@ -612,8 +657,6 @@ class Flow extends React.PureComponent {
             // this.addEdges(item)
             cells.push(this.getEdges(item))
         })
-        console.timeEnd("data")
-        console.time("create")
         this.graph.fromJSON({ cells })
 
         this.graph.action = data.action
