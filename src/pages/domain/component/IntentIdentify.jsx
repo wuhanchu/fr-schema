@@ -291,7 +291,10 @@ class IntentIdentify extends React.Component {
             }
         })
         try {
-            await IntentService.service.submit(data)
+            await IntentService.service.submit({
+                data: data,
+                domain_key: this.props.record.key,
+            })
             let values = await this.formRef.current.validateFields()
             message.success("提交成功")
             this.onFinish(values)
@@ -337,11 +340,6 @@ class IntentIdentify extends React.Component {
 
     renderTabs() {
         const { record, text } = this.props
-        console.log(record)
-        console.log(
-            "基础域是",
-            this.props.dict.domain[record.key].base_domain_key
-        )
         return (
             <Tabs defaultActiveKey="1" style={{ marginTop: "-13px" }}>
                 <TabPane

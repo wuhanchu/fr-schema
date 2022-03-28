@@ -162,7 +162,11 @@ service.upInsert = createApi(
     null,
     "eq."
 ).upInsert
-service.submit = createApi("intent/correction").upInsert
+service.submit = async (args) => {
+    return createApi(
+        "intent/correction?domain_key=" + args.domain_key
+    ).upInsert(args.data)
+}
 
 export default {
     schema,
