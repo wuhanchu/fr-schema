@@ -17,10 +17,12 @@ import { formatData } from "@/utils/utils"
 import SearchPage from "@/pages/question/components/SearchPage"
 import clone from "clone"
 import { connect } from "dva"
+import { listToDict } from "@/outter/fr-schema/src/dict"
 const { TabPane } = Tabs
 
 @connect(({ global, user }) => ({
     dict: global.dict,
+    user: user,
 }))
 class IntentIdentify extends React.Component {
     state = {
@@ -32,7 +34,24 @@ class IntentIdentify extends React.Component {
     }
     formRef = React.createRef()
 
-    componentDidMount() {
+    async componentDidMount() {
+        console.log(this.props.user.currentUser.loginid === "admin")
+        if (this.props.user.currentUser.loginid !== "admin") {
+            let domainArray = await service.service.getUserDomain({
+                limit: 1000,
+                user_id: this.props.user.currentUser.id,
+            })
+            // console.log(listToDict(domainArray.list, '', "domain_key",'name'))
+            this.setState({
+                domianList: listToDict(
+                    domainArray.list,
+                    "",
+                    "domain_key",
+                    "name"
+                ),
+            })
+        }
+
         if (this.props.text) {
             this.onFinish({ text: this.props.text })
         }
@@ -186,6 +205,7 @@ class IntentIdentify extends React.Component {
                     <>
                         <Input
                             onChange={(e) => {
+                                console.log(addTxt, record, index)
                                 const { list } = this.state
                                 list[index] = {
                                     ...record,
@@ -196,6 +216,11 @@ class IntentIdentify extends React.Component {
                                 })
                                 this.getRow()
                             }}
+                            disabled={
+                                this.props.user.currentUser.loginid !== "admin"
+                                    ? !this.state.domianList[record.domain_key]
+                                    : false
+                            }
                             value={addTxt}
                             placeholder={"输入文本"}
                         />
@@ -222,6 +247,14 @@ class IntentIdentify extends React.Component {
                                     })
                                     this.getRow()
                                 }}
+                                disabled={
+                                    this.props.user.currentUser.loginid !==
+                                    "admin"
+                                        ? !this.state.domianList[
+                                              record.domain_key
+                                          ]
+                                        : false
+                                }
                                 checked={isDel}
                             />
                         </>

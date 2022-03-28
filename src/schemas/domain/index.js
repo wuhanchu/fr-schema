@@ -120,6 +120,12 @@ service.getServices = async (args) => {
         ai_type: "chat",
     })
 }
+service.getUserDomain = async (args) => {
+    return await createApi("domain_user", schema, null, "eq.").get({
+        ...args,
+        // select: "id, name, key",
+    })
+}
 // 创建会话
 service.conversation = createApi("chat/conversation", schema, null, "eq.").post
 // 发送消息
