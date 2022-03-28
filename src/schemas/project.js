@@ -64,7 +64,7 @@ const schema = {
         },
     },
     config: {
-        title: "自定义字段配置",
+        title: "个性化配置",
         search: false,
         hideInTable: true,
         props: {

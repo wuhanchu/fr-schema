@@ -352,14 +352,14 @@ export const ConditionModal = ({
                 {
                     <Form.Item
                         label="引用"
-                        extra="可选择流程中其他连线配置的条件定义。"
+                        extra="复用流程中配置的的条件定义。修改当前信息会同步修改引用对应的信息。"
                     >
                         <Select
                             showSearch
                             defaultValue={defaultImport}
                             allowClear
                             optionFilterProp="children"
-                            placeholder="请选择引用"
+                            placeholder="请选择条件"
                             style={{ width: "100%" }}
                             onChange={(key) => {
                                 if (key) {
@@ -403,7 +403,19 @@ export const ConditionModal = ({
                 >
                     <Input placeholder={"请输入名称"} />
                 </Form.Item>
-
+                <Form.Item
+                    label="优先级"
+                    name="priority"
+                    extra="如果同时有多个条件满足时，数字越小越优先。"
+                    rules={[{ required: true, message: "请输入优先级！" }]}
+                >
+                    <InputNumber
+                        style={{ width: "100%" }}
+                        max={99}
+                        min={0}
+                        placeholder={"请输入名称"}
+                    />
+                </Form.Item>
                 <Form.Item
                     label="意图"
                     extra="选择预先定义好的意图进行配置。"
@@ -421,20 +433,8 @@ export const ConditionModal = ({
                     />
                 </Form.Item>
                 <Form.Item
-                    label="优先级"
-                    name="priority"
-                    extra="如果同时有多个条件满足时，数字越小越优先。"
-                    rules={[{ required: true, message: "请输入优先级！" }]}
-                >
-                    <InputNumber
-                        style={{ width: "100%" }}
-                        max={99}
-                        min={0}
-                        placeholder={"请输入名称"}
-                    />
-                </Form.Item>
-                <Form.Item
                     label="槽位"
+                    extra="JSON格式或者是PYTHON表达式"
                     name={"slot"}
                     rules={verifyJsonORString}
                 >

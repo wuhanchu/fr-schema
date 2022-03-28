@@ -349,13 +349,13 @@ export const ActionModal = ({
                 {
                     <Form.Item
                         label="引用"
-                        extra="可选择流程中其他节点配置的操作定义。"
+                        extra="服用流程中配置的操作定义。修改当前信息会同步修改引用对应的信息。"
                     >
                         <Select
                             showSearch
                             defaultValue={defaultImport}
                             allowClear
-                            placeholder="请选择引用"
+                            placeholder="请选择操作"
                             optionFilterProp="children"
                             style={{ width: "100%" }}
                             onChange={(key) => {

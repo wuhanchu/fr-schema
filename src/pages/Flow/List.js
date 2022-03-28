@@ -477,7 +477,7 @@ class List extends ListPage {
                     key: "intent_key",
                 },
                 {
-                    title: "意图匹配辅助信息",
+                    title: "关键信息",
                     dataIndex: "intent_key_text",
                     key: "intent_key_text",
                 },

@@ -56,14 +56,27 @@ const schema = {
         extra: "没有制定话术流程的对话中触发进入流程的意图。",
     },
     intent_key_text: {
-        title: "意图匹配辅助信息",
+        title: "关键信息",
         style: { width: "500px" },
         search: false,
         sorter: true,
         extra: "拼接传入文本，用于支持搜索问题库(意图)的识别。",
     },
     slot: {
-        title: "话术配置",
+        title: "全局槽位",
+        search: false,
+        remark: "",
+        extra: "可配置电话渠道参数和相关参数(意图识别阈值:intent_identify_threshold)",
+        hideInTable: true,
+        props: {
+            style: { width: "500px" },
+            height: "300px",
+        },
+        type: schemaFieldType.AceEditor,
+        decoratorProps: { rules: verifyJson },
+    },
+    init_slot: {
+        title: "初始化槽位",
         search: false,
         remark: "",
         extra:
