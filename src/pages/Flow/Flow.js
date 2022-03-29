@@ -504,18 +504,34 @@ class Flow extends React.PureComponent {
                             console.log("ad")
                             let haveError = false
                             try {
-                                JSON.parse(
+                                if (
                                     localStorage.getItem(
                                         "flow" + this.props.record.id + "slot"
                                     )
-                                )
-                                JSON.parse(
+                                ) {
+                                    JSON.parse(
+                                        localStorage.getItem(
+                                            "flow" +
+                                                this.props.record.id +
+                                                "slot"
+                                        )
+                                    )
+                                }
+                                if (
                                     localStorage.getItem(
                                         "flow" +
                                             this.props.record.id +
                                             "init_slot"
                                     )
-                                )
+                                ) {
+                                    JSON.parse(
+                                        localStorage.getItem(
+                                            "flow" +
+                                                this.props.record.id +
+                                                "init_slot"
+                                        )
+                                    )
+                                }
                             } catch (error) {
                                 haveError = true
                             }
@@ -530,16 +546,28 @@ class Flow extends React.PureComponent {
                                 try {
                                     await service.patch({
                                         ...data,
-                                        slot: JSON.parse(
-                                            localStorage.getItem(
-                                                "flow" + record.id + "slot"
-                                            )
-                                        ),
-                                        init_slot: JSON.parse(
-                                            localStorage.getItem(
-                                                "flow" + record.id + "init_slot"
-                                            )
-                                        ),
+                                        slot: localStorage.getItem(
+                                            "flow" + record.id + "slot"
+                                        )
+                                            ? JSON.parse(
+                                                  localStorage.getItem(
+                                                      "flow" +
+                                                          record.id +
+                                                          "slot"
+                                                  )
+                                              )
+                                            : null,
+                                        init_slot: localStorage.getItem(
+                                            "flow" + record.id + "init_slot"
+                                        )
+                                            ? JSON.parse(
+                                                  localStorage.getItem(
+                                                      "flow" +
+                                                          record.id +
+                                                          "init_slot"
+                                                  )
+                                              )
+                                            : null,
                                         id: record.id,
                                     })
                                     localStorage.removeItem("flow" + record.id)
@@ -578,8 +606,6 @@ class Flow extends React.PureComponent {
         _this.setState({ spinning: true })
         localStorage.removeItem("flowCreate" + record.id)
         localStorage.removeItem("flow" + record.id)
-        localStorage.removeItem("flow" + record.id + "slot")
-        localStorage.removeItem("flow" + record.id + "init_slot")
 
         _this.graph.dispose()
         await _this.initData()
@@ -643,14 +669,18 @@ class Flow extends React.PureComponent {
                 (res.update_time && res.update_time.valueOf()) ||
                     res.create_time.valueOf()
             )
-            localStorage.setItem(
-                "flow" + record.id + "slot",
-                JSON.stringify(res.slot, null, "\t")
-            )
-            localStorage.setItem(
-                "flow" + record.id + "init_slot",
-                JSON.stringify(res.init_slot, null, "\t")
-            )
+            res.slot
+                ? localStorage.setItem(
+                      "flow" + record.id + "slot",
+                      JSON.stringify(res.slot, null, "\t")
+                  )
+                : localStorage.setItem("flow" + record.id + "slot", "")
+            res.init_slot
+                ? localStorage.setItem(
+                      "flow" + record.id + "init_slot",
+                      JSON.stringify(res.init_slot, null, "\t")
+                  )
+                : localStorage.setItem("flow" + record.id + "init_slot", "")
             if (res.config && res.config.node && res.config.node.length) {
                 data = res.config
             } else {
