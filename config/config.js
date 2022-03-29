@@ -31,6 +31,12 @@ if (BASE_PATH) {
 }
 
 let config = defineConfig({
+    // urlLoaderExcludes: [
+    //     /\.md$/,
+    //   ],
+    chainWebpack(config) {
+        config.module.rule("md").test(/\.md$/).use("raw").loader("raw-loader")
+    },
     hash: true,
     dva: {
         hmr: true,

@@ -297,7 +297,26 @@ class Flow extends React.PureComponent {
                             chooseType={chooseType}
                             graph={this.graph}
                             setChooseType={(args) => {
-                                this.setState({ chooseType: args })
+                                let isError = false
+                                if (localStorage.getItem("slot")) {
+                                    try {
+                                        JSON.parse(localStorage.getItem("slot"))
+                                    } catch (error) {
+                                        isError = true
+                                    }
+                                }
+                                if (localStorage.getItem("init_slot")) {
+                                    try {
+                                        JSON.parse(
+                                            localStorage.getItem("init_slot")
+                                        )
+                                    } catch (error) {
+                                        isError = true
+                                    }
+                                }
+                                if (!isError) {
+                                    this.setState({ chooseType: args })
+                                }
                             }}
                             actionType={this.state.actionType}
                             changeGridBack={this.onChangeGridBack}
@@ -482,6 +501,30 @@ class Flow extends React.PureComponent {
                         }
                         onConfirm={async () => {
                             let data = this.graphChange()
+                            console.log("ad")
+                            let haveError = false
+                            try {
+                                JSON.parse(
+                                    localStorage.getItem(
+                                        "flow" + this.props.record.id + "slot"
+                                    )
+                                )
+                                JSON.parse(
+                                    localStorage.getItem(
+                                        "flow" +
+                                            this.props.record.id +
+                                            "init_slot"
+                                    )
+                                )
+                            } catch (error) {
+                                haveError = true
+                            }
+                            if (haveError) {
+                                message.error(
+                                    "流程全局槽位或初始化槽位填写错误！"
+                                )
+                                return
+                            }
                             if (isError(data, this.graph)) {
                                 this.setState({ spinning: true })
                                 try {
@@ -602,11 +645,11 @@ class Flow extends React.PureComponent {
             )
             localStorage.setItem(
                 "flow" + record.id + "slot",
-                JSON.stringify(res.slot, "\t")
+                JSON.stringify(res.slot, null, "\t")
             )
             localStorage.setItem(
                 "flow" + record.id + "init_slot",
-                JSON.stringify(res.init_slot, "\t")
+                JSON.stringify(res.init_slot, null, "\t")
             )
             if (res.config && res.config.node && res.config.node.length) {
                 data = res.config
@@ -1106,13 +1149,44 @@ class Flow extends React.PureComponent {
             this.setState({ chooseType: "grid" })
         })
         this.graph.on("cell:click", ({ cell }) => {
-            this.setState({
-                chooseType: "",
-            })
-            this.setState({
-                chooseType: cell.isNode() ? "node" : "edge",
-                cell: cell,
-            })
+            let isError = false
+            if (localStorage.getItem("flow" + this.props.record.id + "slot")) {
+                try {
+                    JSON.parse(
+                        localStorage.getItem(
+                            "flow" + this.props.record.id + "slot"
+                        )
+                    )
+                } catch (error) {
+                    isError = true
+                    message.error("全局槽位填写格式错误")
+                }
+            }
+            if (
+                localStorage.getItem(
+                    "flow" + this.props.record.id + "init_slot"
+                )
+            ) {
+                try {
+                    JSON.parse(
+                        localStorage.getItem(
+                            "flow" + this.props.record.id + "init_slot"
+                        )
+                    )
+                } catch (error) {
+                    isError = true
+                    message.error("初始化槽位填写格式错误")
+                }
+            }
+            if (!isError) {
+                this.setState({
+                    chooseType: "",
+                })
+                this.setState({
+                    chooseType: cell.isNode() ? "node" : "edge",
+                    cell: cell,
+                })
+            }
         })
         this.graph.on("selection:changed", (args) => {
             try {

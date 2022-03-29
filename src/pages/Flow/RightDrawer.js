@@ -108,6 +108,9 @@ class RightDrawer extends React.PureComponent {
                         handleVisible={(args) => {
                             this.setState({ conditionVisible: args })
                         }}
+                        actionTypeList={this.props.actionType}
+                        actionParam={this.props.actionParam}
+                        record={this.props.record}
                     />
                 )}
             </div>
@@ -248,8 +251,11 @@ class RightDrawer extends React.PureComponent {
             intentDict,
             projectDict,
         } = this.props
-        let init_slot = localStorage.getItem("flow" + record.id + "init_slot")
+        // let init_slot = localStorage.getItem("flow" + record.id + "init_slot")?JSON.stringify(JSON.parse(localStorage.getItem("flow" + record.id + "init_slot")),null, '\t') : ""
+        // let slot = localStorage.getItem("flow" + record.id + "slot")?JSON.stringify(JSON.parse(localStorage.getItem("flow" + record.id + "slot")),null, '\t') : ""
+
         let slot = localStorage.getItem("flow" + record.id + "slot")
+        let init_slot = localStorage.getItem("flow" + record.id + "init_slot")
 
         return (
             chooseType === "grid" && (
@@ -263,13 +269,34 @@ class RightDrawer extends React.PureComponent {
                                 slot: slot,
                                 init_slot: init_slot,
                             }}
-                            // onValuesChange={(args) => {
-                            //     graph.flowSetting = args
-                            // }}
                             layout="vertical"
                         >
                             <FormItem
-                                label="全局槽位"
+                                label={
+                                    <div>
+                                        全局槽位
+                                        <Tooltip
+                                            title={
+                                                <pre>
+                                                    格式
+                                                    {`
+"name": {
+    "value": "***",
+    "name": "***",
+    "type": "***",
+    "remark": "***",
+    "require": true/false
+}
+`}
+                                                </pre>
+                                            }
+                                        >
+                                            <QuestionCircleOutlined
+                                                style={{ marginLeft: "5px" }}
+                                            />
+                                        </Tooltip>
+                                    </div>
+                                }
                                 name={"slot"}
                                 // extra="全局槽位"
                                 rules={verifyJsonORString}
@@ -283,11 +310,11 @@ class RightDrawer extends React.PureComponent {
                                         wrapEnabled={true}
                                         onChange={(res) => {
                                             let isError = false
-                                            try {
-                                                JSON.parse(res)
-                                            } catch (error) {
-                                                isError = true
-                                            }
+                                            // try {
+                                            //     JSON.parse(res)
+                                            // } catch (error) {
+                                            //     isError = true
+                                            // }
                                             if (res === "" || !isError) {
                                                 if (res === "") {
                                                     localStorage.setItem(
@@ -310,7 +337,7 @@ class RightDrawer extends React.PureComponent {
                                         showPrintMargin
                                         showGutter
                                         width={"309px"}
-                                        height={"200px"}
+                                        height={"230px"}
                                         highlightActiveLine
                                         value={slot}
                                         markers={[
@@ -333,25 +360,49 @@ class RightDrawer extends React.PureComponent {
                                 </div>
                             </FormItem>
                             <FormItem
-                                label="初始化槽位"
+                                label={
+                                    <div>
+                                        初始化槽位
+                                        <Tooltip
+                                            title={
+                                                <pre>
+                                                    格式
+                                                    {`
+"name": {
+    "value": "***",
+    "name": "***",
+    "type": "***",
+    "remark": "***",
+    "require": true/false
+}
+`}
+                                                </pre>
+                                            }
+                                        >
+                                            <QuestionCircleOutlined
+                                                style={{ marginLeft: "5px" }}
+                                            />
+                                        </Tooltip>
+                                    </div>
+                                }
                                 name={"init_slot"}
                                 // extra="初始化槽位"
                                 rules={verifyJsonORString}
                             >
                                 <div style={{ width: "309px" }}>
                                     <AceEditor
-                                        placeholder={`请输入${"初始号槽位"}`}
+                                        placeholder={`请输入${"初始化槽位"}`}
                                         mode={"json"}
                                         // theme="tomorrow"
                                         name="blah2"
                                         wrapEnabled={true}
                                         onChange={(res) => {
                                             let isError = false
-                                            try {
-                                                JSON.parse(res)
-                                            } catch (error) {
-                                                isError = true
-                                            }
+                                            // try {
+                                            //     JSON.parse(res)
+                                            // } catch (error) {
+                                            //     isError = true
+                                            // }
                                             if (res === "" || !isError) {
                                                 if (res === "") {
                                                     localStorage.setItem(
@@ -374,7 +425,7 @@ class RightDrawer extends React.PureComponent {
                                         showPrintMargin
                                         showGutter
                                         width={"309px"}
-                                        height={"200px"}
+                                        height={"230px"}
                                         highlightActiveLine
                                         value={init_slot}
                                         markers={[

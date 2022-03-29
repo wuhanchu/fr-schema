@@ -558,20 +558,6 @@ class List extends ListPage {
             />
         )
     }
-
-    // 搜索
-    renderSearchBar() {
-        const { name, domain_key, project_id } = this.schema
-        const filters = this.createFilters(
-            {
-                domain_key,
-                name,
-                // project_id,
-            },
-            5
-        )
-        return this.createSearchBar(filters)
-    }
 }
 
 export default List

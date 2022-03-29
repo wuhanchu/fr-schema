@@ -1,22 +1,31 @@
 import React, { useState } from "react"
-import { Input, Form, Button, Select, Divider, Tooltip, message } from "antd"
+import {
+    Input,
+    Form,
+    Button,
+    Select,
+    Divider,
+    Tooltip,
+    message,
+    Space,
+} from "antd"
 import "antd/lib/style/index.css"
 import Modal from "antd/lib/modal/Modal"
 import clone from "clone"
 import AceEditor from "react-ace"
 import { v4 as uuidv4 } from "uuid"
 import { verifyJsonORString } from "@/outter/fr-schema-antd-utils/src/utils/component"
-import { InfoCircleOutlined } from "@ant-design/icons"
+import { QuestionCircleOutlined } from "@ant-design/icons"
 import "ace-builds/src-noconflict/mode-json"
 import "ace-builds/src-noconflict/mode-python"
 import "ace-builds/src-noconflict/theme-github"
 import "ace-builds/src-noconflict/ext-language_tools"
 import { uuid } from "@antv/x6/lib/util/string/uuid"
 import { values } from "lodash"
+import ReactMarkdown from "react-markdown"
 import { listToDict } from "@/outter/fr-schema/src/dict"
 
-function initCompleter(actionParam, record, formRef) {
-    console.log(formRef.current)
+function initCompleter(actionParam, record) {
     let init_slot = JSON.parse(
         localStorage.getItem("flow" + record.id + "init_slot")
     )
@@ -27,27 +36,39 @@ function initCompleter(actionParam, record, formRef) {
             name: item.key,
             value: item.key,
             score: 100,
-            meta: item.remark,
+            meta: item.remark || "",
+            require: item.require,
+            type: item.type,
             action_type_key: item.action_type_key,
         })
     })
+    if (slot) {
+        Object.keys(slot).forEach((key) => {
+            completers.push({
+                name: slot[key].name,
+                value: slot[key].value,
+                score: 100,
+                require: slot[key].require,
+                type: slot[key].type,
+                meta: slot[key].remark || "",
+                remarks: slot[key].remark || "",
+            })
+        })
+    }
+    if (init_slot) {
+        Object.keys(init_slot).forEach((key) => {
+            completers.push({
+                name: init_slot[key].value,
+                value: init_slot[key].value,
+                score: 100,
+                require: init_slot[key].require,
+                type: init_slot[key].type,
+                meta: init_slot[key].remark || "",
+                remarks: init_slot[key].remark || "",
+            })
+        })
+    }
 
-    Object.keys(slot).forEach((key) => {
-        completers.push({
-            name: slot[key].value,
-            value: slot[key].value,
-            score: 100,
-            meta: slot[key].remark,
-        })
-    })
-    Object.keys(init_slot).forEach((key) => {
-        completers.push({
-            name: init_slot[key].value,
-            value: init_slot[key].value,
-            score: 100,
-            meta: init_slot[key].remark,
-        })
-    })
     return completers
 }
 
@@ -67,8 +88,6 @@ export const ActionModal = ({
     actionParam,
     record,
 }) => {
-    console.log(actionTypeList)
-    console.log(record)
     let completers = []
     let formRef = React.createRef()
 
@@ -232,28 +251,36 @@ export const ActionModal = ({
         console.log("Failed:", errorInfo)
     }
 
-    if (record) {
-        completers = initCompleter(actionParam, record, formRef)
-    }
-
     const dict = actionTypeList
         ? listToDict(actionTypeList, "", "key", "name")
         : {}
 
     let options = []
+    let optionsRemark = []
     Object.keys(dict).forEach((key) => {
+        optionsRemark.push(dict[key])
         options.push(
-            <Select.Option value={key} key={key}>
-                {dict[key].remark}
+            <Select.Option label={dict[key].remark} value={key} key={key}>
+                <div>
+                    <span>{dict[key].remark}</span>
+                    <span style={{ color: "#00000060", marginLeft: "3px" }}>
+                        {"(" + dict[key].remarks + ")"}
+                    </span>
+                </div>
             </Select.Option>
         )
     })
     var [type, setType] = useState(initialValues.type)
+    localStorage.setItem("actionType", type)
 
+    if (record) {
+        completers = initCompleter(actionParam, record, type)
+    }
     const onValuesChange = (value) => {
         if (value.type) {
             formRef.current.setFieldsValue({ name: dict[value.type].remark })
             setType(value.type)
+            localStorage.setItem("actionType", value.type)
         }
     }
 
@@ -284,6 +311,12 @@ export const ActionModal = ({
             )
         })
 
+    let mdStart =
+        "***可选范围***\n" +
+        // '*这是倾斜的文字*`\n\n' +
+        // '**这是斜体加粗的文字**\n\n' +
+        "~~~js\n"
+
     return (
         <Modal
             title={<div keys={isImport || defaultValue.key}>行为配置</div>}
@@ -308,79 +341,122 @@ export const ActionModal = ({
                         label="引用"
                         extra="服用流程中配置的操作定义。修改当前信息会同步修改引用对应的信息。"
                     >
-                        <Select
-                            showSearch
-                            defaultValue={defaultImport}
-                            allowClear
-                            placeholder="请选择操作"
-                            optionFilterProp="children"
-                            style={{ width: "100%" }}
-                            onChange={(key) => {
-                                if (key) {
-                                    const importData = expGraph.action.filter(
-                                        (item) =>
-                                            item.key === key.split("nodeID_")[1]
-                                    )[0]
-                                    formRef.current.setFieldsValue({
-                                        param: undefined,
-                                    })
-                                    formRef.current.setFieldsValue(importData)
-                                    setIsImport(key.split("nodeID_")[1])
-                                    setImportData(importData)
-                                    setAceEditorValue("")
-                                    if (importData.param) {
-                                        setAceEditorValue(
-                                            JSON.stringify(
-                                                importData.param,
-                                                null,
-                                                "\t"
-                                            )
+                        <>
+                            <Select
+                                showSearch
+                                defaultValue={defaultImport}
+                                allowClear
+                                placeholder="请选择操作"
+                                optionFilterProp="children"
+                                style={{ width: "100%" }}
+                                onChange={(key) => {
+                                    if (key) {
+                                        const importData = expGraph.action.filter(
+                                            (item) =>
+                                                item.key ===
+                                                key.split("nodeID_")[1]
+                                        )[0]
+                                        formRef.current.setFieldsValue({
+                                            param: undefined,
+                                        })
+                                        formRef.current.setFieldsValue(
+                                            importData
                                         )
-                                    } else {
+                                        setIsImport(key.split("nodeID_")[1])
+                                        setImportData(importData)
                                         setAceEditorValue("")
+                                        if (importData.param) {
+                                            setAceEditorValue(
+                                                JSON.stringify(
+                                                    importData.param,
+                                                    null,
+                                                    "\t"
+                                                )
+                                            )
+                                        } else {
+                                            setAceEditorValue("")
+                                        }
+                                    } else {
+                                        setIsImport(null)
+                                        setImportData([])
                                     }
-                                } else {
-                                    setIsImport(null)
-                                    setImportData([])
-                                }
-                            }}
-                        >
-                            {importDict}
-                        </Select>
+                                }}
+                            >
+                                {importDict}
+                            </Select>
+                        </>
                     </Form.Item>
                 }
-                <Form.Item
-                    label="类型"
-                    name="type"
-                    extra={
-                        dict[type] && (
-                            <span
-                                dangerouslySetInnerHTML={{
-                                    __html:
-                                        dict[type].remarks &&
-                                        dict[type].remarks.replace(
-                                            /\n/g,
-                                            "<br/>"
-                                        ),
+                <Form.Item label="类型">
+                    <>
+                        <Form.Item
+                            // label="类型"
+                            name="type"
+                            extra={
+                                dict[type] && (
+                                    <span
+                                        dangerouslySetInnerHTML={{
+                                            __html:
+                                                dict[type].remarks &&
+                                                dict[type].remarks.replace(
+                                                    /\n/g,
+                                                    "<br/>"
+                                                ),
+                                        }}
+                                    />
+                                )
+                            }
+                            rules={[
+                                { required: true, message: "请输入类型！" },
+                            ]}
+                        >
+                            <Select
+                                showSearch
+                                placeholder="请选择类型"
+                                style={{ width: "489px" }}
+                                optionLabelProp="label"
+                                filterOption={(input, option) =>
+                                    option.children
+                                        .toLowerCase()
+                                        .indexOf(input.toLowerCase()) >= 0
+                                }
+                            >
+                                {options}
+                            </Select>
+                        </Form.Item>
+                        <Tooltip
+                            placement="rightTop"
+                            overlayStyle={{ width: "430px" }}
+                            overlayInnerStyle={{ width: "430px" }}
+                            title={
+                                <ReactMarkdown escapeHtml={false}>
+                                    {mdStart +
+                                        optionsRemark
+                                            .map((item) => {
+                                                return (
+                                                    item.value +
+                                                    " //" +
+                                                    item.remarks +
+                                                    "\n"
+                                                )
+                                            })
+                                            .join("")}
+                                </ReactMarkdown>
+                            }
+                        >
+                            <a
+                                style={{
+                                    position: "absolute",
+                                    right: "-20px",
+                                    top: "5px",
                                 }}
-                            />
-                        )
-                    }
-                    rules={[{ required: true, message: "请输入类型！" }]}
-                >
-                    <Select
-                        showSearch
-                        placeholder="请选择类型"
-                        style={{ width: "100%" }}
-                        filterOption={(input, option) =>
-                            option.children
-                                .toLowerCase()
-                                .indexOf(input.toLowerCase()) >= 0
-                        }
-                    >
-                        {options}
-                    </Select>
+                            >
+                                <QuestionCircleOutlined />
+                            </a>
+                        </Tooltip>
+                    </>
                 </Form.Item>
+
                 <Form.Item
                     label="名称"
                     name="name"
@@ -397,15 +473,20 @@ export const ActionModal = ({
                     extra="操作的输入参数"
                     rules={verifyJsonORString}
                 >
-                    <div style={{ width: "489px" }}>
+                    <div
+                        style={{
+                            display: "flex",
+                            "justify-content": "space-between",
+                        }}
+                    >
                         <AceEditor
                             placeholder={`请输入${"参数"}`}
-                            mode={"json"}
-                            // theme="tomorrow"
+                            mode="python"
                             name="blah2"
                             wrapEnabled={true}
                             onChange={(res) => {
                                 const obj = {}
+                                console.log(type)
                                 obj["param"] = res
                                 formRef.current.setFieldsValue({
                                     param: res,
@@ -430,20 +511,19 @@ export const ActionModal = ({
                                             prefix,
                                             callback
                                         ) {
-                                            let type =
-                                                formRef.current &&
-                                                formRef.current.getFieldsValue()
-                                                    .type
-                                            console.log(type)
-                                            callback(
-                                                null,
-                                                completers.filter((item) => {
+                                            let type = localStorage.getItem(
+                                                "actionType"
+                                            )
+                                            let completer = completers.filter(
+                                                (item) => {
                                                     return item.action_type_key
                                                         ? item.action_type_key ===
                                                               type
                                                         : true
-                                                })
+                                                }
                                             )
+                                            console.log(completer)
+                                            callback(null, completer)
                                         },
                                     },
                                 ]
@@ -467,6 +547,86 @@ export const ActionModal = ({
                                 useWorker: false,
                             }}
                         />
+                        <Tooltip
+                            placement="rightTop"
+                            overlayStyle={{ width: "430px" }}
+                            overlayInnerStyle={{ width: "430px" }}
+                            title={
+                                <ReactMarkdown escapeHtml={false}>
+                                    {mdStart +
+                                        completers
+                                            .map((item) => {
+                                                let type = localStorage.getItem(
+                                                    "actionType"
+                                                )
+                                                if (
+                                                    item.action_type_key &&
+                                                    item.action_type_key ===
+                                                        type
+                                                ) {
+                                                    return (
+                                                        item.value +
+                                                        " //" +
+                                                        (item.meta || "") +
+                                                        "(" +
+                                                        (item.type
+                                                            ? "类型：" +
+                                                              item.type
+                                                            : "") +
+                                                        "," +
+                                                        (item.require !=
+                                                        undefined
+                                                            ? "必填：" +
+                                                              (item.require ===
+                                                              true
+                                                                  ? "是"
+                                                                  : "否")
+                                                            : "") +
+                                                        ")" +
+                                                        " \n"
+                                                    )
+                                                } else {
+                                                    if (!item.action_type_key) {
+                                                        return (
+                                                            item.value +
+                                                            " //" +
+                                                            (item.meta || "") +
+                                                            "(" +
+                                                            (item.type
+                                                                ? "类型：" +
+                                                                  item.type
+                                                                : "") +
+                                                            "," +
+                                                            (item.require !=
+                                                            undefined
+                                                                ? "必填：" +
+                                                                  (item.require ===
+                                                                  true
+                                                                      ? "是"
+                                                                      : "否")
+                                                                : "") +
+                                                            ")" +
+                                                            " \n"
+                                                        )
+                                                    } else {
+                                                        return ""
+                                                    }
+                                                }
+                                            })
+                                            .join("")}
+                                </ReactMarkdown>
+                            }
+                        >
+                            <a
+                                style={{
+                                    position: "absolute",
+                                    right: "-20px",
+                                    top: "5px",
+                                }}
+                            >
+                                <QuestionCircleOutlined />
+                            </a>
+                        </Tooltip>
                     </div>
                 </Form.Item>
                 <Divider

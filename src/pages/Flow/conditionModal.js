@@ -15,105 +15,61 @@ import Modal from "antd/lib/modal/Modal"
 import clone from "clone"
 import AceEditor from "react-ace"
 import "ace-builds/src-noconflict/mode-json"
-import { InfoCircleOutlined } from "@ant-design/icons"
+import { QuestionCircleOutlined } from "@ant-design/icons"
 import { v4 as uuidv4 } from "uuid"
 import {
     verifyJson,
     verifyJsonORString,
 } from "@/outter/fr-schema-antd-utils/src/utils/component"
-
+import ReactMarkdown from "react-markdown"
 import "ace-builds/src-noconflict/theme-github"
 import "ace-builds/src-noconflict/ext-language_tools"
 
-const completers = [
-    {
-        name: "skip_execute",
-        value: "skip_execute",
-        score: 100,
-        meta: "是否跳过下一个节点的执行",
-    },
-    {
-        name: "question_limit",
-        value: "question_limit",
-        score: 100,
-        meta: "问题搜索数量。",
-    },
-    {
-        name: "new_message",
-        value: "new_message",
-        score: 100,
-        meta: "当前会话状态新消息是否被节点执行",
-    },
-    {
-        name: "last_master_node",
-        value: "last_master_node",
-        score: 100,
-        meta: "当前会话中最后停留主节点",
-    },
-    {
-        name: "receive_text",
-        value: "receive_text",
-        score: 100,
-        meta: "会话中接收到的所有文本",
-    },
-    {
-        name: "reply_text",
-        value: "reply_text",
-        score: 100,
-        meta: "会话中最后回复的文本",
-    },
-    {
-        name: "search_result",
-        value: "search_result",
-        score: 100,
-        meta: "问题库是否返回数据",
-    },
-    {
-        name: "repeat_out_of_limit",
-        value: "repeat_out_of_limit",
-        score: 100,
-        meta: "是否有节点操过了重复次数",
-    },
-    {
-        name: "user_silent",
-        value: "user_silent",
-        score: 100,
-        meta: "是否静默，每次客户回答重新设置",
-    },
-    {
-        name: "user_silent_num",
-        value: "user_silent_num",
-        score: 100,
-        meta: "用户连续静默次数",
-    },
-    {
-        name: "user_interrupt",
-        value: "user_interrupt",
-        score: 100,
-        meta: "是否打断，每次客户回答重新设置",
-    },
-    {
-        name: "user_interrupt_num",
-        value: "user_interrupt_num",
-        score: 100,
-        meta: "用户连续打断次数",
-    },
-    {
-        name: "tts_play",
-        value: "tts_play",
-        score: 100,
-        meta: "回复文本tts合成的音频客户聆听秒数",
-    },
-]
+function initCompleter(actionParam, record) {
+    let init_slot = JSON.parse(
+        localStorage.getItem("flow" + record.id + "init_slot")
+    )
+    let slot = JSON.parse(localStorage.getItem("flow" + record.id + "slot"))
+    let completers = []
+    actionParam.map((item) => {
+        completers.push({
+            name: item.key,
+            value: item.key,
+            score: 100,
+            meta: item.remark,
+            require: item.require,
+            type: item.type,
+            action_type_key: item.action_type_key,
+        })
+    })
+    if (slot) {
+        Object.keys(slot).forEach((key) => {
+            completers.push({
+                name: slot[key].name,
+                value: slot[key].value,
+                score: 100,
+                require: slot[key].require,
+                type: slot[key].type,
+                meta: slot[key].remark || "",
+                remarks: slot[key].remark || "",
+            })
+        })
+    }
+    if (init_slot) {
+        Object.keys(init_slot).forEach((key) => {
+            completers.push({
+                name: init_slot[key].value,
+                value: init_slot[key].value,
+                score: 100,
+                require: init_slot[key].require,
+                type: init_slot[key].type,
+                meta: init_slot[key].remark || "",
+                remarks: init_slot[key].remark || "",
+            })
+        })
+    }
 
-const complete = (editor) => {
-    editor.completers = [
-        {
-            getCompletions: function (editors, session, pos, prefix, callback) {
-                callback(null, completers)
-            },
-        },
-    ]
+    return completers
 }
 
 export const ConditionModal = ({
@@ -128,6 +84,8 @@ export const ConditionModal = ({
     intenList,
     handleChangeShowCondition,
     graphChange,
+    actionParam,
+    record,
 }) => {
     const expGraph = graph
     let condition = []
@@ -304,7 +262,10 @@ export const ConditionModal = ({
     )
     const [importData, setImportData] = useState([])
     let importDict = []
-
+    let completers = []
+    if (record) {
+        completers = initCompleter(actionParam, record)
+    }
     expGraphData.connection &&
         expGraphData.connection.map((item) => {
             let nodeActionDict = []
@@ -329,7 +290,11 @@ export const ConditionModal = ({
                 </Select.OptGroup>
             )
         })
-
+    let mdStart =
+        "***可选范围***\n" +
+        // '*这是倾斜的文字*`\n\n' +
+        // '**这是斜体加粗的文字**\n\n' +
+        "~~~js\n"
     return (
         <Modal
             title={<div keys={isImport || defaultValue.key}>条件配置</div>}
@@ -470,7 +435,29 @@ export const ConditionModal = ({
                                     type: "background",
                                 },
                             ]}
-                            onLoad={complete}
+                            onLoad={(editor) => {
+                                editor.completers = [
+                                    {
+                                        getCompletions: function (
+                                            editors,
+                                            session,
+                                            pos,
+                                            prefix,
+                                            callback
+                                        ) {
+                                            let completer = completers.filter(
+                                                (item) => {
+                                                    return item.action_type_key
+                                                        ? item.action_type_key ===
+                                                              "set_slot"
+                                                        : true
+                                                }
+                                            )
+                                            callback(null, completer)
+                                        },
+                                    },
+                                ]
+                            }}
                             setOptions={{
                                 // enableBasicAutocompletion: true,
                                 enableLiveAutocompletion: true,
@@ -480,6 +467,83 @@ export const ConditionModal = ({
                                 useWorker: false,
                             }}
                         />
+                        <Tooltip
+                            placement="rightTop"
+                            overlayStyle={{ width: "430px" }}
+                            overlayInnerStyle={{ width: "430px" }}
+                            title={
+                                <ReactMarkdown escapeHtml={false}>
+                                    {mdStart +
+                                        completers
+                                            .map((item) => {
+                                                if (
+                                                    item.action_type_key &&
+                                                    item.action_type_key ===
+                                                        "set_slot"
+                                                ) {
+                                                    return (
+                                                        item.value +
+                                                        " //" +
+                                                        (item.meta || "") +
+                                                        "(" +
+                                                        (item.type
+                                                            ? "类型：" +
+                                                              item.type
+                                                            : "") +
+                                                        "," +
+                                                        (item.require !=
+                                                        undefined
+                                                            ? "必填：" +
+                                                              (item.require ===
+                                                              true
+                                                                  ? "是"
+                                                                  : "否")
+                                                            : "") +
+                                                        ")" +
+                                                        " \n"
+                                                    )
+                                                } else {
+                                                    if (!item.action_type_key) {
+                                                        return (
+                                                            item.value +
+                                                            " //" +
+                                                            (item.meta || "") +
+                                                            "(" +
+                                                            (item.type
+                                                                ? "类型：" +
+                                                                  item.type
+                                                                : "") +
+                                                            "," +
+                                                            (item.require !=
+                                                            undefined
+                                                                ? "必填：" +
+                                                                  (item.require ===
+                                                                  true
+                                                                      ? "是"
+                                                                      : "否")
+                                                                : "") +
+                                                            ")" +
+                                                            " \n"
+                                                        )
+                                                    } else {
+                                                        return ""
+                                                    }
+                                                }
+                                            })
+                                            .join("")}
+                                </ReactMarkdown>
+                            }
+                        >
+                            <a
+                                style={{
+                                    position: "absolute",
+                                    right: "-20px",
+                                    top: "5px",
+                                }}
+                            >
+                                <QuestionCircleOutlined />
+                            </a>
+                        </Tooltip>
                     </div>
                 </Form.Item>
                 <Divider
