@@ -2,12 +2,16 @@ import { connect } from "dva"
 import ListPage from "@/components/ListPage/ListPage"
 import schemas from "@/schemas"
 import React from "react"
-import { Divider, Button } from "antd"
+import { Divider, Button, message, Modal } from "antd"
 import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
 import { listToDict } from "@/outter/fr-schema/src/dict"
 import ImportModal from "./ImportModal"
 import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
+import FileSaver from "file-saver"
+import Result from "./Result"
+import XLSX from "xlsx"
+import { convertFormImport } from "@/outter/fr-schema/src/schema"
 
 @connect(({ global }) => ({
     dict: global.dict,
@@ -23,23 +27,140 @@ class List extends ListPage {
             schema: schemas.outboundTask.schema,
             service: schemas.outboundTask.service,
             importTemplateUrl,
-            showDelete: true,
+            showDelete: false,
+            showEdit: false,
             showSelect: true,
             initLocalStorageDomainKey: true,
-            operateWidth: "170px",
+            operateWidth: "200px",
         })
     }
 
     async componentDidMount() {
         let dict = await schemas.outboundTask.service.getDict({ type: 1 })
-        super.componentDidMount()
         this.schema.caller_group_id.dict = listToDict(
             dict.list,
             "",
             "KEY",
             "VALUE"
         )
+
+        let flow = await schemas.flow.service.get({
+            limit: 1000,
+            select: "id, key, domain_key, name",
+        })
+        this.schema.flow_key.dict = listToDict(flow.list, "", "key", "name")
+
+        let callerArray = []
+        let response = await Promise.all(
+            dict.list.map(async (item) => {
+                let res = await schemas.outboundTask.service.getDict({
+                    type: 2,
+                    caller_group_id: item.KEY,
+                })
+                console.log(res)
+                callerArray = [...callerArray, ...res.list]
+            })
+        )
+
+        this.schema.caller_number.dict = listToDict(
+            callerArray,
+            "",
+            "KEY",
+            "VALUE"
+        )
         this.schema.domain_key.dict = this.props.dict.domain
+        super.componentDidMount()
+    }
+
+    getExcelData = async (file) => {
+        const reader = new FileReader()
+        let maxLength = 1000
+        let sliceNum = 1
+        let dataArray = []
+
+        await new Promise((resolve, reject) => {
+            reader.onload = (async (evt) => {
+                // parse excel
+
+                const schema = schemas.outboundTask.fileSchema
+                const binary = evt.target.result
+                const wb = XLSX.read(binary, { type: "binary" })
+                const sheetName = wb.SheetNames[0]
+                const ws = wb.Sheets[sheetName]
+                let data = XLSX.utils.sheet_to_json(ws, {
+                    raw: false,
+                    header: "A",
+                    defval: "",
+                    dateNF: "YYYY/MM/DD",
+                })
+
+                try {
+                    // 判断数据长度
+                    if (maxLength && data && data.length > maxLength) {
+                        throw new Error(
+                            `每次导入最多只允许导入${maxLength}条数据！`
+                        )
+                    }
+
+                    data = await convertFormImport(
+                        data,
+                        schema,
+                        sliceNum,
+                        "id" || Object.keys(schema)[0]
+                    )
+                    // this.props.onChange(data)
+                    console.log(data)
+                    dataArray = data
+                    this.setState((state) => ({
+                        fileList: [file],
+                    }))
+                    resolve()
+                } catch (e) {
+                    message.error(e.message)
+                } finally {
+                    // this.setState({ beforeUploadLoading: false })
+                }
+            }).bind(this)
+
+            //here our function should be implemented
+            reader.readAsBinaryString(file)
+        })
+
+        return dataArray
+    }
+
+    async handleImportData(data, schema) {
+        // 更新
+        let response
+        try {
+            let number_group = await this.getExcelData(data.number_group.file)
+            number_group = number_group.map((item) => {
+                return {
+                    ...item,
+                    slot: item.slot ? JSON.parse(item.slot) : {},
+                    // cstm_param: item.cstm_param? JSON.parse(item.cstm_param): {},
+                }
+            })
+            response = await this.service.importData(
+                {
+                    ...data,
+                    number_group: number_group,
+                    task_id: this.state.infoData.external_id,
+                    id: undefined,
+                },
+                schema
+            )
+
+            this.refreshList()
+            message.success("添加成功")
+            this.handleVisibleImportModal()
+        } catch (error) {
+            message.error(error.message)
+        }
+        this.handleChangeCallback && this.handleChangeCallback()
+        this.props.handleChangeCallback && this.props.handleChangeCallback()
+
+        return response
     }
 
     renderOperationButtons() {
@@ -59,13 +180,13 @@ class List extends ListPage {
                         新增
                     </Button>
                 )}
-                <Button
+                {/* <Button
                     onClick={() => {
                         this.setState({ visibleImport: true })
                     }}
                 >
                     导入
-                </Button>
+                </Button> */}
 
                 <Button
                     loading={this.state.exportLoading}
@@ -81,7 +202,29 @@ class List extends ListPage {
         )
     }
 
+    renderExtend() {
+        const { record } = this.state
+        return (
+            <>
+                {this.state.showInfo && (
+                    <Modal
+                        title={"详情"}
+                        width={"80%"}
+                        visible={this.state.showInfo}
+                        footer={null}
+                        onCancel={() => {
+                            this.setState({ showInfo: false })
+                        }}
+                    >
+                        <Result task_id={record.id} />
+                    </Modal>
+                )}
+            </>
+        )
+    }
+
     handleVisibleImportModal = (flag, record, action) => {
+        console.log(record)
         this.setState({
             visibleImport: !!flag,
             infoData: record,
@@ -116,6 +259,9 @@ class List extends ListPage {
     }
 
     renderImportModal(customProps) {
+        if (this.props.renderInfoModal) {
+            return this.props.renderInfoModal()
+        }
         const { form } = this.props
         const renderForm = this.props.renderForm || this.renderForm
         const { resource, title, addArgs } = this.meta
@@ -123,7 +269,7 @@ class List extends ListPage {
         const updateMethods = {
             handleVisibleModal: this.handleVisibleImportModal.bind(this),
             handleUpdate: this.handleUpdate.bind(this),
-            handleAdd: this.handleAdd.bind(this),
+            handleAdd: this.handleImportData.bind(this),
         }
 
         return (
@@ -131,7 +277,7 @@ class List extends ListPage {
                 <InfoModal
                     renderForm={renderForm}
                     title={title}
-                    action={action}
+                    action={"add"}
                     resource={resource}
                     {...updateMethods}
                     visible={visibleImport}
@@ -139,7 +285,7 @@ class List extends ListPage {
                     addArgs={addArgs}
                     meta={this.meta}
                     service={this.service}
-                    schema={this.schema}
+                    schema={schemas.outboundTask.importSchema}
                     {...this.meta.infoProps}
                     {...customProps}
                 />
@@ -152,13 +298,30 @@ class List extends ListPage {
                 <Divider type="vertical" />
                 <a
                     onClick={() => {
-                        this.setState({
-                            showYamlEdit: true,
-                            record,
-                        })
+                        this.handleVisibleImportModal(true, record, "add")
                     }}
                 >
-                    内容
+                    导入
+                </a>
+                <Divider type="vertical" />
+                <a
+                    onClick={() => {
+                        this.setState({ showInfo: true, record })
+                    }}
+                >
+                    详情
+                </a>
+                <Divider type="vertical" />
+                <a
+                    onClick={async () => {
+                        await schemas.outboundTask.service.changeTaskStatus({
+                            task_id: record.external_id,
+                            status: "running",
+                        })
+                        message.success("开启成功")
+                    }}
+                >
+                    开启
                 </a>
             </>
         )

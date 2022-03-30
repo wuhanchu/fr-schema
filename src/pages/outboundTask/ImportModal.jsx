@@ -3,7 +3,7 @@ import { connect } from "dva"
 import { globalStyle } from "@/styles/global"
 import "@ant-design/compatible/assets/index.css"
 
-import { Button, message, Modal, Upload, Form } from "antd"
+import { Button, message, Modal, Upload, Form, Input } from "antd"
 import FileSaver from "file-saver"
 
 import XLSX from "xlsx"
@@ -111,7 +111,15 @@ class ImportModal extends PureComponent {
                             下载
                         </Button>
                     </FormItem>
-
+                    <FormItem
+                        labelCol={globalStyle.form.labelCol}
+                        wrapperCol={globalStyle.form.wrapperCol}
+                        label={"名称"}
+                        name="name"
+                        required={true}
+                    >
+                        <Input placeholder="名称"></Input>
+                    </FormItem>
                     <FormItem
                         labelCol={globalStyle.form.labelCol}
                         wrapperCol={globalStyle.form.wrapperCol}

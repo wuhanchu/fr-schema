@@ -2,6 +2,8 @@ import { createApi } from "@/components/ListPage/service"
 import { schemas } from "@/outter/fr-schema-antd-utils/src"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import { verifyJson } from "@/outter/fr-schema-antd-utils/src/utils/component"
+import { Tooltip } from "antd"
+import { QuestionCircleOutlined } from "@ant-design/icons"
 
 const schema = {
     id: {
@@ -49,7 +51,7 @@ const schema = {
             false: {
                 value: "false",
                 remark: "否",
-                default: true
+                default: true,
             },
         },
         extra: "内部问题库的数据不用于智能提示(一般问题包含变量或者占位符)",
@@ -67,6 +69,46 @@ const schema = {
         title: "个性化配置",
         search: false,
         hideInTable: true,
+        infoRender: (
+            <Tooltip
+                overlayStyle={{ width: "530px" }}
+                overlayInnerStyle={{ width: "530px" }}
+                placement="rightTop"
+                title={
+                    <pre>
+                        格式
+                        {`
+{
+  "info_schema": {
+	"***": {
+	  "dict": {   // 类型为下拉框时必填
+		"***": {
+		  "value": "***", //值 
+		  "remark": "****" //名称
+		}
+	  },
+	  "type": "Select", // 类型 Select下拉框 text 文本框
+	  "title": "信息类型", //字段名称
+	  "editable": true, // 是否可编辑
+	  "isExpand": true, // 是否自定义变量
+	  "required": true // 是否必填
+	}
+  }
+}
+`}
+                    </pre>
+                }
+            >
+                <QuestionCircleOutlined
+                    style={{
+                        marginLeft: "5px",
+                        position: "absolute",
+                        right: "120px",
+                        top: "10px",
+                    }}
+                />
+            </Tooltip>
+        ),
         props: {
             style: { width: "500px" },
             height: "300px",

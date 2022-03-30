@@ -12,6 +12,8 @@ import entityType from "./entityType"
 import hotWord from "./domain/hotWord"
 import task from "./domain/task"
 import outboundTask from "./outboundTask/index"
+import taskResult from "./outboundTask/result"
+
 import response from "./response"
 
 import searchHistory from "./domain/searchHistory"
@@ -43,4 +45,5 @@ export default {
     searchHistory,
     outboundTask,
     customer,
+    taskResult,
 }

@@ -305,11 +305,11 @@ class List extends ListPage {
         
          [
             {
-                "text": "对不起，您的内容小数还在努力学习中。",
-                "buttons": [
+                "text": "对不起，您的内容小数还在努力学习中。", //回复内容
+                "buttons": [    // 回复选项
                     {
-                        "title": "展示文本",
-                        "payload": "/set_slot{\"templates\":\"t\"}"
+                        "title": "展示文本", //回复选项展示内容
+                        "payload": "/set_slot{\"templates\":\"t\"}" //回复选项值
                     }]
             }
         ]
@@ -482,28 +482,7 @@ class List extends ListPage {
                             extra="回复文本没配置时生效，用于更复杂的回复方式。"
                             label={
                                 <div>
-                                    <div>
-                                        回复模板:
-                                        <Tooltip
-                                            overlayStyle={{ width: "500px" }}
-                                            overlayInnerStyle={{
-                                                width: "500px",
-                                            }}
-                                            title={
-                                                <ReactMarkdown>
-                                                    {markdown}
-                                                </ReactMarkdown>
-                                            }
-                                        >
-                                            <a>
-                                                <InfoCircleOutlined
-                                                    style={{
-                                                        marginLeft: "5px",
-                                                    }}
-                                                />
-                                            </a>
-                                        </Tooltip>
-                                    </div>
+                                    <div>回复模板:</div>
                                     <div style={{ color: "#00000073" }}>
                                         机器闲聊回复
                                     </div>
@@ -512,6 +491,26 @@ class List extends ListPage {
                             name="template"
                         >
                             {this.renderAce("template")}
+                            <Tooltip
+                                overlayStyle={{ width: "600px" }}
+                                overlayInnerStyle={{
+                                    width: "600px",
+                                }}
+                                title={
+                                    <ReactMarkdown>{markdown}</ReactMarkdown>
+                                }
+                            >
+                                {/* <a> */}
+                                <InfoCircleOutlined
+                                    style={{
+                                        position: "absolute",
+                                        right: "-20px",
+                                        top: "10px",
+                                        marginLeft: "5px",
+                                    }}
+                                />
+                                {/* </a> */}
+                            </Tooltip>
                         </Form.Item>
                     </Form>
                 </Spin>
@@ -559,7 +558,7 @@ class List extends ListPage {
                     fontSize={14}
                     showPrintMargin
                     showGutter
-                    style={{ width: "500px" }}
+                    style={{ width: "476px" }}
                     height={"400px"}
                     highlightActiveLine
                     value={AceEditorValue}
