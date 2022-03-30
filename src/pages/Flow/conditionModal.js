@@ -26,10 +26,16 @@ import "ace-builds/src-noconflict/theme-github"
 import "ace-builds/src-noconflict/ext-language_tools"
 
 function initCompleter(actionParam, record) {
-    let init_slot = JSON.parse(
-        localStorage.getItem("flow" + record.id + "init_slot")
-    )
-    let slot = JSON.parse(localStorage.getItem("flow" + record.id + "slot"))
+    let init_slot = undefined
+    let slot = undefined
+    if (localStorage.getItem("flow" + record.id + "init_slot")) {
+        init_slot = JSON.parse(
+            localStorage.getItem("flow" + record.id + "init_slot")
+        )
+    }
+    if (localStorage.getItem("flow" + record.id + "slot")) {
+        slot = JSON.parse(localStorage.getItem("flow" + record.id + "slot"))
+    }
     let completers = []
     actionParam.map((item) => {
         completers.push({
