@@ -227,7 +227,7 @@ class Flow extends React.PureComponent {
             domain_key: record.domain_key,
         }
 
-        this.bindKey()
+        // this.bindKey()
         this.getFlow()
         try {
             const container = document.getElementById("containerChart")

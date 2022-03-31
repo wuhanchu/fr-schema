@@ -56,14 +56,27 @@ class MyList extends DataList {
     async componentDidMount() {
         let res = await projectService.service.get({ limit: 1000 })
         let resClient = await clientService.get({ limit: 1000 })
-        this.schema.client_id.dict = listToDict(
+        let client_dict = listToDict(
             resClient.list,
             null,
             "client_id",
             "client_name"
         )
+        client_dict["null"] = {
+            value: "",
+            client_id: "",
+            remark: "未知",
+        }
+        this.schema.client_id.dict = client_dict
         try {
-            this.formRef.current.setFieldsValue({ final_result: "true" })
+            this.formRef.current.setFieldsValue({
+                final_result: "true",
+                fitter_time:
+                    this.props.searchArgs && this.props.searchArgs.begin_time,
+                client_id:
+                    this.props.searchArgs && this.props.searchArgs.client_id,
+                have_match_project_id: this.props.searchArgs.match_project_id,
+            })
         } catch (error) {}
         super.componentDidMount()
         const onChange = (e, data) => {
@@ -74,6 +87,7 @@ class MyList extends DataList {
                 match: e.target.value,
             })
         }
+        console.log(this.props)
         this.setState({ projectDict: listToDict(res.list), searchSpan: 6 })
         this.schema.match_project_id.dict = listToDict(res.list)
         this.schema.project_id.dict = listToDict(res.list)
@@ -106,7 +120,13 @@ class MyList extends DataList {
         const { order } = this.props
 
         this.formRef.current.resetFields()
-        this.formRef.current.setFieldsValue({ final_result: "true" })
+        this.formRef.current.setFieldsValue({
+            final_result: "true",
+            fitter_time:
+                this.props.searchArgs && this.props.searchArgs.begin_time,
+            client_id: this.props.searchArgs && this.props.searchArgs.client_id,
+            have_match_project_id: this.props.searchArgs.match_project_id,
+        })
         this.setState(
             {
                 pagination: { ...this.state.pagination, currentPage: 1 },

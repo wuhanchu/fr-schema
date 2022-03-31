@@ -5,24 +5,52 @@ import { verifyJson } from "@/outter/fr-schema-antd-utils/src/utils/component"
 const schema = {
     customer_id: {
         title: "客户编号",
+        search: false,
+    },
+    result: {
+        title: "结果",
+        type: schemaFieldType.Select,
+        dict: {
+            normal: { remark: "正常", value: "normal" },
+            failed: { remark: "拨打失败", value: "failed" },
+            no_connect: { remark: "未接通", value: "no_connect" },
+            no_answer: { remark: "无应答", value: "no_answer" },
+            busy: { remark: "忙线", value: "busy" },
+            empty: { remark: "空号", value: "empty" },
+            shutdown: { remark: "关机", value: "shutdown" },
+            halt: { remark: "停机", value: "halt" },
+            other: { remark: "其他", value: "other" },
+        },
     },
     type: {
         title: "类型",
+        type: schemaFieldType.Select,
+        dict: {
+            in: { remark: "呼入", value: "in" },
+            out: { remark: "呼出", value: "out" },
+        },
     },
+    status: {
+        title: "状态",
+        type: schemaFieldType.Select,
+        dict: {
+            created: { remark: "已创建", value: "created" },
+            wait: { remark: "等待", value: "wait" },
+            calling: { remark: "响铃中", value: "calling" },
+            on_the_phone: { remark: "通话中", value: "on_the_phone" },
+            end: { remark: "已结束", value: "end" },
+        },
+    },
+
     form_phone: {
         title: "呼出号码",
     },
     to_phone: {
         title: "拨打号码",
     },
-    status: {
-        title: "状态",
-    },
-    result: {
-        title: "结果",
-    },
     fail_reason: {
         title: "失败原因",
+        search: false,
     },
     begin_time: {
         title: "开始时间",
@@ -32,21 +60,27 @@ const schema = {
     },
     phone_duration: {
         title: "通话时长",
+        search: false,
     },
     wait_duration: {
+        search: false,
         title: "排队时长",
     },
     calling_duration: {
         title: "振铃时长",
+        search: false,
     },
     external_id: {
         title: "外部编号",
+        search: false,
     },
     conversation_id: {
         title: "会话信息编号",
+        search: false,
     },
     phone_audio_url: {
         title: "录音地址",
+        search: false,
     },
 }
 

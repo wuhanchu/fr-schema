@@ -359,6 +359,12 @@ export default [
                     //             component: "./customer/List.jsx",
                     //             title: "客户管理",
                     //         },
+                    //         {
+                    //             path: "/outboundTask/message",
+                    //             name: "taskMessage",
+                    //             component: "./message/List.jsx",
+                    //             title: "消息管理",
+                    //         },
                     //     ],
                     // },
                     {

@@ -25,6 +25,7 @@ const schema = {
         },
         type: schemaFieldType.DatePicker,
     },
+
     create_time: {
         title: "提问时间",
         props: {
@@ -189,8 +190,9 @@ const schema = {
         props: {
             allowClear: true,
             showSearch: true,
+            mode: "tags",
         },
-        listHide: true,
+        // listHide: true,
         addHide: true,
         editHide: true,
     },
@@ -224,21 +226,6 @@ const schema = {
 const service = createApi("search_history", schema, null)
 
 service.get = async (args) => {
-    console.log(args.fitter_time)
-
-    // if (args.fitter_time) {
-    //     let fitter_time = args.fitter_time.split(",")
-    //     let time = new Date(fitter_time[0])
-    //     let beginTime = moment(time).format("YYYY-MM-DD") + "T00:00:00"
-    //     time = new Date(fitter_time[1])
-    //     let endTime = moment(time).format("YYYY-MM-DD") + "T23:59:59"
-
-    //     // let beginTime = args.fitter_time[0].format("YYYY-MM-DDTHH:mm:ss")
-    //     // let endTime = args.fitter_time[1].format("YYYY-MM-DDTHH:mm:ss")
-    //     args.fitter_time = undefined
-    //     args.and = `(create_time.gte.${beginTime},create_time.lte.${endTime})`
-    // }
-
     if (args.fitter_time) {
         let fitter_time = args.fitter_time.split(",")
         let time = new Date(fitter_time[0])
@@ -275,7 +262,6 @@ service.get = async (args) => {
             args.match_project_id = "is.null"
         }
     }
-    console.log(args.final_result)
     if (args.final_result === "false") {
         args.final_result = undefined
     }
@@ -291,6 +277,23 @@ service.get = async (args) => {
 
     if (args.user_confirm === "null") {
         args.user_confirm = "is.null"
+    }
+    if (args.client_id) {
+        // args.client_id = "in.(" + args.client_id + ")"
+        if (args.client_id.indexOf("null") > -1) {
+            args.or =
+                "(client_id.is.null, client_id.eq." +
+                args.client_id.split(",").join(", client_id.eq.") +
+                ")"
+        } else {
+            args.or =
+                "(client_id.eq." +
+                args.client_id.split(",").join(", client_id.eq.") +
+                ")"
+        }
+        args.client_id = undefined
+    } else {
+        args.client_id = undefined
     }
     let data = await createApi("search_history", schema, null, "eq.").get(args)
     return data

@@ -7,12 +7,14 @@ const schema = {
     start_time: {
         title: "开始时间",
         type: schemaFieldType.DatePicker,
+        extra: "任务开始拨号时间",
         hideInTable: true,
         required: true,
     },
     end_time: {
         title: "结束时间",
         type: schemaFieldType.DatePicker,
+        extra: "任务结束拨号时间",
         hideInTable: true,
         required: true,
     },
@@ -55,6 +57,7 @@ const schema = {
             true: { value: "true", remark: "是" },
             false: { value: "false", remark: "否" },
         },
+        extra: "是否为测试任务",
     },
     caller_number: {
         title: "呼出号码",
@@ -62,11 +65,19 @@ const schema = {
     },
     user_id: {
         title: "用户",
+        addHide: true,
     },
     status: {
         title: "状态",
         addHide: true,
         editHide: true,
+        type: schemaFieldType.Select,
+        dict: {
+            wait: { value: "wait", remark: "等待运行" },
+            running: { value: "running", remark: "运行中" },
+            suspend: { value: "suspend", remark: "暂停" },
+            end: { value: "end", remark: "结束" },
+        },
     },
 
     create_time: {
@@ -85,71 +96,55 @@ const schema = {
 }
 
 const importSchema = {
-    call_type: {
-        title: "数据类型",
-        type: schemaFieldType.Select,
-        required: true,
+    // call_type: {
+    //     title: "数据类型",
+    //     type: schemaFieldType.Select,
+    //     required: true,
 
-        dict: {
-            predict: {
-                value: "3",
-                remark: "预测外呼",
-            },
-            auto: {
-                value: "4",
-                remark: "自动外呼",
-            },
-        },
-    },
-    service_cmd: {
-        title: "接听队列",
-        type: schemaFieldType.Select,
-        required: true,
+    //     dict: {
+    //         predict: {
+    //             value: "3",
+    //             remark: "预测外呼",
+    //         },
+    //         auto: {
+    //             value: "4",
+    //             remark: "自动外呼",
+    //         },
+    //     },
+    // },
+    // service_cmd: {
+    //     title: "接听队列",
+    //     type: schemaFieldType.Select,
+    //     required: true,
 
-        dict: {
-            TRUNK002: {
-                value: "2",
-                remark: "TRUNK002",
-            },
-            自助终端居住证: {
-                value: "3",
-                reamrk: "自助终端居住证",
-            },
-            TRUNK005: {
-                value: "5",
-                remark: "TRUNK005",
-            },
-            易办税代开: {
-                value: "20",
-                remark: "易办税代开",
-            },
-            财税软件: {
-                value: "21",
-                remark: "财税软件",
-            },
-            大客户: {
-                value: "22",
-                remark: "大客户",
-            },
-        },
-    },
+    //     dict: {
+    //         预测004: {
+    //             value: "预测004",
+    //             remark: "预测004",
+    //         },
+    //         预测006: {
+    //             value: "预测006",
+    //             reamrk: "预测006",
+    //         },
+    //     },
+    // },
     name: {
         title: "名称",
         required: true,
     },
 
-    call_modle: {
-        required: true,
+    // call_modle: {
+    //     required: true,
 
-        title: "外呼模式",
-        type: schemaFieldType.Select,
-        dict: {
-            return: {
-                value: "0",
-                remark: "接通转坐席",
-            },
-        },
-    },
+    //     title: "外呼模式",
+    //     type: schemaFieldType.Select,
+    //     dict: {
+    //         return: {
+    //             value: "0",
+    //             remark: "接通转坐席",
+    //         },
+    //     },
+    // },
     number_group: {
         title: "数据文件",
         required: true,

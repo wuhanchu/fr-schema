@@ -295,7 +295,7 @@ class List extends ListPage {
     renderOperateColumnExtend(record) {
         return (
             <>
-                <Divider type="vertical" />
+                {/* <Divider type="vertical" /> */}
                 <a
                     onClick={() => {
                         this.handleVisibleImportModal(true, record, "add")
@@ -311,18 +311,43 @@ class List extends ListPage {
                 >
                     详情
                 </a>
-                <Divider type="vertical" />
-                <a
-                    onClick={async () => {
-                        await schemas.outboundTask.service.changeTaskStatus({
-                            task_id: record.external_id,
-                            status: "running",
-                        })
-                        message.success("开启成功")
-                    }}
-                >
-                    开启
-                </a>
+                {record.status !== "end" && (
+                    <>
+                        <Divider type="vertical" />
+                        {record.status === "wait" ||
+                        record.status === "suspend" ? (
+                            <a
+                                onClick={async () => {
+                                    await schemas.outboundTask.service.changeTaskStatus(
+                                        {
+                                            task_id: record.external_id,
+                                            status: "running",
+                                        }
+                                    )
+                                    this.refreshList()
+                                    message.success("开启成功")
+                                }}
+                            >
+                                开启
+                            </a>
+                        ) : (
+                            <a
+                                onClick={async () => {
+                                    await schemas.outboundTask.service.changeTaskStatus(
+                                        {
+                                            task_id: record.external_id,
+                                            status: "suspend",
+                                        }
+                                    )
+                                    this.refreshList()
+                                    message.success("暂停成功")
+                                }}
+                            >
+                                暂停
+                            </a>
+                        )}
+                    </>
+                )}
             </>
         )
     }

@@ -26,6 +26,8 @@ class List extends DataList {
             showSelect: true,
             initLocalStorageDomainKey: true,
             operateWidth: "170px",
+            readOnly: true,
+            addHide: true,
         })
     }
 

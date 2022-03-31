@@ -17,6 +17,8 @@ class List extends ListPage {
             service: schemas.customer.service,
             initLocalStorageDomainKey: true,
             operateWidth: "170px",
+            readOnly: true,
+            addHide: true,
         })
     }
 

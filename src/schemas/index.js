@@ -23,6 +23,7 @@ import relationType from "./relationType"
 import flow from "./flow"
 import customer from "./customer"
 import statistics from "./statistics"
+import message from "./message"
 
 export default {
     project,
@@ -46,4 +47,5 @@ export default {
     outboundTask,
     customer,
     taskResult,
+    message,
 }

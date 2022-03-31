@@ -40,6 +40,8 @@ import { exportData } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
 import { formatData } from "@/utils/utils"
 import clientService from "@/pages/authority/clientList/service"
 import moment from "moment"
+import SearchHistory from "@/pages/domain/component/SearchHistory"
+
 const { utils, decorateList } = frSchema
 
 @connect(({ global }) => ({
@@ -155,7 +157,6 @@ class List extends ListPage {
             client_id: "null",
             remark: "未知",
         }
-        console.log(client_dict)
         this.schema.client_id.dict = client_dict
         this.meta.queryArgs = {
             ...this.meta.queryArgs,
@@ -392,7 +393,15 @@ class List extends ListPage {
                                         fontSize: "20px",
                                     }}
                                 >
-                                    {summary ? summary.not_match_total : 0}
+                                    <a
+                                        onClick={() => {
+                                            this.setState({
+                                                showSearchHistory: true,
+                                            })
+                                        }}
+                                    >
+                                        {summary ? summary.not_match_total : 0}
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -843,6 +852,7 @@ class List extends ListPage {
             this.refreshList()
         }
     }
+
     render() {
         const { title, content, tabList, onTabChange } = this.meta
         const { tabActiveKey } = this.state
@@ -902,7 +912,14 @@ class List extends ListPage {
         )
     }
     renderExtend() {
-        const { showAnswer, record } = this.state
+        const {
+            showAnswer,
+            record,
+            showSearchHistory,
+            initLocalStorageDomainKey,
+        } = this.state
+        if (this.formRef && this.formRef.current)
+            console.log(this.formRef.current.getFieldsValue())
         return (
             <>
                 {showAnswer && (
@@ -924,6 +941,27 @@ class List extends ListPage {
                                 }}
                             />
                         </Card>
+                    </Modal>
+                )}
+                {showSearchHistory && (
+                    <Modal
+                        title={"提问历史"}
+                        width={"90%"}
+                        visible={showSearchHistory}
+                        footer={null}
+                        onCancel={() => {
+                            this.setState({ showSearchHistory: false })
+                        }}
+                    >
+                        <SearchHistory
+                            searchArgs={{
+                                ...(this.formRef &&
+                                    this.formRef.current &&
+                                    this.formRef.current.getFieldsValue()),
+                                match_project_id: "notHave",
+                            }}
+                            record={{ key: this.meta.queryArgs.domain_key }}
+                        ></SearchHistory>
                     </Modal>
                 )}
             </>

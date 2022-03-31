@@ -1,11 +1,10 @@
 import { connect } from "dva"
-import ListPage from "@/outter/fr-schema-antd-utils/src/components/Page/ListPage"
+import ListPage from "@/components/ListPage/ListPage"
 import schemas from "@/schemas"
 import React from "react"
 import { Divider } from "antd"
 import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
-import YamlEdit from "./yamlEdiit"
 
 @connect(({ global }) => ({
     dict: global.dict,
@@ -14,8 +13,9 @@ import YamlEdit from "./yamlEdiit"
 class List extends ListPage {
     constructor(props) {
         super(props, {
-            schema: schemas.story.schema,
-            service: schemas.story.service,
+            schema: schemas.message.schema,
+            service: schemas.message.service,
+            initLocalStorageDomainKey: true,
             operateWidth: "170px",
         })
     }
@@ -36,27 +36,8 @@ class List extends ListPage {
         return this.createSearchBar(filters)
     }
 
-    handleSetYamlEditVisible = (visible) => {
-        this.setState({
-            showYamlEdit: visible,
-        })
-    }
-
     renderExtend() {
-        return (
-            <>
-                {this.state.showYamlEdit && (
-                    <YamlEdit
-                        handleSetYamlEditVisible={this.handleSetYamlEditVisible}
-                        service={this.service}
-                        title={"内容"}
-                        refreshList={this.refreshList.bind(this)}
-                        schemasName={"content"}
-                        record={this.state.record}
-                    />
-                )}
-            </>
-        )
+        return <></>
     }
 
     renderOperateColumnExtend(record) {
@@ -66,7 +47,7 @@ class List extends ListPage {
                 <a
                     onClick={() => {
                         this.setState({
-                            showYamlEdit: true,
+                            // showYamlEdit: true,
                             record,
                         })
                     }}
