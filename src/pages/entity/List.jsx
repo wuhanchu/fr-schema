@@ -297,10 +297,12 @@ class List extends DataList {
                                                     <div
                                                         dangerouslySetInnerHTML={{
                                                             __html: value
-                                                                ? value.replace(
-                                                                      "<br/>",
-                                                                      ""
-                                                                  )
+                                                                ? value
+                                                                      .toString()
+                                                                      .replace(
+                                                                          "<br/>",
+                                                                          ""
+                                                                      )
                                                                 : "",
                                                         }}
                                                     ></div>
