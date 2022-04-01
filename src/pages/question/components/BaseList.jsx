@@ -827,7 +827,10 @@ class BaseList extends EditPage {
                             action !== "edit"
                                 ? this.schema
                                 : {
-                                      answer: this.schema.answer,
+                                      answer: {
+                                          ...this.schema.answer,
+                                          position: "left",
+                                      },
                                       answer_text: {
                                           ...this.schema.answer_text,
                                           itemProps: {

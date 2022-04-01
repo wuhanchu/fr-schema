@@ -210,7 +210,7 @@ const schema = {
         type: schemaFieldType.TextArea,
         props: {
             // 最小高度
-            autoSize: { minRows: 2, maxRows: 6 },
+            autoSize: { minRows: 2, maxRows: 2 },
         },
         itemProps: {
             labelCol: {
@@ -226,7 +226,7 @@ const schema = {
         // type: schemaFieldType.Select,
         type: schemaFieldType.TextArea,
         props: {
-            autoSize: { minRows: 2, maxRows: 6 },
+            autoSize: { minRows: 2, maxRows: 2 },
             placeholder: "请输入推荐问",
         },
         style: { width: "530px" },

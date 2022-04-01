@@ -13,7 +13,7 @@ class ModalWin extends React.Component {
             clientWidth,
             clientHeight,
             pageX: clientWidth / 3,
-            pageY: "5vh",
+            pageY: 50,
             moving: false,
         }
     }
@@ -33,7 +33,8 @@ class ModalWin extends React.Component {
         const { clientWidth, clientHeight } = document.documentElement
         const modal = document.getElementById("modal")
         if (modal) {
-            const pageY = (clientHeight - modal.offsetHeight) / 3
+            console.log("data")
+            const pageY = (clientHeight - 679) / 2
             const pageX = (clientWidth - modal.offsetWidth) / 2
             this.setState({ clientWidth, clientHeight, pageX, pageY })
         }

@@ -221,6 +221,7 @@ export class PureInfoModal extends PureComponent {
         if (action == actions.show) {
             otherProps.footer = null
         }
+        const { clientWidth, clientHeight } = document.documentElement
 
         return (
             <DragModal
@@ -245,7 +246,16 @@ export class PureInfoModal extends PureComponent {
                 {this.state.loadingFetch ? (
                     <Skeleton />
                 ) : (
-                    <Spin spinning={loadingSubmit}>{this.renderForm()}</Spin>
+                    <Spin spinning={loadingSubmit}>
+                        <div
+                            style={{
+                                maxHeight: clientHeight - 110 + "px",
+                                overflowY: "auto",
+                            }}
+                        >
+                            {this.renderForm()}
+                        </div>
+                    </Spin>
                 )}
             </DragModal>
         )
