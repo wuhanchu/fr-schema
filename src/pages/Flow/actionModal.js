@@ -442,6 +442,7 @@ export const ActionModal = ({
                         <Form.Item
                             // label="类型"
                             name="type"
+                            style={{ marginBottom: "0px" }}
                             extra={
                                 dict[type] && (
                                     <span

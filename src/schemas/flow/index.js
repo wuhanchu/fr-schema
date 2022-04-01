@@ -62,34 +62,8 @@ const schema = {
         sorter: true,
         extra: "拼接传入文本，用于支持搜索问题库(意图)的识别。",
     },
-    slot: {
-        title: "全局槽位",
-        search: false,
-        remark: "",
-        extra:
-            "可配置电话渠道参数和相关参数(意图识别阈值:intent_identify_threshold)",
-        hideInTable: true,
-        props: {
-            style: { width: "500px" },
-            height: "300px",
-        },
-        type: schemaFieldType.AceEditor,
-        decoratorProps: { rules: verifyJson },
-    },
-    init_slot: {
-        title: "初始化槽位",
-        search: false,
-        remark: "",
-        extra:
-            "可配置电话渠道参数和相关参数(意图识别阈值:intent_identify_threshold)",
-        hideInTable: true,
-        props: {
-            style: { width: "500px" },
-            height: "300px",
-        },
-        type: schemaFieldType.AceEditor,
-        decoratorProps: { rules: verifyJson },
-    },
+    // slot: "可配置电话渠道参数和相关参数(意图识别阈值:intent_identify_threshold)",
+
     create_time: {
         title: "创建时间",
         search: false,

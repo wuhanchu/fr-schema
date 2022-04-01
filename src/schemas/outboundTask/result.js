@@ -7,21 +7,7 @@ const schema = {
         title: "客户编号",
         search: false,
     },
-    result: {
-        title: "结果",
-        type: schemaFieldType.Select,
-        dict: {
-            normal: { remark: "正常", value: "normal" },
-            failed: { remark: "拨打失败", value: "failed" },
-            no_connect: { remark: "未接通", value: "no_connect" },
-            no_answer: { remark: "无应答", value: "no_answer" },
-            busy: { remark: "忙线", value: "busy" },
-            empty: { remark: "空号", value: "empty" },
-            shutdown: { remark: "关机", value: "shutdown" },
-            halt: { remark: "停机", value: "halt" },
-            other: { remark: "其他", value: "other" },
-        },
-    },
+
     type: {
         title: "类型",
         type: schemaFieldType.Select,
@@ -41,7 +27,21 @@ const schema = {
             end: { remark: "已结束", value: "end" },
         },
     },
-
+    result: {
+        title: "结果",
+        type: schemaFieldType.Select,
+        dict: {
+            normal: { remark: "正常", value: "normal" },
+            failed: { remark: "拨打失败", value: "failed" },
+            no_connect: { remark: "未接通", value: "no_connect" },
+            no_answer: { remark: "无应答", value: "no_answer" },
+            busy: { remark: "忙线", value: "busy" },
+            empty: { remark: "空号", value: "empty" },
+            shutdown: { remark: "关机", value: "shutdown" },
+            halt: { remark: "停机", value: "halt" },
+            other: { remark: "其他", value: "other" },
+        },
+    },
     form_phone: {
         title: "呼出号码",
         searchPrefix: "like",

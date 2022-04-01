@@ -45,6 +45,7 @@ export default [
                     {
                         path: "/frame/domain",
                         name: "domain",
+                        icon: "CreditCardOutlined",
                         // component: "./domain/List",
                         routes: [
                             {
@@ -90,6 +91,7 @@ export default [
                     {
                         path: "/frame/conversation",
                         name: "conversation",
+                        icon: "InboxOutlined",
                         routes: [
                             {
                                 path: "/frame/conversation/list",
@@ -101,6 +103,7 @@ export default [
                     },
                     {
                         path: "/frame/entity",
+                        icon: "FolderOutlined",
                         name: "entity",
                         routes: [
                             {
@@ -122,6 +125,7 @@ export default [
                     {
                         path: "/frame/project",
                         name: "project",
+                        icon: "FileSearchOutlined",
                         title: "问题库",
                         // component: "./project/List",
                         routes: [
@@ -143,12 +147,14 @@ export default [
                     {
                         path: "/frame/statistics",
                         name: "statistics",
+                        icon: "ScheduleOutlined",
                         title: "统计",
                         component: "./statistics/List",
                     },
                     {
                         name: "system",
                         path: "/frame/system",
+                        icon: "SettingOutlined",
                         authority: ["system"],
                         routes: [
                             {
