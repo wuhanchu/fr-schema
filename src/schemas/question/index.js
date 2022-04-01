@@ -137,19 +137,18 @@ const schema = {
         width: "120px",
     },
     answer: {
-        title: "答案",
+        title: "答案内容",
         hideInTable: true,
         type: schemaFieldType.BraftEditor,
-        // span: 24,
         position: "right",
         itemProps: {
             labelCol: {
                 span: 4,
             },
         },
+        extra: "富文本内容，文本渠道默认返回。",
         id: "answer",
         listHide: true,
-        // width: 450,
         lineWidth: "480px",
         render: (item, record) => {
             return (
@@ -217,17 +216,16 @@ const schema = {
                 span: 4,
             },
         },
+        extra: "答案概要，电话渠道默认返回概要信息。",
         listHide: true,
         editable: true,
-        // width: "250px",
     },
     recommend_text: {
         title: <div style={{ width: "56px" }}>推荐信息</div>,
-        // type: schemaFieldType.Select,
         type: schemaFieldType.TextArea,
         props: {
             autoSize: { minRows: 2, maxRows: 2 },
-            placeholder: "请输入推荐问",
+            placeholder: "请输入推荐信息",
         },
         style: { width: "530px" },
         itemProps: {
@@ -237,7 +235,7 @@ const schema = {
         },
         position: "right",
         exportConcat: true,
-        extra: "每行表示一个问题",
+        extra: "附加在回复文本下的可选项,每行表示一个问题",
         listHide: true,
         editable: true,
         render: (item, record) => {
@@ -256,7 +254,6 @@ const schema = {
                 </Tooltip>
             )
         },
-        // width: "260px",
     },
 
     create_time: {

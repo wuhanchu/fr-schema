@@ -610,7 +610,7 @@ class BaseList extends EditPage {
                         this.handleVisibleModal(true, record, actions.edit)
                     }
                 >
-                    回复
+                    回复详情
                 </a>
                 <Divider type="vertical" />
                 <a
