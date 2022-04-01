@@ -117,7 +117,7 @@ service.getServices = async (args) => {
     return await createApi("z_ai_service/service", schema, null, "eq.").get({
         ...args,
         select: "id, name, ai_type",
-        ai_type: "chat",
+        // ai_type: "chat",
     })
 }
 service.getUserDomain = async (args) => {
