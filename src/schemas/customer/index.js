@@ -18,16 +18,19 @@ const schema = {
     },
     telephone: {
         title: "电话号码",
+        required: true,
+        sorter: true,
     },
     name: {
         title: "名称",
         sorter: true,
         searchPrefix: "like",
-        required: true,
+        // required: true,
     },
 
     gender: {
         title: "性别",
+        sorter: true,
         type: schemaFieldType.Select,
         dict: {
             male: { remark: "男", value: "male" },
@@ -36,10 +39,13 @@ const schema = {
     },
     email: {
         title: "邮箱",
+        sorter: true,
     },
     block: {
         title: "是否屏蔽",
         type: schemaFieldType.Select,
+        sorter: true,
+
         dict: {
             true: { remark: "是", value: "true" },
             false: { remark: "否", value: "false" },
@@ -48,7 +54,7 @@ const schema = {
 
     create_time: {
         title: "创建时间",
-        required: true,
+        // required: true,
         sorter: true,
         addHide: true,
         editHide: true,
@@ -59,11 +65,15 @@ const schema = {
         search: false,
         type: schemaFieldType.DatePicker,
     },
-
+    auto_maxtimes: {
+        title: "自动重拨次数",
+        sorter: true,
+        hideInTable: true,
+    },
     remark: {
         title: "备注",
         search: false,
-
+        sorter: true,
         type: schemaFieldType.TextArea,
         sorter: true,
     },

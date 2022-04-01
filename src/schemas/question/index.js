@@ -137,7 +137,7 @@ const schema = {
         width: "120px",
     },
     answer: {
-        title: "答案",
+        title: "答案内容",
         hideInTable: true,
         type: schemaFieldType.BraftEditor,
         // span: 24,
@@ -227,7 +227,7 @@ const schema = {
         type: schemaFieldType.TextArea,
         props: {
             autoSize: { minRows: 2, maxRows: 2 },
-            placeholder: "请输入推荐问",
+            placeholder: "请输入推荐信息",
         },
         style: { width: "530px" },
         itemProps: {

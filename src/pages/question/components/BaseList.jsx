@@ -409,6 +409,7 @@ class BaseList extends EditPage {
                 answer: {
                     ...answer,
                     type: schemaFieldType.Input,
+                    extra: "",
                     props: {},
                     span: 6,
                 },

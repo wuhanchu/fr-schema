@@ -9,6 +9,7 @@ const schema = {
         type: schemaFieldType.DatePicker,
         extra: "任务开始拨号时间",
         hideInTable: true,
+        search: false,
         required: true,
     },
     end_time: {
@@ -16,6 +17,7 @@ const schema = {
         type: schemaFieldType.DatePicker,
         extra: "任务结束拨号时间",
         hideInTable: true,
+        search: false,
         required: true,
     },
     domain_key: {
@@ -49,22 +51,14 @@ const schema = {
         required: true,
         type: schemaFieldType.Select,
     },
-    test: {
-        title: "测试任务",
-        type: schemaFieldType.Select,
-        required: true,
-        dict: {
-            true: { value: "true", remark: "是" },
-            false: { value: "false", remark: "否" },
-        },
-        extra: "是否为测试任务",
-    },
+
     caller_number: {
         title: "呼出号码",
         type: schemaFieldType.Select,
     },
     user_id: {
         title: "用户",
+        type: schemaFieldType.Select,
         addHide: true,
     },
     status: {
@@ -79,7 +73,16 @@ const schema = {
             end: { value: "end", remark: "结束" },
         },
     },
-
+    test: {
+        title: "测试任务",
+        type: schemaFieldType.Select,
+        required: true,
+        dict: {
+            true: { value: "true", remark: "是" },
+            false: { value: "false", remark: "否" },
+        },
+        extra: "是否为测试任务",
+    },
     create_time: {
         title: "创建时间",
         required: true,
@@ -212,6 +215,15 @@ service.importData = async (args) => {
 service.changeTaskStatus = async (args) => {
     let data = await createApi(
         "outbound/change_task_status",
+        null,
+        null,
+        ""
+    ).post({ ...args })
+    return data
+}
+service.syncTaskResult = async (args) => {
+    let data = await createApi(
+        "outbound/sync_task_result",
         null,
         null,
         ""

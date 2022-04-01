@@ -11,10 +11,12 @@ import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoMod
 import FileSaver from "file-saver"
 import Result from "./Result"
 import XLSX from "xlsx"
+import userService from "@/pages/authority/user/service"
 import { convertFormImport } from "@/outter/fr-schema/src/schema"
 
-@connect(({ global }) => ({
+@connect(({ global, user }) => ({
     dict: global.dict,
+    user: user,
 }))
 @Form.create()
 class List extends ListPage {
@@ -29,14 +31,19 @@ class List extends ListPage {
             importTemplateUrl,
             showDelete: false,
             showEdit: false,
-            showSelect: true,
+            // showSelect: true,
+            search: {
+                span: 6,
+            },
             initLocalStorageDomainKey: true,
             operateWidth: "200px",
         })
     }
 
     async componentDidMount() {
+        console.log(this.props)
         let dict = await schemas.outboundTask.service.getDict({ type: 1 })
+        await this.findUserList()
         this.schema.caller_group_id.dict = listToDict(
             dict.list,
             "",
@@ -82,7 +89,7 @@ class List extends ListPage {
             reader.onload = (async (evt) => {
                 // parse excel
 
-                const schema = schemas.outboundTask.fileSchema
+                const schema = schemas.customer.schema
                 const binary = evt.target.result
                 const wb = XLSX.read(binary, { type: "binary" })
                 const sheetName = wb.SheetNames[0]
@@ -110,7 +117,15 @@ class List extends ListPage {
                     )
                     // this.props.onChange(data)
                     console.log(data)
-                    dataArray = data
+                    // dataArray = data
+                    dataArray = data.map((item) => {
+                        return {
+                            phone: item.telephone,
+                            auto_maxtimes: item.auto_maxtimes,
+                            slot: { ...item, block: item.block === "true" },
+                        }
+                    })
+                    console.log(dataArray)
                     this.setState((state) => ({
                         fileList: [file],
                     }))
@@ -129,18 +144,37 @@ class List extends ListPage {
         return dataArray
     }
 
+    async handleAdd(data, schema) {
+        // 更新
+        let response
+        try {
+            response = await this.service.post(
+                { ...data, user_id: this.props.user.currentUser.id },
+                schema
+            )
+            this.refreshList()
+            message.success("添加成功")
+            this.handleVisibleModal()
+        } catch (error) {
+            message.error(error.message)
+        }
+        this.handleChangeCallback && this.handleChangeCallback()
+        this.props.handleChangeCallback && this.props.handleChangeCallback()
+
+        return response
+    }
     async handleImportData(data, schema) {
         // 更新
         let response
         try {
             let number_group = await this.getExcelData(data.number_group.file)
-            number_group = number_group.map((item) => {
-                return {
-                    ...item,
-                    slot: item.slot ? JSON.parse(item.slot) : {},
-                    // cstm_param: item.cstm_param? JSON.parse(item.cstm_param): {},
-                }
-            })
+            // number_group = number_group.map((item) => {
+            //     return {
+            //         ...item,
+            //         // slot: item.slot ? JSON.parse(item.slot) : {},
+            //         // cstm_param: item.cstm_param? JSON.parse(item.cstm_param): {},
+            //     }
+            // })
             response = await this.service.importData(
                 {
                     ...data,
@@ -209,7 +243,7 @@ class List extends ListPage {
                 {this.state.showInfo && (
                     <Modal
                         title={"详情"}
-                        width={"80%"}
+                        width={"95%"}
                         visible={this.state.showInfo}
                         footer={null}
                         onCancel={() => {
@@ -348,8 +382,25 @@ class List extends ListPage {
                         )}
                     </>
                 )}
+                <Divider type="vertical" />
+                <a
+                    onClick={async () => {
+                        await schemas.outboundTask.service.syncTaskResult({
+                            task_id: record.external_id,
+                        })
+                        // this.refreshList()
+                        message.success("同步中！")
+                    }}
+                >
+                    同步
+                </a>
             </>
         )
+    }
+
+    async findUserList() {
+        let res = await userService.get({ pageSize: 10000, select: "id, name" })
+        this.schema.user_id.dict = listToDict(res.list, null, "id", "name")
     }
 }
 

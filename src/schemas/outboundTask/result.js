@@ -44,31 +44,31 @@ const schema = {
 
     form_phone: {
         title: "呼出号码",
+        searchPrefix: "like",
     },
     to_phone: {
         title: "拨打号码",
+        searchPrefix: "like",
     },
     fail_reason: {
         title: "失败原因",
         search: false,
     },
-    begin_time: {
-        title: "开始时间",
-    },
-    end_time: {
-        title: "结束时间",
-    },
+
     phone_duration: {
         title: "通话时长",
         search: false,
+        unit: "ms",
     },
     wait_duration: {
         search: false,
         title: "排队时长",
+        unit: "ms",
     },
     calling_duration: {
         title: "振铃时长",
         search: false,
+        unit: "ms",
     },
     external_id: {
         title: "外部编号",
@@ -81,6 +81,22 @@ const schema = {
     phone_audio_url: {
         title: "录音地址",
         search: false,
+    },
+    begin_time: {
+        title: "开始时间",
+        props: {
+            showTime: true,
+            valueType: "dateTime",
+        },
+        type: schemaFieldType.DatePicker,
+    },
+    end_time: {
+        title: "结束时间",
+        props: {
+            showTime: true,
+            valueType: "dateTime",
+        },
+        type: schemaFieldType.DatePicker,
     },
 }
 

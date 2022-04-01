@@ -116,8 +116,6 @@ class Conversation extends ListPage {
             node_key: undefined,
         })
 
-        // let list = getTree(this.state.intentList)
-
         this.formRef.current.resetFields()
         this.formRef.current.setFieldsValue({
             begin_time: [moment().subtract("days", 6), undefined],
