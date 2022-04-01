@@ -86,7 +86,7 @@ class BaseList extends EditPage {
         })
         console.log(beforeSchema, endSchema)
         super(props, {
-            operateWidth: 150,
+            operateWidth: 170,
             schema: clone({ ...beforeSchema, ...config, ...endSchema }),
             service: {
                 ...schemas.question.service,
