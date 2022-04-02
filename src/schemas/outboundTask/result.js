@@ -6,10 +6,10 @@ import moment from "moment"
 
 const { RangePicker } = DatePicker
 const schema = {
-    customer_id: {
-        title: "客户编号",
-        search: false,
-    },
+    // customer_id: {
+    //     title: "客户编号",
+    //     search: false,
+    // },
 
     type: {
         title: "类型",
@@ -45,7 +45,7 @@ const schema = {
             other: { remark: "其他", value: "other" },
         },
     },
-    form_phone: {
+    from_phone: {
         title: "呼出号码",
         searchPrefix: "like",
     },
@@ -122,6 +122,7 @@ const schema = {
 }
 
 const service = createApi("call_record", schema, null, "eq.")
+service.getBatch = createApi("outbound_task_batch", schema, null, "eq.").get
 service.get = async (args) => {
     let andArray = []
     if (args.begin_time) {

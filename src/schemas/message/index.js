@@ -73,7 +73,7 @@ const schema = {
         type: schemaFieldType.DatePicker,
     },
     end_time: {
-        title: "结束",
+        title: "结束时间",
         required: true,
         sorter: true,
         addHide: true,

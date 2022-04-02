@@ -20,6 +20,7 @@ const schema = {
         title: "电话号码",
         required: true,
         sorter: true,
+        searchPrefix: "like",
     },
     name: {
         title: "名称",
@@ -40,6 +41,7 @@ const schema = {
     email: {
         title: "邮箱",
         sorter: true,
+        searchPrefix: "like",
     },
     block: {
         title: "是否屏蔽",
@@ -68,6 +70,7 @@ const schema = {
     auto_maxtimes: {
         title: "自动重拨次数",
         sorter: true,
+        search: false,
         hideInTable: true,
     },
     remark: {
@@ -79,9 +82,33 @@ const schema = {
     },
 }
 
-const service = createApi("customer", schema, null, "eq.")
+const callSchema = {
+    flow_key: {
+        title: "流程",
+        required: true,
+        type: schemaFieldType.Select,
+    },
+    slot: {
+        title: "槽位",
+        search: false,
+        hideInTable: true,
+        props: {
+            style: { width: "300px" },
+            height: "300px",
+        },
+        type: schemaFieldType.AceEditor,
+        decoratorProps: { rules: verifyJson },
+        extra: "通话中用到的槽位，如名称，性别等",
+    },
+}
 
+const service = createApi("customer", schema, null, "eq.")
+service.call = async (args) => {
+    let data = await createApi("outbound/call", null, null, "").post(args)
+    return data
+}
 export default {
     schema,
+    callSchema,
     service,
 }

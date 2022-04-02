@@ -17,6 +17,9 @@ class List extends ListPage {
             service: schemas.message.service,
             initLocalStorageDomainKey: true,
             operateWidth: "170px",
+            search: {
+                span: 6,
+            },
         })
     }
 

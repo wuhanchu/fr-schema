@@ -2,7 +2,7 @@ import { connect } from "dva"
 import ListPage from "@/components/ListPage/ListPage"
 import schemas from "@/schemas"
 import React from "react"
-import { Divider, Button, message, Modal } from "antd"
+import { Divider, Button, message, Modal, Popconfirm } from "antd"
 import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
 import { listToDict } from "@/outter/fr-schema/src/dict"
@@ -11,6 +11,7 @@ import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoMod
 import FileSaver from "file-saver"
 import Result from "./Result"
 import XLSX from "xlsx"
+import Statistics from "./Statistics"
 import userService from "@/pages/authority/user/service"
 import { convertFormImport } from "@/outter/fr-schema/src/schema"
 
@@ -31,12 +32,11 @@ class List extends ListPage {
             importTemplateUrl,
             showDelete: false,
             showEdit: false,
-            // showSelect: true,
             search: {
                 span: 6,
             },
             initLocalStorageDomainKey: true,
-            operateWidth: "200px",
+            operateWidth: "240px",
         })
     }
 
@@ -54,6 +54,7 @@ class List extends ListPage {
         let flow = await schemas.flow.service.get({
             limit: 1000,
             select: "id, key, domain_key, name",
+            domain_key: this.state.localStorageDomainKey,
         })
         this.schema.flow_key.dict = listToDict(flow.list, "", "key", "name")
 
@@ -115,9 +116,7 @@ class List extends ListPage {
                         sliceNum,
                         "id" || Object.keys(schema)[0]
                     )
-                    // this.props.onChange(data)
-                    console.log(data)
-                    // dataArray = data
+
                     dataArray = data.map((item) => {
                         return {
                             phone: item.telephone,
@@ -125,7 +124,6 @@ class List extends ListPage {
                             slot: { ...item, block: item.block === "true" },
                         }
                     })
-                    console.log(dataArray)
                     this.setState((state) => ({
                         fileList: [file],
                     }))
@@ -168,13 +166,6 @@ class List extends ListPage {
         let response
         try {
             let number_group = await this.getExcelData(data.number_group.file)
-            // number_group = number_group.map((item) => {
-            //     return {
-            //         ...item,
-            //         // slot: item.slot ? JSON.parse(item.slot) : {},
-            //         // cstm_param: item.cstm_param? JSON.parse(item.cstm_param): {},
-            //     }
-            // })
             response = await this.service.importData(
                 {
                     ...data,
@@ -214,15 +205,8 @@ class List extends ListPage {
                         新增
                     </Button>
                 )}
-                {/* <Button
-                    onClick={() => {
-                        this.setState({ visibleImport: true })
-                    }}
-                >
-                    导入
-                </Button> */}
 
-                <Button
+                {/* <Button
                     loading={this.state.exportLoading}
                     onClick={() => {
                         // this.setState({ visibleExport: true })
@@ -231,26 +215,39 @@ class List extends ListPage {
                     }}
                 >
                     导出
-                </Button>
+                </Button> */}
             </>
         )
     }
 
     renderExtend() {
-        const { record } = this.state
+        const { record, showInfo, showStatistics } = this.state
         return (
             <>
-                {this.state.showInfo && (
+                {showInfo && (
                     <Modal
                         title={"详情"}
                         width={"95%"}
-                        visible={this.state.showInfo}
+                        visible={showInfo}
                         footer={null}
                         onCancel={() => {
                             this.setState({ showInfo: false })
                         }}
                     >
-                        <Result task_id={record.id} />
+                        <Result task_id={record.id} record={record} />
+                    </Modal>
+                )}
+                {showStatistics && (
+                    <Modal
+                        title={"统计"}
+                        width={"1200px"}
+                        visible={showStatistics}
+                        footer={null}
+                        onCancel={() => {
+                            this.setState({ showStatistics: false })
+                        }}
+                    >
+                        <Statistics task_id={record.id} />
                     </Modal>
                 )}
             </>
@@ -315,7 +312,7 @@ class List extends ListPage {
                     resource={resource}
                     {...updateMethods}
                     visible={visibleImport}
-                    values={infoData}
+                    // values={infoData}
                     addArgs={addArgs}
                     meta={this.meta}
                     service={this.service}
@@ -350,8 +347,10 @@ class List extends ListPage {
                         <Divider type="vertical" />
                         {record.status === "wait" ||
                         record.status === "suspend" ? (
-                            <a
-                                onClick={async () => {
+                            <Popconfirm
+                                title="是否要开启任务？"
+                                onConfirm={async (e) => {
+                                    this.setState({ record })
                                     await schemas.outboundTask.service.changeTaskStatus(
                                         {
                                             task_id: record.external_id,
@@ -360,13 +359,16 @@ class List extends ListPage {
                                     )
                                     this.refreshList()
                                     message.success("开启成功")
+                                    e.stopPropagation()
                                 }}
                             >
-                                开启
-                            </a>
+                                <a>开启</a>
+                            </Popconfirm>
                         ) : (
-                            <a
-                                onClick={async () => {
+                            <Popconfirm
+                                title="是否要停止任务？"
+                                onConfirm={async (e) => {
+                                    this.setState({ record })
                                     await schemas.outboundTask.service.changeTaskStatus(
                                         {
                                             task_id: record.external_id,
@@ -375,24 +377,40 @@ class List extends ListPage {
                                     )
                                     this.refreshList()
                                     message.success("暂停成功")
+                                    e.stopPropagation()
                                 }}
                             >
-                                暂停
-                            </a>
+                                <a>暂停</a>
+                            </Popconfirm>
                         )}
                     </>
                 )}
                 <Divider type="vertical" />
-                <a
-                    onClick={async () => {
+                <Popconfirm
+                    title="是否要同步任务数据？"
+                    onConfirm={async (e) => {
+                        this.setState({ record })
                         await schemas.outboundTask.service.syncTaskResult({
                             task_id: record.external_id,
                         })
-                        // this.refreshList()
+                        this.refreshList()
                         message.success("同步中！")
+                        e.stopPropagation()
                     }}
                 >
-                    同步
+                    <a>同步</a>
+                </Popconfirm>
+                <Divider type="vertical" />
+                <a
+                    onClick={async () => {
+                        this.setState({
+                            showStatistics: true,
+                            record,
+                        })
+                        // this.refreshList()
+                    }}
+                >
+                    统计
                 </a>
             </>
         )

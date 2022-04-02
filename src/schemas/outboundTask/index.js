@@ -98,60 +98,73 @@ const schema = {
     },
 }
 
-const importSchema = {
-    // call_type: {
-    //     title: "数据类型",
-    //     type: schemaFieldType.Select,
-    //     required: true,
-
-    //     dict: {
-    //         predict: {
-    //             value: "3",
-    //             remark: "预测外呼",
-    //         },
-    //         auto: {
-    //             value: "4",
-    //             remark: "自动外呼",
-    //         },
-    //     },
-    // },
-    // service_cmd: {
-    //     title: "接听队列",
-    //     type: schemaFieldType.Select,
-    //     required: true,
-
-    //     dict: {
-    //         预测004: {
-    //             value: "预测004",
-    //             remark: "预测004",
-    //         },
-    //         预测006: {
-    //             value: "预测006",
-    //             reamrk: "预测006",
-    //         },
-    //     },
-    // },
-    name: {
-        title: "名称",
-        required: true,
+const statisticsSchema = {
+    begin_time: {
+        title: "开始时间",
+        type: schemaFieldType.DatePicker,
+        props: {
+            format: "YYYY-MM-DD",
+            style: { width: "100%" },
+            showTime: true,
+            valueType: "dateTime",
+        },
+        hideInTable: true,
     },
+    end_time: {
+        title: "结束时间",
+        type: schemaFieldType.DatePicker,
+        props: {
+            format: "YYYY-MM-DD",
+            style: { width: "100%" },
+            showTime: true,
+            valueType: "dateTime",
+        },
+        hideInTable: true,
+    },
+    flow_key: {
+        title: "流程",
+        required: true,
+        search: false,
+        type: schemaFieldType.Select,
+        props: {
+            mode: "tags",
+            allowClear: true,
+            showSearch: true,
+        },
+    },
+    user_id: {
+        title: "用户",
+        type: schemaFieldType.Select,
+        addHide: true,
+        props: {
+            mode: "tags",
+            allowClear: true,
+            showSearch: true,
+        },
+    },
+    client_id: {
+        title: "渠道",
+        hideInTable: true,
+        type: schemaFieldType.Select,
+        props: {
+            mode: "tags",
+            allowClear: true,
+            showSearch: true,
+        },
+    },
+}
 
-    // call_modle: {
-    //     required: true,
-
-    //     title: "外呼模式",
-    //     type: schemaFieldType.Select,
-    //     dict: {
-    //         return: {
-    //             value: "0",
-    //             remark: "接通转坐席",
-    //         },
-    //     },
-    // },
+const importSchema = {
     number_group: {
         title: "数据文件",
+        props: { style: { width: "300px" } },
         required: true,
         type: schemaFieldType.Upload,
+    },
+
+    name: {
+        title: "批次名称",
+        // required: true,
     },
 }
 
@@ -181,6 +194,23 @@ const fileSchema = {
 }
 
 const service = createApi("outbound_task", schema, null, "eq.")
+service.getStatistics = async (args) => {
+    if (args.begin_time) {
+        let time = new Date(parseInt(args.begin_time))
+        args.begin_time = moment(time).format("YYYY-MM-DDTHH:mm:ss")
+    }
+    if (args.end_time) {
+        let time = new Date(parseInt(args.end_time))
+        args.end_time = moment(time).format("YYYY-MM-DDTHH:mm:ss")
+    }
+    let data = await createApi(
+        "outbound/call_record_summary",
+        schema,
+        null,
+        ""
+    ).getBasic(args)
+    return { ...data, list: [], summary: data.list }
+}
 service.getDict = async (args) => {
     return createApi("outbound/dictionary", schema, null, "").getBasic(args)
 }
@@ -235,4 +265,5 @@ export default {
     service,
     importSchema,
     fileSchema,
+    statisticsSchema,
 }
