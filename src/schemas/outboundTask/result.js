@@ -55,6 +55,7 @@ const schema = {
     },
     fail_reason: {
         title: "失败原因",
+        hideInTable: true,
         search: false,
     },
 
