@@ -2,6 +2,7 @@ import { Addon, FunctionExt, Graph, Shape } from "@antv/x6"
 import frSchema from "@/outter/fr-schema/src"
 import clone from "clone"
 import schemas from "@/schemas"
+import { message } from "antd"
 
 const { decorateList } = frSchema
 // 拖拽生成四边形或者圆形
@@ -538,6 +539,7 @@ export function isError(data, graph) {
     let nameArr = data.config.node.map((item) => {
         return item.name
     })
+    let flowNodeArray = []
     data.config.node.map((item) => {
         if (
             (!item.allow_repeat_time ||
@@ -551,18 +553,65 @@ export function isError(data, graph) {
             })
             isTrue = false
         } else {
-            if (item.type === "flow" && !item.flow_key) {
+            if (
+                item.type === "flow" &&
+                (!item.flow_key || item.skip_begin === undefined)
+            ) {
                 let cell = graph.getCellById(item.key)
                 cell.attr("body/stroke", "#ff4d4f", {
                     ignoreHistory: true,
                 })
                 isTrue = false
             } else {
+                if (
+                    item.type === "flow" &&
+                    item.flow_key &&
+                    item.skip_begin === true
+                ) {
+                    flowNodeArray.push(item)
+                }
                 let cell = graph.getCellById(item.key)
                 // cell.attr("body/stroke", undefined)
             }
         }
     })
+    console.log(flowNodeArray)
+    let skipBeginFlowNodeConnection = false
+    let skipBeginFlowNodeCondition = false
+
+    flowNodeArray.map((item) => {
+        const connection = data.config.connection.filter((one) => {
+            if (
+                item.key === one.end &&
+                one.condition &&
+                one.condition.length !== 0
+            ) {
+                let cell = graph.getCellById(one.key)
+                cell.attr("line/stroke", "#ff4d4f", {
+                    ignoreHistory: true,
+                })
+                isTrue = false
+                skipBeginFlowNodeCondition = true
+            }
+            return item.key === one.end
+        })
+        if (connection.length > 1) {
+            connection.map((one) => {
+                let cell = graph.getCellById(one.key)
+                cell.attr("line/stroke", "#ff4d4f", {
+                    ignoreHistory: true,
+                })
+            })
+            isTrue = false
+            skipBeginFlowNodeConnection = true
+        }
+    })
+    if (skipBeginFlowNodeConnection || skipBeginFlowNodeCondition) {
+        message.error(
+            "当流程节点配置跳过子流程开始节点时，只能有一个节点连接当前节点，且连线不能配置条件！"
+        )
+    }
+
     nameArr = data.config.connection.map((item) => {
         return item.name
     })
@@ -579,6 +628,7 @@ export function isError(data, graph) {
         }
     })
     return isTrue
+    // return false
 }
 
 export function countName(arr, num) {

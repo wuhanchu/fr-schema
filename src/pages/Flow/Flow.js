@@ -761,6 +761,7 @@ class Flow extends React.PureComponent {
                 allow_repeat_time: args.allow_repeat_time,
                 skip_repeat_action: skip_repeat_action,
                 flow_key: args.flow_key,
+                skip_begin: args.skip_begin,
                 action: args.action,
                 types: args.type,
             },
@@ -859,6 +860,7 @@ class Flow extends React.PureComponent {
                 allow_repeat_time: args.allow_repeat_time,
                 skip_repeat_action: skip_repeat_action,
                 flow_key: args.flow_key,
+                skip_begin: args.skip_begin,
                 action: args.action,
                 types: args.type,
             },
@@ -1339,6 +1341,7 @@ class Flow extends React.PureComponent {
                 skip_repeat_action: skip_repeat_action,
                 domain_key: this.props.record.domain_key,
                 flow_key: nodeData.flow_key,
+                skip_begin: nodeData.skip_begin,
                 type: nodeData.types,
                 position: {
                     x: item.store.data.position.x,

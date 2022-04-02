@@ -46,6 +46,25 @@ class Chat extends React.PureComponent {
         this.tableRef = React.createRef()
     }
 
+    // 得到热门问题
+    async handleGetHotWord(domainArray, project_id) {
+        await schemas.hotWord.service
+            .getRecentHotQuestion({
+                domain_key:
+                    (domainArray.length && domainArray.join(",")) || "default",
+                project_id: project_id,
+                limit: 500,
+            })
+            .then((response) => {
+                let allData = []
+                response.list.forEach((item) => {
+                    allData.push(item.question_standard)
+                })
+
+                this.setState({ allData })
+            })
+    }
+
     async componentDidMount() {
         let domainArray = []
 
@@ -65,31 +84,14 @@ class Chat extends React.PureComponent {
                     ...domainInfo.list[0].base_domain_key,
                 ]
             }
-            console.log(
-                "this.props.record.project_id",
-                this.props.record.project_id
+            this.handleGetHotWord(
+                domainArray,
+                (this.props.record &&
+                    this.props.record.project_id &&
+                    this.props.record.project_id.length &&
+                    this.props.record.project_id.join(",")) ||
+                    undefined
             )
-            await schemas.hotWord.service
-                .getRecentHotQuestion({
-                    domain_key:
-                        (domainArray.length && domainArray.join(",")) ||
-                        "default",
-                    project_id:
-                        (this.props.record &&
-                            this.props.record.project_id &&
-                            this.props.record.project_id.length &&
-                            this.props.record.project_id.join(",")) ||
-                        undefined,
-                    limit: 500,
-                })
-                .then((response) => {
-                    let allData = []
-                    response.list.forEach((item) => {
-                        allData.push(item.question_standard)
-                    })
-
-                    this.setState({ allData })
-                })
         } else {
             let domainInfo = await schemas.domain.service.get({
                 key: url.getUrlParams("domain_key"),
@@ -103,26 +105,14 @@ class Chat extends React.PureComponent {
                     ...domainInfo.list[0].base_domain_key,
                 ]
             }
-            await schemas.hotWord.service
-                .getRecentHotQuestion({
-                    domain_key:
-                        (domainArray.length && domainArray.join(",")) ||
-                        "default",
-                    project_id: url.getUrlParams("project_id")
-                        ? url.getUrlParams("project_id")
-                        : undefined,
-                    limit: 500,
-                })
-                .then((response) => {
-                    let allData = []
-                    response.list.forEach((item) => {
-                        allData.push(item.question_standard)
-                    })
-
-                    this.setState({ allData })
-                })
+            this.handleGetHotWord(
+                domainArray,
+                url.getUrlParams("project_id")
+                    ? url.getUrlParams("project_id")
+                    : undefined
+            )
         }
-
+        this.setState({ domainArray })
         this.initFlow(domainArray)
     }
 

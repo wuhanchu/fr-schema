@@ -273,6 +273,10 @@ class Dialogue extends Chat {
                                     this.setState({
                                         checkboxValue: data,
                                     })
+                                    this.handleGetHotWord(
+                                        this.state.domainArray,
+                                        data.join(",")
+                                    )
                                 }}
                                 options={options}
                                 value={checkboxValue}
@@ -624,7 +628,6 @@ class Dialogue extends Chat {
                     await schemas.domain.service.message({
                         domain_key,
                         conversation_id: res.data.id,
-
                         text:
                             `/slot{"project\_id":"` +
                             checkboxValue.join(",") +

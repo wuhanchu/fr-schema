@@ -177,14 +177,7 @@ function renderTitle(
     return (
         <div style={{ width: "100%", display: "flex" }}>
             <span style={{ flex: 1 }}>
-                <span
-                    style={{ fontWeight: "bold" }}
-                    // dangerouslySetInnerHTML={{
-                    //     __html: item.question_standard
-                    //         .replace(/<b>/g, "<b style='color:red;'>")
-                    //         .replace(/\n/g, "<br/>"),
-                    // }}
-                >
+                <span style={{ fontWeight: "bold" }}>
                     {item.question_standard}
                 </span>
                 {item.label && item.label.length !== 0 && (
@@ -201,9 +194,6 @@ function renderTitle(
                         })}
                     </span>
                 )}
-                {/* {<a style={{marginLeft: '10px', marginRight: '10px'}} onClick={()=>{setState({...state, visibleModal:true, listItem: item})}}><EditOutlined/></a>}
-                {props.renderTitleOpeation && props.renderTitleOpeation(item)}
-             */}
             </span>
 
             {
@@ -871,6 +861,16 @@ function SearchPage(props) {
                             onChange={(value) => {
                                 console.log(value)
                                 setSearchProject(value)
+                                getHotWord(
+                                    {
+                                        ...props,
+                                        record: {
+                                            ...props.record,
+                                            project_id: value.join(","),
+                                        },
+                                    },
+                                    setAllData
+                                )
                             }}
                             value={searchProject}
                             disabled={props.type === "history" ? true : loading}

@@ -1,7 +1,10 @@
 import { createApi } from "@/components/ListPage/service"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import { verifyJson } from "@/outter/fr-schema-antd-utils/src/utils/component"
+import { DatePicker } from "antd"
+import moment from "moment"
 
+const { RangePicker } = DatePicker
 const schema = {
     customer_id: {
         title: "客户编号",
@@ -83,24 +86,84 @@ const schema = {
         search: false,
     },
     begin_time: {
-        title: "开始时间",
+        title: "拨通时间",
         props: {
             showTime: true,
             valueType: "dateTime",
         },
+        renderInput: () => {
+            return (
+                <RangePicker
+                    allowEmpty={[true, true]}
+                    format="MM-DD HH:mm:ss"
+                    showTime
+                ></RangePicker>
+            )
+        },
         type: schemaFieldType.DatePicker,
     },
     end_time: {
-        title: "结束时间",
+        title: "挂机时间",
         props: {
             showTime: true,
             valueType: "dateTime",
+        },
+        renderInput: () => {
+            return (
+                <RangePicker
+                    allowEmpty={[true, true]}
+                    format="MM-DD HH:mm:ss"
+                    showTime
+                ></RangePicker>
+            )
         },
         type: schemaFieldType.DatePicker,
     },
 }
 
 const service = createApi("call_record", schema, null, "eq.")
+service.get = async (args) => {
+    let andArray = []
+    if (args.begin_time) {
+        if (args.begin_time.split(",")[0]) {
+            andArray.push(
+                `begin_time.gte.${moment(args.begin_time.split(",")[0]).format(
+                    "YYYY-MM-DDTHH:mm:ss"
+                )}`
+            )
+        }
+        if (args.begin_time.split(",")[1]) {
+            andArray.push(
+                `begin_time.lte.${moment(args.begin_time.split(",")[1]).format(
+                    "YYYY-MM-DDTHH:mm:ss"
+                )}`
+            )
+        }
+    }
+    if (args.end_time) {
+        if (args.end_time.split(",")[0]) {
+            andArray.push(
+                `end_time.gte.${moment(args.end_time.split(",")[0]).format(
+                    "YYYY-MM-DDTHH:mm:ss"
+                )}`
+            )
+        }
+        if (args.end_time.split(",")[1]) {
+            andArray.push(
+                `end_time.lte.${moment(args.end_time.split(",")[1]).format(
+                    "YYYY-MM-DDTHH:mm:ss"
+                )}`
+            )
+        }
+    }
+
+    args.begin_time = undefined
+    args.end_time = undefined
+    args.and = andArray.length ? "(" + andArray.join(",") + ")" : undefined
+
+    let data = createApi("call_record", schema, null, "eq.").get(args)
+    return data
+}
 
 export default {
     schema,

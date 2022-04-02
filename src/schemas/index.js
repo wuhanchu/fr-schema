@@ -6,7 +6,7 @@ import synonym from "./synonym"
 import intent from "./intent"
 import entity from "./entity"
 import mark from "./mark"
-
+import log from "./log"
 import entityAttr from "./entityType/attribute"
 import entityType from "./entityType"
 import hotWord from "./domain/hotWord"
@@ -48,4 +48,5 @@ export default {
     customer,
     taskResult,
     message,
+    log,
 }

@@ -385,18 +385,22 @@ export default [
                         authority: ["system"],
                         routes: [
                             {
+                                path: "/system/log",
+                                name: "log",
+                                title: "日志管理",
+                                component: "./log/List",
+                            },
+                            {
                                 authority: ["department_get"],
                                 path: "/system/department",
                                 name: "department",
                                 title: "部门管理",
-
                                 component: "./authority/department/List",
                             },
                             {
                                 path: "/system/user",
                                 name: "user",
                                 title: "用户管理",
-
                                 component: "./authority/user/List",
                             },
                             {

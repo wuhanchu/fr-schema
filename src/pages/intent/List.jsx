@@ -167,6 +167,20 @@ class List extends DataList {
                                     修改
                                 </a>
                             )}
+                        {record.domain_key !==
+                            this.state.localStorageDomainKey && (
+                            <a
+                                onClick={() =>
+                                    this.handleVisibleModal(
+                                        true,
+                                        record,
+                                        actions.show
+                                    )
+                                }
+                            >
+                                查看
+                            </a>
+                        )}
                         {showDelete &&
                             record.domain_key ===
                                 this.state.localStorageDomainKey && (

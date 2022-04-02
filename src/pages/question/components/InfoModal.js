@@ -148,6 +148,7 @@ export class PureInfoModal extends PureComponent {
             })
         ) : (
             <InfoForm {...otherProps} values={values} form={this.formRef} />
+            // <></>
         )
     }
 

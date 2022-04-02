@@ -33,6 +33,7 @@ export default {
     "menu.domain.intent": "意图",
     "menu.domain.synonym": "专业词汇",
     "menu.system": "系统管理",
+    "menu.system.log": "日志管理",
     "menu.system.user": "用户管理",
     "menu.system.setting": "字典配置",
     "menu.system.role": "角色管理",

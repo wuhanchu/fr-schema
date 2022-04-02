@@ -337,16 +337,11 @@ class List extends DataList {
     }
 
     handleDenyMulti = async (recordList) => {
-        // change current data
         const idKey = "id"
-        // const valueList = recordList.map((record) => record[idKey])
-
-        // invoke remote service
         if (!this.props.offline) {
             await this.service.deny(recordList)
         }
 
-        //  refresh current data
         this.refreshList()
         message.success("丢弃成功")
         this.handleChangeCallback && this.handleChangeCallback()

@@ -6,6 +6,8 @@ const schema = {
         title: "域",
         addHide: true,
         editHide: true,
+        showHide: true,
+
         search: false,
         sorter: true,
         type: schemaFieldType.Select,
@@ -65,6 +67,7 @@ const schema = {
         title: "创建时间",
         search: false,
         sorter: true,
+        showHide: true,
         addHide: true,
         editHide: true,
         hideInTable: true,

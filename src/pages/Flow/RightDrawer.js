@@ -691,6 +691,27 @@ class RightDrawer extends React.PureComponent {
                                     ></Select>
                                 </FormItem>
                             )}
+                            {cell.getData().types === "flow" && (
+                                <FormItem
+                                    name={"skip_begin"}
+                                    label={"是否跳过开始节点"}
+                                    // extra="如已执行次数等于允许的执行次数，则跳过。"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "请输入是否跳过开始节点",
+                                        },
+                                    ]}
+                                >
+                                    <Select
+                                        placeholder="请输入是否跳过开始节点"
+                                        options={[
+                                            { value: true, label: "是" },
+                                            { value: false, label: "否" },
+                                        ]}
+                                    ></Select>
+                                </FormItem>
+                            )}
                             <FormItem
                                 label={
                                     <div>
