@@ -8,7 +8,6 @@ import { Divider, Button, message, Modal, Row, Col, Popconfirm } from "antd"
 import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
 import { listToDict } from "@/outter/fr-schema/src/dict"
-import ImportModal from "./ImportModal"
 import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
 import FileSaver from "file-saver"
 import ConversationDetail from "@/pages/outPage/ConversationDetail"
@@ -83,13 +82,15 @@ class List extends DataList {
     renderOperateColumnExtend(record) {
         return (
             <>
-                <a
-                    onClick={() => {
-                        this.setState({ showInfo: true, record })
-                    }}
-                >
-                    详情
-                </a>
+                {record.conversation_id && (
+                    <a
+                        onClick={() => {
+                            this.setState({ showInfo: true, record })
+                        }}
+                    >
+                        详情
+                    </a>
+                )}
             </>
         )
     }
@@ -189,9 +190,7 @@ class List extends DataList {
                         destroyOnClose
                     >
                         <ConversationDetail
-                            conversation_id={
-                                "77bfe6a1-ae3f-11ec-b0df-0242ac110017"
-                            }
+                            conversation_id={record.conversation_id}
                             flow_key={record.flow_key}
                             domain_key={record.domain_key}
                             roomHeight="60vh"

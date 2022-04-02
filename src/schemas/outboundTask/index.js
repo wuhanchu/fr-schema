@@ -54,6 +54,7 @@ const schema = {
 
     caller_number: {
         title: "呼出号码",
+        required: true,
         type: schemaFieldType.Select,
     },
     user_id: {

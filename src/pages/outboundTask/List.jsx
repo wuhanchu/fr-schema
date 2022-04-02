@@ -6,7 +6,6 @@ import { Divider, Button, message, Modal, Popconfirm } from "antd"
 import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
 import { listToDict } from "@/outter/fr-schema/src/dict"
-import ImportModal from "./ImportModal"
 import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
 import FileSaver from "file-saver"
 import Result from "./Result"
@@ -14,6 +13,7 @@ import XLSX from "xlsx"
 import Statistics from "./Statistics"
 import userService from "@/pages/authority/user/service"
 import { convertFormImport } from "@/outter/fr-schema/src/schema"
+import ImportModal from "@/outter/fr-schema-antd-utils/src/components/modal/ImportModal"
 
 @connect(({ global, user }) => ({
     dict: global.dict,
@@ -22,7 +22,7 @@ import { convertFormImport } from "@/outter/fr-schema/src/schema"
 @Form.create()
 class List extends ListPage {
     constructor(props) {
-        const importTemplateUrl = (BASE_PATH + "/import/专业词汇.xlsx").replace(
+        const importTemplateUrl = (BASE_PATH + "/import/客户信息.xlsx").replace(
             "//",
             "/"
         )
@@ -289,47 +289,73 @@ class List extends ListPage {
         })
     }
 
-    renderImportModal(customProps) {
-        if (this.props.renderInfoModal) {
-            return this.props.renderInfoModal()
-        }
-        const { form } = this.props
-        const renderForm = this.props.renderForm || this.renderForm
-        const { resource, title, addArgs } = this.meta
-        const { visibleImport, infoData, action } = this.state
-        const updateMethods = {
-            handleVisibleModal: this.handleVisibleImportModal.bind(this),
-            handleUpdate: this.handleUpdate.bind(this),
-            handleAdd: this.handleImportData.bind(this),
-        }
-
+    renderImportModal() {
         return (
-            visibleImport && (
-                <InfoModal
-                    renderForm={renderForm}
-                    title={title}
-                    action={"add"}
-                    resource={resource}
-                    {...updateMethods}
-                    visible={visibleImport}
-                    // values={infoData}
-                    addArgs={addArgs}
-                    meta={this.meta}
-                    service={this.service}
-                    schema={schemas.outboundTask.importSchema}
-                    {...this.meta.infoProps}
-                    {...customProps}
-                />
-            )
+            <ImportModal
+                importTemplateUrl={this.meta.importTemplateUrl}
+                schema={schemas.customer.schema}
+                errorKey={"question_standard"}
+                title={"导入"}
+                sliceNum={1}
+                onCancel={() => this.setState({ visibleImport: false })}
+                onChange={(data) => this.setState({ importData: data })}
+                confirmLoading={this.state.confirmLoading}
+                onOk={async () => {
+                    // to convert
+                    this.setState({
+                        confirmLoading: true,
+                    })
+                    let data = this.state.importData
+                    try {
+                        let number_group = data.map((item) => {
+                            return {
+                                phone: item.telephone,
+                                auto_maxtimes: item.auto_maxtimes,
+                                slot: { ...item, block: item.block === "true" },
+                            }
+                        })
+                        // await this.service.upInsert(data)
+                        await this.service.importData(
+                            {
+                                // ...data,
+                                number_group: number_group,
+                                task_id: this.state.infoData.external_id,
+                                id: undefined,
+                            },
+                            schemas.customer.schema
+                        )
+
+                        this.refreshList()
+                        message.success("导入成功")
+                        this.setState({
+                            visibleImport: false,
+                            confirmLoading: false,
+                        })
+                        this.refreshList()
+                    } catch (error) {
+                        message.error(error.message)
+                        this.setState({
+                            confirmLoading: false,
+                        })
+                    }
+                    // let postData = data.filters
+                }}
+            />
         )
     }
+
     renderOperateColumnExtend(record) {
         return (
             <>
                 {/* <Divider type="vertical" /> */}
                 <a
                     onClick={() => {
-                        this.handleVisibleImportModal(true, record, "add")
+                        // this.handleVisibleImportModal(true, record, "add")
+                        this.setState({
+                            visibleImport: true,
+                            infoData: record,
+                            record,
+                        })
                     }}
                 >
                     导入
