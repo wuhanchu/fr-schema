@@ -3,7 +3,7 @@ import {
     convertFromRemote,
     schemaFieldType,
 } from "@/outter/fr-schema/src/schema"
-import moments from "moment"
+import moment from "moment"
 import { request } from "@/outter/fr-schema/src"
 import { DatePicker } from "antd"
 import queryString from "query-string"
@@ -38,20 +38,25 @@ const schema = {
         extra: "每行表示一个问题",
     },
     begin_time: {
-        title: "时间区间",
+        title: "开始时间",
         type: schemaFieldType.DatePicker,
         props: {
             format: "YYYY-MM-DD",
             style: { width: "100%" },
+            showTime: true,
+            valueType: "dateTime",
         },
-        renderInput: () => {
-            return (
-                <RangePicker
-                    allowEmpty={[true, true]}
-                    format="MM-DD HH:mm:ss"
-                    showTime
-                ></RangePicker>
-            )
+        hideInTable: true,
+    },
+
+    end_time: {
+        title: "结束时间",
+        type: schemaFieldType.DatePicker,
+        props: {
+            format: "YYYY-MM-DD",
+            style: { width: "100%" },
+            showTime: true,
+            valueType: "dateTime",
         },
         hideInTable: true,
     },
@@ -90,21 +95,12 @@ service.getRecentHotQuestion = createApi(
 ).get
 service.get = async (args) => {
     if (args.begin_time) {
-        let fitter_time = args.begin_time.split(",")
-        let time = new Date(fitter_time[0])
-        let beginTime = moments(time).format("YYYY-MM-DDTHH:mm:ss")
-        time = new Date(fitter_time[1])
-        let endTime = moments(time).format("YYYY-MM-DDTHH:mm:ss")
-        if (fitter_time[0]) {
-            args.begin_time = beginTime
-        } else {
-            args.begin_time = undefined
-        }
-        if (fitter_time[1]) {
-            args.end_time = endTime
-        } else {
-            args.end_time = undefined
-        }
+        let time = new Date(parseInt(args.begin_time))
+        args.begin_time = moment(time).format("YYYY-MM-DDTHH:mm:ss")
+    }
+    if (args.end_time) {
+        let time = new Date(parseInt(args.end_time))
+        args.end_time = moment(time).format("YYYY-MM-DDTHH:mm:ss")
     }
     let { currentPage, pageSize, limit, ...otherParams } = args
     if (args.order) {

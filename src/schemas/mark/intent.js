@@ -11,20 +11,28 @@ const schema = {
         search: false,
         type: schemaFieldType.Select,
     },
-    flitter_time: {
-        title: "时间",
-        required: true,
-        // search: false,
-        sorter: true,
-        addHide: true,
-        editHide: true,
+    begin_time: {
+        title: "开始时间",
+        type: schemaFieldType.DatePicker,
         props: {
+            format: "YYYY-MM-DD",
+            style: { width: "100%" },
             showTime: true,
-            valueType: "dateRange",
+            valueType: "dateTime",
         },
         hideInTable: true,
-        renderInput: () => <RangePicker style={{ width: "100%" }} />,
+    },
+
+    end_time: {
+        title: "结束时间",
         type: schemaFieldType.DatePicker,
+        props: {
+            format: "YYYY-MM-DD",
+            style: { width: "100%" },
+            showTime: true,
+            valueType: "dateTime",
+        },
+        hideInTable: true,
     },
 
     create_time: {
@@ -156,19 +164,25 @@ const service = createApi("intent_mark_task", schema, null, "eq.")
 
 service.get = async (args) => {
     let order = args.order
-    if (args.flitter_time) {
-        // console.log(args.create_time.split(","))
-        let flitter_time = args.flitter_time.split(",")
-        let time = new Date(flitter_time[0])
-        let beginTime = moment(time).format("YYYY-MM-DD") + "T00:00:00"
-        time = new Date(flitter_time[1])
-        let endTime = moment(time).format("YYYY-MM-DD") + "T23:59:59"
-
-        // let beginTime = args.flitter_time[0].format("YYYY-MM-DD") + "T00:00:00"
-        // let endTime = args.flitter_time[1].format("YYYY-MM-DD") + "T23:59:59"
-        args.flitter_time = undefined
-        args.and = `(create_time.gte.${beginTime},create_time.lte.${endTime})`
+    if (args.begin_time) {
+        let time = new Date(parseInt(args.begin_time))
+        let begin_time = moment(time).format("YYYY-MM-DDTHH:mm:ss")
+        args.and = `(create_time.gte.${begin_time})`
     }
+    if (args.end_time) {
+        let time = new Date(parseInt(args.end_time))
+        let end_time = moment(time).format("YYYY-MM-DDTHH:mm:ss")
+        args.and = `(create_time.lte.${end_time})`
+    }
+    if (args.end_time && args.begin_time) {
+        let time = new Date(parseInt(args.begin_time))
+        let begin_time = moment(time).format("YYYY-MM-DDTHH:mm:ss")
+        time = new Date(parseInt(args.end_time))
+        let end_time = moment(time).format("YYYY-MM-DDTHH:mm:ss")
+        args.and = `(create_time.gte.${begin_time},create_time.lte.${end_time})`
+    }
+    args.end_time = undefined
+    args.begin_time = undefined
     if (order) {
         if (
             args.order.split(".")[0] === "compare_intent_id" ||

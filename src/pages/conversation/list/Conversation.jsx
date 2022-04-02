@@ -118,7 +118,7 @@ class Conversation extends ListPage {
 
         this.formRef.current.resetFields()
         this.formRef.current.setFieldsValue({
-            begin_time: [moment().subtract("days", 6), undefined],
+            begin_time: moment().subtract("days", 6),
         })
         this.setState(
             {
@@ -210,7 +210,7 @@ class Conversation extends ListPage {
         let _this = this
         // 外链
         this.formRef.current.setFieldsValue({
-            begin_time: [moment().subtract("days", 6), undefined],
+            begin_time: moment().subtract("days", 6),
         })
         if (location.pathname.startsWith("/outter")) {
             let showIntentFlow =

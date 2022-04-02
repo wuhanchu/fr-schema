@@ -6,24 +6,28 @@ import { isNull } from "lodash"
 const { RangePicker } = DatePicker
 
 const schema = {
-    fitter_time: {
-        title: "提问时间",
-        sorter: true,
-        hideInTable: true,
-        props: {
-            showTime: true,
-            valueType: "dateRange",
-        },
-        renderInput: () => {
-            return (
-                <RangePicker
-                    allowEmpty={[true, true]}
-                    format="MM-DD HH:mm:ss"
-                    showTime
-                ></RangePicker>
-            )
-        },
+    begin_time: {
+        title: "开始时间",
         type: schemaFieldType.DatePicker,
+        props: {
+            format: "YYYY-MM-DD",
+            style: { width: "100%" },
+            showTime: true,
+            valueType: "dateTime",
+        },
+        hideInTable: true,
+    },
+
+    end_time: {
+        title: "结束时间",
+        type: schemaFieldType.DatePicker,
+        props: {
+            format: "YYYY-MM-DD",
+            style: { width: "100%" },
+            showTime: true,
+            valueType: "dateTime",
+        },
+        hideInTable: true,
     },
 
     create_time: {
@@ -226,34 +230,25 @@ const schema = {
 const service = createApi("search_history", schema, null)
 
 service.get = async (args) => {
-    if (args.fitter_time) {
-        let fitter_time = args.fitter_time.split(",")
-        let time = new Date(fitter_time[0])
-        let beginTime = moment(time).format("YYYY-MM-DDTHH:mm:ss")
-        time = new Date(fitter_time[1])
-        let endTime = moment(time).format("YYYY-MM-DDTHH:mm:ss")
-        if (fitter_time[0]) {
-            beginTime = beginTime
-        } else {
-            beginTime = undefined
-        }
-        if (fitter_time[1]) {
-            endTime = endTime
-        } else {
-            endTime = undefined
-        }
-        args.fitter_time = undefined
-        if (beginTime && endTime) {
-            args.and = `(create_time.gte.${beginTime},create_time.lte.${endTime})`
-        } else {
-            if (beginTime && !endTime) {
-                args.and = `(create_time.gte.${beginTime})`
-            }
-            if (!beginTime && endTime) {
-                args.and = `(create_time.lte.${endTime})`
-            }
-        }
+    if (args.begin_time) {
+        let time = new Date(parseInt(args.begin_time))
+        let begin_time = moment(time).format("YYYY-MM-DDTHH:mm:ss")
+        args.and = `(create_time.gte.${begin_time})`
     }
+    if (args.end_time) {
+        let time = new Date(parseInt(args.end_time))
+        let end_time = moment(time).format("YYYY-MM-DDTHH:mm:ss")
+        args.and = `(create_time.lte.${end_time})`
+    }
+    if (args.end_time && args.begin_time) {
+        let time = new Date(parseInt(args.begin_time))
+        let begin_time = moment(time).format("YYYY-MM-DDTHH:mm:ss")
+        time = new Date(parseInt(args.end_time))
+        let end_time = moment(time).format("YYYY-MM-DDTHH:mm:ss")
+        args.and = `(create_time.gte.${begin_time},create_time.lte.${end_time})`
+    }
+    args.end_time = undefined
+    args.begin_time = undefined
     if (args.have_match_project_id) {
         if (args.have_match_project_id === "have") {
             args.match_project_id = "not.is.null"

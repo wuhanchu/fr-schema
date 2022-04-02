@@ -101,7 +101,7 @@ class List extends ListPage {
 
         this.formRef.current.resetFields()
         this.formRef.current.setFieldsValue({
-            begin_time: [moment().subtract("days", 6), undefined],
+            begin_time: moment().subtract("days", 6),
         })
 
         this.setState(
@@ -162,7 +162,7 @@ class List extends ListPage {
         }
         try {
             this.formRef.current.setFieldsValue({
-                begin_time: [moment().subtract("days", 6), undefined],
+                begin_time: moment().subtract("days", 6),
             })
         } catch (error) {}
         let project = await schemas.project.service.get({

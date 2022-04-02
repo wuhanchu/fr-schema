@@ -2,30 +2,32 @@
 import { createApi } from "@/components/ListPage/service"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import { DatePicker } from "antd"
-import moments from "moment"
+import moment from "moment"
 import { render } from "mustache"
 
 const { RangePicker } = DatePicker
 
 const schema = {
     begin_time: {
-        title: "创建时间",
+        title: "开始时间",
         type: schemaFieldType.DatePicker,
         props: {
-            showTime: true,
+            format: "YYYY-MM-DD",
             style: { width: "100%" },
-            // valueType: "dateTime",
-            allowEmpty: [false, true],
-            valueType: "dateTimeRange",
+            showTime: true,
+            valueType: "dateTime",
         },
-        renderInput: () => {
-            return (
-                <RangePicker
-                    allowEmpty={[true, true]}
-                    format="MM-DD HH:mm:ss"
-                    showTime
-                ></RangePicker>
-            )
+        hideInTable: true,
+    },
+
+    end_time: {
+        title: "结束时间",
+        type: schemaFieldType.DatePicker,
+        props: {
+            format: "YYYY-MM-DD",
+            style: { width: "100%" },
+            showTime: true,
+            valueType: "dateTime",
         },
         hideInTable: true,
     },
@@ -143,7 +145,7 @@ const schema = {
             },
         },
     },
-    
+
     flow_key: {
         title: "流程",
         sorter: true,
@@ -202,21 +204,12 @@ service.get = async (args) => {
         args.call_id = "is.null"
     }
     if (args.begin_time) {
-        let fitter_time = args.begin_time.split(",")
-        let time = new Date(fitter_time[0])
-        let beginTime = moments(time).format("YYYY-MM-DDTHH:mm:ss")
-        time = new Date(fitter_time[1])
-        let endTime = moments(time).format("YYYY-MM-DDTHH:mm:ss")
-        if (fitter_time[0]) {
-            args.begin_time = beginTime
-        } else {
-            args.begin_time = undefined
-        }
-        if (fitter_time[1]) {
-            args.end_time = endTime
-        } else {
-            args.end_time = undefined
-        }
+        let time = new Date(parseInt(args.begin_time))
+        args.begin_time = moment(time).format("YYYY-MM-DDTHH:mm:ss")
+    }
+    if (args.end_time) {
+        let time = new Date(parseInt(args.end_time))
+        args.end_time = moment(time).format("YYYY-MM-DDTHH:mm:ss")
     }
 
     if (args.intent_key) {

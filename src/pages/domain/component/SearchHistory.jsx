@@ -71,8 +71,10 @@ class MyList extends DataList {
         try {
             this.formRef.current.setFieldsValue({
                 final_result: "true",
-                fitter_time:
+                begin_time:
                     this.props.searchArgs && this.props.searchArgs.begin_time,
+                end_time:
+                    this.props.searchArgs && this.props.searchArgs.end_time,
                 client_id:
                     this.props.searchArgs && this.props.searchArgs.client_id,
                 have_match_project_id: this.props.searchArgs.match_project_id,
@@ -122,8 +124,9 @@ class MyList extends DataList {
         this.formRef.current.resetFields()
         this.formRef.current.setFieldsValue({
             final_result: "true",
-            fitter_time:
+            begin_time:
                 this.props.searchArgs && this.props.searchArgs.begin_time,
+            end_time: this.props.searchArgs && this.props.searchArgs.end_time,
             client_id: this.props.searchArgs && this.props.searchArgs.client_id,
             have_match_project_id: this.props.searchArgs.match_project_id,
         })

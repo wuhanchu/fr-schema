@@ -23,20 +23,28 @@ function renderText(data) {
     )
 }
 const schema = {
-    flitter_time: {
-        title: "时间",
-        required: true,
-        // search: false,
-        sorter: true,
-        addHide: true,
-        editHide: true,
+    begin_time: {
+        title: "开始时间",
+        type: schemaFieldType.DatePicker,
         props: {
+            format: "YYYY-MM-DD",
+            style: { width: "100%" },
             showTime: true,
-            valueType: "dateRange",
+            valueType: "dateTime",
         },
         hideInTable: true,
-        renderInput: () => <RangePicker style={{ width: "100%" }} />,
+    },
+
+    end_time: {
+        title: "结束时间",
         type: schemaFieldType.DatePicker,
+        props: {
+            format: "YYYY-MM-DD",
+            style: { width: "100%" },
+            showTime: true,
+            valueType: "dateTime",
+        },
+        hideInTable: true,
     },
     domain_key: {
         title: "域",
