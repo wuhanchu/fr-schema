@@ -145,6 +145,31 @@ export default [
                         ],
                     },
                     {
+                        path: "/frame/outboundTask",
+                        name: "outboundTask",
+                        icon: "BarChartOutlined",
+                        routes: [
+                            {
+                                path: "/frame/outboundTask/list",
+                                name: "taskList",
+                                component: "./outboundTask/List.jsx",
+                                title: "任务管理",
+                            },
+                            {
+                                path: "/frame/outboundTask/customer",
+                                name: "taskCustomer",
+                                component: "./customer/List.jsx",
+                                title: "客户管理",
+                            },
+                            {
+                                path: "/frame/outboundTask/message",
+                                name: "taskMessage",
+                                component: "./message/List.jsx",
+                                title: "消息管理",
+                            },
+                        ],
+                    },
+                    {
                         path: "/frame/statistics",
                         name: "statistics",
                         icon: "ScheduleOutlined",
