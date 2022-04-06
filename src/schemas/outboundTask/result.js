@@ -14,6 +14,7 @@ const schema = {
 
     type: {
         title: "类型",
+        sorter: true,
         type: schemaFieldType.Select,
         dict: {
             in: { remark: "呼入", value: "in" },
@@ -22,6 +23,7 @@ const schema = {
     },
     status: {
         title: "状态",
+        sorter: true,
         type: schemaFieldType.Select,
         dict: {
             created: { remark: "已创建", value: "created" },
@@ -34,6 +36,7 @@ const schema = {
     result: {
         title: "结果",
         type: schemaFieldType.Select,
+        sorter: true,
         dict: {
             normal: { remark: "正常", value: "normal" },
             failed: { remark: "拨打失败", value: "failed" },
@@ -48,10 +51,12 @@ const schema = {
     },
     from_phone: {
         title: "呼出号码",
+        sorter: true,
         searchPrefix: "like",
     },
     to_phone: {
         title: "拨打号码",
+        sorter: true,
         searchPrefix: "like",
     },
     fail_reason: {
@@ -62,41 +67,48 @@ const schema = {
 
     phone_duration: {
         title: "通话时长",
+        sorter: true,
         search: false,
         // unit: "ms",
         render: (item, data) => {
             return <>{decorateTime(item)}</>
         },
     },
-    begin_time: {
-        title: "拨通时间",
+    start_time: {
+        title: "开始时间",
+        sorter: true,
         props: {
-            showTime: true,
-            valueType: "dateTime",
+            // showTime: true,
+            // valueType: "dateTime",
         },
-        renderInput: () => {
-            return (
-                <RangePicker
-                    allowEmpty={[true, true]}
-                    format="MM-DD HH:mm:ss"
-                    showTime
-                ></RangePicker>
-            )
-        },
+        hideInTable: true,
         type: schemaFieldType.DatePicker,
     },
     end_time: {
-        title: "挂机时间",
+        title: "结束时间",
+        sorter: true,
         props: {
-            showTime: true,
-            valueType: "dateTime",
+            // showTime: true,
+            // valueType: "dateTime",
+        },
+        hideInTable: true,
+        type: schemaFieldType.DatePicker,
+    },
+    begin_time: {
+        title: "拨通时间",
+        sorter: true,
+        search: false,
+        props: {
+            // showTime: true,
+            // valueType: "dateTime",
         },
         renderInput: () => {
             return (
                 <RangePicker
                     allowEmpty={[true, true]}
-                    format="MM-DD HH:mm:ss"
-                    showTime
+                    format="YYYY-MM-DD"
+                    style={{ width: "100%" }}
+                    // showTime
                 ></RangePicker>
             )
         },
@@ -104,14 +116,12 @@ const schema = {
     },
     external_id: {
         title: "外部编号",
-        search: false,
-    },
-    conversation_id: {
-        title: "会话信息编号",
+        sorter: true,
         search: false,
     },
     phone_audio_url: {
-        title: "录音地址",
+        title: "通话录音",
+        sorter: true,
         search: false,
     },
 }
@@ -119,44 +129,25 @@ const schema = {
 const service = createApi("call_record", schema, null, "eq.")
 service.getBatch = createApi("outbound_task_batch", schema, null, "eq.").get
 service.get = async (args) => {
-    let andArray = []
-    if (args.begin_time) {
-        if (args.begin_time.split(",")[0]) {
-            andArray.push(
-                `begin_time.gte.${moment(args.begin_time.split(",")[0]).format(
-                    "YYYY-MM-DDTHH:mm:ss"
-                )}`
-            )
-        }
-        if (args.begin_time.split(",")[1]) {
-            andArray.push(
-                `begin_time.lte.${moment(args.begin_time.split(",")[1]).format(
-                    "YYYY-MM-DDTHH:mm:ss"
-                )}`
-            )
-        }
+    if (args.start_time) {
+        let time = new Date(parseInt(args.start_time))
+        let begin_time = moment(time).format("YYYY-MM-DD") + "T00:00:00"
+        args.and = `(begin_time.gte.${begin_time})`
     }
     if (args.end_time) {
-        if (args.end_time.split(",")[0]) {
-            andArray.push(
-                `end_time.gte.${moment(args.end_time.split(",")[0]).format(
-                    "YYYY-MM-DDTHH:mm:ss"
-                )}`
-            )
-        }
-        if (args.end_time.split(",")[1]) {
-            andArray.push(
-                `end_time.lte.${moment(args.end_time.split(",")[1]).format(
-                    "YYYY-MM-DDTHH:mm:ss"
-                )}`
-            )
-        }
+        let time = new Date(parseInt(args.end_time))
+        let end_time = moment(time).format("YYYY-MM-DD") + "T23:59:59"
+        args.and = `(begin_time.lte.${end_time})`
     }
-
-    args.begin_time = undefined
+    if (args.end_time && args.start_time) {
+        let time = new Date(parseInt(args.start_time))
+        let begin_time = moment(time).format("YYYY-MM-DD") + "T00:00:00"
+        time = new Date(parseInt(args.end_time))
+        let end_time = moment(time).format("YYYY-MM-DD") + "T23:59:59"
+        args.and = `(begin_time.gte.${begin_time},begin_time.lte.${end_time})`
+    }
     args.end_time = undefined
-    args.and = andArray.length ? "(" + andArray.join(",") + ")" : undefined
-
+    args.start_time = undefined
     let data = createApi("call_record", schema, null, "eq.").get(args)
     return data
 }

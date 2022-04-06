@@ -12,8 +12,8 @@ const schema = {
         props: {
             format: "YYYY-MM-DD",
             style: { width: "100%" },
-            showTime: true,
-            valueType: "dateTime",
+            // showTime: true,
+            // valueType: "dateTime",
         },
         hideInTable: true,
     },
@@ -24,8 +24,8 @@ const schema = {
         props: {
             format: "YYYY-MM-DD",
             style: { width: "100%" },
-            showTime: true,
-            valueType: "dateTime",
+            // showTime: true,
+            // valueType: "dateTime",
         },
         hideInTable: true,
     },
@@ -33,8 +33,8 @@ const schema = {
     create_time: {
         title: "提问时间",
         props: {
-            showTime: true,
-            valueType: "dateTime",
+            // showTime: true,
+            // valueType: "dateTime",
         },
         type: schemaFieldType.DatePicker,
         sorter: true,
@@ -232,19 +232,19 @@ const service = createApi("search_history", schema, null)
 service.get = async (args) => {
     if (args.begin_time) {
         let time = new Date(parseInt(args.begin_time))
-        let begin_time = moment(time).format("YYYY-MM-DDTHH:mm:ss")
+        let begin_time = moment(time).format("YYYY-MM-DD") + "T00:00:00"
         args.and = `(create_time.gte.${begin_time})`
     }
     if (args.end_time) {
         let time = new Date(parseInt(args.end_time))
-        let end_time = moment(time).format("YYYY-MM-DDTHH:mm:ss")
+        let end_time = moment(time).format("YYYY-MM-DD") + "T23:59:59"
         args.and = `(create_time.lte.${end_time})`
     }
     if (args.end_time && args.begin_time) {
         let time = new Date(parseInt(args.begin_time))
-        let begin_time = moment(time).format("YYYY-MM-DDTHH:mm:ss")
+        let begin_time = moment(time).format("YYYY-MM-DD") + "T00:00:00"
         time = new Date(parseInt(args.end_time))
-        let end_time = moment(time).format("YYYY-MM-DDTHH:mm:ss")
+        let end_time = moment(time).format("YYYY-MM-DD") + "T23:59:59"
         args.and = `(create_time.gte.${begin_time},create_time.lte.${end_time})`
     }
     args.end_time = undefined

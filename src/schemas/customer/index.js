@@ -38,6 +38,11 @@ const schema = {
             female: { remark: "女士", value: "female" },
         },
     },
+    title: {
+        title: "称呼",
+        sorter: true,
+        searchPrefix: "like",
+    },
     email: {
         title: "邮箱",
         sorter: true,
@@ -61,8 +66,8 @@ const schema = {
         addHide: true,
         editHide: true,
         props: {
-            showTime: true,
-            valueType: "dateTime",
+            // showTime: true,
+            // valueType: "dateTime",
         },
         search: false,
         type: schemaFieldType.DatePicker,

@@ -77,10 +77,12 @@ class List extends ListPage {
                     type: 2,
                     caller_group_id: item.KEY,
                 })
+                res.list = res.list.map((item) => {
+                    return { ...item, caller_group_id: item.KEY }
+                })
                 callerArray = [...callerArray, ...res.list]
             })
         )
-        console.log(callerArray)
         this.schema.caller_number.dict = listToDict(
             callerArray,
             "",
@@ -336,7 +338,7 @@ class List extends ListPage {
                 )}
                 <Divider type="vertical" />
                 <Popconfirm
-                    title="是否要同步任务数据？"
+                    title="是否要同步任务执行结果？"
                     onConfirm={async (e) => {
                         this.setState({ record })
                         await schemas.outboundTask.service.syncTaskResult({
@@ -349,7 +351,7 @@ class List extends ListPage {
                 >
                     <a>同步</a>
                 </Popconfirm>
-                <Divider type="vertical" />
+                {/* <Divider type="vertical" />
                 <a
                     onClick={async () => {
                         this.setState({
@@ -360,7 +362,7 @@ class List extends ListPage {
                     }}
                 >
                     统计
-                </a>
+                </a> */}
             </>
         )
     }

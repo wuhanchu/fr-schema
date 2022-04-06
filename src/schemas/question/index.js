@@ -266,15 +266,15 @@ const schema = {
         editHide: true,
         type: schemaFieldType.DatePicker,
         props: {
-            showTime: true,
-            valueType: "dateTime",
+            // showTime: true,
+            // valueType: "dateTime",
         },
         renderInput: () => {
             return (
                 <RangePicker
                     allowEmpty={[true, true]}
-                    format="MM-DD HH:mm:ss"
-                    showTime
+                    format="YYYY-MM-DD"
+                    // showTime
                 ></RangePicker>
             )
         },
@@ -289,10 +289,10 @@ const schema = {
         editHide: true,
         type: schemaFieldType.DatePicker,
         props: {
-            showTime: true,
-            valueType: "dateTime",
+            // showTime: true,
+            // valueType: "dateTime",
             allowEmpty: [true, true],
-            format: "MM-DD HH:mm:ss",
+            format: "YYYY-MM-DD",
         },
         // width: "135px",
     },
@@ -316,7 +316,7 @@ service.get = async function (args) {
                 `create_time.lte.${
                     moment(args.create_time.split(",")[1]).format(
                         "YYYY-MM-DD"
-                    ) + "T00:00:00"
+                    ) + "T23:59:59"
                 }`
             )
         }
@@ -336,7 +336,7 @@ service.get = async function (args) {
                 `update_time.lte.${
                     moment(args.update_time.split(",")[1]).format(
                         "YYYY-MM-DD"
-                    ) + "T00:00:00"
+                    ) + "T23:59:59"
                 }`
             )
         }
@@ -380,7 +380,7 @@ service.getData = async function (args) {
                 `create_time.lte.${
                     moment(args.create_time.split(",")[1]).format(
                         "YYYY-MM-DD"
-                    ) + "T00:00:00"
+                    ) + "T23:59:59"
                 }`
             )
         }
@@ -400,7 +400,7 @@ service.getData = async function (args) {
                 `update_time.lte.${
                     moment(args.update_time.split(",")[1]).format(
                         "YYYY-MM-DD"
-                    ) + "T00:00:00"
+                    ) + "T23:59:59"
                 }`
             )
         }

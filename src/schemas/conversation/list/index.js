@@ -14,8 +14,8 @@ const schema = {
         props: {
             format: "YYYY-MM-DD",
             style: { width: "100%" },
-            showTime: true,
-            valueType: "dateTime",
+            // showTime: true,
+            // valueType: "dateTime",
         },
         hideInTable: true,
     },
@@ -26,8 +26,8 @@ const schema = {
         props: {
             format: "YYYY-MM-DD",
             style: { width: "100%" },
-            showTime: true,
-            valueType: "dateTime",
+            // showTime: true,
+            // valueType: "dateTime",
         },
         hideInTable: true,
     },
@@ -188,8 +188,8 @@ const schema = {
         search: false,
         sorter: true,
         props: {
-            showTime: true,
-            valueType: "dateTime",
+            // showTime: true,
+            // valueType: "dateTime",
         },
         type: schemaFieldType.DatePicker,
     },
@@ -205,11 +205,11 @@ service.get = async (args) => {
     }
     if (args.begin_time) {
         let time = new Date(parseInt(args.begin_time))
-        args.begin_time = moment(time).format("YYYY-MM-DDTHH:mm:ss")
+        args.begin_time = moment(time).format("YYYY-MM-DD") + "T00:00:00"
     }
     if (args.end_time) {
         let time = new Date(parseInt(args.end_time))
-        args.end_time = moment(time).format("YYYY-MM-DDTHH:mm:ss")
+        args.end_time = moment(time).format("YYYY-MM-DD") + "T23:59:59"
     }
 
     if (args.intent_key) {

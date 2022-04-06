@@ -17,8 +17,8 @@ const schema = {
         props: {
             format: "YYYY-MM-DD",
             style: { width: "100%" },
-            showTime: true,
-            valueType: "dateTime",
+            // showTime: true,
+            // valueType: "dateTime",
         },
         hideInTable: true,
     },
@@ -29,8 +29,8 @@ const schema = {
         props: {
             format: "YYYY-MM-DD",
             style: { width: "100%" },
-            showTime: true,
-            valueType: "dateTime",
+            // showTime: true,
+            // valueType: "dateTime",
         },
         hideInTable: true,
     },
@@ -44,8 +44,8 @@ const schema = {
         editHide: true,
         search: false,
         props: {
-            showTime: true,
-            valueType: "dateTime",
+            // showTime: true,
+            // valueType: "dateTime",
             // valueType: 'dateRange',
         },
         renderInput: () => <RangePicker style={{ width: "100%" }} />,
@@ -166,19 +166,19 @@ service.get = async (args) => {
     let order = args.order
     if (args.begin_time) {
         let time = new Date(parseInt(args.begin_time))
-        let begin_time = moment(time).format("YYYY-MM-DDTHH:mm:ss")
+        let begin_time = moment(time).format("YYYY-MM-DD") + "T00:00:00"
         args.and = `(create_time.gte.${begin_time})`
     }
     if (args.end_time) {
         let time = new Date(parseInt(args.end_time))
-        let end_time = moment(time).format("YYYY-MM-DDTHH:mm:ss")
+        let end_time = moment(time).format("YYYY-MM-DD") + "T23:59:59"
         args.and = `(create_time.lte.${end_time})`
     }
     if (args.end_time && args.begin_time) {
         let time = new Date(parseInt(args.begin_time))
-        let begin_time = moment(time).format("YYYY-MM-DDTHH:mm:ss")
+        let begin_time = moment(time).format("YYYY-MM-DD") + "T00:00:00"
         time = new Date(parseInt(args.end_time))
-        let end_time = moment(time).format("YYYY-MM-DDTHH:mm:ss")
+        let end_time = moment(time).format("YYYY-MM-DD") + "T23:59:59"
         args.and = `(create_time.gte.${begin_time},create_time.lte.${end_time})`
     }
     args.end_time = undefined

@@ -28,8 +28,8 @@ const schema = {
         props: {
             format: "YYYY-MM-DD",
             style: { width: "100%" },
-            showTime: true,
-            valueType: "dateTime",
+            // showTime: true,
+            // valueType: "dateTime",
         },
         hideInTable: true,
     },
@@ -40,8 +40,8 @@ const schema = {
         props: {
             format: "YYYY-MM-DD",
             style: { width: "100%" },
-            showTime: true,
-            valueType: "dateTime",
+            // showTime: true,
+            // valueType: "dateTime",
         },
         hideInTable: true,
     },
@@ -55,9 +55,9 @@ const schema = {
         editHide: true,
         search: false,
         props: {
-            showTime: true,
+            // showTime: true,
             // valueType: 'dateRange',
-            valueType: "dateTime",
+            // valueType: "dateTime",
         },
         renderInput: () => <RangePicker style={{ width: "100%" }} />,
         type: schemaFieldType.DatePicker,

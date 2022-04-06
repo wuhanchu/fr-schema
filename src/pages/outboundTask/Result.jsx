@@ -1,7 +1,7 @@
 import { connect } from "dva"
 import DataList from "@/outter/fr-schema-antd-utils/src/components/Page/DataList"
 import styles from "@/outter/fr-schema-antd-utils/src/components/Page/DataList.less"
-
+import { PlaySquareOutlined, SyncOutlined } from "@ant-design/icons"
 import schemas from "@/schemas"
 import React from "react"
 import { Divider, Button, message, Modal, Row, Col, Popconfirm } from "antd"
@@ -51,7 +51,73 @@ class List extends DataList {
     }
 
     async componentDidMount() {
+        this.setState({
+            audio: document.createElement("AUDIO"),
+        })
+        this.schema.phone_audio_url.render = (item, data) => {
+            console.log(item)
+            if (!data.phone_audio_url) {
+                return ""
+            }
+            return (
+                <>
+                    {this.state.audioIndex !== data.id ? (
+                        <a
+                            onClick={() => {
+                                const { audio } = this.state
+                                try {
+                                    audio.src = item.phone_audio_url
+                                    var playPromise = audio.play()
+
+                                    if (playPromise !== undefined) {
+                                        playPromise
+                                            .then((_) => {
+                                                // Automatic playback started!
+                                                // Show playing UI.
+                                            })
+                                            .catch((error) => {
+                                                // Auto-play was prevented
+                                                // Show paused UI.
+                                            })
+                                    }
+                                    audio.onended = () => {
+                                        this.setState({
+                                            audioIndex: undefined,
+                                        })
+                                    }
+                                } catch (error) {}
+
+                                this.setState({ audioIndex: data.id })
+                            }}
+                            style={{ marginLeft: "5px" }}
+                        >
+                            <PlaySquareOutlined />
+                        </a>
+                    ) : (
+                        <a
+                            onClick={() => {
+                                const { audio } = this.state
+                                try {
+                                    audio.load()
+                                } catch (error) {}
+                                this.setState({
+                                    audioIndex: undefined,
+                                })
+                            }}
+                            style={{ marginLeft: "5px" }}
+                        >
+                            <SyncOutlined spin />
+                        </a>
+                    )}
+                </>
+            )
+        }
         super.componentDidMount()
+    }
+
+    componentWillUnmount() {
+        const { audio } = this.state
+        audio.load()
     }
 
     renderInfoModal(customProps = {}) {

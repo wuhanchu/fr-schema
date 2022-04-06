@@ -33,7 +33,6 @@ const schema = {
         searchPrefix: "like",
         sorter: true,
         extra: "实体类型提取的统一正则表达式。",
-
     },
     create_time: {
         title: "创建时间",
@@ -44,8 +43,8 @@ const schema = {
 
         editHide: true,
         props: {
-            showTime: true,
-            valueType: "dateTime",
+            // showTime: true,
+            // valueType: "dateTime",
         },
         type: schemaFieldType.DatePicker,
     },

@@ -39,6 +39,22 @@ const schema = {
         searchPrefix: "like",
         required: true,
     },
+
+    flow_key: {
+        title: "流程",
+        required: true,
+        type: schemaFieldType.Select,
+    },
+    test: {
+        title: "测试任务",
+        type: schemaFieldType.Select,
+        required: true,
+        dict: {
+            true: { value: "true", remark: "是" },
+            false: { value: "false", remark: "否" },
+        },
+        extra: "是否为测试任务",
+    },
     caller_group_id: {
         title: "号码组",
         hideInTable: true,
@@ -46,12 +62,6 @@ const schema = {
         required: true,
         type: schemaFieldType.Select,
     },
-    flow_key: {
-        title: "流程",
-        required: true,
-        type: schemaFieldType.Select,
-    },
-
     caller_number: {
         title: "呼出号码",
         required: true,
@@ -74,16 +84,7 @@ const schema = {
             end: { value: "end", remark: "结束" },
         },
     },
-    test: {
-        title: "测试任务",
-        type: schemaFieldType.Select,
-        required: true,
-        dict: {
-            true: { value: "true", remark: "是" },
-            false: { value: "false", remark: "否" },
-        },
-        extra: "是否为测试任务",
-    },
+
     create_time: {
         title: "创建时间",
         required: true,
@@ -91,8 +92,8 @@ const schema = {
         addHide: true,
         editHide: true,
         props: {
-            showTime: true,
-            valueType: "dateTime",
+            // showTime: true,
+            // valueType: "dateTime",
         },
         search: false,
         type: schemaFieldType.DatePicker,
@@ -106,8 +107,8 @@ const statisticsSchema = {
         props: {
             format: "YYYY-MM-DD",
             style: { width: "100%" },
-            showTime: true,
-            valueType: "dateTime",
+            // showTime: true,
+            // valueType: "dateTime",
         },
         hideInTable: true,
     },
@@ -117,8 +118,8 @@ const statisticsSchema = {
         props: {
             format: "YYYY-MM-DD",
             style: { width: "100%" },
-            showTime: true,
-            valueType: "dateTime",
+            // showTime: true,
+            // valueType: "dateTime",
         },
         hideInTable: true,
     },
@@ -198,11 +199,11 @@ const service = createApi("outbound_task", schema, null, "eq.")
 service.getStatistics = async (args) => {
     if (args.begin_time) {
         let time = new Date(parseInt(args.begin_time))
-        args.begin_time = moment(time).format("YYYY-MM-DDTHH:mm:ss")
+        args.begin_time = moment(time).format("YYYY-MM-DD") + "T00:00:00"
     }
     if (args.end_time) {
         let time = new Date(parseInt(args.end_time))
-        args.end_time = moment(time).format("YYYY-MM-DDTHH:mm:ss")
+        args.end_time = moment(time).format("YYYY-MM-DD") + "T23:59:59"
     }
     let data = await createApi(
         "outbound/call_record_summary",
@@ -220,7 +221,9 @@ service.post = async (args) => {
         args.start_time = moment(args.start_time).format("YYYY-MM-DD")
     }
     if (args.end_time) {
-        args.end_time = moment(args.end_time).format("YYYY-MM-DD")
+        args.end_time = moment(args.end_time)
+            .add("days", 1)
+            .format("YYYY-MM-DD")
     }
     console.log(args)
     let data = await createApi("outbound/create_task", null, null, "").post({
