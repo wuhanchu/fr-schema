@@ -1,7 +1,12 @@
 import { connect } from "dva"
 import DataList from "@/outter/fr-schema-antd-utils/src/components/Page/DataList"
 import styles from "@/outter/fr-schema-antd-utils/src/components/Page/DataList.less"
-import { PlaySquareOutlined, SyncOutlined } from "@ant-design/icons"
+import {
+    DownCircleFilled,
+    PlaySquareOutlined,
+    SyncOutlined,
+    DownloadOutlined,
+} from "@ant-design/icons"
 import schemas from "@/schemas"
 import React from "react"
 import { Divider, Button, message, Modal, Row, Col, Popconfirm } from "antd"
@@ -51,8 +56,11 @@ class List extends DataList {
     }
 
     async componentDidMount() {
+        let audio = document.createElement("AUDIO")
+        audio.crossOrigin = "anonymous"
+
         this.setState({
-            audio: document.createElement("AUDIO"),
+            audio: audio,
         })
         this.schema.phone_audio_url.render = (item, data) => {
             console.log(item)
@@ -66,6 +74,7 @@ class List extends DataList {
                             onClick={() => {
                                 const { audio } = this.state
                                 try {
+                                    audio.crossOrigin = "anonymous"
                                     audio.src = item.phone_audio_url
                                     var playPromise = audio.play()
 
@@ -109,9 +118,22 @@ class List extends DataList {
                             <SyncOutlined spin />
                         </a>
                     )}
+                    <Divider type="vertical" />
+                    <a
+                        onClick={() => {
+                            FileSaver(
+                                data.phone_audio_url,
+                                data.external_id || "导出"
+                            )
+                        }}
+                    >
+                        <DownloadOutlined />
+                    </a>
                 </>
             )
         }
+        let batchArray = await this.service.getBatch({ limit: 1000 })
+        console.log(batchArray)
         super.componentDidMount()
     }
 
@@ -166,7 +188,7 @@ class List extends DataList {
                             this.setState({ showInfo: true, record })
                         }}
                     >
-                        详情
+                        明细
                     </a>
                 )}
             </>

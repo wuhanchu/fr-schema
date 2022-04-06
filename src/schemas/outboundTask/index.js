@@ -7,7 +7,7 @@ const schema = {
     start_time: {
         title: "开始时间",
         type: schemaFieldType.DatePicker,
-        extra: "任务开始拨号时间",
+        extra: "任务开始时间为选择日期当天00:00:00",
         hideInTable: true,
         search: false,
         required: true,
@@ -15,7 +15,7 @@ const schema = {
     end_time: {
         title: "结束时间",
         type: schemaFieldType.DatePicker,
-        extra: "任务结束拨号时间",
+        extra: "任务结束时间为选择日期当天23.59:59",
         hideInTable: true,
         search: false,
         required: true,
@@ -64,6 +64,7 @@ const schema = {
     },
     caller_number: {
         title: "呼出号码",
+        search: false,
         required: true,
         type: schemaFieldType.Select,
     },
@@ -225,10 +226,8 @@ service.post = async (args) => {
             .add("days", 1)
             .format("YYYY-MM-DD")
     }
-    console.log(args)
     let data = await createApi("outbound/create_task", null, null, "").post({
         ...args,
-        flow_id: "12085",
     })
     return data
 }

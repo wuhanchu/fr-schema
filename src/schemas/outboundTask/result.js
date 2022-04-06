@@ -119,6 +119,12 @@ const schema = {
         sorter: true,
         search: false,
     },
+    batch_id: {
+        title: "批次",
+        sorter: true,
+        search: false,
+        // type: schemaFieldType.Select,
+    },
     phone_audio_url: {
         title: "通话录音",
         sorter: true,

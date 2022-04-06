@@ -2,7 +2,7 @@ import { connect } from "dva"
 import ListPage from "@/components/ListPage/ListPage"
 import schemas from "@/schemas"
 import React from "react"
-import { Divider, Button, message, Modal, Popconfirm } from "antd"
+import { Divider, Button, message, Modal, Popconfirm, Select } from "antd"
 import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
 import { listToDict } from "@/outter/fr-schema/src/dict"
@@ -77,8 +77,9 @@ class List extends ListPage {
                     type: 2,
                     caller_group_id: item.KEY,
                 })
+                let caller_group_key = item.KEY
                 res.list = res.list.map((item) => {
-                    return { ...item, caller_group_id: item.KEY }
+                    return { ...item, caller_group_id: caller_group_key }
                 })
                 callerArray = [...callerArray, ...res.list]
             })
@@ -89,6 +90,47 @@ class List extends ListPage {
             "KEY",
             "VALUE"
         )
+        this.schema.caller_number.callerArray = callerArray
+        this.schema.caller_number.renderInput = (item, data, props) => {
+            let option = []
+            if (
+                props.form &&
+                props.form.current &&
+                props.form.current.getFieldsValue
+            ) {
+                option =
+                    item.callerArray &&
+                    item.callerArray.filter((item) => {
+                        return (
+                            item.caller_group_id ===
+                            props.form.current.getFieldsValue().caller_group_id
+                        )
+                    })
+            }
+
+            return (
+                <Select
+                    style={{ width: "300px" }}
+                    placeholder="请输入呼出号码"
+                    showSearch
+                    filterOption={(input, option) =>
+                        option.children
+                            .toLowerCase()
+                            .indexOf(input.toLowerCase()) >= 0
+                    }
+                    allowClear
+                >
+                    {option.map((item) => {
+                        return (
+                            <Select.Option value={item.KEY}>
+                                {item.VALUE}
+                            </Select.Option>
+                        )
+                    })}
+                </Select>
+            )
+        }
+
         this.schema.domain_key.dict = this.props.dict.domain
         super.componentDidMount()
     }
@@ -272,10 +314,8 @@ class List extends ListPage {
     renderOperateColumnExtend(record) {
         return (
             <>
-                {/* <Divider type="vertical" /> */}
                 <a
                     onClick={() => {
-                        // this.handleVisibleImportModal(true, record, "add")
                         this.setState({
                             visibleImport: true,
                             infoData: record,
@@ -351,7 +391,7 @@ class List extends ListPage {
                 >
                     <a>同步</a>
                 </Popconfirm>
-                {/* <Divider type="vertical" />
+                <Divider type="vertical" />
                 <a
                     onClick={async () => {
                         this.setState({
@@ -362,7 +402,7 @@ class List extends ListPage {
                     }}
                 >
                     统计
-                </a> */}
+                </a>
             </>
         )
     }
