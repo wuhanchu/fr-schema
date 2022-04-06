@@ -59,7 +59,12 @@ function initCompleter(actionParam, record) {
                 value: slot[key].value,
                 score: 100,
                 require: slot[key].require,
-                required: slot[key].require ? "是" : "否",
+                required:
+                    slot[key].require !== undefined
+                        ? slot[key].require
+                            ? "是"
+                            : "否"
+                        : "",
                 type: slot[key].type,
                 meta: slot[key].name || "",
                 remarks: slot[key].remark || "",
@@ -73,7 +78,12 @@ function initCompleter(actionParam, record) {
                 value: init_slot[key].value,
                 score: 100,
                 require: init_slot[key].require,
-                required: slot[key].require ? "是" : "否",
+                required:
+                    init_slot[key].require !== undefined
+                        ? init_slot[key].require
+                            ? "是"
+                            : "否"
+                        : "",
                 type: init_slot[key].type,
                 meta: init_slot[key].name || "",
                 remarks: init_slot[key].remark || "",
