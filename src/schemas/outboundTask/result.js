@@ -3,6 +3,7 @@ import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import { verifyJson } from "@/outter/fr-schema-antd-utils/src/utils/component"
 import { DatePicker } from "antd"
 import moment from "moment"
+import { decorateTime } from "@/utils/utils"
 
 const { RangePicker } = DatePicker
 const schema = {
@@ -62,29 +63,10 @@ const schema = {
     phone_duration: {
         title: "通话时长",
         search: false,
-        unit: "ms",
-    },
-    wait_duration: {
-        search: false,
-        title: "排队时长",
-        unit: "ms",
-    },
-    calling_duration: {
-        title: "振铃时长",
-        search: false,
-        unit: "ms",
-    },
-    external_id: {
-        title: "外部编号",
-        search: false,
-    },
-    conversation_id: {
-        title: "会话信息编号",
-        search: false,
-    },
-    phone_audio_url: {
-        title: "录音地址",
-        search: false,
+        // unit: "ms",
+        render: (item, data) => {
+            return <>{decorateTime(item)}</>
+        },
     },
     begin_time: {
         title: "拨通时间",
@@ -119,6 +101,18 @@ const schema = {
             )
         },
         type: schemaFieldType.DatePicker,
+    },
+    external_id: {
+        title: "外部编号",
+        search: false,
+    },
+    conversation_id: {
+        title: "会话信息编号",
+        search: false,
+    },
+    phone_audio_url: {
+        title: "录音地址",
+        search: false,
     },
 }
 
