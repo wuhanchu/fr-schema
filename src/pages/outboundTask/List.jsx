@@ -195,7 +195,7 @@ class List extends ListPage {
                 {showStatistics && (
                     <Modal
                         title={"统计"}
-                        width={"1200px"}
+                        width={"80%"}
                         visible={showStatistics}
                         footer={null}
                         onCancel={() => {

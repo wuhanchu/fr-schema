@@ -50,8 +50,14 @@ const schema = {
         type: schemaFieldType.Select,
         required: true,
         dict: {
-            true: { value: "true", remark: "是" },
-            false: { value: "false", remark: "否" },
+            true: {
+                value: "true",
+                remark: "是",
+            },
+            false: {
+                value: "false",
+                remark: "否",
+            },
         },
         extra: "是否为测试任务",
     },
@@ -69,7 +75,7 @@ const schema = {
         type: schemaFieldType.Select,
     },
     user_id: {
-        title: "用户",
+        title: "操作用户",
         type: schemaFieldType.Select,
         addHide: true,
     },
@@ -79,10 +85,22 @@ const schema = {
         editHide: true,
         type: schemaFieldType.Select,
         dict: {
-            wait: { value: "wait", remark: "等待运行" },
-            running: { value: "running", remark: "运行中" },
-            suspend: { value: "suspend", remark: "暂停" },
-            end: { value: "end", remark: "结束" },
+            wait: {
+                value: "wait",
+                remark: "等待运行",
+            },
+            running: {
+                value: "running",
+                remark: "运行中",
+            },
+            suspend: {
+                value: "suspend",
+                remark: "暂停",
+            },
+            end: {
+                value: "end",
+                remark: "结束",
+            },
         },
     },
 
@@ -107,7 +125,9 @@ const statisticsSchema = {
         type: schemaFieldType.DatePicker,
         props: {
             format: "YYYY-MM-DD",
-            style: { width: "100%" },
+            style: {
+                width: "100%",
+            },
             // showTime: true,
             // valueType: "dateTime",
         },
@@ -118,7 +138,9 @@ const statisticsSchema = {
         type: schemaFieldType.DatePicker,
         props: {
             format: "YYYY-MM-DD",
-            style: { width: "100%" },
+            style: {
+                width: "100%",
+            },
             // showTime: true,
             // valueType: "dateTime",
         },
@@ -127,6 +149,7 @@ const statisticsSchema = {
     flow_key: {
         title: "流程",
         required: true,
+        hideInTable: true,
         search: false,
         type: schemaFieldType.Select,
         props: {
@@ -136,9 +159,10 @@ const statisticsSchema = {
         },
     },
     user_id: {
-        title: "用户",
+        title: "操作用户",
         type: schemaFieldType.Select,
         addHide: true,
+        hideInTable: true,
         props: {
             mode: "tags",
             allowClear: true,
@@ -155,12 +179,64 @@ const statisticsSchema = {
             showSearch: true,
         },
     },
+    total: {
+        title: "总外呼",
+        search: false,
+    },
+    connected: {
+        title: "接通",
+        search: false,
+    },
+    no_connect: {
+        title: "未接通",
+        search: false,
+    },
+    refuse: {
+        title: "拒接",
+        search: false,
+    },
+    connected_rate: {
+        title: "接通率",
+        search: false,
+    },
+    no_answer: {
+        title: "无应答",
+        search: false,
+    },
+    failed: {
+        title: "拨打失败",
+        search: false,
+    },
+    busy: {
+        title: "忙线",
+        search: false,
+    },
+    empty: {
+        title: "空号",
+        search: false,
+    },
+    shutdown: {
+        title: "关机",
+        search: false,
+    },
+    halt: {
+        title: "停机",
+        search: false,
+    },
+    other: {
+        title: "其他",
+        search: false,
+    },
 }
 
 const importSchema = {
     number_group: {
         title: "数据文件",
-        props: { style: { width: "300px" } },
+        props: {
+            style: {
+                width: "300px",
+            },
+        },
         required: true,
         type: schemaFieldType.Upload,
     },
@@ -212,7 +288,11 @@ service.getStatistics = async (args) => {
         null,
         ""
     ).getBasic(args)
-    return { ...data, list: [], summary: data.list }
+    return {
+        ...data,
+        list: [data.list],
+        summary: data.list,
+    }
 }
 service.getDict = async (args) => {
     return createApi("outbound/dictionary", schema, null, "").getBasic(args)
@@ -251,7 +331,9 @@ service.changeTaskStatus = async (args) => {
         null,
         null,
         ""
-    ).post({ ...args })
+    ).post({
+        ...args,
+    })
     return data
 }
 service.syncTaskResult = async (args) => {
@@ -260,7 +342,9 @@ service.syncTaskResult = async (args) => {
         null,
         null,
         ""
-    ).post({ ...args })
+    ).post({
+        ...args,
+    })
     return data
 }
 export default {

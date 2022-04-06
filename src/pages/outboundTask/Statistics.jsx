@@ -871,7 +871,7 @@ class List extends ListPage {
                     <div className={styles.tableList}>
                         {operationBar}
                         {this.renderList(
-                            { tableRender: () => <></> },
+                            // { tableRender: () => <></> },
                             {
                                 renderOpeation: (
                                     <Spin spinning={this.state.listLoading}>
