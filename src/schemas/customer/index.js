@@ -34,8 +34,8 @@ const schema = {
         sorter: true,
         type: schemaFieldType.Select,
         dict: {
-            male: { remark: "男", value: "male" },
-            female: { remark: "女", value: "female" },
+            male: { remark: "先生", value: "male" },
+            female: { remark: "女士", value: "female" },
         },
     },
     email: {

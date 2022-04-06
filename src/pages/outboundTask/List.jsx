@@ -77,11 +77,10 @@ class List extends ListPage {
                     type: 2,
                     caller_group_id: item.KEY,
                 })
-                console.log(res)
                 callerArray = [...callerArray, ...res.list]
             })
         )
-
+        console.log(callerArray)
         this.schema.caller_number.dict = listToDict(
             callerArray,
             "",

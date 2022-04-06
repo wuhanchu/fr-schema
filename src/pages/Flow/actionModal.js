@@ -466,45 +466,17 @@ export const ActionModal = ({
                                 placeholder="请选择类型"
                                 style={{ width: "489px" }}
                                 optionLabelProp="label"
-                                filterOption={(input, option) =>
-                                    option.children
-                                        .toLowerCase()
-                                        .indexOf(input.toLowerCase()) >= 0
-                                }
+                                filterOption={(input, option) => {
+                                    return (
+                                        option.label.indexOf(
+                                            input.toLowerCase()
+                                        ) >= 0
+                                    )
+                                }}
                             >
                                 {options}
                             </Select>
                         </Form.Item>
-                        {/* <Tooltip
-                            placement="rightTop"
-                            overlayStyle={{ width: "430px" }}
-                            overlayInnerStyle={{ width: "430px" }}
-                            title={
-                                <ReactMarkdown escapeHtml={false}>
-                                    {mdStart +
-                                        optionsRemark
-                                            .map((item) => {
-                                                return (
-                                                    item.value +
-                                                    " //" +
-                                                    item.remarks +
-                                                    "\n"
-                                                )
-                                            })
-                                            .join("")}
-                                </ReactMarkdown>
-                            }
-                        >
-                            <a
-                                style={{
-                                    position: "absolute",
-                                    right: "-20px",
-                                    top: "5px",
-                                }}
-                            >
-                                <QuestionCircleOutlined />
-                            </a>
-                        </Tooltip> */}
                     </>
                 </Form.Item>
 
