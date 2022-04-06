@@ -50,7 +50,7 @@ class List extends DataList {
                 outbound_task_id: props.task_id,
             },
             initLocalStorageDomainKey: true,
-            operateWidth: "60px",
+            operateWidth: "180px",
             addHide: true,
         })
     }
@@ -62,76 +62,6 @@ class List extends DataList {
         this.setState({
             audio: audio,
         })
-        this.schema.phone_audio_url.render = (item, data) => {
-            console.log(item)
-            if (!data.phone_audio_url) {
-                return ""
-            }
-            return (
-                <>
-                    {this.state.audioIndex !== data.id ? (
-                        <a
-                            onClick={() => {
-                                const { audio } = this.state
-                                try {
-                                    audio.crossOrigin = "anonymous"
-                                    audio.src = item.phone_audio_url
-                                    var playPromise = audio.play()
-
-                                    if (playPromise !== undefined) {
-                                        playPromise
-                                            .then((_) => {
-                                                // Automatic playback started!
-                                                // Show playing UI.
-                                            })
-                                            .catch((error) => {
-                                                // Auto-play was prevented
-                                                // Show paused UI.
-                                            })
-                                    }
-                                    audio.onended = () => {
-                                        this.setState({
-                                            audioIndex: undefined,
-                                        })
-                                    }
-                                } catch (error) {}
-
-                                this.setState({ audioIndex: data.id })
-                            }}
-                            style={{ marginLeft: "5px" }}
-                        >
-                            <PlaySquareOutlined />
-                        </a>
-                    ) : (
-                        <a
-                            onClick={() => {
-                                const { audio } = this.state
-                                try {
-                                    audio.load()
-                                } catch (error) {}
-                                this.setState({
-                                    audioIndex: undefined,
-                                })
-                            }}
-                            style={{ marginLeft: "5px" }}
-                        >
-                            <SyncOutlined spin />
-                        </a>
-                    )}
-                    <Divider type="vertical" />
-                    <a
-                        onClick={() => {
-                            FileSaver(
-                                data.phone_audio_url,
-                                data.external_id || "导出"
-                            )
-                        }}
-                    >
-                        <DownloadOutlined />
-                    </a>
-                </>
-            )
-        }
         let batchArray = await this.service.getBatch({ limit: 1000 })
         super.componentDidMount()
     }
@@ -189,6 +119,71 @@ class List extends DataList {
                     >
                         明细
                     </a>
+                )}
+                {record.phone_audio_url && (
+                    <>
+                        <Divider type="vertical" />
+                        {this.state.audioIndex !== record.id ? (
+                            <a
+                                onClick={() => {
+                                    const { audio } = this.state
+                                    try {
+                                        audio.crossOrigin = "anonymous"
+                                        audio.src = record.phone_audio_url
+                                        var playPromise = audio.play()
+
+                                        if (playPromise !== undefined) {
+                                            playPromise
+                                                .then((_) => {
+                                                    // Automatic playback started!
+                                                    // Show playing UI.
+                                                })
+                                                .catch((error) => {
+                                                    // Auto-play was prevented
+                                                    // Show paused UI.
+                                                })
+                                        }
+                                        audio.onended = () => {
+                                            this.setState({
+                                                audioIndex: undefined,
+                                            })
+                                        }
+                                    } catch (error) {}
+
+                                    this.setState({ audioIndex: record.id })
+                                }}
+                                style={{ marginLeft: "5px" }}
+                            >
+                                播放
+                            </a>
+                        ) : (
+                            <a
+                                onClick={() => {
+                                    const { audio } = this.state
+                                    try {
+                                        audio.load()
+                                    } catch (error) {}
+                                    this.setState({
+                                        audioIndex: undefined,
+                                    })
+                                }}
+                                style={{ marginLeft: "5px" }}
+                            >
+                                暂停
+                            </a>
+                        )}
+                        <Divider type="vertical" />
+                        <a
+                            onClick={() => {
+                                FileSaver(
+                                    record.phone_audio_url,
+                                    record.external_id || "导出"
+                                )
+                            }}
+                        >
+                            下载
+                        </a>
+                    </>
                 )}
             </>
         )

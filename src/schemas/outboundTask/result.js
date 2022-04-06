@@ -125,11 +125,11 @@ const schema = {
         search: false,
         // type: schemaFieldType.Select,
     },
-    phone_audio_url: {
-        title: "通话录音",
-        sorter: true,
-        search: false,
-    },
+    // phone_audio_url: {
+    //     title: "通话录音",
+    //     sorter: true,
+    //     search: false,
+    // },
 }
 
 const service = createApi("call_record", schema, null, "eq.")
