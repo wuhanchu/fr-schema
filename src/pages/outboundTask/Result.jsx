@@ -133,7 +133,6 @@ class List extends DataList {
             )
         }
         let batchArray = await this.service.getBatch({ limit: 1000 })
-        console.log(batchArray)
         super.componentDidMount()
     }
 

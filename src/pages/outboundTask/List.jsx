@@ -12,8 +12,7 @@ import Result from "./Result"
 import XLSX from "xlsx"
 import Statistics from "./Statistics"
 import userService from "@/pages/authority/user/service"
-import { convertFormImport } from "@/outter/fr-schema/src/schema"
-import ImportModal from "@/outter/fr-schema-antd-utils/src/components/modal/ImportModal"
+import ImportModal from "./component/ImportModal"
 
 function unique(arr, key) {
     if (!arr) return arr

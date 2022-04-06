@@ -29,22 +29,8 @@ const schema = {
         // required: true,
     },
 
-    gender: {
-        title: "性别",
-        sorter: true,
-        type: schemaFieldType.Select,
-        dict: {
-            male: { remark: "男", value: "male" },
-            female: { remark: "女", value: "female" },
-        },
-    },
     title: {
         title: "称呼",
-        sorter: true,
-        searchPrefix: "like",
-    },
-    email: {
-        title: "邮箱",
         sorter: true,
         searchPrefix: "like",
     },
@@ -71,19 +57,6 @@ const schema = {
         },
         search: false,
         type: schemaFieldType.DatePicker,
-    },
-    auto_maxtimes: {
-        title: "自动重拨次数",
-        sorter: true,
-        search: false,
-        hideInTable: true,
-    },
-    remark: {
-        title: "备注",
-        search: false,
-        sorter: true,
-        type: schemaFieldType.TextArea,
-        sorter: true,
     },
 }
 
