@@ -14,6 +14,18 @@ import ConversationDetail from "@/pages/outPage/ConversationDetail"
 import XLSX from "xlsx"
 import { convertFormImport } from "@/outter/fr-schema/src/schema"
 
+function unique(arr, key) {
+    if (!arr) return arr
+    if (key === undefined) return [...new Set(arr)]
+    const map = {
+        string: (e) => e[key],
+        function: (e) => key(e),
+    }
+    const fn = map[typeof key]
+    const obj = arr.reduce((o, e) => ((o[fn(e)] = e), o), {})
+    return Object.values(obj)
+}
+
 @connect(({ global }) => ({
     dict: global.dict,
 }))
@@ -135,11 +147,14 @@ class List extends DataList {
                 number_group.push({
                     phone: item.to_phone,
                     auto_maxtimes:
-                        item.request_info && item.request_info.auto_maxtimes,
+                        (item.request_info &&
+                            item.request_info.auto_maxtimes) ||
+                        undefined,
                     slot: item.request_info,
                 })
             })
-            args.number_group = number_group
+
+            args.number_group = unique(number_group, "phone")
             response = await schemas.outboundTask.service.importData(
                 args,
                 schema

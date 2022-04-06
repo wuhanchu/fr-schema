@@ -15,6 +15,18 @@ import userService from "@/pages/authority/user/service"
 import { convertFormImport } from "@/outter/fr-schema/src/schema"
 import ImportModal from "@/outter/fr-schema-antd-utils/src/components/modal/ImportModal"
 
+function unique(arr, key) {
+    if (!arr) return arr
+    if (key === undefined) return [...new Set(arr)]
+    const map = {
+        string: (e) => e[key],
+        function: (e) => key(e),
+    }
+    const fn = map[typeof key]
+    const obj = arr.reduce((o, e) => ((o[fn(e)] = e), o), {})
+    return Object.values(obj)
+}
+
 @connect(({ global, user }) => ({
     dict: global.dict,
     user: user,
@@ -80,68 +92,6 @@ class List extends ListPage {
         super.componentDidMount()
     }
 
-    getExcelData = async (file) => {
-        const reader = new FileReader()
-        let maxLength = 1000
-        let sliceNum = 1
-        let dataArray = []
-
-        await new Promise((resolve, reject) => {
-            reader.onload = (async (evt) => {
-                // parse excel
-
-                const schema = schemas.customer.schema
-                const binary = evt.target.result
-                const wb = XLSX.read(binary, { type: "binary" })
-                const sheetName = wb.SheetNames[0]
-                const ws = wb.Sheets[sheetName]
-                let data = XLSX.utils.sheet_to_json(ws, {
-                    raw: false,
-                    header: "A",
-                    defval: "",
-                    dateNF: "YYYY/MM/DD",
-                })
-
-                try {
-                    // 判断数据长度
-                    if (maxLength && data && data.length > maxLength) {
-                        throw new Error(
-                            `每次导入最多只允许导入${maxLength}条数据！`
-                        )
-                    }
-
-                    data = await convertFormImport(
-                        data,
-                        schema,
-                        sliceNum,
-                        "id" || Object.keys(schema)[0]
-                    )
-
-                    dataArray = data.map((item) => {
-                        return {
-                            phone: item.telephone,
-                            auto_maxtimes: item.auto_maxtimes,
-                            slot: { ...item, block: item.block === "true" },
-                        }
-                    })
-                    this.setState((state) => ({
-                        fileList: [file],
-                    }))
-                    resolve()
-                } catch (e) {
-                    message.error(e.message)
-                } finally {
-                    // this.setState({ beforeUploadLoading: false })
-                }
-            }).bind(this)
-
-            //here our function should be implemented
-            reader.readAsBinaryString(file)
-        })
-
-        return dataArray
-    }
-
     async handleAdd(data, schema) {
         // 更新
         let response
@@ -153,32 +103,6 @@ class List extends ListPage {
             this.refreshList()
             message.success("添加成功")
             this.handleVisibleModal()
-        } catch (error) {
-            message.error(error.message)
-        }
-        this.handleChangeCallback && this.handleChangeCallback()
-        this.props.handleChangeCallback && this.props.handleChangeCallback()
-
-        return response
-    }
-    async handleImportData(data, schema) {
-        // 更新
-        let response
-        try {
-            let number_group = await this.getExcelData(data.number_group.file)
-            response = await this.service.importData(
-                {
-                    ...data,
-                    number_group: number_group,
-                    task_id: this.state.infoData.external_id,
-                    id: undefined,
-                },
-                schema
-            )
-
-            this.refreshList()
-            message.success("添加成功")
-            this.handleVisibleImportModal()
         } catch (error) {
             message.error(error.message)
         }
@@ -205,17 +129,6 @@ class List extends ListPage {
                         新增
                     </Button>
                 )}
-
-                {/* <Button
-                    loading={this.state.exportLoading}
-                    onClick={() => {
-                        // this.setState({ visibleExport: true })
-                        console.log("data")
-                        this.handleExport()
-                    }}
-                >
-                    导出
-                </Button> */}
             </>
         )
     }
@@ -302,42 +215,53 @@ class List extends ListPage {
                 confirmLoading={this.state.confirmLoading}
                 onOk={async () => {
                     // to convert
-                    this.setState({
-                        confirmLoading: true,
-                    })
-                    let data = this.state.importData
-                    try {
-                        let number_group = data.map((item) => {
-                            return {
-                                phone: item.telephone,
-                                auto_maxtimes: item.auto_maxtimes,
-                                slot: { ...item, block: item.block === "true" },
-                            }
+                    if (this.state.importData) {
+                        this.setState({
+                            confirmLoading: true,
                         })
-                        // await this.service.upInsert(data)
-                        await this.service.importData(
-                            {
-                                // ...data,
-                                number_group: number_group,
-                                task_id: this.state.infoData.external_id,
-                                id: undefined,
-                            },
-                            schemas.customer.schema
-                        )
+                        let data = this.state.importData
+                        try {
+                            let number_group = data.map((item) => {
+                                return {
+                                    phone: item.telephone,
+                                    auto_maxtimes:
+                                        item.auto_maxtimes || undefined,
+                                    slot: {
+                                        ...item,
+                                        block: item.block === "true",
+                                        auto_maxtimes:
+                                            item.auto_maxtimes || undefined,
+                                    },
+                                }
+                            })
+                            number_group = unique(number_group, "phone")
+                            await this.service.importData(
+                                {
+                                    // ...data,
+                                    number_group: number_group,
+                                    task_id: this.state.infoData.external_id,
+                                    id: undefined,
+                                },
+                                schemas.customer.schema
+                            )
 
-                        this.refreshList()
-                        message.success("导入成功")
-                        this.setState({
-                            visibleImport: false,
-                            confirmLoading: false,
-                        })
-                        this.refreshList()
-                    } catch (error) {
-                        message.error(error.message)
-                        this.setState({
-                            confirmLoading: false,
-                        })
+                            this.refreshList()
+                            message.success("导入成功")
+                            this.setState({
+                                visibleImport: false,
+                                confirmLoading: false,
+                                importData: undefined,
+                            })
+                            this.refreshList()
+                        } catch (error) {
+                            message.error(error.message)
+                            this.setState({
+                                confirmLoading: false,
+                                importData: undefined,
+                            })
+                        }
                     }
+
                     // let postData = data.filters
                 }}
             />
