@@ -15,8 +15,8 @@ export default {
     "menu.domain": "域",
     "menu.outboundTask": "外呼",
     "menu.outboundTask.taskList": "任务管理",
-    "menu.outboundTask.taskCustomer": "客户管理",
-    "menu.outboundTask.taskMessage": "消息管理",
+    "menu.outboundTask.taskCustomer": "客户列表",
+    "menu.outboundTask.taskMessage": "消息列表",
 
     "menu.domain.domainList": "域信息",
     "menu.domain.story": "故事",
