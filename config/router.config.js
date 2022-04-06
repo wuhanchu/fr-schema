@@ -159,14 +159,14 @@ export default [
                                 path: "/frame/outboundTask/customer",
                                 name: "taskCustomer",
                                 component: "./customer/List.jsx",
-                                title: "客户列表",
+                                title: "客户管理",
                             },
-                            {
-                                path: "/frame/outboundTask/message",
-                                name: "taskMessage",
-                                component: "./message/List.jsx",
-                                title: "消息列表",
-                            },
+                            // {
+                            //     path: "/frame/outboundTask/message",
+                            //     name: "taskMessage",
+                            //     component: "./message/List.jsx",
+                            //     title: "消息管理",
+                            // },
                         ],
                     },
                     {
@@ -388,14 +388,14 @@ export default [
                                 path: "/outboundTask/customer",
                                 name: "taskCustomer",
                                 component: "./customer/List.jsx",
-                                title: "客户列表",
+                                title: "客户管理",
                             },
-                            {
-                                path: "/outboundTask/message",
-                                name: "taskMessage",
-                                component: "./message/List.jsx",
-                                title: "消息列表",
-                            },
+                            // {
+                            //     path: "/outboundTask/message",
+                            //     name: "taskMessage",
+                            //     component: "./message/List.jsx",
+                            //     title: "消息管理",
+                            // },
                         ],
                     },
                     {
