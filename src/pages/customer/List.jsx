@@ -63,7 +63,6 @@ class List extends ListPage {
     }
 
     async componentDidMount() {
-        super.componentDidMount()
         let flow = await schemas.flow.service.get({
             limit: 1000,
             select: "id, key, domain_key, name",
@@ -75,6 +74,7 @@ class List extends ListPage {
             "name"
         )
         this.schema.domain_key.dict = this.props.dict.domain
+        super.componentDidMount()
     }
 
     renderInfoModal(customProps = {}) {

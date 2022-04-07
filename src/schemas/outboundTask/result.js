@@ -11,7 +11,7 @@ const schema = {
     //     title: "客户编号",
     //     search: false,
     // },
-
+    name: { title: "姓名", search: false },
     type: {
         title: "类型",
         sorter: true,
@@ -154,7 +154,12 @@ service.get = async (args) => {
     }
     args.end_time = undefined
     args.start_time = undefined
-    let data = createApi("call_record", schema, null, "eq.").get(args)
+    let data = await createApi("call_record", schema, null, "eq.").get(args)
+    data.list =
+        data.list &&
+        data.list.map((item) => {
+            return { ...item.request_info, ...item }
+        })
     return data
 }
 

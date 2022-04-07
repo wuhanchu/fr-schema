@@ -4,22 +4,6 @@ import { verifyJson } from "@/outter/fr-schema-antd-utils/src/utils/component"
 import moment from "moment"
 
 const schema = {
-    start_time: {
-        title: "开始时间",
-        type: schemaFieldType.DatePicker,
-        extra: "任务开始时间为选择日期当天00:00:00",
-        hideInTable: true,
-        search: false,
-        required: true,
-    },
-    end_time: {
-        title: "结束时间",
-        type: schemaFieldType.DatePicker,
-        extra: "任务结束时间为选择日期当天23.59:59",
-        hideInTable: true,
-        search: false,
-        required: true,
-    },
     domain_key: {
         title: "域",
         sorter: true,
@@ -103,7 +87,31 @@ const schema = {
             },
         },
     },
-
+    begin_time: {
+        title: "开始时间",
+        type: schemaFieldType.DatePicker,
+        extra: "任务开始时间为选择日期当天00:00:00",
+        // hideInTable: true,
+        search: false,
+        required: true,
+    },
+    end_time: {
+        title: "结束时间",
+        type: schemaFieldType.DatePicker,
+        extra: "任务结束时间为选择日期当天23.59:59",
+        // hideInTable: true,
+        search: false,
+        render: (item, data) => {
+            if (data.end_time)
+                return moment(data.end_time)
+                    .subtract("day", 1)
+                    .format("YYYY-MM-DD")
+            else {
+                return "-"
+            }
+        },
+        required: true,
+    },
     create_time: {
         title: "创建时间",
         required: true,
@@ -170,6 +178,7 @@ const statisticsSchema = {
         },
     },
     client_id: {
+        search: false,
         title: "渠道",
         hideInTable: true,
         type: schemaFieldType.Select,

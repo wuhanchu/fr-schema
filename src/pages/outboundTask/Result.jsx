@@ -42,7 +42,7 @@ class List extends DataList {
             service: schemas.taskResult.service,
             showDelete: false,
             showEdit: false,
-            showSelect: true,
+            showSelect: props.task_id,
             search: {
                 span: 6,
             },
@@ -118,70 +118,6 @@ class List extends DataList {
                     >
                         明细
                     </a>
-                )}
-                {record.phone_audio_url && (
-                    <>
-                        <Divider type="vertical" />
-                        {this.state.audioIndex !== record.id ? (
-                            <a
-                                onClick={() => {
-                                    const { audio } = this.state
-                                    try {
-                                        audio.src = record.phone_audio_url
-                                        var playPromise = audio.play()
-
-                                        if (playPromise !== undefined) {
-                                            playPromise
-                                                .then((_) => {
-                                                    // Automatic playback started!
-                                                    // Show playing UI.
-                                                })
-                                                .catch((error) => {
-                                                    // Auto-play was prevented
-                                                    // Show paused UI.
-                                                })
-                                        }
-                                        audio.onended = () => {
-                                            this.setState({
-                                                audioIndex: undefined,
-                                            })
-                                        }
-                                    } catch (error) {}
-
-                                    this.setState({ audioIndex: record.id })
-                                }}
-                                style={{ marginLeft: "5px" }}
-                            >
-                                播放
-                            </a>
-                        ) : (
-                            <a
-                                onClick={() => {
-                                    const { audio } = this.state
-                                    try {
-                                        audio.load()
-                                    } catch (error) {}
-                                    this.setState({
-                                        audioIndex: undefined,
-                                    })
-                                }}
-                                style={{ marginLeft: "5px" }}
-                            >
-                                暂停
-                            </a>
-                        )}
-                        <Divider type="vertical" />
-                        <a
-                            onClick={() => {
-                                FileSaver(
-                                    record.phone_audio_url,
-                                    record.external_id || "导出"
-                                )
-                            }}
-                        >
-                            下载
-                        </a>
-                    </>
                 )}
             </>
         )
@@ -285,6 +221,7 @@ class List extends DataList {
                         destroyOnClose
                     >
                         <ConversationDetail
+                            phone_audio_url={record.phone_audio_url}
                             conversation_id={record.conversation_id}
                             flow_key={record.flow_key}
                             domain_key={record.domain_key}

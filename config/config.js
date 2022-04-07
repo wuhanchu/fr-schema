@@ -102,6 +102,11 @@ let config = defineConfig({
             changeOrigin: true,
             pathRewrite: { "^/api": "" },
         },
+        "/file_server": {
+            target: "http://101.231.133.233:8088",
+            changeOrigin: true,
+            pathRewrite: { "^/file_server": "" },
+        },
         "/zknowninfo": {
             target: "http://server.aiknown.cn:32123",
             // changeOrigin: true,

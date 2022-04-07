@@ -1,6 +1,6 @@
 import React from "react"
 import { autobind } from "core-decorators"
-import { Button, Input, Spin, AutoComplete } from "antd"
+import { Button, Input, Spin, AutoComplete, Tooltip } from "antd"
 import robotSvg from "@/assets/rebot.svg"
 import schemas from "@/schemas"
 import mySvg from "@/outter/fr-schema-antd-utils/src/components/GlobalHeader/my.svg"
@@ -10,8 +10,12 @@ import {
     MenuFoldOutlined,
     PlaySquareOutlined,
     SyncOutlined,
+    ReloadOutlined,
     RedoOutlined,
+    DownloadOutlined,
+    PauseOutlined,
 } from "@ant-design/icons"
+import FileSaver from "file-saver"
 import utils from "@/outter/fr-schema-antd-utils/src"
 const { url } = utils.utils
 /**
@@ -153,51 +157,138 @@ class Chat extends React.PureComponent {
             <Spin tip="加载中..." spinning={this.state.loading}>
                 <div style={styles.contentSt}>
                     <div style={styles.chatView}>
-                        {(showRedoOutlined || showIntentFlow) && (
-                            <div
-                                style={{
-                                    display: "flex",
-                                    justifyContent: "flex-end",
-                                    width: "100%",
-                                    fontSize: "21px",
-                                    marginBottom: "10px",
-                                }}
-                            >
-                                {showRedoOutlined && (
-                                    <RedoOutlined
-                                        style={{ marginRight: "8px" }}
-                                        onClick={() => {
-                                            this.setState({ loading: true })
-                                            this.init()
+                        <div style={{ display: "flex" }}>
+                            <div style={{ height: "40px", flex: 1 }}>
+                                {this.props.phone_audio_url && (
+                                    <div
+                                        id="waveform"
+                                        style={{
+                                            width: "100%",
+                                            height: "40px",
                                         }}
-                                    />
-                                )}
-                                {showIntentFlow ? (
-                                    collapse ? (
-                                        <MenuFoldOutlined
-                                            onClick={(_) =>
-                                                this.setState({
-                                                    collapse: false,
-                                                })
-                                            }
-                                        />
-                                    ) : (
-                                        <MenuUnfoldOutlined
-                                            onClick={(_) => {
-                                                if (conversationId) {
-                                                    this.setState({
-                                                        collapse: true,
-                                                    })
-                                                }
-                                            }}
-                                        />
-                                    )
-                                ) : (
-                                    <></>
+                                    ></div>
                                 )}
                             </div>
-                        )}
+                            {(showRedoOutlined || showIntentFlow) && (
+                                <div
+                                    style={{
+                                        flex: "0 0 150px",
+                                        marginTop: "12px",
+                                        float: "right",
+                                        justifyContent: "flex-end",
+                                        width: "100px",
+                                        fontSize: "16px",
+                                        marginBottom: "10px",
+                                    }}
+                                >
+                                    {showIntentFlow ? (
+                                        <Tooltip title="详情">
+                                            <MenuFoldOutlined
+                                                style={{
+                                                    float: "right",
+                                                    marginLeft: "4px",
+                                                }}
+                                                onClick={(_) => {
+                                                    if (collapse) {
+                                                        this.setState({
+                                                            collapse: false,
+                                                        })
+                                                        this.onCollapse()
+                                                    } else {
+                                                        if (conversationId) {
+                                                            this.setState({
+                                                                collapse: true,
+                                                            })
+                                                            this.onCollapse()
+                                                        }
+                                                    }
+                                                }}
+                                            />
+                                        </Tooltip>
+                                    ) : (
+                                        <></>
+                                    )}
+                                    {showRedoOutlined && (
+                                        <Tooltip title="刷新">
+                                            <ReloadOutlined
+                                                style={{
+                                                    marginRight: "8px",
+                                                    float: "right",
+                                                    fontSize: "16px",
+                                                    marginRight: "16px",
+                                                    marginLeft: "4px",
+                                                }}
+                                                onClick={() => {
+                                                    this.setState({
+                                                        loading: true,
+                                                    })
+                                                    this.init()
+                                                }}
+                                            />
+                                        </Tooltip>
+                                    )}
+                                    {this.props.phone_audio_url && (
+                                        <Tooltip title="下载">
+                                            <DownloadOutlined
+                                                style={{
+                                                    marginRight: "8px",
+                                                    float: "right",
+                                                    fontSize: "16px",
+                                                    marginRight: "16px",
+                                                    marginLeft: "4px",
+                                                }}
+                                                onClick={() => {
+                                                    FileSaver(
+                                                        "/file_server/record/rec/2022/04/06/10/20220406_103429_010083_018859952768.wav"
+                                                    )
+                                                }}
+                                            ></DownloadOutlined>
+                                        </Tooltip>
+                                    )}
+                                    {this.props.phone_audio_url &&
+                                        !this.state.isPlay && (
+                                            <Tooltip title="播放">
+                                                <PlaySquareOutlined
+                                                    style={{
+                                                        marginRight: "8px",
+                                                        float: "right",
+                                                        fontSize: "16px",
+                                                        marginRight: "16px",
+                                                        marginLeft: "4px",
+                                                    }}
+                                                    onClick={() => {
+                                                        this.setState({
+                                                            isPlay: true,
+                                                        })
+                                                        this.wavesurfer.play()
+                                                    }}
+                                                ></PlaySquareOutlined>
+                                            </Tooltip>
+                                        )}
 
+                                    {this.props.phone_audio_url &&
+                                        this.state.isPlay && (
+                                            <Tooltip title="暂停">
+                                                <PauseOutlined
+                                                    style={{
+                                                        marginRight: "8px",
+                                                        float: "right",
+                                                        fontSize: "16px",
+                                                        marginRight: "16px",
+                                                        marginLeft: "4px",
+                                                    }}
+                                                    onClick={() => {
+                                                        this.setState({
+                                                            isPlay: false,
+                                                        })
+                                                        this.wavesurfer.playPause()
+                                                    }}
+                                                ></PauseOutlined>
+                                            </Tooltip>
+                                        )}
+                                </div>
+                            )}
+                        </div>
                         {this.renderChatView()}
                         {showInput && this.renderInput()}
                     </div>
@@ -282,6 +373,9 @@ class Chat extends React.PureComponent {
 
     componentWillUnmount() {
         const { audio } = this.state
+        if (this.wavesurfer) {
+            this.wavesurfer.stop()
+        }
         audio.load()
     }
 
@@ -353,6 +447,8 @@ class Chat extends React.PureComponent {
             </div>
         )
     }
+
+    onCollapse() {}
 
     handleOnSearch = (event) => {
         // 函数节流，防止数据频繁更新，每300毫秒才搜索一次
@@ -573,6 +669,7 @@ const styles = {
     },
     chatView: {
         display: "flex",
+        marginTop: "-12px",
         flexDirection: "column",
         flex: 1,
     },

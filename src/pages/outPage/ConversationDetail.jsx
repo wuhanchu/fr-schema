@@ -5,6 +5,7 @@ import schema from "@/schemas/conversation/detail"
 import domainSchema from "@/schemas/domain/index"
 import schemaConversation from "@/schemas/conversation/list"
 import { listToDict } from "@/outter/fr-schema/src/dict"
+import WaveSurfer from "wavesurfer.js"
 
 @autobind
 class ConversationDetail extends Chat {
@@ -19,10 +20,40 @@ class ConversationDetail extends Chat {
             showRedoOutlined: true,
         }
     }
-
+    onCollapse() {
+        if (this.props.phone_audio_url) {
+            let time = 0
+            this.setState({ isPlay: false })
+            if (this.wavesurfer) {
+                time = this.wavesurfer.getCurrentTime()
+                this.wavesurfer.destroy()
+            }
+            console.log(time)
+            var wavesurfer = WaveSurfer.create({
+                container: "#waveform",
+                waveColor: "#777",
+                progressColor: "#1890ff",
+                height: 40,
+                xhr: {
+                    cache: "default",
+                    mode: "cors",
+                    method: "GET",
+                },
+            })
+            wavesurfer.load(
+                "/file_server/record/rec/2022/04/06/10/20220406_103429_010083_018859952768.wav"
+            )
+            wavesurfer.on("ready", function () {
+                wavesurfer.play(time)
+                wavesurfer.playPause()
+            })
+            this.wavesurfer = wavesurfer
+        }
+    }
     async componentDidMount() {
         this.init()
         this.initFlow()
+        this.onCollapse()
     }
 
     async init() {

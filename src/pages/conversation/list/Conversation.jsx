@@ -313,7 +313,7 @@ class Conversation extends ListPage {
 
     // 详情弹窗
     renderDetailModal() {
-        let { showDetail, detail, showIntentFlow } = this.state
+        let { showDetail, detail, showIntentFlow, record } = this.state
         return (
             <Modal
                 visible={showDetail}
@@ -324,6 +324,9 @@ class Conversation extends ListPage {
                 destroyOnClose
             >
                 <ConversationDetail
+                    phone_audio_url={
+                        record && record.info && record.info.audio_url
+                    }
                     conversation_id={detail.id}
                     flow_key={detail.flow_key}
                     domain_key={detail.domain_key}
