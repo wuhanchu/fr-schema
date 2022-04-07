@@ -294,7 +294,7 @@ class Chat extends React.PureComponent {
                         {this.state.buttons[item.content]
                             ? this.state.buttons[item.content].title
                             : item.content}
-                        {item.result && (
+                        {item.result && item.result.voice_url && (
                             <>
                                 {this.state.audioIndex !== index ? (
                                     <a
@@ -302,7 +302,7 @@ class Chat extends React.PureComponent {
                                             const { audio } = this.state
                                             try {
                                                 audio.src =
-                                                    "http://101.231.133.233:8088/record/rec/2022/04/06/14/20220406_144446_010099_015980670034.wav"
+                                                    item.result.voice_url
                                                 var playPromise = audio.play()
 
                                                 if (playPromise !== undefined) {
