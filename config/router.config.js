@@ -91,7 +91,7 @@ export default [
                     {
                         path: "/frame/conversation",
                         name: "conversation",
-                        icon: "InboxOutlined",
+                        icon: "MessageOutlined",
                         routes: [
                             {
                                 path: "/frame/conversation/list",
@@ -103,7 +103,7 @@ export default [
                     },
                     {
                         path: "/frame/entity",
-                        icon: "FolderOutlined",
+                        icon: "ProjectOutlined",
                         name: "entity",
                         routes: [
                             {
@@ -147,7 +147,7 @@ export default [
                     {
                         path: "/frame/outboundTask",
                         name: "outboundTask",
-                        icon: "BarChartOutlined",
+                        icon: "PhoneOutlined",
                         routes: [
                             {
                                 path: "/frame/outboundTask/list",
