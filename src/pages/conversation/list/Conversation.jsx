@@ -325,7 +325,7 @@ class Conversation extends ListPage {
             >
                 <ConversationDetail
                     phone_audio_url={
-                        record && record.info && record.info.audio_url
+                        detail && detail.info && detail.info.audio_url
                     }
                     conversation_id={detail.id}
                     flow_key={detail.flow_key}

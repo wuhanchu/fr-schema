@@ -161,12 +161,12 @@ export default [
                                 component: "./customer/List.jsx",
                                 title: "客户列表",
                             },
-                            // {
-                            //     path: "/frame/outboundTask/message",
-                            //     name: "taskMessage",
-                            //     component: "./message/List.jsx",
-                            //     title: "消息列表",
-                            // },
+                            {
+                                path: "/outboundTask/callRecord",
+                                name: "callRecord",
+                                component: "./callRecord/List.jsx",
+                                title: "话单列表",
+                            },
                         ],
                     },
                     {
