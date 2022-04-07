@@ -47,8 +47,8 @@ const schema = {
     },
     caller_group_id: {
         title: "号码组",
-        hideInTable: true,
-        search: false,
+        // hideInTable: true,
+        // search: false,
         required: true,
         type: schemaFieldType.Select,
     },
@@ -94,6 +94,13 @@ const schema = {
         // hideInTable: true,
         search: false,
         required: true,
+        render: (item, data) => {
+            if (data.begin_time)
+                return moment(data.begin_time).format("YYYY-MM-DD")
+            else {
+                return "-"
+            }
+        },
     },
     end_time: {
         title: "结束时间",
@@ -121,6 +128,13 @@ const schema = {
         props: {
             // showTime: true,
             // valueType: "dateTime",
+        },
+        render: (item, data) => {
+            if (data.create_time)
+                return moment(data.create_time).format("YYYY-MM-DD HH:mm:ss")
+            else {
+                return "-"
+            }
         },
         search: false,
         type: schemaFieldType.DatePicker,
@@ -307,8 +321,8 @@ service.getDict = async (args) => {
     return createApi("outbound/dictionary", schema, null, "").getBasic(args)
 }
 service.post = async (args) => {
-    if (args.start_time) {
-        args.start_time = moment(args.start_time).format("YYYY-MM-DD")
+    if (args.begin_time) {
+        args.begin_time = moment(args.begin_time).format("YYYY-MM-DD")
     }
     if (args.end_time) {
         args.end_time = moment(args.end_time)

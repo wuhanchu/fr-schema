@@ -97,7 +97,7 @@ const schema = {
         addHide: true,
         editHide: true,
         props: {
-            // showTime: true,
+            showTime: true,
             // valueType: "dateTime",
         },
         type: schemaFieldType.DatePicker,

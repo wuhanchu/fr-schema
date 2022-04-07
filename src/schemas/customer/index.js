@@ -52,7 +52,7 @@ const schema = {
         addHide: true,
         editHide: true,
         props: {
-            // showTime: true,
+            showTime: true,
             // valueType: "dateTime",
         },
         search: false,

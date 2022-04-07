@@ -12,6 +12,17 @@ const schema = {
     //     search: false,
     // },
     name: { title: "姓名", search: false },
+    flow_key: {
+        title: "流程",
+        search: false,
+        type: schemaFieldType.Select,
+    },
+    outbound_task_id: {
+        title: "任务",
+        search: false,
+        hideInTable: true,
+        type: schemaFieldType.Select,
+    },
     type: {
         title: "类型",
         sorter: true,
@@ -21,6 +32,7 @@ const schema = {
             out: { remark: "呼出", value: "out" },
         },
     },
+
     status: {
         title: "状态",
         sorter: true,
@@ -99,18 +111,8 @@ const schema = {
         sorter: true,
         search: false,
         props: {
-            // showTime: true,
+            showTime: true,
             // valueType: "dateTime",
-        },
-        renderInput: () => {
-            return (
-                <RangePicker
-                    allowEmpty={[true, true]}
-                    format="YYYY-MM-DD"
-                    style={{ width: "100%" }}
-                    // showTime
-                ></RangePicker>
-            )
         },
         type: schemaFieldType.DatePicker,
     },
@@ -123,17 +125,23 @@ const schema = {
         title: "批次",
         sorter: true,
         search: false,
-        // type: schemaFieldType.Select,
+        type: schemaFieldType.Select,
     },
-    // phone_audio_url: {
-    //     title: "通话录音",
-    //     sorter: true,
-    //     search: false,
-    // },
 }
 
 const service = createApi("call_record", schema, null, "eq.")
-service.getBatch = createApi("outbound_task_batch", schema, null, "eq.").get
+service.getBatch = async (args) => {
+    let data = await createApi("outbound_task_batch", schema, null, "eq.").get(
+        args
+    )
+    data.list = data.list.map((item) => {
+        return {
+            ...item,
+            create_time: moment(item.create_time).format("YYYY-MM-DD HH:mm:ss"),
+        }
+    })
+    return data
+}
 service.get = async (args) => {
     if (args.start_time) {
         let time = new Date(parseInt(args.start_time))
@@ -154,11 +162,16 @@ service.get = async (args) => {
     }
     args.end_time = undefined
     args.start_time = undefined
+    args.select = "*,outbound_task!inner(flow_key)*"
+    if (args.flow_key) {
+        args["outbound_task.flow_key"] = "eq." + args.flow_key
+        args.flow_key = undefined
+    }
     let data = await createApi("call_record", schema, null, "eq.").get(args)
     data.list =
         data.list &&
         data.list.map((item) => {
-            return { ...item.request_info, ...item }
+            return { ...item.request_info, ...item.outbound_task, ...item }
         })
     return data
 }

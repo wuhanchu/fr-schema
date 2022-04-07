@@ -181,7 +181,7 @@ class List extends ListPage {
             <>
                 {showInfo && (
                     <Modal
-                        title={"详情"}
+                        title={"明细"}
                         width={"95%"}
                         visible={showInfo}
                         footer={null}
@@ -286,7 +286,12 @@ class List extends ListPage {
                                 },
                                 schemas.customer.schema
                             )
-
+                            await schemas.outboundTask.service.changeTaskStatus(
+                                {
+                                    task_id: this.state.infoData.external_id,
+                                    status: "running",
+                                }
+                            )
                             this.refreshList()
                             message.success("导入成功")
                             this.setState({
@@ -330,7 +335,7 @@ class List extends ListPage {
                         this.setState({ showInfo: true, record })
                     }}
                 >
-                    详情
+                    明细
                 </a>
                 {record.status !== "end" && (
                     <>

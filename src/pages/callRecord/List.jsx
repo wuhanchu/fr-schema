@@ -1,6 +1,5 @@
 import { connect } from "dva"
-import DataList from "@/outter/fr-schema-antd-utils/src/components/Page/DataList"
-import styles from "@/outter/fr-schema-antd-utils/src/components/Page/DataList.less"
+import ListPage from "@/components/ListPage/ListPage"
 import {
     DownCircleFilled,
     PlaySquareOutlined,
@@ -18,6 +17,7 @@ import FileSaver from "file-saver"
 import ConversationDetail from "@/pages/outPage/ConversationDetail"
 import XLSX from "xlsx"
 import { convertFormImport } from "@/outter/fr-schema/src/schema"
+import { clone } from "lodash"
 
 function unique(arr, key) {
     if (!arr) return arr
@@ -35,10 +35,16 @@ function unique(arr, key) {
     dict: global.dict,
 }))
 @Form.create()
-class List extends DataList {
+class List extends ListPage {
     constructor(props) {
+        let schema = clone(schemas.taskResult.schema)
+        schema.outbound_task_id.search = true
+        schema.outbound_task_id.hideInTable = false
+        schema.flow_key.search = true
+        schema.flow_key.hideInTable = false
+
         super(props, {
-            schema: schemas.taskResult.schema,
+            schema: schema,
             service: schemas.taskResult.service,
             showDelete: false,
             showEdit: false,
@@ -50,14 +56,22 @@ class List extends DataList {
                 outbound_task_id: props.task_id,
             },
             initLocalStorageDomainKey: true,
-            operateWidth: "60px",
+            operateWidth: "180px",
             addHide: true,
         })
     }
 
     async componentDidMount() {
         let audio = document.createElement("AUDIO")
-
+        let outbound_task_id = await schemas.outboundTask.service.get({
+            limit: 10000,
+        })
+        this.schema.outbound_task_id.dict = listToDict(
+            outbound_task_id.list,
+            "",
+            "id",
+            "name"
+        )
         this.setState({
             audio: audio,
         })
@@ -68,6 +82,12 @@ class List extends DataList {
             "external_id",
             "create_time"
         )
+        let flow = await schemas.flow.service.get({
+            limit: 1000,
+            select: "id, key, domain_key, name",
+            domain_key: this.state.localStorageDomainKey,
+        })
+        this.schema.flow_key.dict = listToDict(flow.list, "", "key", "name")
         super.componentDidMount()
     }
 
@@ -129,90 +149,10 @@ class List extends DataList {
         )
     }
 
-    renderOperationBar() {
-        const { showSelect, showDelete = true } = this.meta
-        const { selectedRows } = this.state
-
-        return (
-            <div className={styles.tableListOperator}>
-                <Row
-                    type="flex"
-                    justify="space-between"
-                    className={styles.operationBar}
-                >
-                    <Col>
-                        {this.renderOperationButtons()}
-                        {showSelect &&
-                            selectedRows.length > 0 &&
-                            this.renderOperationMulit()}
-                    </Col>
-                    <Col>{this.renderOperationExtend()}</Col>
-                </Row>
-            </div>
-        )
-    }
-
     /**
      * create the multi opertaion buttons
      */
 
-    async handleAdd(data, schema) {
-        // 更新
-        const { selectedRows } = this.state
-        let response
-        try {
-            let args = {}
-            args.name = data.name
-            args.task_id = this.props.record.external_id
-            let number_group = []
-            selectedRows.map((item) => {
-                number_group.push({
-                    phone: item.to_phone,
-                    auto_maxtimes:
-                        (item.request_info &&
-                            item.request_info.auto_maxtimes) ||
-                        undefined,
-                    slot: item.request_info,
-                })
-            })
-
-            args.number_group = unique(number_group, "phone")
-            response = await schemas.outboundTask.service.importData(
-                args,
-                schema
-            )
-            await schemas.outboundTask.service.changeTaskStatus({
-                task_id: this.props.record.external_id,
-                status: "running",
-            })
-            this.refreshList()
-            message.success("重播成功")
-            this.handleVisibleModal()
-        } catch (error) {
-            message.error(error.message)
-        }
-        this.handleChangeCallback && this.handleChangeCallback()
-        this.props.handleChangeCallback && this.props.handleChangeCallback()
-
-        return response
-    }
-
-    renderOperationMulit() {
-        return (
-            <span>
-                <Popconfirm
-                    title="是否要重拨选中的数据？"
-                    onConfirm={(e) => {
-                        const { dispatch } = this.props
-                        const { selectedRows } = this.state
-                        this.handleAdd({}, this.schema)
-                    }}
-                >
-                    <Button>批量重拨</Button>
-                </Popconfirm>
-            </span>
-        )
-    }
     renderExtend() {
         const { record, showInfo } = this.state
         return (

@@ -14,7 +14,7 @@ const schema = {
         props: {
             format: "YYYY-MM-DD",
             style: { width: "100%" },
-            // showTime: true,
+            showTime: true,
             // valueType: "dateTime",
         },
         hideInTable: true,
@@ -26,7 +26,7 @@ const schema = {
         props: {
             format: "YYYY-MM-DD",
             style: { width: "100%" },
-            // showTime: true,
+            showTime: true,
             // valueType: "dateTime",
         },
         hideInTable: true,
@@ -188,7 +188,7 @@ const schema = {
         search: false,
         sorter: true,
         props: {
-            // showTime: true,
+            showTime: true,
             // valueType: "dateTime",
         },
         type: schemaFieldType.DatePicker,

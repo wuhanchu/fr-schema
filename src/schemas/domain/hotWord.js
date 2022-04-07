@@ -43,7 +43,7 @@ const schema = {
         props: {
             format: "YYYY-MM-DD",
             style: { width: "100%" },
-            // showTime: true,
+            showTime: true,
             // valueType: "dateTime",
         },
         hideInTable: true,
@@ -55,7 +55,7 @@ const schema = {
         props: {
             format: "YYYY-MM-DD",
             style: { width: "100%" },
-            // showTime: true,
+            showTime: true,
             // valueType: "dateTime",
         },
         hideInTable: true,
