@@ -40,9 +40,12 @@ class ConversationDetail extends Chat {
                     method: "GET",
                 },
             })
-            wavesurfer.load(
-                "/file_server/record/rec/2022/04/06/10/20220406_103429_010083_018859952768.wav"
-            )
+            let url =
+                "/file_server/" +
+                this.props.phone_audio_url
+                    .replace(/^http:\/\/[^/]+/, "")
+                    .replace(/^https:\/\/[^/]+/, "")
+            wavesurfer.load(url)
             wavesurfer.on("ready", function () {
                 wavesurfer.play(time)
                 wavesurfer.playPause()

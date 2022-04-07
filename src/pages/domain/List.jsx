@@ -685,6 +685,9 @@ class List extends ListPage {
             handleVisibleModal: this.handleTTsVisibleModal.bind(this),
             handleUpdate: async (args) => {
                 console.log(args, this.state.record.domain_key)
+                if (args.speech_rate) {
+                    args.speech_rate = args.speech_rate.toString()
+                }
                 try {
                     await this.service.cache_tts({
                         ...args,
@@ -727,6 +730,43 @@ class List extends ListPage {
                             props: {
                                 min: 0,
                                 max: 40,
+                            },
+                        },
+                        framerate: {
+                            title: "采样率",
+                            type: schemaFieldType.Select,
+                            dict: {
+                                8000: {
+                                    value: "8000",
+                                    remark: "8K",
+                                },
+                                16000: {
+                                    value: "16000",
+                                    remark: "16K",
+                                },
+                            },
+                        },
+                        speak_id: {
+                            title: "说话人",
+                            type: schemaFieldType.Select,
+                            dict: {
+                                0: {
+                                    value: "0",
+                                    remark: "女",
+                                },
+                                1: {
+                                    value: "1",
+                                    remark: "男",
+                                },
+                            },
+                        },
+                        speech_rate: {
+                            title: "语速",
+                            type: schemaFieldType.InputNumber,
+                            props: {
+                                min: 0.75,
+                                max: 1.25,
+                                step: "0.01",
                             },
                         },
                     }}
