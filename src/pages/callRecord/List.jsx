@@ -17,7 +17,7 @@ import FileSaver from "file-saver"
 import ConversationDetail from "@/pages/outPage/ConversationDetail"
 import XLSX from "xlsx"
 import { convertFormImport } from "@/outter/fr-schema/src/schema"
-import { clone } from "lodash"
+import clone from "clone"
 
 function unique(arr, key) {
     if (!arr) return arr
@@ -42,7 +42,6 @@ class List extends ListPage {
         schema.outbound_task_id.hideInTable = false
         schema.flow_key.search = true
         schema.flow_key.hideInTable = false
-
         super(props, {
             schema: schema,
             service: schemas.taskResult.service,

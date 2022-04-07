@@ -17,6 +17,7 @@ import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoMod
 import FileSaver from "file-saver"
 import ConversationDetail from "@/pages/outPage/ConversationDetail"
 import XLSX from "xlsx"
+import clone from "clone"
 import { convertFormImport } from "@/outter/fr-schema/src/schema"
 
 function unique(arr, key) {
@@ -37,8 +38,13 @@ function unique(arr, key) {
 @Form.create()
 class List extends DataList {
     constructor(props) {
+        let schema = clone(schemas.taskResult.schema)
+        schema.outbound_task_id.search = false
+        schema.outbound_task_id.hideInTable = true
+        schema.flow_key.search = false
+        schema.flow_key.hideInTable = true
         super(props, {
-            schema: schemas.taskResult.schema,
+            schema: schema,
             service: schemas.taskResult.service,
             showDelete: false,
             showEdit: false,

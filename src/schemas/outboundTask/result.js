@@ -15,6 +15,7 @@ const schema = {
     flow_key: {
         title: "流程",
         search: false,
+        hideInTable: true,
         type: schemaFieldType.Select,
     },
     outbound_task_id: {
