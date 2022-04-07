@@ -162,7 +162,7 @@ export default [
                                 title: "客户列表",
                             },
                             {
-                                path: "/outboundTask/callRecord",
+                                path: "/frame/outboundTask/callRecord",
                                 name: "callRecord",
                                 component: "./callRecord/List.jsx",
                                 title: "话单列表",
