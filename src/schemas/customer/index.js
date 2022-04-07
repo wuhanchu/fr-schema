@@ -23,7 +23,7 @@ const schema = {
         searchPrefix: "like",
     },
     name: {
-        title: "名称",
+        title: "姓名",
         sorter: true,
         searchPrefix: "like",
         // required: true,
