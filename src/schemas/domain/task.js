@@ -45,7 +45,6 @@ const schema = {
     },
     remark: {
         title: "备注",
-        // type: schemaFieldType.Select,
         type: schemaFieldType.TextArea,
         props: {
             autoSize: { minRows: 2, maxRows: 6 },
