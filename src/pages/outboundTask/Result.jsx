@@ -57,7 +57,6 @@ class List extends DataList {
 
     async componentDidMount() {
         let audio = document.createElement("AUDIO")
-        audio.crossOrigin = "anonymous"
 
         this.setState({
             audio: audio,
@@ -128,7 +127,6 @@ class List extends DataList {
                                 onClick={() => {
                                     const { audio } = this.state
                                     try {
-                                        audio.crossOrigin = "anonymous"
                                         audio.src = record.phone_audio_url
                                         var playPromise = audio.play()
 
