@@ -76,7 +76,7 @@ const callSchema = {
         },
         type: schemaFieldType.AceEditor,
         decoratorProps: { rules: verifyJson },
-        extra: "通话中用到的槽位，如名称，性别等",
+        extra: '通话中用到的槽位，例如：{"称呼": "先生", "性别": "男"}',
     },
 }
 

@@ -475,69 +475,104 @@ export const ConditionModal = ({
                         />
                         <Tooltip
                             placement="rightTop"
-                            overlayStyle={{ width: "430px" }}
-                            overlayInnerStyle={{ width: "430px" }}
+                            color={"#444"}
+                            overlayStyle={{ width: "460px" }}
+                            overlayInnerStyle={{ width: "460px" }}
                             title={
-                                <ReactMarkdown escapeHtml={false}>
-                                    {mdStart +
-                                        completers
-                                            .map((item) => {
+                                <div
+                                    className="tooltipTable"
+                                    style={{
+                                        height: "300px",
+                                        overflowY: "auto",
+                                    }}
+                                >
+                                    <table border="0">
+                                        <thead>
+                                            <tr>
+                                                <th>变量</th>
+                                                <th>名称</th>
+                                                <th>备注</th>
+                                                <th>必填</th>
+                                                <th>类型</th>
+                                            </tr>
+                                        </thead>
+                                        {completers
+                                            .filter((item) => {
                                                 if (
                                                     item.action_type_key &&
                                                     item.action_type_key ===
                                                         "set_slot"
                                                 ) {
-                                                    return (
-                                                        item.value +
-                                                        " //" +
-                                                        (item.meta || "") +
-                                                        "(" +
-                                                        (item.type
-                                                            ? "类型：" +
-                                                              item.type
-                                                            : "") +
-                                                        "," +
-                                                        (item.require !=
-                                                        undefined
-                                                            ? "必填：" +
-                                                              (item.require ===
-                                                              true
-                                                                  ? "是"
-                                                                  : "否")
-                                                            : "") +
-                                                        ")" +
-                                                        " \n"
-                                                    )
+                                                    return true
                                                 } else {
                                                     if (!item.action_type_key) {
-                                                        return (
-                                                            item.value +
-                                                            " //" +
-                                                            (item.meta || "") +
-                                                            "(" +
-                                                            (item.type
-                                                                ? "类型：" +
-                                                                  item.type
-                                                                : "") +
-                                                            "," +
-                                                            (item.require !=
-                                                            undefined
-                                                                ? "必填：" +
-                                                                  (item.require ===
-                                                                  true
-                                                                      ? "是"
-                                                                      : "否")
-                                                                : "") +
-                                                            ")" +
-                                                            " \n"
-                                                        )
+                                                        return true
                                                     } else {
-                                                        return ""
+                                                        return false
                                                     }
                                                 }
                                             })
-                                            .join("")}
-                                </ReactMarkdown>
+                                            .map((item) => {
+                                                return (
+                                                    <tbody>
+                                                        <tr>
+                                                            <td
+                                                                style={{
+                                                                    width:
+                                                                        "100px",
+                                                                    marginRight:
+                                                                        "10px",
+                                                                }}
+                                                            >
+                                                                <div
+                                                                    style={{
+                                                                        width:
+                                                                            "100px",
+                                                                    }}
+                                                                >
+                                                                    {item.value}
+                                                                </div>
+                                                            </td>
+                                                            <td
+                                                                style={{
+                                                                    width:
+                                                                        "100px",
+                                                                    marginRight:
+                                                                        "10px",
+                                                                }}
+                                                            >
+                                                                {item.meta}
+                                                            </td>
+                                                            <td
+                                                                style={{
+                                                                    width:
+                                                                        "150px",
+                                                                }}
+                                                            >
+                                                                {item.remarks}
+                                                            </td>
+                                                            <td
+                                                                style={{
+                                                                    width:
+                                                                        "50px",
+                                                                }}
+                                                            >
+                                                                {item.required}
+                                                            </td>
+                                                            <td
+                                                                style={{
+                                                                    width:
+                                                                        "60px",
+                                                                }}
+                                                            >
+                                                                {item.type}
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                )
+                                            })}
+                                    </table>
+                                </div>
                             }
                         >
                             <a

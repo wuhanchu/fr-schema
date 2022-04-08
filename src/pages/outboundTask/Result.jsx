@@ -178,7 +178,7 @@ class List extends DataList {
                         (item.request_info &&
                             item.request_info.auto_maxtimes) ||
                         undefined,
-                    slot: item.request_info,
+                    slot: { ...item.request_info, block: undefined },
                 })
             })
 
