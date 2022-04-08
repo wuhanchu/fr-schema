@@ -1,19 +1,11 @@
 import { message, Collapse, Icon } from "antd"
+import * as Sentry from "@sentry/browser"
 
-// import * as Sentry from "@sentry/react"
-// import { Integrations } from "@sentry/tracing"
 const { Panel } = Collapse
 
-// Sentry.init({
-//     dsn:
-//         "https://af5d9accf33742688741efdc0764f6bd@o261197.ingest.sentry.io/6076700",
-//     integrations: [new Integrations.BrowserTracing()],
-
-//     // Set tracesSampleRate to 1.0 to capture 100%
-//     // of transactions for performance monitoring.
-//     // We recommend adjusting this value in production
-//     tracesSampleRate: 1.0,
-// })
+Sentry.init({
+    dsn: "https://40cd4b80c8984866ba1c1d22b28c18a4@ai.dataknown.cn:31443/14",
+})
 
 const showError = (error) => {
     if (!error) {
