@@ -116,7 +116,7 @@ class List extends ListPage {
                         this.handleVisibleModal(true, record, "add")
                     }}
                 >
-                    拨号
+                    拨打提示
                 </a>
                 <Divider type="vertical" />
                 {record.block ? (

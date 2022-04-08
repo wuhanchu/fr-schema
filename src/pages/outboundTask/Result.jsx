@@ -183,6 +183,7 @@ class List extends DataList {
             })
 
             args.number_group = unique(number_group, "phone")
+            args.duplicate_remove = false
             response = await schemas.outboundTask.service.importData(
                 args,
                 schema

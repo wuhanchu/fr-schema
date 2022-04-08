@@ -312,17 +312,32 @@ class List extends ListPage {
     renderOperateColumnExtend(record) {
         return (
             <>
-                <a
-                    onClick={() => {
-                        this.setState({
-                            visibleImport: true,
-                            infoData: record,
-                            record,
-                        })
-                    }}
-                >
-                    导入
-                </a>
+                {record.status === "running" ? (
+                    <Popconfirm
+                        title="当前任务运行中，导入后会立即拨号，是否继续导入数据？"
+                        onConfirm={async (e) => {
+                            this.setState({
+                                visibleImport: true,
+                                infoData: record,
+                                record,
+                            })
+                        }}
+                    >
+                        <a>导入</a>
+                    </Popconfirm>
+                ) : (
+                    <a
+                        onClick={() => {
+                            this.setState({
+                                visibleImport: true,
+                                infoData: record,
+                                record,
+                            })
+                        }}
+                    >
+                        导入
+                    </a>
+                )}
                 <Divider type="vertical" />
                 <a
                     onClick={() => {
