@@ -1,7 +1,8 @@
 export default [
     {
         path: "/user",
-        component: "../outter/fr-schema-antd-utils/src/layouts/UserLayout",
+        // component: "../outter/fr-schema-antd-utils/src/layouts/UserLayout",
+        component: "../layouts/DomainUserLayout",
         routes: [
             {
                 path: "/user",
