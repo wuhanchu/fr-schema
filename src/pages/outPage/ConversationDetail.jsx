@@ -41,7 +41,8 @@ class ConversationDetail extends Chat {
                 },
             })
             let url =
-                "/file_server/" +
+                BASE_PATH +
+                "/file_server" +
                 this.props.phone_audio_url
                     .replace(/^http:\/\/[^/]+/, "")
                     .replace(/^https:\/\/[^/]+/, "")

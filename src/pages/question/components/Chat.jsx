@@ -238,9 +238,19 @@ class Chat extends React.PureComponent {
                                                     marginLeft: "4px",
                                                 }}
                                                 onClick={() => {
-                                                    FileSaver(
-                                                        "/file_server/record/rec/2022/04/06/10/20220406_103429_010083_018859952768.wav"
-                                                    )
+                                                    let url =
+                                                        BASE_PATH +
+                                                        "/file_server" +
+                                                        this.props.phone_audio_url
+                                                            .replace(
+                                                                /^http:\/\/[^/]+/,
+                                                                ""
+                                                            )
+                                                            .replace(
+                                                                /^https:\/\/[^/]+/,
+                                                                ""
+                                                            )
+                                                    FileSaver(url)
                                                 }}
                                             ></DownloadOutlined>
                                         </Tooltip>
