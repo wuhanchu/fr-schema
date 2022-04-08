@@ -187,10 +187,6 @@ class List extends DataList {
                 args,
                 schema
             )
-            await schemas.outboundTask.service.changeTaskStatus({
-                task_id: this.props.record.external_id,
-                status: "running",
-            })
             this.refreshList()
             message.success("重播成功")
             this.handleVisibleModal()

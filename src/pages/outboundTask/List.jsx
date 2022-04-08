@@ -286,12 +286,6 @@ class List extends ListPage {
                                 },
                                 schemas.customer.schema
                             )
-                            await schemas.outboundTask.service.changeTaskStatus(
-                                {
-                                    task_id: this.state.infoData.external_id,
-                                    status: "running",
-                                }
-                            )
                             this.refreshList()
                             message.success("导入成功")
                             this.setState({
