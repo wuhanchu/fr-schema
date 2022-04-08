@@ -181,7 +181,7 @@ class List extends ListPage {
             <>
                 {showInfo && (
                     <Modal
-                        title={"明细"}
+                        title={"明细(" + record.name + ")"}
                         width={"95%"}
                         visible={showInfo}
                         footer={null}

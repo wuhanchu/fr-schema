@@ -55,7 +55,7 @@ class List extends ListPage {
                 outbound_task_id: props.task_id,
             },
             initLocalStorageDomainKey: true,
-            operateWidth: "180px",
+            operateWidth: "60px",
             addHide: true,
         })
     }

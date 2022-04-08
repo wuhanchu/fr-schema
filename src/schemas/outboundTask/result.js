@@ -11,7 +11,7 @@ const schema = {
     //     title: "客户编号",
     //     search: false,
     // },
-    name: { title: "姓名", search: false },
+    name: { title: "姓名", search: true },
     flow_key: {
         title: "流程",
         search: false,
@@ -163,10 +163,14 @@ service.get = async (args) => {
     }
     args.end_time = undefined
     args.start_time = undefined
-    args.select = "*,outbound_task!inner(flow_key)*"
+    args.select = "*,outbound_task!inner(flow_key)"
     if (args.flow_key) {
         args["outbound_task.flow_key"] = "eq." + args.flow_key
         args.flow_key = undefined
+    }
+    if (args.name) {
+        args["request_info->>name"] = "like.*" + args.name + "*"
+        args.name = undefined
     }
     let data = await createApi("call_record", schema, null, "eq.").get(args)
     data.list =
