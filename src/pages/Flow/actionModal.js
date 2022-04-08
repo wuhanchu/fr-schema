@@ -379,7 +379,7 @@ export const ActionModal = ({
 
     return (
         <Modal
-            title={<div keys={isImport || defaultValue.key}>行为配置</div>}
+            title={<div keys={isImport || defaultValue.key}>操作配置</div>}
             visible={visible}
             destroyOnClose={true}
             width={"700px"}
