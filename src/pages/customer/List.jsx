@@ -2,7 +2,7 @@ import { connect } from "dva"
 import ListPage from "@/components/ListPage/ListPage"
 import schemas from "@/schemas"
 import React from "react"
-import { Divider, message } from "antd"
+import { Divider, message, Popconfirm } from "antd"
 import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
 import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
@@ -118,6 +118,40 @@ class List extends ListPage {
                 >
                     拨号
                 </a>
+                <Divider type="vertical" />
+                {record.block ? (
+                    <Popconfirm
+                        title="是否要取消屏蔽客户？"
+                        onConfirm={async (e) => {
+                            this.setState({ record })
+                            await schemas.customer.service.patch({
+                                id: record.id,
+                                block: false,
+                            })
+                            this.refreshList()
+                            message.success("取消屏蔽成功")
+                            e.stopPropagation()
+                        }}
+                    >
+                        <a>取消屏蔽</a>
+                    </Popconfirm>
+                ) : (
+                    <Popconfirm
+                        title="是否要屏蔽客户？"
+                        onConfirm={async (e) => {
+                            this.setState({ record })
+                            await schemas.customer.service.patch({
+                                id: record.id,
+                                block: true,
+                            })
+                            this.refreshList()
+                            message.success("屏蔽成功")
+                            e.stopPropagation()
+                        }}
+                    >
+                        <a>屏蔽</a>
+                    </Popconfirm>
+                )}
             </>
         )
     }
