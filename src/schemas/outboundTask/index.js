@@ -45,19 +45,7 @@ const schema = {
         },
         extra: "是否为测试任务",
     },
-    caller_group_id: {
-        title: "号码组",
-        // hideInTable: true,
-        // search: false,
-        required: true,
-        type: schemaFieldType.Select,
-    },
-    caller_number: {
-        title: "呼出号码",
-        search: false,
-        required: true,
-        type: schemaFieldType.Select,
-    },
+
     user_id: {
         title: "操作用户",
         type: schemaFieldType.Select,
@@ -118,6 +106,20 @@ const schema = {
             }
         },
         required: true,
+    },
+    caller_group_id: {
+        title: "号码组",
+        // hideInTable: true,
+        // search: false,
+        required: true,
+        type: schemaFieldType.Select,
+    },
+    caller_number: {
+        title: "呼出号码",
+        search: false,
+        // required: true,
+        extra: "呼出号码可以为空，不选按组随机",
+        type: schemaFieldType.Select,
     },
     create_time: {
         title: "创建时间",

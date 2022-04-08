@@ -272,7 +272,7 @@ class RightDrawer extends React.PureComponent {
                             layout="vertical"
                         >
                             <FormItem
-                                extra="可配置电话渠道参数和相关参数(意图识别阈值:intent_identify_threshold)"
+                                extra="永远保存在会话中的槽位，不能在流程被修改，但是能被使用。"
                                 label={
                                     <div>
                                         全局槽位
@@ -393,7 +393,7 @@ class RightDrawer extends React.PureComponent {
                                     </div>
                                 }
                                 name={"init_slot"}
-                                extra="可配置电话渠道参数和相关参数(意图识别阈值:intent_identify_threshold)"
+                                extra="会话开始时，初始化到会话上下文的槽位，能在流程中被修改。"
                                 // extra="初始化槽位"
                                 rules={verifyJsonORString}
                             >

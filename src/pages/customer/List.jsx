@@ -45,6 +45,7 @@ class List extends ListPage {
                 name: this.state.infoData.name,
                 gender: this.state.infoData.gender,
                 email: this.state.infoData.email,
+                title: this.state.infoData.title,
                 ...(data.slot ? JSON.parse(data.slot) : {}),
             }
 
@@ -116,7 +117,7 @@ class List extends ListPage {
                         this.handleVisibleModal(true, record, "add")
                     }}
                 >
-                    拨打提示
+                    拨打测试
                 </a>
                 <Divider type="vertical" />
                 {record.block ? (
