@@ -148,6 +148,24 @@ class List extends ListPage {
         )
     }
 
+    renderOperationExtend() {
+        return (
+            <>
+                <Popconfirm
+                    title="是否要同步任务执行结果？"
+                    onConfirm={async (e) => {
+                        await schemas.outboundTask.service.syncTaskResult({})
+                        this.refreshList()
+                        message.success("同步中！")
+                        e.stopPropagation()
+                    }}
+                >
+                    <Button>同步数据</Button>
+                </Popconfirm>
+            </>
+        )
+    }
+
     /**
      * create the multi opertaion buttons
      */

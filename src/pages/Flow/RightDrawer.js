@@ -292,7 +292,10 @@ class RightDrawer extends React.PureComponent {
                                             }
                                         >
                                             <QuestionCircleOutlined
-                                                style={{ marginLeft: "5px" }}
+                                                style={{
+                                                    marginLeft: "5px",
+                                                    display: "inline-block",
+                                                }}
                                             />
                                         </Tooltip>
                                     </div>
@@ -380,7 +383,10 @@ class RightDrawer extends React.PureComponent {
                                             }
                                         >
                                             <QuestionCircleOutlined
-                                                style={{ marginLeft: "5px" }}
+                                                style={{
+                                                    marginLeft: "5px",
+                                                    display: "inline-block",
+                                                }}
                                             />
                                         </Tooltip>
                                     </div>

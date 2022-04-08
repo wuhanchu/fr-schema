@@ -1,6 +1,6 @@
 import React from "react"
 import { autobind } from "core-decorators"
-import { Button, Input, Spin, AutoComplete, Tooltip } from "antd"
+import { Button, Input, Spin, AutoComplete, Tooltip, Mentions } from "antd"
 import robotSvg from "@/assets/rebot.svg"
 import schemas from "@/schemas"
 import mySvg from "@/outter/fr-schema-antd-utils/src/components/GlobalHeader/my.svg"
@@ -123,10 +123,8 @@ class Chat extends React.PureComponent {
     async initFlow(domainArray) {
         const res = await schemas.flow.service.get({
             limit: 1000,
-            // key: flow_key || flowKey,
             config: "not.is.null",
             domain_key: domainArray,
-            // domain_key: domainKey,
             order: "create_time.desc",
         })
         console.log(res)
@@ -135,6 +133,7 @@ class Chat extends React.PureComponent {
 
     handleChange = (value) => {
         const { allData } = this.state
+
         this.setState({
             inputValue: value,
             open: true,
