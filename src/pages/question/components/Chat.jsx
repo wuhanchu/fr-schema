@@ -249,7 +249,11 @@ class Chat extends React.PureComponent {
                                                                 /^https:\/\/[^/]+/,
                                                                 ""
                                                             )
-                                                    FileSaver(url)
+                                                    FileSaver(
+                                                        url,
+                                                        this.props.user_name ||
+                                                            "下载"
+                                                    )
                                                 }}
                                             ></DownloadOutlined>
                                         </Tooltip>

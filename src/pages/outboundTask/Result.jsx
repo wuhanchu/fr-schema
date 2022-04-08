@@ -231,6 +231,9 @@ class List extends DataList {
                         <ConversationDetail
                             phone_audio_url={record.phone_audio_url}
                             conversation_id={record.conversation_id}
+                            user_name={
+                                record.request_info && record.request_info.name
+                            }
                             flow_key={record.flow_key}
                             domain_key={record.domain_key}
                             roomHeight="60vh"
