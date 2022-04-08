@@ -272,6 +272,7 @@ class RightDrawer extends React.PureComponent {
                             layout="vertical"
                         >
                             <FormItem
+                                extra="可配置电话渠道参数和相关参数(意图识别阈值:intent_identify_threshold)"
                                 label={
                                     <div>
                                         全局槽位
@@ -281,11 +282,11 @@ class RightDrawer extends React.PureComponent {
                                                     格式
                                                     {`
 "name": {
-    "value": "***",
-    "name": "***",
-    "type": "***",
-    "remark": "***",
-    "require": true/false
+    "value": "***" 槽位,
+    "name": "***" 槽位名,
+    "type": "***" 数据类型,
+    "remark": "***" 备注,
+    "require": true/false 是否必填
 }
 `}
                                                 </pre>
@@ -372,11 +373,11 @@ class RightDrawer extends React.PureComponent {
                                                     格式
                                                     {`
 "name": {
-    "value": "***",
-    "name": "***",
-    "type": "***",
-    "remark": "***",
-    "require": true/false
+    "value": "***" 槽位,
+    "name": "***" 槽位名,
+    "type": "***" 数据类型,
+    "remark": "***" 备注,
+    "require": true/false 是否必填
 }
 `}
                                                 </pre>
@@ -392,6 +393,7 @@ class RightDrawer extends React.PureComponent {
                                     </div>
                                 }
                                 name={"init_slot"}
+                                extra="可配置电话渠道参数和相关参数(意图识别阈值:intent_identify_threshold)"
                                 // extra="初始化槽位"
                                 rules={verifyJsonORString}
                             >
