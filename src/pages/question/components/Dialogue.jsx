@@ -266,7 +266,7 @@ class Dialogue extends Chat {
                         </Radio.Group>
                     </Form.Item>
                     {type === "chat" && options.length > 0 && (
-                        <Form.Item label="知识库">
+                        <Form.Item label="问题库">
                             <Checkbox.Group
                                 defaultChecked
                                 onChange={(data) => {
