@@ -277,6 +277,12 @@ class RightDrawer extends React.PureComponent {
                                     <div>
                                         全局槽位
                                         <Tooltip
+                                            placement="rightTop"
+                                            color={"#444"}
+                                            overlayStyle={{ width: "300px" }}
+                                            overlayInnerStyle={{
+                                                width: "300px",
+                                            }}
                                             title={
                                                 <pre>
                                                     格式
@@ -368,6 +374,12 @@ class RightDrawer extends React.PureComponent {
                                     <div>
                                         初始化槽位
                                         <Tooltip
+                                            placement="rightTop"
+                                            color={"#444"}
+                                            overlayStyle={{ width: "300px" }}
+                                            overlayInnerStyle={{
+                                                width: "300px",
+                                            }}
                                             title={
                                                 <pre>
                                                     格式
