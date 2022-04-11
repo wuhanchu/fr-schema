@@ -73,6 +73,7 @@
         "async-validator": "v3.5.2",
         "axios": "0.21.1",
         "babel-plugin-transform-remove-console": "^6.9.4",
+        "bizcharts": "^4.1.15",
         "braft-editor": "^2.3.9",
         "braft-extensions": "^0.1.1",
         "classnames": "^2.2.6",
