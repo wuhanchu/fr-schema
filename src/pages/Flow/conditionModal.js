@@ -42,8 +42,10 @@ function initCompleter(actionParam, record) {
             name: item.key,
             value: item.key,
             score: 100,
-            meta: item.remark,
+            meta: item.name || "",
+            remarks: item.remark || "",
             require: item.require,
+            required: item.require ? "是" : "否",
             type: item.type,
             action_type_key: item.action_type_key,
         })
