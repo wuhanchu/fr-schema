@@ -46,8 +46,10 @@ function initCompleter(actionParam, record) {
             remarks: item.remark || "",
             require: item.require,
             required: item.require ? "是" : "否",
+            // default: item.default===true? "是": (item.default===false? "否": ""),
             type: item.type,
             action_type_key: item.action_type_key,
+            default: item.default,
         })
     })
     if (slot) {
@@ -57,6 +59,13 @@ function initCompleter(actionParam, record) {
                 value: slot[key].value,
                 score: 100,
                 require: slot[key].require,
+                required:
+                    slot[key].require !== undefined
+                        ? slot[key].require
+                            ? "是"
+                            : "否"
+                        : "",
+                default: slot[key].default,
                 type: slot[key].type,
                 meta: slot[key].remark || "",
                 remarks: slot[key].remark || "",
@@ -70,6 +79,13 @@ function initCompleter(actionParam, record) {
                 value: init_slot[key].value,
                 score: 100,
                 require: init_slot[key].require,
+                required:
+                    init_slot[key].require !== undefined
+                        ? init_slot[key].require
+                            ? "是"
+                            : "否"
+                        : "",
+                default: init_slot[key].default,
                 type: init_slot[key].type,
                 meta: init_slot[key].remark || "",
                 remarks: init_slot[key].remark || "",
@@ -496,6 +512,7 @@ export const ConditionModal = ({
                                                 <th>备注</th>
                                                 <th>必填</th>
                                                 <th>类型</th>
+                                                <th>默认</th>
                                             </tr>
                                         </thead>
                                         {completers
@@ -568,6 +585,14 @@ export const ConditionModal = ({
                                                                 }}
                                                             >
                                                                 {item.type}
+                                                            </td>
+                                                            <td
+                                                                style={{
+                                                                    width:
+                                                                        "60px",
+                                                                }}
+                                                            >
+                                                                {item.default}
                                                             </td>
                                                         </tr>
                                                     </tbody>
