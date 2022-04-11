@@ -270,14 +270,13 @@ class List extends ListPage {
                                         item.auto_maxtimes || undefined,
                                     slot: {
                                         ...item,
-                                        block: item.block === "true",
                                         auto_maxtimes:
                                             item.auto_maxtimes || undefined,
                                     },
                                 }
                             })
                             number_group = unique(number_group, "phone")
-                            await this.service.importData(
+                            let resp = await this.service.importData(
                                 {
                                     // ...data,
                                     number_group: number_group,
@@ -286,8 +285,20 @@ class List extends ListPage {
                                 },
                                 schemas.customer.schema
                             )
+                            console.log(resp)
                             this.refreshList()
-                            message.success("导入成功")
+                            let block_num = 0
+                            let duplicate_num = 0
+                            if (resp.data.block_num) {
+                                block_num = resp.data.block_num
+                            }
+                            if (resp.data.duplicate_num) {
+                                duplicate_num = resp.data.duplicate_num
+                            }
+                            let fail_sum = block_num + duplicate_num
+                            message.success(
+                                `成功${resp.data.success_num}条, 失败${fail_sum}条, 其中重复${duplicate_num}条, 屏蔽${block_num}条`
+                            )
                             this.setState({
                                 visibleImport: false,
                                 confirmLoading: false,

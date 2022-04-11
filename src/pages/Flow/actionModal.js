@@ -49,6 +49,7 @@ function initCompleter(actionParam, record) {
             require: item.require,
             required: item.require ? "是" : "否",
             type: item.type,
+            default: item.default,
             action_type_key: item.action_type_key,
         })
     })
@@ -65,6 +66,7 @@ function initCompleter(actionParam, record) {
                             ? "是"
                             : "否"
                         : "",
+                default: slot[key].default,
                 type: slot[key].type,
                 meta: slot[key].name || "",
                 remarks: slot[key].remark || "",
@@ -84,6 +86,7 @@ function initCompleter(actionParam, record) {
                             ? "是"
                             : "否"
                         : "",
+                default: init_slot[key].default,
                 type: init_slot[key].type,
                 meta: init_slot[key].name || "",
                 remarks: init_slot[key].remark || "",
@@ -601,6 +604,7 @@ export const ActionModal = ({
                                                 <th>备注</th>
                                                 <th>必填</th>
                                                 <th>类型</th>
+                                                <th>默认</th>
                                             </tr>
                                         </thead>
                                         {completers
@@ -676,6 +680,14 @@ export const ActionModal = ({
                                                                 }}
                                                             >
                                                                 {item.type}
+                                                            </td>
+                                                            <td
+                                                                style={{
+                                                                    width:
+                                                                        "60px",
+                                                                }}
+                                                            >
+                                                                {item.default}
                                                             </td>
                                                         </tr>
                                                     </tbody>
