@@ -110,7 +110,6 @@ class List extends DataList {
             ...this.meta.queryArgs,
             domain_key: domainArray.join(","),
         }
-        this.refreshList()
         // }
     }
 

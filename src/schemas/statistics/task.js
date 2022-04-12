@@ -76,15 +76,27 @@ const schema = {
             showSearch: true,
         },
     },
+    create_date: {
+        title: "日期",
+        search: false,
+    },
     total: {
         title: "总外呼",
         search: false,
     },
-    connected: {
+    connected_rate: {
+        title: "接通率",
+        search: false,
+        // sorter: true,
+        render: (item) => {
+            return Math.round(item * 100 * 10 ** 2) / 10 ** 2 + "%"
+        },
+    },
+    normal: {
         title: "接通",
         search: false,
     },
-    no_connect: {
+    abnormal: {
         title: "未接通",
         search: false,
     },
@@ -92,10 +104,7 @@ const schema = {
         title: "拒接",
         search: false,
     },
-    connected_rate: {
-        title: "接通率",
-        search: false,
-    },
+
     no_answer: {
         title: "无应答",
         search: false,

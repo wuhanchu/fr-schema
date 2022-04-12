@@ -594,7 +594,6 @@ class List extends TabList {
                 domain_key: item,
             }
             this.findIntentByDomainKey(item)
-            this.refreshList()
         }
     }
     /**

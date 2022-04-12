@@ -25,6 +25,9 @@ import {
     Menu,
     Tree,
     Tabs,
+    Table,
+    Spin,
+    Empty,
 } from "antd"
 import {
     LikeTwoTone,
@@ -78,6 +81,9 @@ class List extends TabList {
                     right: 14,
                 },
             },
+            search: {
+                span: 6,
+            },
             showEdit: false,
             showDelete: false,
             readOnly: true,
@@ -86,6 +92,7 @@ class List extends TabList {
             queryArgs: {
                 ...props.queryArgs,
                 // inside: true,
+                limit: 1000,
                 order: "create_date.desc",
                 domain_key: localStorageDomainKey,
             },
@@ -118,7 +125,7 @@ class List extends TabList {
 
         this.formRef.current.resetFields()
         this.formRef.current.setFieldsValue({
-            begin_time: moment().subtract("days", 30),
+            begin_time: moment().subtract("days", 14),
         })
 
         this.setState(
@@ -163,7 +170,8 @@ class List extends TabList {
         })
         // this.handleVisibleExportModal()
     }
-    async componentDidMount() {
+
+    init = async () => {
         let res = await clientService.get({ limit: 1000 })
         let client_dict = listToDict(res.list, null, "client_id", "client_name")
 
@@ -187,23 +195,21 @@ class List extends TabList {
         this.schema.task_id.dict = listToDict(task.list, "", "id", "name")
 
         await this.findUserList()
+    }
 
-        this.meta.queryArgs = {
-            ...this.meta.queryArgs,
-            sort: "desc",
-        }
+    async componentDidMount() {
         try {
             this.formRef.current.setFieldsValue({
-                begin_time: moment().subtract("days", 30),
+                begin_time: moment().subtract("days", 14),
             })
         } catch (error) {}
         super.componentDidMount()
         this.setState({
             searchValues: {
-                // domain_key: "default",
-                begin_time: moment().subtract("days", 30),
+                begin_time: moment().subtract("days", 14),
             },
         })
+        this.init()
     }
 
     renderOperateColumnExtend(record) {
@@ -231,19 +237,30 @@ class List extends TabList {
         const theme = getTheme()
         let data = []
         let averageData = []
+        let max = 0
         this.state.data.list.map((item, index) => {
             data.push({
-                name: "正常",
+                name: "接通",
                 month: item.create_date,
                 monthAverageRain: item.normal,
                 ...item,
             })
             data.push({
-                name: "异常",
+                name: "未接通",
                 month: item.create_date,
                 monthAverageRain: item.abnormal,
                 ...item,
             })
+            if (item.normal > item.abnormal) {
+                if (item.normal > max) {
+                    max = item.normal
+                }
+            } else {
+                if (item.abnormal > max) {
+                    max = item.abnormal
+                }
+            }
+
             averageData.push({
                 month: item.create_date,
                 averageRain: item.connected_rate * 100,
@@ -252,6 +269,8 @@ class List extends TabList {
             })
             return
         })
+
+        console.log(max % 4)
 
         const scale = {
             month: {
@@ -264,7 +283,7 @@ class List extends TabList {
             },
             monthAverageRain: {
                 min: 0,
-                max: 16,
+                max: max + (max % 4),
             },
         }
 
@@ -306,11 +325,11 @@ class List extends TabList {
                                         %
                                     </div>
                                     <div style={{ marginBottom: "8px" }}>
-                                        正常：
+                                        接通：
                                         {one.normal}
                                     </div>
                                     <div style={{ marginBottom: "8px" }}>
-                                        异常：
+                                        未接通：
                                         {one.abnormal}
                                     </div>
                                     <Divider
@@ -376,23 +395,23 @@ class List extends TabList {
                     custom={true}
                     items={[
                         {
-                            name: "正常",
-                            value: "正常",
+                            name: "接通",
+                            value: "接通",
                             marker: {
                                 symbol: "square",
                                 style: { fill: colors[0] },
                             },
                         },
                         {
-                            name: "异常",
-                            value: "异常",
+                            name: "未接通",
+                            value: "未接通",
                             marker: {
                                 symbol: "square",
                                 style: { fill: colors[1] },
                             },
                         },
                         {
-                            name: "平均",
+                            name: "接通率",
                             value: "avg",
                             marker: {
                                 symbol: "hyphen",
@@ -428,6 +447,55 @@ class List extends TabList {
         )
     }
 
+    handleRenderTable = () => {
+        let columns = []
+        Object.keys(this.schema).forEach((key) => {
+            if (!this.schema[key].hideInTable)
+                columns.push({
+                    ...this.schema[key],
+                    dataIndex: key,
+                    key,
+                })
+        })
+        return (
+            <Table
+                columns={columns}
+                size="small"
+                pagination={false}
+                dataSource={this.state.data.list}
+            />
+        )
+    }
+
+    async handleExport(args, schema) {
+        this.setState({ exportLoading: true }, async () => {
+            let column = this.getColumns(false).filter((item) => {
+                return !item.hideInTable
+            })
+            let columns = column
+            let data = await this.requestList({
+                pageSize: 1000000,
+                offset: 0,
+                ...args,
+            })
+            const list =
+                data &&
+                data.list.map((item, index) => {
+                    return {
+                        ...item,
+                        connected_rate:
+                            Math.round(item.connected_rate * 100 * 10 ** 2) /
+                                10 ** 2 +
+                            "%",
+                    }
+                })
+            data = decorateList(list, this.schema)
+            await exportData("详情", data, columns)
+            this.setState({ exportLoading: false })
+        })
+        // this.handleVisibleExportModal()
+    }
+
     renderDataList() {
         const { visibleModal, visibleImport } = this.state
         let {
@@ -450,7 +518,15 @@ class List extends TabList {
         } else if (renderSearchBar !== null) {
             searchBar = this.renderSearchBar && this.renderSearchBar()
         }
-
+        const operations = (
+            <Button
+                onClick={() => {
+                    this.handleExport({}, this.schema)
+                }}
+            >
+                导出
+            </Button>
+        )
         return (
             <>
                 <Card
@@ -467,15 +543,28 @@ class List extends TabList {
                         {this.renderList(
                             { tableRender: () => <></> },
                             {
-                                renderOpeation: (
-                                    <Tabs defaultActiveKey="1">
-                                        <TabPane tab="图表" key="1">
-                                            {this.renderSummary()}
-                                        </TabPane>
-                                        <TabPane tab="数据" key="2">
-                                            Content of Tab Pane 2
-                                        </TabPane>
-                                    </Tabs>
+                                renderOpeation: this.state.data.list.length ? (
+                                    <Spin spinning={this.state.listLoading}>
+                                        <Card bordered={false}>
+                                            <Tabs
+                                                tabBarExtraContent={operations}
+                                                defaultActiveKey="1"
+                                            >
+                                                <TabPane tab="图表" key="1">
+                                                    {this.renderSummary()}
+                                                </TabPane>
+                                                <TabPane tab="数据" key="2">
+                                                    {this.handleRenderTable()}
+                                                </TabPane>
+                                            </Tabs>
+                                        </Card>
+                                    </Spin>
+                                ) : (
+                                    <Spin spinning={this.state.listLoading}>
+                                        <Card bordered={false}>
+                                            <Empty></Empty>
+                                        </Card>
+                                    </Spin>
                                 ),
                             }
                         )}
@@ -587,11 +676,10 @@ class List extends TabList {
             this.schema.flow_key.dict = listToDict(flow.list, "", "key", "name")
             let task = await schemas.outboundTask.service.get({
                 limit: 1000,
-                domain_key: this.meta.queryArgs.domain_key,
+                domain_key: item,
             })
             this.schema.task_id.dict = listToDict(task.list, "", "id", "name")
-
-            this.refreshList()
+            console.log(this.schema.task_id)
         }
     }
 
