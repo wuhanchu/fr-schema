@@ -516,7 +516,7 @@ class List extends ListPage {
         return (
             <div>
                 <AceEditor
-                    placeholder={`请输入模板`}
+                    placeholder={`请输入展示按钮`}
                     mode="json"
                     theme="tomorrow"
                     name="blah2"
