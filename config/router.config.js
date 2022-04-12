@@ -36,7 +36,7 @@ export default [
         routes: [
             {
                 path: "/frame",
-                component: "../layouts/FrameLayout",
+                component: "../layouts/TabLayout",
                 routes: [
                     {
                         path: "/frame",

@@ -59,8 +59,20 @@ const BasicLayout = (props) => {
     const [rightClickTab, setRightClickTab] = useState({}); // 当前点击的tab项
     const [currentDomainKey, setCurrentDomainKey] = useState();  // 当前所选域key
     const [domainKeyFlag, setDomainKeyFlag] = useState(false); // 是不是需要重新渲染tab子元素
+    const [layoutProps, setLayoutProps] = useState({logo: logo,}); // layout样式,默认菜单栏在上面
     let tabDivObj = document.getElementById('tabDiv') // tab元素
     let tabDivWidth = tabDivObj && tabDivObj.clientWidth || 900; // 获取tab整体框宽度,以便计算最多能打开多少标签页
+
+    // 左侧菜单栏配置
+    const frameLayoutProps = {
+        layout: 'leftmenu',
+        style: { height: "calc(100% - 48px)" },
+        menuHeaderRender: false,
+        headerRender: false,
+        footerRender: _ => false,
+        rightContentRender: () => <></>,
+    }
+
 
     const {
         dispatch,
@@ -98,6 +110,9 @@ const BasicLayout = (props) => {
             })
             setDomainList([...domain])
             props.dict.domain[localStorageDomainKey] && setCurrentDomainKey(props.dict.domain[localStorageDomainKey].key)
+        }
+        if (props.location.pathname.startsWith("/frame")) {
+            setLayoutProps(frameLayoutProps)
         }
     }, [init])
 
@@ -247,7 +262,7 @@ const BasicLayout = (props) => {
 
     return (
         <ProLayout
-            logo={logo}
+            // logo={logo}
             formatMessage={formatMessage}
             menuHeaderRender={(logoDom, titleDom) => (
                 <Link to={"/"}>
@@ -280,6 +295,7 @@ const BasicLayout = (props) => {
             rightContentRender={() => <RightContent/>}
             {...props}
             {...settings}
+            {...layoutProps}
             loading={!init}
         >
             <div style={{backgroundColor: "#fff"}} id="tabDiv">
