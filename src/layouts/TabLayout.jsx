@@ -92,10 +92,7 @@ const BasicLayout = (props) => {
         window.onclick = () => {
             setShowRightMenu(false)
         }
-    }, [])
 
-    useEffect(() => {
-        initCallback && initCallback()
         // 域初始化
         let domain_key = localStorage.getItem("domain_key")
         if (!domain_key) {
@@ -104,6 +101,10 @@ const BasicLayout = (props) => {
         if (domain_key && !!props.dict.domain[domain_key]) {
             localStorage.setItem("domain_key", "default")
         }
+    }, [])
+
+    useEffect(() => {
+        initCallback && initCallback()
 
         // 获取域列表 并显示域名称
         let domain = []
