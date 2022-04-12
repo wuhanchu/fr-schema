@@ -48,17 +48,7 @@ import TabList from "@/pages/tabList/TabList"
 }))
 class Conversation extends TabList {
     constructor(props) {
-        let domain_key = localStorage.getItem("domain_key")
-        if (!domain_key) {
-            localStorage.setItem("domain_key", "default")
-        } else {
-            if (domain_key && !props.dict.domain[domain_key]) {
-                localStorage.setItem("domain_key", "default")
-                domain_key = "default"
-            }
-        }
         const localStorageDomainKey = localStorage.getItem("domain_key")
-
         super(props, {
             schema: schemas.schema,
             service: schemas.service,
