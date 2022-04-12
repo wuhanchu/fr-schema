@@ -98,7 +98,7 @@ const BasicLayout = (props) => {
             localStorage.setItem("domain_key", "default")
         } else {
             if (domain_key && !props.dict.domain[domain_key]) {
-                console.info('domain_key', props.dict.domain[domain_key])
+                localStorage.setItem("domain_key", "default")
             }
         }
 
@@ -152,15 +152,16 @@ const BasicLayout = (props) => {
 
     // 新增标签页
     const tabAdd = (menuItem) => {
-        let maxTabLength = Math.round((tabDivWidth - 130) / 118); // 最多可打开的标签页
+        let index = tabList.findIndex((value => {
+            return value.key === menuItem.key
+        })); // 当前点击页面是否已存在标签页中
+
+        let maxTabLength = Math.round((tabDivWidth - 135) / 120); // 最多可打开的标签页
         // 判断是否已经达到最高标签页数量
-        if (tabList.length > maxTabLength) {
+        if (index === -1 && tabList.length > maxTabLength) {
             message.error(`最多可打开${maxTabLength}个标签页`);
             return;
         }
-        let index = tabList.findIndex((value => {
-            return value.key === menuItem.key
-        }));
         // 标签页不存在则新增标签页 若存在显示到对应页签
         if (index === -1) {
             tabList.push({
@@ -188,7 +189,7 @@ const BasicLayout = (props) => {
     // 关闭其他便签页
     const tabRemoveOther = targetKey => {
         const panes = tabList.filter(pane => pane.key === targetKey);
-        setTabList([...panes])
+        setTabList([...panes]);
     }
 
     // 左键点击tab
@@ -238,9 +239,6 @@ const BasicLayout = (props) => {
         showRightMenu &&
         <div style={{position: 'absolute', left: rightClickTab.clientX, top: 40, zIndex: 9999,}}>
             <Menu
-                onClick={async (item) => {
-                    localStorage.setItem("domain_key", item.key)
-                }}
                 style={{backgroundColor: '#fafafa'}}
             >
                 <Menu.Item>
