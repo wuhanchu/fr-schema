@@ -11,20 +11,16 @@ import {
 } from "antd"
 import { connect } from "dva"
 import { DownOutlined } from "@ant-design/icons"
-
-import ListPage from "@/components/ListPage/ListPage"
 import schemas from "@/schemas"
 import React, { Fragment } from "react"
-import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
 import QuestionBaseList from "@/pages/question/components/BaseList"
 import SearchPageModal from "@/pages/question/components/SearchPageModal"
-
+import TabList from "@/pages/tabList/TabList";
 @connect(({ global }) => ({
     dict: global.dict,
 }))
-@Form.create()
-class List extends ListPage {
+class List extends TabList {
     constructor(props) {
         super(props, {
             operateWidth: 340,

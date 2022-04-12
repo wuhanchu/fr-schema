@@ -40,7 +40,7 @@ const schema = {
             allowClear: true,
             showSearch: true,
         },
-        extra: "没有定话术流程的对话中触发进入流程的意图。",
+        extra: "没有指定话术流程的对话中触发进入流程的意图。",
     },
     project_id: {
         style: { width: "500px" },
@@ -53,17 +53,15 @@ const schema = {
             allowClear: true,
             showSearch: true,
         },
-        extra: "用于支持搜索问题库(意图)的识别。",
+        extra: "用于支持搜索问题库(意图)的识别。请谨慎填写，会影响性能。",
     },
     intent_key_text: {
         title: "关键信息",
         style: { width: "500px" },
         search: false,
         sorter: true,
-        extra: "拼接传入文本，用于支持搜索问题库(意图)的识别。",
+        extra: "拼接搜索文本，用于支持搜索问题库(意图)的识别。",
     },
-    // slot: "可配置电话渠道参数和相关参数(意图识别阈值:intent_identify_threshold)",
-
     create_time: {
         title: "创建时间",
         search: false,

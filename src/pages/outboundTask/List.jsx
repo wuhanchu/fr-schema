@@ -1,15 +1,10 @@
 import { connect } from "dva"
-import ListPage from "@/components/ListPage/ListPage"
 import schemas from "@/schemas"
 import React from "react"
 import { Divider, Button, message, Modal, Popconfirm, Select } from "antd"
-import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
 import { listToDict } from "@/outter/fr-schema/src/dict"
-import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
-import FileSaver from "file-saver"
 import Result from "./Result"
-import XLSX from "xlsx"
 import Statistics from "./Statistics"
 import userService from "@/pages/authority/user/service"
 import ImportModal from "./component/ImportModal"
@@ -25,13 +20,13 @@ function unique(arr, key) {
     const obj = arr.reduce((o, e) => ((o[fn(e)] = e), o), {})
     return Object.values(obj)
 }
+import TabList from "@/pages/tabList/TabList";
 
 @connect(({ global, user }) => ({
     dict: global.dict,
     user: user,
 }))
-@Form.create()
-class List extends ListPage {
+class List extends TabList {
     constructor(props) {
         const importTemplateUrl = (BASE_PATH + "/import/客户信息.xlsx").replace(
             "//",
@@ -52,7 +47,6 @@ class List extends ListPage {
     }
 
     async componentDidMount() {
-        console.log(this.props)
         let dict = await schemas.outboundTask.service.getDict({ type: 1 })
         await this.findUserList()
         this.schema.caller_group_id.dict = listToDict(
@@ -154,6 +148,23 @@ class List extends ListPage {
         return response
     }
 
+    handleDomainChange = async (item) => {
+        if (this.meta.initLocalStorageDomainKey) {
+            let flow = await schemas.flow.service.get({
+                limit: 1000,
+                select: "id, key, domain_key, name",
+                domain_key: item.key,
+            })
+            this.schema.flow_key.dict = listToDict(flow.list, "", "key", "name")
+            this.meta.queryArgs = {
+                ...this.meta.queryArgs,
+                domain_key: item.key,
+            }
+
+            this.refreshList()
+        }
+    }
+
     renderOperationButtons() {
         if (this.props.renderOperationButtons) {
             return this.props.renderOperationButtons()
@@ -210,7 +221,6 @@ class List extends ListPage {
     }
 
     handleVisibleImportModal = (flag, record, action) => {
-        console.log(record)
         this.setState({
             visibleImport: !!flag,
             infoData: record,
@@ -285,7 +295,6 @@ class List extends ListPage {
                                 },
                                 schemas.customer.schema
                             )
-                            console.log(resp)
                             this.refreshList()
                             let block_num = 0
                             let duplicate_num = 0

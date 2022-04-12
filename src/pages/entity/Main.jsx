@@ -1,12 +1,10 @@
-import ListPage from "@/components/ListPage/ListPage"
 import React from "react"
-import { PageHeaderWrapper } from "@ant-design/pro-layout"
 import { connect } from "dva"
 import Entity from "./List"
 import EntityType from "../entityType/List"
-import { Dropdown, Menu, Button } from "antd"
-import { DownOutlined } from "@ant-design/icons"
-
+import TabMulList from "@/pages/tabList/TabMulList";
+import {Tabs} from 'antd';
+const {TabPane} = Tabs;
 // 微信信息类型
 export const infoType = {
     entity: "信息",
@@ -14,6 +12,7 @@ export const infoType = {
 }
 
 /**
+ * 实体信息
  * meta 包含
  * resource
  * service
@@ -21,95 +20,31 @@ export const infoType = {
  * selectedRows
  * scroll table whether can scroll
  */
-class Main extends React.PureComponent {
+class Main extends TabMulList {
     constructor(props) {
-        let domain_key = localStorage.getItem("domain_key")
-        if (!domain_key) {
-            localStorage.setItem("domain_key", "default")
-        } else {
-            if (domain_key && !props.dict.domain[domain_key]) {
-                localStorage.setItem("domain_key", "default")
-                domain_key = "default"
-            }
-        }
-        const localStorageDomainKey = localStorage.getItem("domain_key")
         super(props)
-        const { query } = this.props.location
-        const tabActiveKey = query && query.type ? query.type : infoType.entity
         this.state = {
-            tabActiveKey,
-            localStorageDomainKey,
+            ...this.state,
+            tabActiveKey: infoType.entity,
         }
     }
 
-    handleDomainChange = (item) => {
-        let otherTabActiveKey = this.state.tabActiveKey
-        this.setState({
-            localStorageDomainKey: item.key,
-        })
-    }
-
-    render() {
-        const { tabActiveKey } = this.state
-        const { dict, data } = this.props
-        let domain = []
-        if (dict) {
-            Object.keys(dict.domain).forEach((key) => {
-                domain.push(dict.domain[key])
-            })
-        }
-        const menu = (
-            <Menu
-                onClick={async (item) => {
-                    console.log(item)
-                    localStorage.setItem("domain_key", item.key)
-                    this.setState({
-                        localStorageDomainKey: item.key,
-                    })
-                    this.handleDomainChange(item)
-                }}
-            >
-                {domain &&
-                    domain.map((item) => {
-                        return (
-                            <Menu.Item key={item.key}>
-                                <a>{item.name}</a>
-                            </Menu.Item>
-                        )
-                    })}
-            </Menu>
-        )
-        const operations = (
-            <Dropdown overlay={menu} placement="bottomLeft">
-                <Button style={{ top: "-35px", float: "right" }}>
-                    {(this.state.localStorageDomainKey &&
-                        dict &&
-                        dict.domain[this.state.localStorageDomainKey].name) ||
-                        "选择数据域"}
-                    <DownOutlined />
-                </Button>
-            </Dropdown>
-        )
+    renderTab() {
+        const { tabActiveKey, localStorageDomainKey } = this.state
         return (
-            <PageHeaderWrapper
-                title={false}
-                tabList={Object.keys(infoType).map((key) => ({
-                    key: infoType[key],
-                    tab: infoType[key],
-                }))}
-                onTabChange={(tabKey) =>
+            <Tabs
+                onChange={(tabKey) =>
                     this.setState({ tabActiveKey: tabKey })
                 }
-                tabActiveKey={tabActiveKey}
-                extra={operations}
+                activeKey={tabActiveKey}
             >
-                {tabActiveKey === infoType.entity && (
-                    <Entity domain_key={this.state.localStorageDomainKey} />
-                )}
-                {tabActiveKey === infoType.entityType && (
-                    <EntityType domain_key={this.state.localStorageDomainKey} />
-                )}
-            </PageHeaderWrapper>
+                <TabPane tab={"信息"} key={infoType.entity}>
+                    <Entity domain_key={localStorageDomainKey} />
+                </TabPane>
+                <TabPane tab={"类型"} key={infoType.entityType}>
+                    <EntityType domain_key={localStorageDomainKey} />
+                </TabPane>
+            </Tabs>
         )
     }
 }

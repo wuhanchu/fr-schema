@@ -1,18 +1,16 @@
 import { connect } from "dva"
-import ListPage from "@/components/ListPage/ListPage"
 import schemas from "@/schemas"
 import React from "react"
 import { Divider, message, Popconfirm } from "antd"
-import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
 import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
 import { listToDict } from "@/outter/fr-schema/src/dict"
+import TabList from "@/pages/tabList/TabList";
 
 @connect(({ global }) => ({
     dict: global.dict,
 }))
-@Form.create()
-class List extends ListPage {
+class List extends TabList {
     constructor(props) {
         super(props, {
             schema: schemas.customer.schema,

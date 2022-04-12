@@ -1,23 +1,13 @@
 import { connect } from "dva"
-import ListPage from "@/components/ListPage/ListPage"
-import {
-    DownCircleFilled,
-    PlaySquareOutlined,
-    SyncOutlined,
-    DownloadOutlined,
-} from "@ant-design/icons"
 import schemas from "@/schemas"
 import React from "react"
-import { Divider, Button, message, Modal, Row, Col, Popconfirm } from "antd"
-import { Form } from "@ant-design/compatible"
+import { Button, message, Modal, Popconfirm } from "antd"
 import "@ant-design/compatible/assets/index.css"
 import { listToDict } from "@/outter/fr-schema/src/dict"
 import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
-import FileSaver from "file-saver"
 import ConversationDetail from "@/pages/outPage/ConversationDetail"
-import XLSX from "xlsx"
-import { convertFormImport } from "@/outter/fr-schema/src/schema"
 import clone from "clone"
+import TabList from "@/pages/tabList/TabList";
 
 function unique(arr, key) {
     if (!arr) return arr
@@ -34,8 +24,7 @@ function unique(arr, key) {
 @connect(({ global }) => ({
     dict: global.dict,
 }))
-@Form.create()
-class List extends ListPage {
+class List extends TabList {
     constructor(props) {
         let schema = clone(schemas.taskResult.schema)
         schema.outbound_task_id.search = true
@@ -61,6 +50,7 @@ class List extends ListPage {
     }
 
     async componentDidMount() {
+        this.meta.queryArgs.domain_key = this.state.localStorageDomainKey
         let audio = document.createElement("AUDIO")
         let outbound_task_id = await schemas.outboundTask.service.get({
             limit: 10000,

@@ -36,7 +36,7 @@ export default [
         routes: [
             {
                 path: "/frame",
-                component: "../layouts/FrameLayout",
+                component: "../layouts/TabLayout",
                 routes: [
                     {
                         path: "/frame",
@@ -270,7 +270,7 @@ export default [
             {
                 path: "/",
                 component:
-                    "../outter/fr-schema-antd-utils/src/layouts/BasicLayout",
+                    "../layouts/TabLayout",
                 routes: [
                     {
                         path: "/",
@@ -397,6 +397,12 @@ export default [
                                 component: "./callRecord/List.jsx",
                                 title: "话单列表",
                             },
+                            // {
+                            //     path: "/outboundTask/statistics",
+                            //     name: "taskStatistics",
+                            //     component: "./Statistics/Task.jsx",
+                            //     title: "话单列表",
+                            // },
                         ],
                     },
                     {
@@ -421,20 +427,20 @@ export default [
                                 path: "/system/department",
                                 name: "department",
                                 title: "部门管理",
-                                component: "./authority/department/List",
+                                component: "./authority/department/DataList",
                             },
                             {
                                 path: "/system/user",
                                 name: "user",
                                 title: "用户管理",
-                                component: "./authority/user/List",
+                                component: "./authority/user/DataList",
                             },
                             {
                                 path: "/system/role",
                                 name: "role",
                                 title: "角色管理",
 
-                                component: "./authority/role/List",
+                                component: "./authority/role/DataList",
                             },
                             {
                                 authority: ["license_get"],
@@ -461,7 +467,7 @@ export default [
                                 path: "/system/client",
                                 name: "client",
                                 title: "客户端管理",
-                                component: "./authority/clientList/List",
+                                component: "./authority/clientList/DataList",
                             },
                         ],
                     },

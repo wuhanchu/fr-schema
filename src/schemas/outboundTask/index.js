@@ -43,7 +43,7 @@ const schema = {
                 remark: "否",
             },
         },
-        extra: "是否为测试任务",
+        extra: "是否为测试任务，测试任务不加入统计",
     },
 
     user_id: {
