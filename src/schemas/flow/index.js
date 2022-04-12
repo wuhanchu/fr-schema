@@ -41,7 +41,7 @@ const schema = {
             allowClear: true,
             showSearch: true,
         },
-        extra: "用于支持搜索问题库(意图)的识别。",
+        extra: "用于支持搜索问题库(意图)的识别。请谨慎填写，会影响性能。",
     },
     intent_key: {
         style: { width: "500px" },
@@ -53,7 +53,7 @@ const schema = {
             allowClear: true,
             showSearch: true,
         },
-        extra: "没有制定话术流程的对话中触发进入流程的意图。",
+        extra: "没有指定话术流程的对话中触发进入流程的意图。",
     },
     intent_key_text: {
         title: "关键信息",

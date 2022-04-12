@@ -154,6 +154,23 @@ class List extends ListPage {
         return response
     }
 
+    handleDomainChange = async (item) => {
+        if (this.meta.initLocalStorageDomainKey) {
+            let flow = await schemas.flow.service.get({
+                limit: 1000,
+                select: "id, key, domain_key, name",
+                domain_key: item.key,
+            })
+            this.schema.flow_key.dict = listToDict(flow.list, "", "key", "name")
+            this.meta.queryArgs = {
+                ...this.meta.queryArgs,
+                domain_key: item.key,
+            }
+
+            this.refreshList()
+        }
+    }
+
     renderOperationButtons() {
         if (this.props.renderOperationButtons) {
             return this.props.renderOperationButtons()

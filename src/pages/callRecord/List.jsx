@@ -61,6 +61,7 @@ class List extends ListPage {
     }
 
     async componentDidMount() {
+        this.meta.queryArgs.domain_key = this.state.localStorageDomainKey
         let audio = document.createElement("AUDIO")
         let outbound_task_id = await schemas.outboundTask.service.get({
             limit: 10000,

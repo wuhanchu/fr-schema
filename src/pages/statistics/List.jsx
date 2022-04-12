@@ -836,7 +836,6 @@ class List extends ListPage {
                 ...this.meta.queryArgs,
                 domain_key: item.key,
             }
-            console.log(this.props, this.meta)
             this.refreshList()
         }
     }
