@@ -16,7 +16,11 @@ import Authorized from "@/outter/fr-schema-antd-utils/src/components/Authorized/
 import {DownOutlined} from "@ant-design/icons";
 const config = SETTING
 
-
+/**
+ * react16.8新特性 context
+ * 用于上下文传递数据
+ * @type {React.Context<string>}
+ */
 export const DomainKeyContext = React.createContext('default');
 
 
@@ -96,10 +100,9 @@ const BasicLayout = (props) => {
         let domain_key = localStorage.getItem("domain_key")
         if (!domain_key) {
             localStorage.setItem("domain_key", "default")
-        } else {
-            if (domain_key && !props.dict.domain[domain_key]) {
-                localStorage.setItem("domain_key", "default")
-            }
+        }
+        if (domain_key && !!props.dict.domain[domain_key]) {
+            localStorage.setItem("domain_key", "default")
         }
 
         // 获取域列表 并显示域名称
