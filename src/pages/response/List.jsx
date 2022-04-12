@@ -3,11 +3,8 @@ import ListPage from "@/components/ListPage/ListPage"
 import schemas from "@/schemas"
 import React from "react"
 import "@ant-design/compatible/assets/index.css"
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
-import { dark } from "react-syntax-highlighter/dist/esm/styles/prism"
 import {
     Form,
-    Select,
     Input,
     Modal,
     Button,
@@ -30,11 +27,12 @@ import "ace-builds/src-noconflict/ext-language_tools"
 import { PlusOutlined, MinusCircleOutlined } from "@ant-design/icons"
 import { getTree } from "@/pages/Flow/methods"
 import ReactMarkdown from "react-markdown"
+import TabList from "@/pages/tabList/TabList";
 @connect(({ global }) => ({
     dict: global.dict,
 }))
 @autobind
-class List extends ListPage {
+class List extends TabList {
     formRefs = React.createRef()
     constructor(props) {
         super(props, {
@@ -90,7 +88,6 @@ class List extends ListPage {
                     loading={this.state.exportLoading}
                     onClick={() => {
                         // this.setState({ visibleExport: true })
-                        console.log("data")
                         this.handleExport()
                     }}
                 >
@@ -145,7 +142,6 @@ class List extends ListPage {
             })
             let list = data.list
             list = list.map((item) => {
-                console.log(item)
                 return {
                     ...item,
                     intent_key: item.intent_key
@@ -159,7 +155,6 @@ class List extends ListPage {
                         : undefined,
                 }
             })
-            console.log(list)
             data = decorateList(list, this.schema)
             await exportData("回应", data, columns)
             this.setState({ exportLoading: false })
@@ -302,14 +297,13 @@ class List extends ListPage {
         } = this.state
 
         const markdown = `**参考配置**
-    
+
     [{
         "title": "展示文本", //回复选项展示内容
         "payload": "/set_slot{\'templates\':\'t\'}" //回复选项值
     }]
          `
 
-        console.log(markdown)
 
         return (
             <Modal

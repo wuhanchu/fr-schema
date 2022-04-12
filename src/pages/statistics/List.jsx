@@ -1,11 +1,9 @@
 import { connect } from "dva"
-import ListPage from "@/components/ListPage/ListPage"
 import styles from "@/outter/fr-schema-antd-utils/src/components/Page/DataList.less"
 import { PageHeaderWrapper } from "@ant-design/pro-layout"
 import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
 import schemas from "@/schemas"
 import React from "react"
-import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
 import frSchema from "@/outter/fr-schema/src"
 import { listToDict } from "@/outter/fr-schema/src/dict"
@@ -13,14 +11,10 @@ import Modal from "antd/lib/modal/Modal"
 import {
     Card,
     message,
-    Col,
-    Row,
     Button,
     Tooltip,
     AutoComplete,
     Input,
-    Dropdown,
-    Menu,
 } from "antd"
 import {
     LikeTwoTone,
@@ -31,7 +25,6 @@ import {
     TagTwoTone,
     TagsTwoTone,
     FileExcelTwoTone,
-    DownOutlined,
 } from "@ant-design/icons"
 
 import { exportData } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
@@ -39,14 +32,14 @@ import { formatData } from "@/utils/utils"
 import clientService from "@/pages/authority/clientList/service"
 import moment from "moment"
 import SearchHistory from "@/pages/domain/component/SearchHistory"
+import TabList from "@/pages/tabList/TabList";
 
-const { utils, decorateList } = frSchema
+const { decorateList } = frSchema
 
 @connect(({ global }) => ({
     dict: global.dict,
 }))
-@Form.create()
-class List extends ListPage {
+class List extends TabList {
     constructor(props) {
         const localStorageDomainKey = localStorage.getItem("domain_key")
 
@@ -184,7 +177,6 @@ class List extends ListPage {
                         <a
                             onClick={() => {
                                 this.setState({ record: data })
-                                console.log(data)
                                 this.handleVisibleModal(
                                     true,
                                     {
@@ -679,7 +671,6 @@ class List extends ListPage {
 
     renderDataList() {
         const { visibleModal, visibleImport } = this.state
-        console.log(this.state)
         let {
             renderOperationBar,
             renderSearchBar,
@@ -742,8 +733,6 @@ class List extends ListPage {
 
     async handleQuestionEdit(data, schema) {
         // 更新
-        console.log(this.state.record)
-
         let response
         try {
             response = await schemas.question.service.patch(
@@ -817,7 +806,7 @@ class List extends ListPage {
                                         options={this.state.options}
                                     >
                                         {/* {options} */}
-                                        <Input placeholder="请输入分组"></Input>
+                                        <Input placeholder="请输入分组"/>
                                     </AutoComplete>
                                 )
                             },
@@ -830,84 +819,12 @@ class List extends ListPage {
         )
     }
 
-    handleDomainChange = (item) => {
-        if (this.meta.initLocalStorageDomainKey) {
-            this.meta.queryArgs = {
-                ...this.meta.queryArgs,
-                domain_key: item.key,
-            }
-            console.log(this.props, this.meta)
-            this.refreshList()
-        }
-    }
-
-    render() {
-        const { title, content, tabList, onTabChange } = this.meta
-        const { tabActiveKey } = this.state
-        const { dict, data } = this.props
-        let domain = []
-        if (dict) {
-            Object.keys(dict.domain).forEach((key) => {
-                domain.push(dict.domain[key])
-            })
-        }
-        const menu = (
-            <Menu
-                onClick={async (item) => {
-                    console.log(item)
-                    localStorage.setItem("domain_key", item.key)
-                    this.setState({
-                        localStorageDomainKey: item.key,
-                    })
-                    this.handleDomainChange(item)
-                }}
-            >
-                {domain &&
-                    domain.map((item) => {
-                        return (
-                            <Menu.Item key={item.key}>
-                                <a>{item.name}</a>
-                            </Menu.Item>
-                        )
-                    })}
-            </Menu>
-        )
-        const operations = (
-            <Dropdown overlay={menu} placement="bottomLeft">
-                <Button style={{ top: "-35px", float: "right" }}>
-                    {(this.state.localStorageDomainKey &&
-                        dict &&
-                        dict.domain[this.state.localStorageDomainKey].name) ||
-                        "选择数据域"}
-                    <DownOutlined />
-                </Button>
-            </Dropdown>
-        )
-        return (
-            <PageHeaderWrapper
-                title={false}
-                content={
-                    content ||
-                    (this.renderHeaderContent && this.renderHeaderContent())
-                }
-                tabList={tabList}
-                onTabChange={onTabChange}
-                tabActiveKey={tabActiveKey}
-                extra={operations}
-            >
-                {this.renderDataList()}
-            </PageHeaderWrapper>
-        )
-    }
     renderExtend() {
         const {
             showAnswer,
             record,
             showSearchHistory,
-            initLocalStorageDomainKey,
         } = this.state
-        if (this.formRef && this.formRef.current)
-            console.log(this.formRef.current.getFieldsValue())
         return (
             <>
                 {showAnswer && (
@@ -949,7 +866,7 @@ class List extends ListPage {
                                 match_project_id: "notHave",
                             }}
                             record={{ key: this.meta.queryArgs.domain_key }}
-                        ></SearchHistory>
+                        />
                     </Modal>
                 )}
             </>

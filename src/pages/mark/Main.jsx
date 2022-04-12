@@ -1,17 +1,14 @@
-import ListPage from "@/components/ListPage/ListPage"
 import React from "react"
-import { PageHeaderWrapper } from "@ant-design/pro-layout"
 import { connect } from "dva"
 import moment from "moment"
 import {
     Button,
-    Menu,
-    Dropdown,
     message,
     notification,
     Progress,
     Tooltip,
     Steps,
+    Tabs,
 } from "antd"
 import Add from "./Add"
 import Complement from "./Complement"
@@ -22,10 +19,11 @@ import {
     InfoCircleOutlined,
     SyncOutlined,
     WarningOutlined,
-    DownOutlined,
 } from "@ant-design/icons"
+import TabMulList from "@/pages/tabList/TabMulList";
 
 const { Step } = Steps
+const {TabPane} = Tabs;
 
 // 微信信息类型
 export const infoType = {
@@ -42,26 +40,12 @@ export const infoType = {
  * selectedRows
  * scroll table whether can scroll
  */
-class Main extends React.PureComponent {
+class Main extends TabMulList {
     constructor(props) {
-        let domain_key = localStorage.getItem("domain_key")
-        if (!domain_key) {
-            localStorage.setItem("domain_key", "default")
-        } else {
-            if (domain_key && !props.dict.domain[domain_key]) {
-                localStorage.setItem("domain_key", "default")
-                domain_key = "default"
-            }
-        }
-        const localStorageDomainKey = localStorage.getItem("domain_key")
         super(props)
-
-        const { query } = this.props.location
-        const tabActiveKey =
-            query && query.type ? query.type : infoType.Complement
         this.state = {
-            tabActiveKey,
-            localStorageDomainKey,
+            ...this.state,
+            tabActiveKey: infoType.List,
         }
     }
 
@@ -321,120 +305,12 @@ class Main extends React.PureComponent {
         clearInterval(this.mysetIntervals)
     }
 
-    handleDomainChange = (item) => {
-        let otherTabActiveKey = this.state.tabActiveKey
-        this.setState({
-            localStorageDomainKey: item.key,
-        })
-    }
-
-    render() {
-        const { tabActiveKey, domian } = this.state
-        const menu = (
-            <Menu
-                onClick={async (item) => {
-                    try {
-                        this.setState({ isLoading: true })
-                        let sync = await schemas.mark.service.mark_task({
-                            domain_key: item.key,
-                        })
-                        if (this.mysetIntervals) {
-                            clearInterval(this.mysetIntervals)
-                        }
-                        if (this.mysetInterval) {
-                            clearInterval(this.mysetInterval)
-                        }
-                        this.handleGetTask(
-                            { ...item, key: item.key },
-                            sync.data.task_id,
-                            undefined
-                        )
-
-                        this.setState({ isLoading: false })
-                        // message.success("创建成功，请查看进度！")
-                        this.mysetInterval = setInterval(async () => {
-                            let data
-                            try {
-                                data = await schemas.task.service.getDetail({
-                                    domain_key: item.key,
-                                    id: sync.data.task_id,
-                                })
-                            } catch (error) {
-                                if (this.mysetInterval) {
-                                    clearInterval(this.mysetInterval)
-                                }
-                            }
-
-                            if (data) {
-                                if (data.status === "end") {
-                                    const args = {
-                                        message: (
-                                            <span>
-                                                <span>
-                                                    {data.name + "已完成"}
-                                                </span>
-                                                <Tooltip title="查看详情">
-                                                    <a
-                                                        onClick={() => {
-                                                            this.handleTaskInfo(
-                                                                item,
-                                                                data.id
-                                                            )
-                                                        }}
-                                                    >
-                                                        <InfoCircleOutlined
-                                                            style={{
-                                                                marginLeft:
-                                                                    "5px",
-                                                            }}
-                                                        />
-                                                    </a>
-                                                </Tooltip>
-                                            </span>
-                                        ),
-                                        key: "process",
-                                        description: (
-                                            <Progress
-                                                strokeColor={{
-                                                    "0%": "#108ee9",
-                                                    "100%": "#87d068",
-                                                }}
-                                                percent={100}
-                                            />
-                                        ),
-                                        duration: 0,
-                                    }
-                                    clearInterval(this.mysetInterval)
-                                    notification.open(args)
-                                }
-                            } else {
-                                clearInterval(this.mysetInterval)
-                            }
-                        }, 10000)
-                        console.log("handleGetTask")
-                    } catch (error) {
-                        message.error(error.message)
-                        if (this.mysetInterval) {
-                            clearInterval(this.mysetInterval)
-                        }
-                        this.setState({ isLoading: false })
-                    }
-                }}
-            >
-                {domian &&
-                    domian.map((item) => {
-                        return (
-                            <Menu.Item key={item.key}>
-                                <a>{item.name}</a>
-                            </Menu.Item>
-                        )
-                    })}
-            </Menu>
-        )
+    renderTab() {
+        const { tabActiveKey, localStorageDomainKey } = this.state
         const operations = (
             <Button
                 onClick={async () => {
-                    let item = this.state.localStorageDomainKey
+                    let item = localStorageDomainKey
                     try {
                         this.setState({ isLoading: true })
                         let sync = await schemas.mark.service.mark_task({
@@ -526,70 +402,24 @@ class Main extends React.PureComponent {
                 {this.state.isLoading && <LoadingOutlined />}创建分析
             </Button>
         )
-
-        const { dict, data } = this.props
-        let domain = []
-        if (dict) {
-            Object.keys(dict.domain).forEach((key) => {
-                domain.push(dict.domain[key])
-            })
-        }
-        const extraMenu = (
-            <Menu
-                onClick={async (item) => {
-                    console.log(item)
-                    localStorage.setItem("domain_key", item.key)
-                    this.setState({
-                        localStorageDomainKey: item.key,
-                    })
-                    this.handleDomainChange(item)
-                }}
-            >
-                {domain &&
-                    domain.map((item) => {
-                        return (
-                            <Menu.Item key={item.key}>
-                                <a>{item.name}</a>
-                            </Menu.Item>
-                        )
-                    })}
-            </Menu>
-        )
-        const extra = (
-            <Dropdown overlay={extraMenu} placement="bottomLeft">
-                <Button style={{ top: "-35px", float: "right" }}>
-                    {(this.state.localStorageDomainKey &&
-                        dict &&
-                        dict.domain[this.state.localStorageDomainKey].name) ||
-                        "选择数据域"}
-                    <DownOutlined />
-                </Button>
-            </Dropdown>
-        )
         return (
-            <PageHeaderWrapper
-                title={false}
-                extra={extra}
+            <Tabs
                 tabBarExtraContent={operations}
-                tabList={Object.keys(infoType).map((key) => ({
-                    key: infoType[key],
-                    tab: infoType[key],
-                }))}
-                onTabChange={(tabKey) =>
+                onChange={(tabKey) =>
                     this.setState({ tabActiveKey: tabKey })
                 }
-                tabActiveKey={tabActiveKey}
+                activeKey={tabActiveKey}
             >
-                {tabActiveKey === infoType.Complement && (
-                    <Complement domain_key={this.state.localStorageDomainKey} />
-                )}
-                {tabActiveKey === infoType.Add && (
-                    <Add domain_key={this.state.localStorageDomainKey} />
-                )}
-                {tabActiveKey === infoType.Repeat && (
-                    <Repeat domain_key={this.state.localStorageDomainKey} />
-                )}
-            </PageHeaderWrapper>
+                <TabPane tab={"补充扩展问"} key={infoType.Complement}>
+                    <Complement domain_key={localStorageDomainKey} />
+                </TabPane>
+                <TabPane tab={"问题新增"} key={infoType.Add}>
+                    <Add domain_key={localStorageDomainKey} />
+                </TabPane>
+                <TabPane tab={"重复问题"} key={infoType.Repeat}>
+                    <Repeat domain_key={localStorageDomainKey} />
+                </TabPane>
+            </Tabs>
         )
     }
 }
