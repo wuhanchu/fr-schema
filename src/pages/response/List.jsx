@@ -27,7 +27,7 @@ import "ace-builds/src-noconflict/ext-language_tools"
 import { PlusOutlined, MinusCircleOutlined } from "@ant-design/icons"
 import { getTree } from "@/pages/Flow/methods"
 import ReactMarkdown from "react-markdown"
-import TabList from "@/pages/tabList/TabList";
+import TabList from "@/pages/tabList/TabList"
 @connect(({ global }) => ({
     dict: global.dict,
 }))
@@ -303,7 +303,6 @@ class List extends TabList {
         "payload": "/set_slot{\'templates\':\'t\'}" //回复选项值
     }]
          `
-
 
         return (
             <Modal
@@ -588,13 +587,13 @@ class List extends TabList {
         })
     }
 
-    handleDomainChange = (item) => {
+    domainKeyChange = (item) => {
         if (this.meta.initLocalStorageDomainKey) {
             this.meta.queryArgs = {
                 ...this.meta.queryArgs,
-                domain_key: item.key,
+                domain_key: item,
             }
-            this.findIntentByDomainKey(item.key)
+            this.findIntentByDomainKey(item)
             this.refreshList()
         }
     }

@@ -9,6 +9,7 @@ import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
 import frSchema from "@/outter/fr-schema/src"
 import { listToDict } from "@/outter/fr-schema/src/dict"
+import userService from "@/pages/authority/user/service"
 import Modal from "antd/lib/modal/Modal"
 import {
     Card,
@@ -20,7 +21,10 @@ import {
     AutoComplete,
     Input,
     Dropdown,
+    Divider,
     Menu,
+    Tree,
+    Tabs,
 } from "antd"
 import {
     LikeTwoTone,
@@ -45,15 +49,15 @@ import {
 } from "bizcharts"
 import schema from "@/schemas/statistics/task"
 import TabList from "@/pages/tabList/TabList"
-
 import { exportData } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
 import { formatData } from "@/utils/utils"
 import clientService from "@/pages/authority/clientList/service"
 import moment from "moment"
 import SearchHistory from "@/pages/domain/component/SearchHistory"
+import { flow } from "lodash"
 
 const { utils, decorateList } = frSchema
-
+const { TabPane } = Tabs
 @connect(({ global }) => ({
     dict: global.dict,
 }))
@@ -114,7 +118,7 @@ class List extends TabList {
 
         this.formRef.current.resetFields()
         this.formRef.current.setFieldsValue({
-            begin_time: moment().subtract("days", 6),
+            begin_time: moment().subtract("days", 30),
         })
 
         this.setState(
@@ -124,7 +128,7 @@ class List extends TabList {
             },
             () => {
                 this.refreshList({
-                    domain_key: "default",
+                    // domain_key: "default",
                     begin_time: moment().subtract("days", 6),
                 })
             }
@@ -160,26 +164,46 @@ class List extends TabList {
         // this.handleVisibleExportModal()
     }
     async componentDidMount() {
-        // let res = await clientService.get({ limit: 1000 })
-        // let client_dict = listToDict(res.list, null, "client_id", "client_name")
+        let res = await clientService.get({ limit: 1000 })
+        let client_dict = listToDict(res.list, null, "client_id", "client_name")
 
-        // client_dict["null"] = {
-        //     value: "null",
-        //     client_id: "null",
-        //     remark: "未知",
-        // }
-        // this.schema.client_id.dict = client_dict
+        client_dict["null"] = {
+            value: "null",
+            client_id: "null",
+            remark: "未知",
+        }
+        this.schema.client_id.dict = client_dict
+
+        let flow = await schemas.flow.service.get({
+            limit: 1000,
+            select: "id, key, domain_key, name",
+            domain_key: this.meta.queryArgs.domain_key,
+        })
+        this.schema.flow_key.dict = listToDict(flow.list, "", "key", "name")
+        let task = await schemas.outboundTask.service.get({
+            limit: 1000,
+            domain_key: this.meta.queryArgs.domain_key,
+        })
+        this.schema.task_id.dict = listToDict(task.list, "", "id", "name")
+
+        await this.findUserList()
+
         this.meta.queryArgs = {
             ...this.meta.queryArgs,
             sort: "desc",
         }
+        try {
+            this.formRef.current.setFieldsValue({
+                begin_time: moment().subtract("days", 30),
+            })
+        } catch (error) {}
         super.componentDidMount()
-        // this.setState({
-        //     searchValues: {
-        //         // domain_key: "default",
-        //         begin_time: moment().subtract("days", 6),
-        //     },
-        // })
+        this.setState({
+            searchValues: {
+                // domain_key: "default",
+                begin_time: moment().subtract("days", 30),
+            },
+        })
     }
 
     renderOperateColumnExtend(record) {
@@ -198,66 +222,36 @@ class List extends TabList {
             </>
         )
     }
+    async findUserList() {
+        let res = await userService.get({ pageSize: 10000, select: "id, name" })
+        this.schema.user_id.dict = listToDict(res.list, null, "id", "name")
+    }
 
     renderSummary() {
         const theme = getTheme()
-
-        console.log("data", this.state.data)
         let data = []
-        // let averageData = []
+        let averageData = []
         this.state.data.list.map((item, index) => {
             data.push({
                 name: "正常",
                 month: item.create_date,
                 monthAverageRain: item.normal,
+                ...item,
             })
             data.push({
                 name: "异常",
                 month: item.create_date,
                 monthAverageRain: item.abnormal,
+                ...item,
             })
-            // averageData.push({
-            //     month: item.create_date,
-            //     averageRain: item.connected_rate * 100,
-            //     name: "avg",})
-            // return
-        })
-        // const data = [
-        //     { name: "London", month: "Jan.", monthAverageRain: 18.9 },
-        //     { name: "London", month: "Feb.", monthAverageRain: 28.8 },
-        //     { name: "London", month: "Mar.", monthAverageRain: 39.3 },
-        //     { name: "London", month: "Apr.", monthAverageRain: 81.4 },
-        //     { name: "London", month: "May", monthAverageRain: 47 },
-        //     { name: "London", month: "Jun.", monthAverageRain: 20.3 },
-        //     { name: "London", month: "Jul.", monthAverageRain: 24 },
-        //     { name: "London", month: "Aug.", monthAverageRain: 35.6 },
-        //     { name: "Berlin", month: "Jan.", monthAverageRain: 12.4 },
-        //     { name: "Berlin", month: "Feb.", monthAverageRain: 23.2 },
-        //     { name: "Berlin", month: "Mar.", monthAverageRain: 34.5 },
-        //     { name: "Berlin", month: "Apr.", monthAverageRain: 99.7 },
-        //     { name: "Berlin", month: "May", monthAverageRain: 52.6 },
-        //     { name: "Berlin", month: "Jun.", monthAverageRain: 35.5 },
-        //     { name: "Berlin", month: "Jul.", monthAverageRain: 37.4 },
-        //     { name: "Berlin", month: "Aug.", monthAverageRain: 42.4 },
-        // ]
-        const average = data.reduce((pre, item) => {
-            const { month, monthAverageRain } = item
-            if (!pre[month]) {
-                pre[month] = 0
-            }
-            pre[month] += monthAverageRain
-            return pre
-        }, {})
-
-        const averageData = Object.keys(average).map((key) => {
-            return {
-                month: key,
-                averageRain: Number((average[key] / 2).toFixed(2)),
+            averageData.push({
+                month: item.create_date,
+                averageRain: item.connected_rate * 100,
+                data: "ces",
                 name: "avg",
-            }
+            })
+            return
         })
-
-        console.log(averageData)
 
         const scale = {
             month: {
@@ -270,7 +264,7 @@ class List extends TabList {
             },
             monthAverageRain: {
                 min: 0,
-                max: 20,
+                max: 16,
             },
         }
 
@@ -284,6 +278,7 @@ class List extends TabList {
          */
         let chartIns
         const { summary } = this.state.data
+
         return (
             <Chart
                 height={400}
@@ -293,7 +288,75 @@ class List extends TabList {
                 autoFit
                 onGetG2Instance={(c) => (chartIns = c)}
             >
-                <ChartTooltip shared />
+                <ChartTooltip shared>
+                    {(title, items) => {
+                        console.log(items)
+                        let one = this.state.data.list.filter((item) => {
+                            return item.create_date == items[0].title
+                        })[0]
+                        return (
+                            <div>
+                                <div style={{ margin: "12px" }}>
+                                    <div style={{ marginBottom: "8px" }}>
+                                        接通率：
+                                        {Math.round(
+                                            one.connected_rate * 100 * 10 ** 2
+                                        ) /
+                                            10 ** 2}
+                                        %
+                                    </div>
+                                    <div style={{ marginBottom: "8px" }}>
+                                        正常：
+                                        {one.normal}
+                                    </div>
+                                    <div style={{ marginBottom: "8px" }}>
+                                        异常：
+                                        {one.abnormal}
+                                    </div>
+                                    <Divider
+                                        style={{ margin: "8px 0px 8px 0px " }}
+                                    />
+                                    <div style={{ marginBottom: "8px" }}>
+                                        未接通：
+                                        {one.no_connect}
+                                    </div>
+                                    <div style={{ marginBottom: "8px" }}>
+                                        拒接：
+                                        {one.refuse}
+                                    </div>
+                                    <div style={{ marginBottom: "8px" }}>
+                                        无应答：
+                                        {one.no_answer}
+                                    </div>
+                                    <div style={{ marginBottom: "8px" }}>
+                                        拨打失败：
+                                        {one.failed}
+                                    </div>
+                                    <div style={{ marginBottom: "8px" }}>
+                                        忙线：
+                                        {one.busy}
+                                    </div>
+                                    <div style={{ marginBottom: "8px" }}>
+                                        空号：
+                                        {one.empty}
+                                    </div>
+                                    <div style={{ marginBottom: "8px" }}>
+                                        关机：
+                                        {one.shutdown}
+                                    </div>
+                                    <div style={{ marginBottom: "8px" }}>
+                                        停机：
+                                        {one.halt}
+                                    </div>
+                                    <div style={{ marginBottom: "8px" }}>
+                                        其他：
+                                        {one.other}
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                    }}
+                </ChartTooltip>
                 <Interval
                     adjust={[
                         {
@@ -313,16 +376,16 @@ class List extends TabList {
                     custom={true}
                     items={[
                         {
-                            name: "London",
-                            value: "London",
+                            name: "正常",
+                            value: "正常",
                             marker: {
                                 symbol: "square",
                                 style: { fill: colors[0] },
                             },
                         },
                         {
-                            name: "Berlin",
-                            value: "Berlin",
+                            name: "异常",
+                            value: "异常",
                             marker: {
                                 symbol: "square",
                                 style: { fill: colors[1] },
@@ -404,7 +467,16 @@ class List extends TabList {
                         {this.renderList(
                             { tableRender: () => <></> },
                             {
-                                renderOpeation: this.renderSummary(),
+                                renderOpeation: (
+                                    <Tabs defaultActiveKey="1">
+                                        <TabPane tab="图表" key="1">
+                                            {this.renderSummary()}
+                                        </TabPane>
+                                        <TabPane tab="数据" key="2">
+                                            Content of Tab Pane 2
+                                        </TabPane>
+                                    </Tabs>
+                                ),
                             }
                         )}
                     </div>
@@ -501,13 +573,24 @@ class List extends TabList {
         )
     }
 
-    handleDomainChange = (item) => {
+    domainKeyChange = async (item) => {
         if (this.meta.initLocalStorageDomainKey) {
             this.meta.queryArgs = {
                 ...this.meta.queryArgs,
-                domain_key: item.key,
+                domain_key: item,
             }
-            console.log(this.props, this.meta)
+            let flow = await schemas.flow.service.get({
+                limit: 1000,
+                select: "id, key, domain_key, name",
+                domain_key: item,
+            })
+            this.schema.flow_key.dict = listToDict(flow.list, "", "key", "name")
+            let task = await schemas.outboundTask.service.get({
+                limit: 1000,
+                domain_key: this.meta.queryArgs.domain_key,
+            })
+            this.schema.task_id.dict = listToDict(task.list, "", "id", "name")
+
             this.refreshList()
         }
     }

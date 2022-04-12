@@ -20,7 +20,7 @@ function unique(arr, key) {
     const obj = arr.reduce((o, e) => ((o[fn(e)] = e), o), {})
     return Object.values(obj)
 }
-import TabList from "@/pages/tabList/TabList";
+import TabList from "@/pages/tabList/TabList"
 
 @connect(({ global, user }) => ({
     dict: global.dict,
@@ -148,7 +148,7 @@ class List extends TabList {
         return response
     }
 
-    handleDomainChange = async (item) => {
+    domainKeyChange = async (item) => {
         if (this.meta.initLocalStorageDomainKey) {
             let flow = await schemas.flow.service.get({
                 limit: 1000,
@@ -158,7 +158,7 @@ class List extends TabList {
             this.schema.flow_key.dict = listToDict(flow.list, "", "key", "name")
             this.meta.queryArgs = {
                 ...this.meta.queryArgs,
-                domain_key: item.key,
+                domain_key: item,
             }
 
             this.refreshList()

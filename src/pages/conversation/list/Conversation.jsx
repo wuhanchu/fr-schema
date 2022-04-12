@@ -41,7 +41,7 @@ function unique(arr, key) {
     const obj = arr.reduce((o, e) => ((o[fn(e)] = e), o), {})
     return Object.values(obj)
 }
-import TabList from "@/pages/tabList/TabList";
+import TabList from "@/pages/tabList/TabList"
 
 @connect(({ global }) => ({
     dict: global.dict,
@@ -88,7 +88,7 @@ class Conversation extends TabList {
         }
     }
 
-    handleDomainChange = (item) => {
+    domainKeyChange = (item) => {
         if (this.meta.initLocalStorageDomainKey) {
             this.formRef.current.setFieldsValue({
                 flow_key: undefined,
@@ -96,11 +96,11 @@ class Conversation extends TabList {
                 node_key: undefined,
             })
             this.setState({ flow_key: undefined, node_key: undefined })
-            this.findFlowList(item.key)
+            this.findFlowList(item)
 
             this.meta.queryArgs = {
                 ...this.meta.queryArgs,
-                domain_key: item.key,
+                domain_key: item,
             }
 
             this.refreshList()

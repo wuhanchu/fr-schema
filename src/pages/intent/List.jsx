@@ -96,14 +96,14 @@ class List extends DataList {
         }
     }
 
-    handleDomainChange = (item) => {
+    domainKeyChange = (item) => {
         // if(this.meta.initLocalStorageDomainKey){
         let domainArray = []
-        domainArray.push(item.key)
-        if (this.props.dict.domain[item.key].base_domain_key) {
+        domainArray.push(item)
+        if (this.props.dict.domain[item].base_domain_key) {
             domainArray = [
                 ...domainArray,
-                ...this.props.dict.domain[item.key].base_domain_key,
+                ...this.props.dict.domain[item].base_domain_key,
             ]
         }
         this.meta.queryArgs = {

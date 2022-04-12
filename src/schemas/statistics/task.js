@@ -30,11 +30,23 @@ const schema = {
         },
         hideInTable: true,
     },
+    task_id: {
+        title: "任务",
+        required: true,
+        hideInTable: true,
+        // search: false,
+        type: schemaFieldType.Select,
+        props: {
+            mode: "tags",
+            allowClear: true,
+            showSearch: true,
+        },
+    },
     flow_key: {
         title: "流程",
         required: true,
         hideInTable: true,
-        search: false,
+        // search: false,
         type: schemaFieldType.Select,
         props: {
             mode: "tags",
@@ -54,7 +66,7 @@ const schema = {
         },
     },
     client_id: {
-        search: false,
+        // search: false,
         title: "渠道",
         hideInTable: true,
         type: schemaFieldType.Select,
@@ -114,6 +126,24 @@ const schema = {
     },
 }
 const service = createApi("outbound/call_record_statistics", schema, null, "")
+service.get = async (args) => {
+    if (args.begin_time) {
+        let time = new Date(parseInt(args.begin_time))
+        args.begin_time = moment(time).format("YYYY-MM-DD") + "T00:00:00"
+    }
+    if (args.end_time) {
+        let time = new Date(parseInt(args.end_time))
+        args.end_time = moment(time).format("YYYY-MM-DD") + "T23:59:59"
+    }
+    let data = await createApi(
+        "outbound/call_record_statistics",
+        schema,
+        null,
+        ""
+    ).get(args)
+    return data
+}
+
 export default {
     schema,
     service,
