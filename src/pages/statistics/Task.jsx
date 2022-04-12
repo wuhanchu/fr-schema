@@ -44,6 +44,7 @@ import {
     getTheme,
 } from "bizcharts"
 import schema from "@/schemas/statistics/task"
+import TabList from "@/pages/tabList/TabList"
 
 import { exportData } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
 import { formatData } from "@/utils/utils"
@@ -57,7 +58,7 @@ const { utils, decorateList } = frSchema
     dict: global.dict,
 }))
 @Form.create()
-class List extends ListPage {
+class List extends TabList {
     constructor(props) {
         const localStorageDomainKey = localStorage.getItem("domain_key")
 
@@ -201,24 +202,44 @@ class List extends ListPage {
     renderSummary() {
         const theme = getTheme()
 
-        const data = [
-            { name: "London", month: "Jan.", monthAverageRain: 18.9 },
-            { name: "London", month: "Feb.", monthAverageRain: 28.8 },
-            { name: "London", month: "Mar.", monthAverageRain: 39.3 },
-            { name: "London", month: "Apr.", monthAverageRain: 81.4 },
-            { name: "London", month: "May", monthAverageRain: 47 },
-            { name: "London", month: "Jun.", monthAverageRain: 20.3 },
-            { name: "London", month: "Jul.", monthAverageRain: 24 },
-            { name: "London", month: "Aug.", monthAverageRain: 35.6 },
-            { name: "Berlin", month: "Jan.", monthAverageRain: 12.4 },
-            { name: "Berlin", month: "Feb.", monthAverageRain: 23.2 },
-            { name: "Berlin", month: "Mar.", monthAverageRain: 34.5 },
-            { name: "Berlin", month: "Apr.", monthAverageRain: 99.7 },
-            { name: "Berlin", month: "May", monthAverageRain: 52.6 },
-            { name: "Berlin", month: "Jun.", monthAverageRain: 35.5 },
-            { name: "Berlin", month: "Jul.", monthAverageRain: 37.4 },
-            { name: "Berlin", month: "Aug.", monthAverageRain: 42.4 },
-        ]
+        console.log("data", this.state.data)
+        let data = []
+        // let averageData = []
+        this.state.data.list.map((item, index) => {
+            data.push({
+                name: "正常",
+                month: item.create_date,
+                monthAverageRain: item.normal,
+            })
+            data.push({
+                name: "异常",
+                month: item.create_date,
+                monthAverageRain: item.abnormal,
+            })
+            // averageData.push({
+            //     month: item.create_date,
+            //     averageRain: item.connected_rate * 100,
+            //     name: "avg",})
+            // return
+        })
+        // const data = [
+        //     { name: "London", month: "Jan.", monthAverageRain: 18.9 },
+        //     { name: "London", month: "Feb.", monthAverageRain: 28.8 },
+        //     { name: "London", month: "Mar.", monthAverageRain: 39.3 },
+        //     { name: "London", month: "Apr.", monthAverageRain: 81.4 },
+        //     { name: "London", month: "May", monthAverageRain: 47 },
+        //     { name: "London", month: "Jun.", monthAverageRain: 20.3 },
+        //     { name: "London", month: "Jul.", monthAverageRain: 24 },
+        //     { name: "London", month: "Aug.", monthAverageRain: 35.6 },
+        //     { name: "Berlin", month: "Jan.", monthAverageRain: 12.4 },
+        //     { name: "Berlin", month: "Feb.", monthAverageRain: 23.2 },
+        //     { name: "Berlin", month: "Mar.", monthAverageRain: 34.5 },
+        //     { name: "Berlin", month: "Apr.", monthAverageRain: 99.7 },
+        //     { name: "Berlin", month: "May", monthAverageRain: 52.6 },
+        //     { name: "Berlin", month: "Jun.", monthAverageRain: 35.5 },
+        //     { name: "Berlin", month: "Jul.", monthAverageRain: 37.4 },
+        //     { name: "Berlin", month: "Aug.", monthAverageRain: 42.4 },
+        // ]
         const average = data.reduce((pre, item) => {
             const { month, monthAverageRain } = item
             if (!pre[month]) {
@@ -236,6 +257,8 @@ class List extends ListPage {
             }
         })
 
+        console.log(averageData)
+
         const scale = {
             month: {
                 sync: true,
@@ -247,7 +270,7 @@ class List extends ListPage {
             },
             monthAverageRain: {
                 min: 0,
-                max: 100,
+                max: 20,
             },
         }
 
@@ -490,62 +513,7 @@ class List extends ListPage {
     }
 
     render() {
-        const { title, content, tabList, onTabChange } = this.meta
-        const { tabActiveKey } = this.state
-        const { dict, data } = this.props
-        let domain = []
-        if (dict) {
-            Object.keys(dict.domain).forEach((key) => {
-                domain.push(dict.domain[key])
-            })
-        }
-        const menu = (
-            <Menu
-                onClick={async (item) => {
-                    console.log(item)
-                    localStorage.setItem("domain_key", item.key)
-                    this.setState({
-                        localStorageDomainKey: item.key,
-                    })
-                    this.handleDomainChange(item)
-                }}
-            >
-                {domain &&
-                    domain.map((item) => {
-                        return (
-                            <Menu.Item key={item.key}>
-                                <a>{item.name}</a>
-                            </Menu.Item>
-                        )
-                    })}
-            </Menu>
-        )
-        const operations = (
-            <Dropdown overlay={menu} placement="bottomLeft">
-                <Button style={{ top: "-35px", float: "right" }}>
-                    {(this.state.localStorageDomainKey &&
-                        dict &&
-                        dict.domain[this.state.localStorageDomainKey].name) ||
-                        "选择数据域"}
-                    <DownOutlined />
-                </Button>
-            </Dropdown>
-        )
-        return (
-            <PageHeaderWrapper
-                title={false}
-                content={
-                    content ||
-                    (this.renderHeaderContent && this.renderHeaderContent())
-                }
-                tabList={tabList}
-                onTabChange={onTabChange}
-                tabActiveKey={tabActiveKey}
-                extra={operations}
-            >
-                {this.renderDataList()}
-            </PageHeaderWrapper>
-        )
+        return this.renderDataList()
     }
     renderExtend() {
         const {

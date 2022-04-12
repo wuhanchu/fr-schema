@@ -8,14 +8,7 @@ import "@ant-design/compatible/assets/index.css"
 import frSchema from "@/outter/fr-schema/src"
 import { listToDict } from "@/outter/fr-schema/src/dict"
 import Modal from "antd/lib/modal/Modal"
-import {
-    Card,
-    message,
-    Button,
-    Tooltip,
-    AutoComplete,
-    Input,
-} from "antd"
+import { Card, message, Button, Tooltip, AutoComplete, Input } from "antd"
 import {
     LikeTwoTone,
     BankTwoTone,
@@ -32,7 +25,7 @@ import { formatData } from "@/utils/utils"
 import clientService from "@/pages/authority/clientList/service"
 import moment from "moment"
 import SearchHistory from "@/pages/domain/component/SearchHistory"
-import TabList from "@/pages/tabList/TabList";
+import TabList from "@/pages/tabList/TabList"
 
 const { decorateList } = frSchema
 
@@ -669,6 +662,10 @@ class List extends TabList {
         )
     }
 
+    render() {
+        return this.renderDataList()
+    }
+
     renderDataList() {
         const { visibleModal, visibleImport } = this.state
         let {
@@ -806,7 +803,7 @@ class List extends TabList {
                                         options={this.state.options}
                                     >
                                         {/* {options} */}
-                                        <Input placeholder="请输入分组"/>
+                                        <Input placeholder="请输入分组" />
                                     </AutoComplete>
                                 )
                             },
@@ -820,11 +817,7 @@ class List extends TabList {
     }
 
     renderExtend() {
-        const {
-            showAnswer,
-            record,
-            showSearchHistory,
-        } = this.state
+        const { showAnswer, record, showSearchHistory } = this.state
         return (
             <>
                 {showAnswer && (
