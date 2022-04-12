@@ -77,7 +77,7 @@ const BasicLayout = (props) => {
         if (!domain_key) {
             localStorage.setItem("domain_key", "default")
         }
-        if (domain_key && !!props.dict.domain[domain_key]) {
+        if (domain_key && !!!props.dict.domain[domain_key]) {
             localStorage.setItem("domain_key", "default")
         }
     }, [])
