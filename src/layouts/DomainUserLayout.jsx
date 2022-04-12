@@ -12,6 +12,11 @@ const DomianUserLayout = (props) => {
     useEffect(async () => {
         const param = queryString.parse(location.search.replace("?", ""))
         const sessionId = param.sessionId
+        /**
+         * sessionId 为华宝基金 域用户登录做的逻辑处理
+         * 华宝基金域用户:
+         *  华宝业务人员电脑登录之后,即认为做过用户认证,无需再次登录
+         */
         if (sessionId) {
             sessionLogin(sessionId)
         }
