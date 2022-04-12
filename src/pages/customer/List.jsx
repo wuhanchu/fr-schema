@@ -5,7 +5,7 @@ import { Divider, message, Popconfirm } from "antd"
 import "@ant-design/compatible/assets/index.css"
 import InfoModal from "@/outter/fr-schema-antd-utils/src/components/Page/InfoModal"
 import { listToDict } from "@/outter/fr-schema/src/dict"
-import TabList from "@/pages/tabList/TabList";
+import TabList from "@/pages/tabList/TabList"
 
 @connect(({ global }) => ({
     dict: global.dict,
@@ -110,14 +110,14 @@ class List extends TabList {
     renderOperateColumnExtend(record) {
         return (
             <>
-                <a
+                {/* <a
                     onClick={() => {
                         this.handleVisibleModal(true, record, "add")
                     }}
                 >
                     拨打测试
                 </a>
-                <Divider type="vertical" />
+                <Divider type="vertical" /> */}
                 {record.block ? (
                     <Popconfirm
                         title="是否要取消屏蔽客户？"
