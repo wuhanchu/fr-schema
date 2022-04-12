@@ -1,8 +1,6 @@
 import { connect } from "dva"
-import ListPage from "@/components/ListPage/ListPage"
 import schemas from "@/schemas"
 import React, { Fragment } from "react"
-import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
 import SearchPageModal from "@/pages/question/components/SearchPageModal"
 import {
@@ -16,7 +14,6 @@ import {
     Progress,
     Tooltip,
     Steps,
-    Select,
 } from "antd"
 import DialogueModal from "@/pages/question/components/DialogueModal"
 import YamlEdit from "@/pages/story/yamlEdiit"
@@ -40,16 +37,17 @@ import {
 } from "@ant-design/icons"
 import moment from "moment"
 
+import {default as tempDataList} from "@/outter/fr-schema-antd-utils/src/components/Page/DataList"
+export const DataList = tempDataList
+
 const { actions } = frSchema
 const { Step } = Steps
-const { SubMenu } = Menu
 @connect(({ global, user }) => ({
     dict: global.dict,
     global: global,
     user: user,
 }))
-@Form.create()
-class List extends ListPage {
+class List extends DataList {
     constructor(props) {
         super(props, {
             schema: schemas.domain.schema,

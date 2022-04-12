@@ -1,19 +1,17 @@
 import { connect } from "dva"
-import ListPage from "@/outter/fr-schema-antd-utils/src/components/Page/ListPage"
 import schemas from "@/schemas"
 import React from "react"
-import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
 import clientService from "@/pages/authority/clientList/service"
 import { listToDict } from "@/outter/fr-schema/src/dict"
 import userService from "@/pages/authority/user/service"
 import ReactJson from "react-json-view"
+import TabList from "@/pages/tabList/TabList";
 
 @connect(({ global }) => ({
     dict: global.dict,
 }))
-@Form.create()
-class List extends ListPage {
+class List extends TabList {
     constructor(props) {
         super(props, {
             schema: schemas.log.schema,

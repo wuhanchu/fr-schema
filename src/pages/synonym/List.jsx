@@ -1,8 +1,6 @@
 import { connect } from "dva"
-import ListPage from "@/components/ListPage/ListPage"
 import schemas from "@/schemas"
 import React from "react"
-import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
 import { schemaFieldType } from "@/outter/fr-schema/src/schema"
 import { verifyJson } from "@/outter/fr-schema-antd-utils/src/utils/component"
@@ -11,11 +9,11 @@ import ImportModal from "@/outter/fr-schema-antd-utils/src/components/modal/Impo
 import frSchema from "@/outter/fr-schema/src"
 import { Button, message } from "antd"
 const { decorateList } = frSchema
+import TabList from "@/pages/tabList/TabList";
 @connect(({ global }) => ({
     dict: global.dict,
 }))
-@Form.create()
-class List extends ListPage {
+class List extends TabList {
     constructor(props) {
         const importTemplateUrl = (BASE_PATH + "/import/专业词汇.xlsx").replace(
             "//",
@@ -113,7 +111,6 @@ class List extends ListPage {
                     loading={this.state.exportLoading}
                     onClick={() => {
                         // this.setState({ visibleExport: true })
-                        console.log("data")
                         this.handleExport()
                     }}
                 >

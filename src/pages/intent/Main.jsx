@@ -1,17 +1,14 @@
-import ListPage from "@/components/ListPage/ListPage"
 import React from "react"
-import { PageHeaderWrapper } from "@ant-design/pro-layout"
-import { connect } from "dva"
+import {connect} from "dva"
 import moment from "moment"
 import {
     Button,
-    Menu,
-    Dropdown,
     message,
     notification,
     Progress,
     Tooltip,
     Steps,
+    Tabs
 } from "antd"
 import List from "./List"
 import Intent from "./Intent"
@@ -21,10 +18,11 @@ import {
     InfoCircleOutlined,
     SyncOutlined,
     WarningOutlined,
-    DownOutlined,
 } from "@ant-design/icons"
+import TabMulList from "@/pages/tabList/TabMulList";
 
-const { Step } = Steps
+const {Step} = Steps
+const {TabPane} = Tabs;
 
 // 微信信息类型
 export const infoType = {
@@ -33,6 +31,7 @@ export const infoType = {
 }
 
 /**
+ * 意图
  * meta 包含
  * resource
  * service
@@ -40,31 +39,13 @@ export const infoType = {
  * selectedRows
  * scroll table whether can scroll
  */
-class Main extends React.PureComponent {
+class Main extends TabMulList {
     constructor(props) {
-        let domain_key = localStorage.getItem("domain_key")
-        if (!domain_key) {
-            localStorage.setItem("domain_key", "default")
-        } else {
-            if (domain_key && !props.dict.domain[domain_key]) {
-                localStorage.setItem("domain_key", "default")
-                domain_key = "default"
-            }
-        }
-        const localStorageDomainKey = localStorage.getItem("domain_key")
         super(props)
-
-        const { query } = this.props.location
-        const tabActiveKey = query && query.type ? query.type : infoType.List
         this.state = {
-            tabActiveKey,
-            localStorageDomainKey,
+            ...this.state,
+            tabActiveKey: infoType.List,
         }
-    }
-
-    async componentDidMount() {
-        let data = await schemas.domain.service.get({ limit: 10000 })
-        this.setState({ domian: data.list })
     }
 
     handleIntervals = async (record, id, name, props) => {
@@ -102,7 +83,7 @@ class Main extends React.PureComponent {
                                     }}
                                 >
                                     <InfoCircleOutlined
-                                        style={{ marginLeft: "5px" }}
+                                        style={{marginLeft: "5px"}}
                                     />
                                 </a>
                             </Tooltip>
@@ -127,13 +108,13 @@ class Main extends React.PureComponent {
                     ),
                     duration: 0,
                 }
-                this.setState({ process: 0 })
+                this.setState({process: 0})
                 notification.open(args)
                 setTimeout(() => {
                     clearInterval(this.mysetIntervals)
                 }, 700)
             } else {
-                this.setState({ process: data.process })
+                this.setState({process: data.process})
                 const args = {
                     message: (
                         <span>
@@ -145,7 +126,7 @@ class Main extends React.PureComponent {
                                     }}
                                 >
                                     <InfoCircleOutlined
-                                        style={{ marginLeft: "5px" }}
+                                        style={{marginLeft: "5px"}}
                                     />
                                 </a>
                             </Tooltip>
@@ -216,7 +197,7 @@ class Main extends React.PureComponent {
                 <Steps
                     direction="vertical"
                     progressDot
-                    style={{ maxHeight: "500px", overflowY: "auto" }}
+                    style={{maxHeight: "500px", overflowY: "auto"}}
                     current={res.list.length}
                 >
                     {res.list.map((item) => {
@@ -257,7 +238,7 @@ class Main extends React.PureComponent {
                                     this.handleTaskInfo(record, taskId)
                                 }}
                             >
-                                <SyncOutlined style={{ marginLeft: "5px" }} />
+                                <SyncOutlined style={{marginLeft: "5px"}}/>
                             </a>
                         </Tooltip>
                     </span>
@@ -280,7 +261,7 @@ class Main extends React.PureComponent {
 
     handleGetTask = (record, id, name) => {
         notification.destroy("info")
-        this.setState({ showProcess: true })
+        this.setState({showProcess: true})
         let props = {}
         props.id = id
         props.name = name
@@ -294,7 +275,7 @@ class Main extends React.PureComponent {
                 notification.destroy("info")
                 clearInterval(this.mysetIntervals)
             },
-            description: <LoadingOutlined />,
+            description: <LoadingOutlined/>,
             duration: 0,
         }
 
@@ -317,122 +298,14 @@ class Main extends React.PureComponent {
         clearInterval(this.mysetIntervals)
     }
 
-    handleDomainChange = (item) => {
-        let otherTabActiveKey = this.state.tabActiveKey
-        this.setState({
-            localStorageDomainKey: item.key,
-        })
-    }
-
-    render() {
-        const { tabActiveKey, domian } = this.state
-        const menu = (
-            <Menu
-                onClick={async (item) => {
-                    try {
-                        this.setState({ isLoading: true })
-                        let sync = await schemas.mark.service.mark_task({
-                            domain_key: item.key,
-                        })
-                        if (this.mysetIntervals) {
-                            clearInterval(this.mysetIntervals)
-                        }
-                        if (this.mysetInterval) {
-                            clearInterval(this.mysetInterval)
-                        }
-                        this.handleGetTask(
-                            { ...item, key: item.key },
-                            sync.data.task_id,
-                            undefined
-                        )
-
-                        this.setState({ isLoading: false })
-                        // message.success("创建成功，请查看进度！")
-                        this.mysetInterval = setInterval(async () => {
-                            let data
-                            try {
-                                data = await schemas.task.service.getDetail({
-                                    domain_key: item.key,
-                                    id: sync.data.task_id,
-                                })
-                            } catch (error) {
-                                if (this.mysetInterval) {
-                                    clearInterval(this.mysetInterval)
-                                }
-                            }
-
-                            if (data) {
-                                if (data.status === "end") {
-                                    const args = {
-                                        message: (
-                                            <span>
-                                                <span>
-                                                    {data.name + "已完成"}
-                                                </span>
-                                                <Tooltip title="查看详情">
-                                                    <a
-                                                        onClick={() => {
-                                                            this.handleTaskInfo(
-                                                                item,
-                                                                data.id
-                                                            )
-                                                        }}
-                                                    >
-                                                        <InfoCircleOutlined
-                                                            style={{
-                                                                marginLeft:
-                                                                    "5px",
-                                                            }}
-                                                        />
-                                                    </a>
-                                                </Tooltip>
-                                            </span>
-                                        ),
-                                        key: "process",
-                                        description: (
-                                            <Progress
-                                                strokeColor={{
-                                                    "0%": "#108ee9",
-                                                    "100%": "#87d068",
-                                                }}
-                                                percent={100}
-                                            />
-                                        ),
-                                        duration: 0,
-                                    }
-                                    clearInterval(this.mysetInterval)
-                                    notification.open(args)
-                                }
-                            } else {
-                                clearInterval(this.mysetInterval)
-                            }
-                        }, 10000)
-                        console.log("handleGetTask")
-                    } catch (error) {
-                        message.error(error.message)
-                        if (this.mysetInterval) {
-                            clearInterval(this.mysetInterval)
-                        }
-                        this.setState({ isLoading: false })
-                    }
-                }}
-            >
-                {domian &&
-                    domian.map((item) => {
-                        return (
-                            <Menu.Item key={item.key}>
-                                <a>{item.name}</a>
-                            </Menu.Item>
-                        )
-                    })}
-            </Menu>
-        )
+    renderTab() {
+        const {tabActiveKey, localStorageDomainKey} = this.state
         const operations = (
             <Button
                 onClick={async () => {
-                    let item = this.state.localStorageDomainKey
+                    let item = localStorageDomainKey
                     try {
-                        this.setState({ isLoading: true })
+                        this.setState({isLoading: true})
                         let sync = await schemas.mark.service.intent_mark_task({
                             domain_key: item.key,
                         })
@@ -443,12 +316,12 @@ class Main extends React.PureComponent {
                             clearInterval(this.mysetInterval)
                         }
                         this.handleGetTask(
-                            { ...item, key: item.key },
+                            {...item, key: item.key},
                             sync.data.task_id,
                             undefined
                         )
 
-                        this.setState({ isLoading: false })
+                        this.setState({isLoading: false})
                         // message.success("创建成功，请查看进度！")
                         this.mysetInterval = setInterval(async () => {
                             let data
@@ -515,78 +388,32 @@ class Main extends React.PureComponent {
                         if (this.mysetInterval) {
                             clearInterval(this.mysetInterval)
                         }
-                        this.setState({ isLoading: false })
+                        this.setState({isLoading: false})
                     }
                 }}
             >
-                {this.state.isLoading && <LoadingOutlined />}创建检测
+                {this.state.isLoading && <LoadingOutlined/>}创建检测
             </Button>
         )
-
-        const { dict, data } = this.props
-        let domain = []
-        if (dict) {
-            Object.keys(dict.domain).forEach((key) => {
-                domain.push(dict.domain[key])
-            })
-        }
-        const extraMenu = (
-            <Menu
-                onClick={async (item) => {
-                    console.log(item)
-                    localStorage.setItem("domain_key", item.key)
-                    this.setState({
-                        localStorageDomainKey: item.key,
-                    })
-                    this.handleDomainChange(item)
-                }}
-            >
-                {domain &&
-                    domain.map((item) => {
-                        return (
-                            <Menu.Item key={item.key}>
-                                <a>{item.name}</a>
-                            </Menu.Item>
-                        )
-                    })}
-            </Menu>
-        )
-        const extra = (
-            <Dropdown overlay={extraMenu} placement="bottomLeft">
-                <Button style={{ top: "-35px", float: "right" }}>
-                    {(this.state.localStorageDomainKey &&
-                        dict &&
-                        dict.domain[this.state.localStorageDomainKey].name) ||
-                        "选择数据域"}
-                    <DownOutlined />
-                </Button>
-            </Dropdown>
-        )
         return (
-            <PageHeaderWrapper
-                title={false}
-                extra={extra}
+            <Tabs
                 tabBarExtraContent={operations}
-                tabList={Object.keys(infoType).map((key) => ({
-                    key: infoType[key],
-                    tab: infoType[key],
-                }))}
-                onTabChange={(tabKey) =>
-                    this.setState({ tabActiveKey: tabKey })
+                onChange={(tabKey) =>
+                    this.setState({tabActiveKey: tabKey})
                 }
-                tabActiveKey={tabActiveKey}
+                activeKey={tabActiveKey}
             >
-                {tabActiveKey === infoType.List && (
-                    <List domain_key={this.state.localStorageDomainKey} />
-                )}
-                {tabActiveKey === infoType.Intent && (
-                    <Intent domain_key={this.state.localStorageDomainKey} />
-                )}
-            </PageHeaderWrapper>
+                <TabPane tab={"意图列表"} key={infoType.List}>
+                    <List domain_key={localStorageDomainKey}/>
+                </TabPane>
+                <TabPane tab={"意图矛盾检测"} key={infoType.Intent}>
+                    <Intent domain_key={localStorageDomainKey}/>
+                </TabPane>
+            </Tabs>
         )
     }
 }
 
-export default connect(({ global }) => ({
+export default connect(({global}) => ({
     dict: global.dict,
 }))(Main)

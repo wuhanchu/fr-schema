@@ -1,8 +1,10 @@
 import React from "react"
-import { PageHeaderWrapper } from "@ant-design/pro-layout"
 import { connect } from "dva"
 import DictType from "./components/DictType"
 import Dict from "./components/Dict"
+import TabMulList from "@/pages/tabList/TabMulList";
+import {Tabs} from "antd";
+const {TabPane} = Tabs;
 
 // 微信信息类型
 export const infoType = {
@@ -18,34 +20,32 @@ export const infoType = {
  * selectedRows
  * scroll table whether can scroll
  */
-class Main extends React.PureComponent {
+class Main extends TabMulList {
     constructor(props) {
         super(props)
-        const { query } = this.props.location
-        const tabActiveKey = query && query.type ? query.type : infoType.Dict
         this.state = {
-            tabActiveKey,
+            ...this.state,
+            tabActiveKey: infoType.Dict,
+            needListener:false,
         }
     }
 
-    render() {
+    renderTab() {
         const { tabActiveKey } = this.state
-
         return (
-            <PageHeaderWrapper
-                title={false}
-                tabList={Object.keys(infoType).map((key) => ({
-                    key: infoType[key],
-                    tab: infoType[key],
-                }))}
-                onTabChange={(tabKey) =>
+            <Tabs
+                onChange={(tabKey) =>
                     this.setState({ tabActiveKey: tabKey })
                 }
-                tabActiveKey={tabActiveKey}
+                activeKey={tabActiveKey}
             >
-                {tabActiveKey === infoType.Dict && <Dict />}
-                {tabActiveKey === infoType.DictType && <DictType />}
-            </PageHeaderWrapper>
+                <TabPane tab="字典" key={infoType.Dict}>
+                    <Dict />
+                </TabPane>
+                <TabPane tab="字典类型" key={infoType.DictType}>
+                    <DictType />
+                </TabPane>
+            </Tabs>
         )
     }
 }

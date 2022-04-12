@@ -25,6 +25,8 @@ import clone from "clone"
 import fileSaver from "file-saver"
 import { exportData } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
 import moment from "moment"
+import { default as tempDataList } from "@/outter/fr-schema-antd-utils/src/components/Page/DataList"
+export const DataList = tempDataList
 
 const { utils, decorateList } = frSchema
 
@@ -39,11 +41,12 @@ function unique(arr, key) {
     const obj = arr.reduce((o, e) => ((o[fn(e)] = e), o), {})
     return Object.values(obj)
 }
+import TabList from "@/pages/tabList/TabList";
 
 @connect(({ global }) => ({
     dict: global.dict,
 }))
-class Conversation extends ListPage {
+class Conversation extends TabList {
     constructor(props) {
         let domain_key = localStorage.getItem("domain_key")
         if (!domain_key) {

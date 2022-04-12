@@ -1,10 +1,8 @@
 import { connect } from "dva"
-import ListPage from "@/components/ListPage/ListPage"
 import InfoModal from "./InfoModal"
 import { getTree } from "./methods"
 import schemas from "@/schemas"
 import React from "react"
-import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
 import DialogueModal from "@/pages/question/components/DialogueModal"
 import {
@@ -20,19 +18,16 @@ import frSchema from "@/outter/fr-schema/src"
 import ChartModal from "./Flow"
 import { exportData } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
 import ImportModal from "@/outter/fr-schema-antd-utils/src/components/modal/ImportModal"
-import { schemaFieldType } from "@/outter/fr-schema/src/schema"
-import { async } from "@antv/x6/lib/registry/marker/main"
 import { listToDict } from "@/outter/fr-schema/src/dict"
 import { LoadingOutlined } from "@ant-design/icons"
 import clone from "clone"
 const { decorateList } = frSchema
-
+import TabList from "@/pages/tabList/TabList";
 @connect(({ global }) => ({
     dict: global.dict,
     data: global.data,
 }))
-@Form.create()
-class List extends ListPage {
+class List extends TabList {
     constructor(props) {
         const importTemplateUrl = (BASE_PATH + "/import/流程.xlsx").replace(
             "//",
@@ -289,7 +284,6 @@ class List extends ListPage {
                     maskClosable={false}
                     destroyOnClose={true}
                     onOk={() => {
-                        console.log(window.__isReactDndBackendSetUp)
                         this.setState({ visibleFlow: false })
                     }}
                     onCancel={() => {
@@ -529,11 +523,6 @@ class List extends ListPage {
                     try {
                         this.setState({ confirmLoading: true })
                         const data = this.state.importData.map((item) => {
-                            console.log(
-                                item.intent_key
-                                    ? item.intent_key.split("|")
-                                    : "unl"
-                            )
                             return {
                                 ...item,
                                 id: item.id || undefined,
