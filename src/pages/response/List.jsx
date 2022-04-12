@@ -302,17 +302,11 @@ class List extends ListPage {
         } = this.state
 
         const markdown = `**参考配置**
-        
-         [
-            {
-                "text": "对不起，您的内容小数还在努力学习中。", //回复内容
-                "buttons": [    // 回复选项
-                    {
-                        "title": "展示文本", //回复选项展示内容
-                        "payload": "/set_slot{\"templates\":\"t\"}" //回复选项值
-                    }]
-            }
-        ]
+    
+    [{
+        "title": "展示文本", //回复选项展示内容
+        "payload": "/set_slot{\'templates\':\'t\'}" //回复选项值
+    }]
          `
 
         console.log(markdown)
@@ -337,27 +331,6 @@ class List extends ListPage {
                         wrapperCol={globalStyle.form.wrapperCol}
                         initialValues={infoData}
                     >
-                        {/* <Form.Item
-                            label="域"
-                            name="domain_key"
-                            rules={[{ required: true, message: "请选择域" }]}
-                        >
-                            <Select
-                                onChange={(value) =>
-                                    this.findIntentByDomainKey(value)
-                                }
-                                placeholder="请选择域"
-                            >
-                                {domainList.map((item) => (
-                                    <Select.Option
-                                        value={item.value}
-                                        key={item.value}
-                                    >
-                                        {item.label}
-                                    </Select.Option>
-                                ))}
-                            </Select>
-                        </Form.Item> */}
                         <Form.Item
                             label="名称"
                             name="name"
@@ -397,10 +370,15 @@ class List extends ListPage {
                             label="实体范围"
                             name="expect_entity_scope"
                             extra="当前回应返回后，希望客户选择配置的实体范围。"
-
-                            // rules={[{ required: true, message: "请输入实体范围" }]}
                         >
                             <Input placeholder="请输入实体范围" />
+                        </Form.Item>
+                        <Form.Item
+                            label="指令"
+                            name="instruction"
+                            extra="当前回应返回后，调用外部接口的指令。"
+                        >
+                            <Input placeholder="请输入指令" />
                         </Form.Item>
                         <Form.Item
                             colon={false}
@@ -479,22 +457,19 @@ class List extends ListPage {
                         </Form.List>
                         <Form.Item
                             colon={false}
-                            extra="回复文本没配置时生效，用于更复杂的回复方式。"
+                            extra="回复时展示的按钮，为数组类型，可配置多个。"
                             label={
                                 <div>
-                                    <div>回复模板:</div>
-                                    <div style={{ color: "#00000073" }}>
-                                        机器闲聊回复
-                                    </div>
+                                    <div>按钮:</div>
                                 </div>
                             }
-                            name="template"
+                            name="buttons"
                         >
-                            {this.renderAce("template")}
+                            {this.renderAce("buttons")}
                             <Tooltip
-                                overlayStyle={{ width: "600px" }}
+                                overlayStyle={{ width: "460px" }}
                                 overlayInnerStyle={{
-                                    width: "600px",
+                                    width: "460px",
                                 }}
                                 title={
                                     <ReactMarkdown>{markdown}</ReactMarkdown>
@@ -518,7 +493,7 @@ class List extends ListPage {
         )
     }
 
-    renderAce(key = "template") {
+    renderAce(key = "buttons") {
         let { infoData, AceEditorValue } = this.state
         if (infoData[key]) {
             AceEditorValue = JSON.stringify(infoData[key], null, "\t")

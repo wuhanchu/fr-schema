@@ -55,6 +55,10 @@ const schema = {
         searchPrefix: "like",
         extra: "当前回应返回后，希望客户选择配置的实体范围。",
     },
+    instruction: {
+        title: "指令",
+        searchPrefix: "like",
+    },
     template_text: {
         title: "回复文本",
         hideInTable: true,
@@ -75,8 +79,8 @@ const schema = {
         ),
     },
     // todo 需要附带 模版说明格式
-    template: {
-        title: "回复模板",
+    buttons: {
+        title: "按钮",
         hideInTable: true,
         props: {
             style: { width: "500px" },

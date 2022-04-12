@@ -43,6 +43,8 @@ import {
     Legend,
     getTheme,
 } from "bizcharts"
+import schema from "@/schemas/statistics/task"
+
 import { exportData } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
 import { formatData } from "@/utils/utils"
 import clientService from "@/pages/authority/clientList/service"
@@ -60,8 +62,8 @@ class List extends ListPage {
         const localStorageDomainKey = localStorage.getItem("domain_key")
 
         super(props, {
-            schema: schemas.statistics.schema,
-            service: schemas.statistics.service,
+            schema: schema.schema,
+            service: schema.service,
             initLocalStorageDomainKey: true,
             infoProps: {
                 width: "1200px",
@@ -156,66 +158,26 @@ class List extends ListPage {
         // this.handleVisibleExportModal()
     }
     async componentDidMount() {
-        let res = await clientService.get({ limit: 1000 })
-        let client_dict = listToDict(res.list, null, "client_id", "client_name")
+        // let res = await clientService.get({ limit: 1000 })
+        // let client_dict = listToDict(res.list, null, "client_id", "client_name")
 
-        client_dict["null"] = {
-            value: "null",
-            client_id: "null",
-            remark: "未知",
-        }
-        this.schema.client_id.dict = client_dict
+        // client_dict["null"] = {
+        //     value: "null",
+        //     client_id: "null",
+        //     remark: "未知",
+        // }
+        // this.schema.client_id.dict = client_dict
         this.meta.queryArgs = {
             ...this.meta.queryArgs,
             sort: "desc",
         }
-        try {
-            this.formRef.current.setFieldsValue({
-                begin_time: moment().subtract("days", 6),
-            })
-        } catch (error) {}
-        let project = await schemas.project.service.get({
-            limit: 10000,
-        })
-        this.schema.domain_key.dict = this.props.dict.domain
-        this.schema.project_id.dict = listToDict(project.list)
-        this.schema.question_standard.render = (item, data) => {
-            return (
-                <Tooltip title={item}>
-                    <div
-                        style={{
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "nowrap",
-                            maxWidth: "250px",
-                        }}
-                    >
-                        <a
-                            onClick={() => {
-                                this.setState({ record: data })
-                                console.log(data)
-                                this.handleVisibleModal(
-                                    true,
-                                    {
-                                        ...data,
-                                    },
-                                    "edit"
-                                )
-                            }}
-                        >
-                            {item}
-                        </a>
-                    </div>
-                </Tooltip>
-            )
-        }
         super.componentDidMount()
-        this.setState({
-            searchValues: {
-                // domain_key: "default",
-                begin_time: moment().subtract("days", 6),
-            },
-        })
+        // this.setState({
+        //     searchValues: {
+        //         // domain_key: "default",
+        //         begin_time: moment().subtract("days", 6),
+        //     },
+        // })
     }
 
     renderOperateColumnExtend(record) {
