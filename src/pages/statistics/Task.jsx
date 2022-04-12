@@ -25,6 +25,8 @@ import {
     Menu,
     Tree,
     Tabs,
+    Table,
+    Spin,
 } from "antd"
 import {
     LikeTwoTone,
@@ -86,6 +88,7 @@ class List extends TabList {
             queryArgs: {
                 ...props.queryArgs,
                 // inside: true,
+                limit: 1000,
                 order: "create_date.desc",
                 domain_key: localStorageDomainKey,
             },
@@ -118,7 +121,7 @@ class List extends TabList {
 
         this.formRef.current.resetFields()
         this.formRef.current.setFieldsValue({
-            begin_time: moment().subtract("days", 30),
+            begin_time: moment().subtract("days", 14),
         })
 
         this.setState(
@@ -163,7 +166,8 @@ class List extends TabList {
         })
         // this.handleVisibleExportModal()
     }
-    async componentDidMount() {
+
+    init = async () => {
         let res = await clientService.get({ limit: 1000 })
         let client_dict = listToDict(res.list, null, "client_id", "client_name")
 
@@ -187,23 +191,21 @@ class List extends TabList {
         this.schema.task_id.dict = listToDict(task.list, "", "id", "name")
 
         await this.findUserList()
+    }
 
-        this.meta.queryArgs = {
-            ...this.meta.queryArgs,
-            sort: "desc",
-        }
+    async componentDidMount() {
         try {
             this.formRef.current.setFieldsValue({
-                begin_time: moment().subtract("days", 30),
+                begin_time: moment().subtract("days", 14),
             })
         } catch (error) {}
         super.componentDidMount()
         this.setState({
             searchValues: {
-                // domain_key: "default",
-                begin_time: moment().subtract("days", 30),
+                begin_time: moment().subtract("days", 14),
             },
         })
+        this.init()
     }
 
     renderOperateColumnExtend(record) {
@@ -428,6 +430,55 @@ class List extends TabList {
         )
     }
 
+    handleRenderTable = () => {
+        let columns = []
+        Object.keys(this.schema).forEach((key) => {
+            if (!this.schema[key].hideInTable)
+                columns.push({
+                    ...this.schema[key],
+                    dataIndex: key,
+                    key,
+                })
+        })
+        return (
+            <Table
+                columns={columns}
+                size="small"
+                pagination={false}
+                dataSource={this.state.data.list}
+            />
+        )
+    }
+
+    async handleExport(args, schema) {
+        this.setState({ exportLoading: true }, async () => {
+            let column = this.getColumns(false).filter((item) => {
+                return !item.hideInTable
+            })
+            let columns = column
+            let data = await this.requestList({
+                pageSize: 1000000,
+                offset: 0,
+                ...args,
+            })
+            const list =
+                data &&
+                data.list.map((item, index) => {
+                    return {
+                        ...item,
+                        connected_rate:
+                            Math.round(item.connected_rate * 100 * 10 ** 2) /
+                                10 ** 2 +
+                            "%",
+                    }
+                })
+            data = decorateList(list, this.schema)
+            await exportData("详情", data, columns)
+            this.setState({ exportLoading: false })
+        })
+        // this.handleVisibleExportModal()
+    }
+
     renderDataList() {
         const { visibleModal, visibleImport } = this.state
         let {
@@ -450,7 +501,15 @@ class List extends TabList {
         } else if (renderSearchBar !== null) {
             searchBar = this.renderSearchBar && this.renderSearchBar()
         }
-
+        const operations = (
+            <Button
+                onClick={() => {
+                    this.handleExport({}, this.schema)
+                }}
+            >
+                导出
+            </Button>
+        )
         return (
             <>
                 <Card
@@ -468,14 +527,21 @@ class List extends TabList {
                             { tableRender: () => <></> },
                             {
                                 renderOpeation: (
-                                    <Tabs defaultActiveKey="1">
-                                        <TabPane tab="图表" key="1">
-                                            {this.renderSummary()}
-                                        </TabPane>
-                                        <TabPane tab="数据" key="2">
-                                            Content of Tab Pane 2
-                                        </TabPane>
-                                    </Tabs>
+                                    <Spin spinning={this.state.listLoading}>
+                                        <Card bordered={false}>
+                                            <Tabs
+                                                tabBarExtraContent={operations}
+                                                defaultActiveKey="1"
+                                            >
+                                                <TabPane tab="图表" key="1">
+                                                    {this.renderSummary()}
+                                                </TabPane>
+                                                <TabPane tab="数据" key="2">
+                                                    {this.handleRenderTable()}
+                                                </TabPane>
+                                            </Tabs>
+                                        </Card>
+                                    </Spin>
                                 ),
                             }
                         )}

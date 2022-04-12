@@ -76,6 +76,9 @@ const schema = {
             showSearch: true,
         },
     },
+    create_date: {
+        title: "日期",
+    },
     total: {
         title: "总外呼",
         search: false,
@@ -95,6 +98,10 @@ const schema = {
     connected_rate: {
         title: "接通率",
         search: false,
+        // sorter: true,
+        render: (item) => {
+            return Math.round(item * 100 * 10 ** 2) / 10 ** 2 + "%"
+        },
     },
     no_answer: {
         title: "无应答",

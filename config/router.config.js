@@ -396,12 +396,12 @@ export default [
                                 component: "./callRecord/List.jsx",
                                 title: "话单列表",
                             },
-                            // {
-                            //     path: "/outboundTask/statistics",
-                            //     name: "taskStatistics",
-                            //     component: "./Statistics/Task.jsx",
-                            //     title: "话单统计",
-                            // },
+                            {
+                                path: "/outboundTask/statistics",
+                                name: "taskStatistics",
+                                component: "./Statistics/Task.jsx",
+                                title: "话单统计",
+                            },
                         ],
                     },
                     {
