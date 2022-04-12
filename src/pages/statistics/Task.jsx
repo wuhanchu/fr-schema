@@ -411,7 +411,7 @@ class List extends TabList {
                             },
                         },
                         {
-                            name: "平均",
+                            name: "接通率",
                             value: "avg",
                             marker: {
                                 symbol: "hyphen",

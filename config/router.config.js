@@ -177,6 +177,27 @@ export default [
                         title: "统计",
                         component: "./statistics/List",
                     },
+                    // {
+                    //     path: "/frame/statistics",
+                    //     name: "statistics",
+                    //     icon: "ScheduleOutlined",
+                    //     title: "统计",
+                    //     routes: [
+                    //         {
+                    //             path: "/frame/statistics/project",
+                    //             name: "statisticsProject",
+                    //             component: "./statistics/List",
+                    //             title: "问题库统计",
+                    //         },
+                    //         {
+                    //             path: "/frame/statistics/outboundTask",
+                    //             name: "taskStatistics",
+                    //             component: "./Statistics/Task.jsx",
+                    //             title: "外呼统计",
+                    //         },
+
+                    //     ],
+                    // },
                     {
                         name: "system",
                         path: "/frame/system",
@@ -337,12 +358,6 @@ export default [
                                 component: "./callRecord/List.jsx",
                                 title: "话单列表",
                             },
-                            {
-                                path: "tabs/outboundTask/statistics",
-                                name: "taskStatistics",
-                                component: "./Statistics/Task.jsx",
-                                title: "话单统计",
-                            },
                         ],
                     },
                     {
@@ -351,6 +366,25 @@ export default [
                         title: "统计",
                         component: "./statistics/List",
                     },
+                    // {
+                    //     path: "/tabs/statistics",
+                    //     name: "statistics",
+                    //     title: "统计",
+                    //     routes: [
+                    //         {
+                    //             path: "/tabs/statistics/project",
+                    //             name: "statisticsProject",
+                    //             component: "./statistics/List",
+                    //             title: "问题库统计",
+                    //         },
+                    //         {
+                    //             path: "/tabs/statistics/outboundTask",
+                    //             name: "taskStatistics",
+                    //             component: "./Statistics/Task.jsx",
+                    //             title: "外呼统计",
+                    //         },
+                    //     ],
+                    // },
                     {
                         name: "system",
                         path: "/tabs/system",
@@ -617,21 +651,27 @@ export default [
                         path: "/statistics",
                         name: "statistics",
                         title: "统计",
-                        routes: [
-                            {
-                                path: "/statistics/project",
-                                name: "statisticsProject",
-                                component: "./statistics/List",
-                                title: "问题库统计",
-                            },
-                            {
-                                path: "/statistics/outboundTask",
-                                name: "taskStatistics",
-                                component: "./Statistics/Task.jsx",
-                                title: "外呼统计",
-                            },
-                        ],
+                        component: "./statistics/List",
                     },
+                    // {
+                    //     path: "/statistics",
+                    //     name: "statistics",
+                    //     title: "统计",
+                    //     routes: [
+                    //         {
+                    //             path: "/statistics/project",
+                    //             name: "statisticsProject",
+                    //             component: "./statistics/List",
+                    //             title: "问题库统计",
+                    //         },
+                    //         {
+                    //             path: "/statistics/outboundTask",
+                    //             name: "taskStatistics",
+                    //             component: "./Statistics/Task.jsx",
+                    //             title: "外呼统计",
+                    //         },
+                    //     ],
+                    // },
                     {
                         name: "system",
                         path: "/system",
