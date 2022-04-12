@@ -240,13 +240,13 @@ class List extends TabList {
         let max = 0
         this.state.data.list.map((item, index) => {
             data.push({
-                name: "正常",
+                name: "接通",
                 month: item.create_date,
                 monthAverageRain: item.normal,
                 ...item,
             })
             data.push({
-                name: "异常",
+                name: "未接通",
                 month: item.create_date,
                 monthAverageRain: item.abnormal,
                 ...item,
@@ -325,11 +325,11 @@ class List extends TabList {
                                         %
                                     </div>
                                     <div style={{ marginBottom: "8px" }}>
-                                        正常：
+                                        接通：
                                         {one.normal}
                                     </div>
                                     <div style={{ marginBottom: "8px" }}>
-                                        异常：
+                                        未接通：
                                         {one.abnormal}
                                     </div>
                                     <Divider
@@ -395,16 +395,16 @@ class List extends TabList {
                     custom={true}
                     items={[
                         {
-                            name: "正常",
-                            value: "正常",
+                            name: "接通",
+                            value: "接通",
                             marker: {
                                 symbol: "square",
                                 style: { fill: colors[0] },
                             },
                         },
                         {
-                            name: "异常",
-                            value: "异常",
+                            name: "未接通",
+                            value: "未接通",
                             marker: {
                                 symbol: "square",
                                 style: { fill: colors[1] },

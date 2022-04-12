@@ -84,18 +84,6 @@ const schema = {
         title: "总外呼",
         search: false,
     },
-    connected: {
-        title: "接通",
-        search: false,
-    },
-    no_connect: {
-        title: "未接通",
-        search: false,
-    },
-    refuse: {
-        title: "拒接",
-        search: false,
-    },
     connected_rate: {
         title: "接通率",
         search: false,
@@ -104,6 +92,19 @@ const schema = {
             return Math.round(item * 100 * 10 ** 2) / 10 ** 2 + "%"
         },
     },
+    normal: {
+        title: "接通",
+        search: false,
+    },
+    abnormal: {
+        title: "未接通",
+        search: false,
+    },
+    refuse: {
+        title: "拒接",
+        search: false,
+    },
+
     no_answer: {
         title: "无应答",
         search: false,
