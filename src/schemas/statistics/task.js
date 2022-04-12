@@ -113,12 +113,7 @@ const schema = {
         search: false,
     },
 }
-const service = createApi(
-    "outbound/call_record_statistics",
-    schema,
-    null,
-    "eq."
-)
+const service = createApi("outbound/call_record_statistics", schema, null, "")
 export default {
     schema,
     service,

@@ -80,7 +80,8 @@ class List extends ListPage {
             // cardProps: { title: "匹配问题详情", bordered: true },
             queryArgs: {
                 ...props.queryArgs,
-                inside: true,
+                // inside: true,
+                order: "create_date.desc",
                 domain_key: localStorageDomainKey,
             },
         })
