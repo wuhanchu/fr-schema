@@ -75,6 +75,7 @@ class Conversation extends TabList {
             detail: {},
             used: [],
             showIntentFlow: true,
+            intentList: [],
         }
     }
 
@@ -157,7 +158,6 @@ class Conversation extends TabList {
                     content = content + "customer:" + item.text + "\n"
                 }
             })
-            // console.log(item, conversation[item])
             let time = new Date(parseInt(items.create_time))
             zip.file(
                 moment(items.create_time).format("YYYY-MM-DDHH:mm:ss") +
@@ -400,7 +400,6 @@ class Conversation extends TabList {
         let oneList = {}
         buttons = listToDict(buttons, "", "payload", "title")
         list.map((item) => {
-            // console.log(item)
             if (item.type !== "receive") {
                 oneList = {
                     ...item,
@@ -520,7 +519,6 @@ class Conversation extends TabList {
         this.schema.node_key.renderInput = (item, tempData, props) => {
             let options = []
             this.infoForm = props.form
-            // console.log(props.getFieldsValue().flow_key)
             if (this.state.flow_key) {
                 let node = this.schema.flow_key.dict[this.state.flow_key].config
                     .node
@@ -555,7 +553,6 @@ class Conversation extends TabList {
                     // options={options}
                     placeholder="请选择"
                     // mode="multiple"
-                    allowClear
                 >
                     {options.map((item) => {
                         return (
@@ -623,9 +620,7 @@ class Conversation extends TabList {
                     treeData = this.state.intentList
                 }
             }
-
             treeData = treeData.map((items) => {
-                // console.log("结果"+)
                 return {
                     ...items,
                     key: items.key,
