@@ -283,7 +283,7 @@ class List extends TabList {
             },
             monthAverageRain: {
                 min: 0,
-                max: max + (max % 4),
+                max: 100,
             },
         }
 
