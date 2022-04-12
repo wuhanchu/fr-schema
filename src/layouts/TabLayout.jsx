@@ -14,11 +14,10 @@ import DomainList from '@/pages/domain/List';
 import logo from "@/assets/logo.svg"
 import Authorized from "@/outter/fr-schema-antd-utils/src/components/Authorized/Authorized"
 import {DownOutlined} from "@ant-design/icons";
-import events from "events";
-
 const config = SETTING
 
-window.events = new events.EventEmitter();
+
+export const DomainKeyContext = React.createContext('default');
 
 
 /**
@@ -39,14 +38,6 @@ const defaultFooterDom = (
 
 
 const BasicLayout = (props) => {
-    let domain_key = localStorage.getItem("domain_key")
-    if (!domain_key) {
-        localStorage.setItem("domain_key", "default")
-    } else {
-        if (domain_key && !props.dict.domain[domain_key]) {
-            localStorage.setItem("domain_key", "default")
-        }
-    }
     let localStorageDomainKey = localStorage.getItem("domain_key");
     const [tabList, setTabList] = useState([{
         name: '域信息',
@@ -57,8 +48,7 @@ const BasicLayout = (props) => {
     const [domainList, setDomainList] = useState([]);  // 域列表
     const [showRightMenu, setShowRightMenu] = useState(false); // 是否显示tab菜单
     const [rightClickTab, setRightClickTab] = useState({}); // 当前点击的tab项
-    const [currentDomainKey, setCurrentDomainKey] = useState();  // 当前所选域key
-    const [domainKeyFlag, setDomainKeyFlag] = useState(false); // 是不是需要重新渲染tab子元素
+    const [currentDomainKey, setCurrentDomainKey] = useState(localStorageDomainKey);  // 当前所选域key
     const [layoutProps, setLayoutProps] = useState({logo: logo,}); // layout样式,默认菜单栏在上面
     let tabDivObj = document.getElementById('tabDiv') // tab元素
     let tabDivWidth = tabDivObj && tabDivObj.clientWidth || 900; // 获取tab整体框宽度,以便计算最多能打开多少标签页
@@ -102,6 +92,16 @@ const BasicLayout = (props) => {
 
     useEffect(() => {
         initCallback && initCallback()
+        // 域初始化
+        let domain_key = localStorage.getItem("domain_key")
+        if (!domain_key) {
+            localStorage.setItem("domain_key", "default")
+        } else {
+            if (domain_key && !props.dict.domain[domain_key]) {
+                console.info('domain_key', props.dict.domain[domain_key])
+            }
+        }
+
         // 获取域列表 并显示域名称
         let domain = []
         if (props.dict) {
@@ -111,6 +111,7 @@ const BasicLayout = (props) => {
             setDomainList([...domain])
             props.dict.domain[localStorageDomainKey] && setCurrentDomainKey(props.dict.domain[localStorageDomainKey].key)
         }
+        // 判断当前使用哪种 layout方式 根据路由配置 '/frame'开头为左侧菜单栏
         if (props.location.pathname.startsWith("/frame")) {
             setLayoutProps(frameLayoutProps)
         }
@@ -202,16 +203,7 @@ const BasicLayout = (props) => {
     const onMenuItemClick = (item) => {
         localStorage.setItem("domain_key", item.key);  //改变缓存key
         setCurrentDomainKey(item.key);  // 更新所选key
-        setDomainKeyFlag(true); // 域变化后所有tab需要重新渲染
-        window.events.emit('domainKeyChange', item.key) // 事件监听触发,通知标签页域更改
     }
-
-    useEffect(() => {
-        // 注册监听事件, 当域变更各个tab渲染完毕后, 取消切换tab重新渲染的操作
-        window.events.on('domainKeyChangeDone', _ => {
-            setDomainKeyFlag(false)
-        })
-    })
 
     // 域选择菜单
     const menu = (
@@ -282,7 +274,6 @@ const BasicLayout = (props) => {
                 return <div onClick={_ => tabAdd(menuItemProps)}>{defaultDom}</div>
             }}
             itemRender={(route, params, routes, paths) => {
-
                 const first = routes.indexOf(route) === 0
                 return first ? (
                     <Link to={paths.join("/")}>{route.breadcrumbName}</Link>
@@ -307,11 +298,13 @@ const BasicLayout = (props) => {
                     type="editable-card"
                     onTabClick={onTabMouseDown}
                     onEdit={onTabEdit}
-                    destroyInactiveTabPane={domainKeyFlag}
+                    destroyInactiveTabPane
                 >
                     {tabList && tabList.map(pane => (
                         <TabPane tab={pane.name} key={pane.key}>
-                            {pane.content}
+                            <DomainKeyContext.Provider value={currentDomainKey}>
+                                {pane.content}
+                            </DomainKeyContext.Provider>
                         </TabPane>
                     ))}
                 </Tabs>

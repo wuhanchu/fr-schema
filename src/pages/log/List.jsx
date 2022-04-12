@@ -6,12 +6,13 @@ import clientService from "@/pages/authority/clientList/service"
 import { listToDict } from "@/outter/fr-schema/src/dict"
 import userService from "@/pages/authority/user/service"
 import ReactJson from "react-json-view"
-import TabList from "@/pages/tabList/TabList";
+import {default as tempDataList} from "@/outter/fr-schema-antd-utils/src/components/Page/DataList"
+export const DataList = tempDataList
 
 @connect(({ global }) => ({
     dict: global.dict,
 }))
-class List extends TabList {
+class List extends DataList {
     constructor(props) {
         super(props, {
             schema: schemas.log.schema,

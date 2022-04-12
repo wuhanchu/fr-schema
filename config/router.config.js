@@ -204,6 +204,217 @@ export default [
             },
         ],
     },
+
+
+    {
+        path: "/tabs",
+        component: "../outter/fr-schema-antd-utils/src/layouts/SecurityLayout",
+        routes: [
+            {
+                path: "/tabs",
+                component: "../layouts/TabLayout",
+                routes: [
+                    {
+                        path: "/tabs",
+                        redirect: "/tabs/domain/list",
+                        title: "域列表",
+                    },
+                    {
+                        path: "/tab/domain",
+                        name: "domain",
+                        // component: "./domain/List",
+                        routes: [
+                            {
+                                path: "/tabs/domain/list",
+                                name: "domainList",
+                                component: "./domain/List",
+                                title: "域列表",
+                            },
+                            {
+                                path: "/tabs/domain/synonym",
+                                name: "synonym",
+                                component: "./synonym/List",
+                                title: "专业词汇",
+                            },
+                            {
+                                path: "/tabs/domain/intent",
+                                name: "intent",
+                                component: "./intent/Main",
+                                title: "意图",
+                            },
+                            // response
+                            {
+                                path: "/tabs/domain/response",
+                                name: "response",
+                                component: "./response/List",
+                                title: "回应",
+                            },
+                            {
+                                path: "/tabs/domain/flow",
+                                name: "flow",
+                                title: "话术",
+                                component: "./Flow/List",
+                            },
+
+                            {
+                                path: "/tabs/domain/story",
+                                name: "story",
+                                component: "./story/List",
+                                title: "故事",
+                            },
+                        ],
+                    },
+                    {
+                        path: "/tabs/conversation",
+                        name: "conversation",
+                        routes: [
+                            {
+                                path: "/tabs/conversation/list",
+                                name: "conversationList",
+                                component: "./conversation/list/Conversation",
+                                title: "会话信息",
+                            },
+                        ],
+                    },
+                    {
+                        path: "/tabs/entity",
+                        name: "entity",
+                        routes: [
+                            {
+                                path: "/tabs/entity/list",
+                                name: "entityList",
+                                title: "实体",
+                                component: "./entity/Main",
+                            },
+                            {
+                                path: "/tabs/entity/relation",
+                                name: "relation",
+                                component: "./relation/Main",
+                                title: "实体关系",
+                            },
+                        ],
+                    },
+
+                    {
+                        path: "/tabs/project",
+                        name: "project",
+                        title: "问题库",
+                        // component: "./project/List",
+                        routes: [
+                            {
+                                path: "/tabs/project/list",
+                                name: "projectList",
+                                title: "问题库信息",
+                                component: "./project/List",
+                            },
+
+                            {
+                                path: "/tabs/project/mark",
+                                name: "mark",
+                                component: "./mark/Main",
+                                title: "问题库运维",
+                            },
+                        ],
+                    },
+                    {
+                        path: "/tabs/outboundTask",
+                        name: "outboundTask",
+                        routes: [
+                            {
+                                path: "/tabs/outboundTask/list",
+                                name: "taskList",
+                                component: "./outboundTask/List.jsx",
+                                title: "任务管理",
+                            },
+                            {
+                                path: "/tabs/outboundTask/customer",
+                                name: "taskCustomer",
+                                component: "./customer/List.jsx",
+                                title: "客户列表",
+                            },
+                            {
+                                path: "/tabs/outboundTask/callRecord",
+                                name: "callRecord",
+                                component: "./callRecord/List.jsx",
+                                title: "话单列表",
+                            },
+                        ],
+                    },
+                    {
+                        path: "/tabs/statistics",
+                        name: "statistics",
+                        title: "统计",
+                        component: "./statistics/List",
+                    },
+                    {
+                        name: "system",
+                        path: "/tabs/system",
+                        authority: ["system"],
+                        routes: [
+                            {
+                                path: "/tabs/system/log",
+                                name: "log",
+                                title: "日志管理",
+                                component: "./log/List",
+                            },
+                            {
+                                authority: ["department_get"],
+                                path: "/system/department",
+                                name: "department",
+                                title: "部门管理",
+                                component: "./authority/department/DataList",
+                            },
+                            {
+                                path: "/tabs/system/user",
+                                name: "user",
+                                title: "用户管理",
+                                component: "./authority/user/DataList",
+                            },
+                            {
+                                path: "/tabs/system/role",
+                                name: "role",
+                                title: "角色管理",
+
+                                component: "./authority/role/DataList",
+                            },
+                            {
+                                authority: ["license_get"],
+                                path: "/tabs/system/license",
+                                name: "license",
+                                title: "证书管理",
+                                component:
+                                    "./authority/permission/license/License",
+                            },
+                            {
+                                path: "/tabs/system/setting",
+                                name: "setting",
+                                title: "设置",
+                                component: "./system/Main",
+                            },
+                            {
+                                path: "/tabs/system/config",
+                                name: "config",
+                                title: "系统配置",
+                                component: "./config/List",
+                            },
+                            {
+                                // authority: ['user_get'],
+                                path: "/tabs/system/client",
+                                name: "client",
+                                title: "客户端管理",
+                                component: "./authority/clientList/DataList",
+                            },
+                        ],
+                    },
+                    {
+                        component: "./404",
+                    },
+                ],
+            },
+        ],
+    },
+
+
     {
         path: "/outter",
         component: "../layouts/BlankLayout",
@@ -269,7 +480,7 @@ export default [
             },
             {
                 path: "/",
-                component: "../layouts/TabLayout",
+                component:  "../layouts/DomainChooseLayout",
                 routes: [
                     {
                         path: "/",
