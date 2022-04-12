@@ -387,7 +387,6 @@ class RightDrawer extends React.PureComponent {
     "type": "***" 数据类型,
     "value": "***" 数值,
     "remark": "***" 备注,
-    "require": true/false 是否必填
 }
 `}
                                                 </pre>

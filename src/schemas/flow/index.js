@@ -30,6 +30,18 @@ const schema = {
         sorter: true,
         extra: "域中的唯一编码,可用中文。初始化好了以后，请不要随意修改。",
     },
+    intent_key: {
+        style: { width: "500px" },
+        search: false,
+        title: "匹配意图",
+        type: schemaFieldType.Select,
+        props: {
+            mode: "tags",
+            allowClear: true,
+            showSearch: true,
+        },
+        extra: "没有定话术流程的对话中触发进入流程的意图。",
+    },
     project_id: {
         style: { width: "500px" },
         title: "相关问题库",
@@ -42,18 +54,6 @@ const schema = {
             showSearch: true,
         },
         extra: "用于支持搜索问题库(意图)的识别。",
-    },
-    intent_key: {
-        style: { width: "500px" },
-        search: false,
-        title: "匹配意图",
-        type: schemaFieldType.Select,
-        props: {
-            mode: "tags",
-            allowClear: true,
-            showSearch: true,
-        },
-        extra: "没有制定话术流程的对话中触发进入流程的意图。",
     },
     intent_key_text: {
         title: "关键信息",
