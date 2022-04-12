@@ -27,6 +27,7 @@ import {
     Tabs,
     Table,
     Spin,
+    Empty,
 } from "antd"
 import {
     LikeTwoTone,
@@ -542,7 +543,7 @@ class List extends TabList {
                         {this.renderList(
                             { tableRender: () => <></> },
                             {
-                                renderOpeation: (
+                                renderOpeation: this.state.data.list.length ? (
                                     <Spin spinning={this.state.listLoading}>
                                         <Card bordered={false}>
                                             <Tabs
@@ -556,6 +557,12 @@ class List extends TabList {
                                                     {this.handleRenderTable()}
                                                 </TabPane>
                                             </Tabs>
+                                        </Card>
+                                    </Spin>
+                                ) : (
+                                    <Spin spinning={this.state.listLoading}>
+                                        <Card bordered={false}>
+                                            <Empty></Empty>
                                         </Card>
                                     </Spin>
                                 ),
@@ -669,11 +676,10 @@ class List extends TabList {
             this.schema.flow_key.dict = listToDict(flow.list, "", "key", "name")
             let task = await schemas.outboundTask.service.get({
                 limit: 1000,
-                domain_key: this.meta.queryArgs.domain_key,
+                domain_key: item,
             })
             this.schema.task_id.dict = listToDict(task.list, "", "id", "name")
-
-            this.refreshList()
+            console.log(this.schema.task_id)
         }
     }
 

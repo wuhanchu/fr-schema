@@ -78,6 +78,7 @@ const schema = {
     },
     create_date: {
         title: "日期",
+        search: false,
     },
     total: {
         title: "总外呼",

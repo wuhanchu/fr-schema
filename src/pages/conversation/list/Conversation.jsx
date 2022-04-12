@@ -93,8 +93,6 @@ class Conversation extends TabList {
                 ...this.meta.queryArgs,
                 domain_key: item,
             }
-
-            this.refreshList()
         }
     }
 
