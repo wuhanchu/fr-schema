@@ -80,6 +80,9 @@ class List extends TabList {
                     right: 14,
                 },
             },
+            search: {
+                span: 6,
+            },
             showEdit: false,
             showDelete: false,
             readOnly: true,
@@ -233,6 +236,7 @@ class List extends TabList {
         const theme = getTheme()
         let data = []
         let averageData = []
+        let max = 0
         this.state.data.list.map((item, index) => {
             data.push({
                 name: "正常",
@@ -246,6 +250,16 @@ class List extends TabList {
                 monthAverageRain: item.abnormal,
                 ...item,
             })
+            if (item.normal > item.abnormal) {
+                if (item.normal > max) {
+                    max = item.normal
+                }
+            } else {
+                if (item.abnormal > max) {
+                    max = item.abnormal
+                }
+            }
+
             averageData.push({
                 month: item.create_date,
                 averageRain: item.connected_rate * 100,
@@ -254,6 +268,8 @@ class List extends TabList {
             })
             return
         })
+
+        console.log(max % 4)
 
         const scale = {
             month: {
@@ -266,7 +282,7 @@ class List extends TabList {
             },
             monthAverageRain: {
                 min: 0,
-                max: 16,
+                max: max + (max % 4),
             },
         }
 

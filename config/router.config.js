@@ -205,7 +205,6 @@ export default [
         ],
     },
 
-
     {
         path: "/tabs",
         component: "../outter/fr-schema-antd-utils/src/layouts/SecurityLayout",
@@ -338,6 +337,12 @@ export default [
                                 component: "./callRecord/List.jsx",
                                 title: "话单列表",
                             },
+                            {
+                                path: "tabs/outboundTask/statistics",
+                                name: "taskStatistics",
+                                component: "./Statistics/Task.jsx",
+                                title: "话单统计",
+                            },
                         ],
                     },
                     {
@@ -414,7 +419,6 @@ export default [
         ],
     },
 
-
     {
         path: "/outter",
         component: "../layouts/BlankLayout",
@@ -480,7 +484,7 @@ export default [
             },
             {
                 path: "/",
-                component:  "../layouts/DomainChooseLayout",
+                component: "../layouts/DomainChooseLayout",
                 routes: [
                     {
                         path: "/",
