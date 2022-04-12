@@ -86,7 +86,6 @@ const schema = {
             style: { width: "500px" },
             height: "400px",
         },
-        extra: "回复文本没配置时生效，用于更复杂的回复方式。",
         search: false,
         type: schemaFieldType.AceEditor,
         decoratorProps: { rules: verifyJson },
