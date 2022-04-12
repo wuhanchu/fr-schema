@@ -192,7 +192,7 @@ export default [
                             {
                                 path: "/frame/statistics/outboundTask",
                                 name: "taskStatistics",
-                                component: "./Statistics/Task.jsx",
+                                component: "./statistics/Task.jsx",
                                 title: "外呼统计",
                             },
                         ],
@@ -379,7 +379,7 @@ export default [
                             {
                                 path: "/tabs/statistics/outboundTask",
                                 name: "taskStatistics",
-                                component: "./Statistics/Task.jsx",
+                                component: "./statistics/Task.jsx",
                                 title: "外呼统计",
                             },
                         ],
@@ -666,7 +666,7 @@ export default [
                             {
                                 path: "/statistics/outboundTask",
                                 name: "taskStatistics",
-                                component: "./Statistics/Task.jsx",
+                                component: "./statistics/Task.jsx",
                                 title: "外呼统计",
                             },
                         ],
