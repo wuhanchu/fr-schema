@@ -74,10 +74,9 @@ const BasicLayout = (props) => {
             })
         }
         // 任意地方点击 关闭tab菜单
-        window.onclick = () => {
+        document.onclick = () => {
             setShowRightMenu(false)
         }
-
         initData()
     }, [])
 
@@ -93,6 +92,8 @@ const BasicLayout = (props) => {
             setDomainList([...domain])
             props.dict.domain[localStorageDomainKey] && setCurrentDomainKey(props.dict.domain[localStorageDomainKey].key)
         }
+        console.info('tabDivObj.getParent()', tabDivObj && tabDivObj.parentNode)
+
     }, [init])
 
 
@@ -247,15 +248,16 @@ const BasicLayout = (props) => {
     const tabRemoveOther = targetKey => {
         const panes = tabList.filter(pane => pane.key === targetKey);
         setTabList([...panes]);
-        localStorage.setItem('tabList', JSON.stringify([...panes]))
+        setShowRightMenu(false);
+        localStorage.setItem('tabList', JSON.stringify([...panes]));
     }
 
     // 左键点击tab
     const onTabMouseDown = (activeKey, event) => {
         if (event.button === 0 && activeKey === tabActiveKey) {
             let res = layoutMode === 'frame' ? tabMenuPosition(event) : event;
-            setRightClickTab({...res})
-            setShowRightMenu(true)
+            setRightClickTab({...res});
+            setShowRightMenu(true);
         }
     }
 
