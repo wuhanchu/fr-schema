@@ -82,6 +82,17 @@ class List extends TabList {
         return data
     }
 
+    domainKeyChange = async (item) => {
+        if (this.meta.initLocalStorageDomainKey) {
+            this.meta.queryArgs = {
+                ...this.meta.queryArgs,
+                domain_key: item,
+            }
+
+            this.initProject(item)
+        }
+    }
+
     handleFormReset = () => {
         const { order } = this.props
 
@@ -132,6 +143,23 @@ class List extends TabList {
         })
         // this.handleVisibleExportModal()
     }
+
+    initProject = async (domain_key) => {
+        let domainArray = []
+        domainArray.push(domain_key)
+        if (this.props.dict.domain[domain_key].base_domain_key) {
+            domainArray = [
+                ...domainArray,
+                ...this.props.dict.domain[domain_key].base_domain_key,
+            ]
+        }
+        let project = await schemas.project.service.get({
+            limit: 10000,
+            domain_key: "in.(" + domainArray.join(",") + ")",
+        })
+        this.schema.project_id.dict = listToDict(project.list)
+    }
+
     async componentDidMount() {
         let res = await clientService.get({ limit: 1000 })
         let client_dict = listToDict(res.list, null, "client_id", "client_name")
@@ -151,11 +179,9 @@ class List extends TabList {
                 begin_time: moment().subtract("days", 6),
             })
         } catch (error) {}
-        let project = await schemas.project.service.get({
-            limit: 10000,
-        })
+        this.initProject(this.meta.queryArgs.domain_key)
+
         this.schema.domain_key.dict = this.props.dict.domain
-        this.schema.project_id.dict = listToDict(project.list)
         this.schema.question_standard.render = (item, data) => {
             return (
                 <Tooltip title={item}>

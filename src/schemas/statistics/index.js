@@ -73,17 +73,6 @@ const schema = {
         extra: "每行表示一个问题",
     },
 
-    project_id: {
-        title: "项目",
-        type: schemaFieldType.Select,
-        hideInTable: true,
-        search: false,
-        props: {
-            allowClear: true,
-            showSearch: true,
-        },
-        span: 7,
-    },
     total: {
         title: "匹配次数",
         search: false,
@@ -108,6 +97,16 @@ const schema = {
     },
     client_id: {
         title: "渠道",
+        hideInTable: true,
+        type: schemaFieldType.Select,
+        props: {
+            mode: "tags",
+            allowClear: true,
+            showSearch: true,
+        },
+    },
+    project_id: {
+        title: "问题库",
         hideInTable: true,
         type: schemaFieldType.Select,
         props: {

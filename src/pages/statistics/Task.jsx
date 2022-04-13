@@ -231,13 +231,13 @@ class List extends TabList {
         let max = 0
         this.state.data.list.map((item, index) => {
             data.push({
-                name: "接通",
+                name: "正常",
                 month: item.create_date,
                 monthAverageRain: item.normal,
                 ...item,
             })
             data.push({
-                name: "未接通",
+                name: "异常",
                 month: item.create_date,
                 monthAverageRain: item.abnormal,
                 ...item,
@@ -263,6 +263,59 @@ class List extends TabList {
 
         console.log(max % 4)
 
+        switch (max) {
+            case 10 >= max > 0:
+                max = 10
+                break
+            case 20 >= max > 10:
+                max = 20
+                break
+            case 40 >= max > 20:
+                max = 40
+                break
+            case 100 >= max > 40:
+                max = 100
+                break
+            case 200 >= max > 100:
+                max = 200
+                break
+            case 400 >= max > 200:
+                max = 400
+                break
+            case 1000 >= max > 400:
+                max = 1000
+                break
+            case 2000 >= max > 1000:
+                max = 2000
+                break
+            case 4000 >= max > 2000:
+                max = 4000
+                break
+            case 10000 >= max > 4000:
+                max = 1000
+                break
+            case 20000 >= max > 10000:
+                max = 20000
+                break
+            case 40000 >= max > 20000:
+                max = 40000
+                break
+            case 100000 >= max > 40000:
+                max = 100000
+                break
+            case 200000 >= max > 100000:
+                max = 200000
+                break
+            case 400000 >= max > 200000:
+                max = 400000
+                break
+            case 1000000 >= max > 400000:
+                max = 1000000
+                break
+            default:
+                max = 10
+        }
+
         const scale = {
             month: {
                 sync: true,
@@ -270,11 +323,18 @@ class List extends TabList {
             averageRain: {
                 min: 0,
                 max: 100,
+                formatter: (val) => {
+                    return val + "%"
+                },
+                tickCount: 5, // 定义坐标轴刻度线的条数，默认为 5
+
                 alias: "接通率",
             },
             monthAverageRain: {
                 min: 0,
-                max: 100,
+                // max: max,
+                type: "linear-strict",
+                tickCount: 5, // 定义坐标轴刻度线的条数，默认为 5
             },
         }
 
@@ -298,73 +358,104 @@ class List extends TabList {
                 autoFit
                 onGetG2Instance={(c) => (chartIns = c)}
             >
-                <ChartTooltip shared>
-                    {(title, items) => {
-                        console.log(items)
+                <ChartTooltip shared={false}>
+                    {(title, items, ...other) => {
+                        console.log(title, items, other)
                         let one = this.state.data.list.filter((item) => {
                             return item.create_date == items[0].title
                         })[0]
-                        return (
-                            <div>
-                                <div style={{ margin: "12px" }}>
-                                    <div style={{ marginBottom: "8px" }}>
-                                        接通率：
-                                        {Math.round(
-                                            one.connected_rate * 100 * 10 ** 2
-                                        ) /
-                                            10 ** 2}
-                                        %
-                                    </div>
-                                    <div style={{ marginBottom: "8px" }}>
-                                        接通：
-                                        {one.normal}
-                                    </div>
-                                    <div style={{ marginBottom: "8px" }}>
-                                        未接通：
-                                        {one.abnormal}
-                                    </div>
-                                    <Divider
-                                        style={{ margin: "8px 0px 8px 0px " }}
-                                    />
-                                    <div style={{ marginBottom: "8px" }}>
-                                        未接通：
-                                        {one.no_connect}
-                                    </div>
-                                    <div style={{ marginBottom: "8px" }}>
-                                        拒接：
-                                        {one.refuse}
-                                    </div>
-                                    <div style={{ marginBottom: "8px" }}>
-                                        无应答：
-                                        {one.no_answer}
-                                    </div>
-                                    <div style={{ marginBottom: "8px" }}>
-                                        拨打失败：
-                                        {one.failed}
-                                    </div>
-                                    <div style={{ marginBottom: "8px" }}>
-                                        忙线：
-                                        {one.busy}
-                                    </div>
-                                    <div style={{ marginBottom: "8px" }}>
-                                        空号：
-                                        {one.empty}
-                                    </div>
-                                    <div style={{ marginBottom: "8px" }}>
-                                        关机：
-                                        {one.shutdown}
-                                    </div>
-                                    <div style={{ marginBottom: "8px" }}>
-                                        停机：
-                                        {one.halt}
-                                    </div>
-                                    <div style={{ marginBottom: "8px" }}>
-                                        其他：
-                                        {one.other}
+
+                        if (items[0].name == "异常") {
+                            return (
+                                <div>
+                                    <div style={{ margin: "12px" }}>
+                                        <div style={{ marginBottom: "8px" }}>
+                                            异常：
+                                            {one.abnormal}
+                                        </div>
+                                        <Divider
+                                            style={{
+                                                margin: "8px 0px 8px 0px ",
+                                            }}
+                                        />
+                                        <div style={{ marginBottom: "8px" }}>
+                                            未接通：
+                                            {one.no_connect}
+                                        </div>
+                                        <div style={{ marginBottom: "8px" }}>
+                                            拒接：
+                                            {one.refuse}
+                                        </div>
+                                        <div style={{ marginBottom: "8px" }}>
+                                            无应答：
+                                            {one.no_answer}
+                                        </div>
+                                        <div style={{ marginBottom: "8px" }}>
+                                            拨打失败：
+                                            {one.failed}
+                                        </div>
+                                        <div style={{ marginBottom: "8px" }}>
+                                            忙线：
+                                            {one.busy}
+                                        </div>
+                                        <div style={{ marginBottom: "8px" }}>
+                                            空号：
+                                            {one.empty}
+                                        </div>
+                                        <div style={{ marginBottom: "8px" }}>
+                                            关机：
+                                            {one.shutdown}
+                                        </div>
+                                        <div style={{ marginBottom: "8px" }}>
+                                            停机：
+                                            {one.halt}
+                                        </div>
+                                        <div style={{ marginBottom: "8px" }}>
+                                            逾期：
+                                            {one.overdue}
+                                        </div>
+                                        <div style={{ marginBottom: "8px" }}>
+                                            其他：
+                                            {one.other}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        )
+                            )
+                        } else {
+                            if (items[0].name == "正常") {
+                                return (
+                                    <div>
+                                        <div style={{ margin: "12px" }}>
+                                            <div
+                                                style={{ marginBottom: "8px" }}
+                                            >
+                                                正常：
+                                                {one.normal}
+                                            </div>
+                                        </div>
+                                    </div>
+                                )
+                            } else {
+                                return (
+                                    <div>
+                                        <div style={{ margin: "12px" }}>
+                                            <div
+                                                style={{ marginBottom: "8px" }}
+                                            >
+                                                接通率：
+                                                {Math.round(
+                                                    one.connected_rate *
+                                                        100 *
+                                                        10 ** 2
+                                                ) /
+                                                    10 ** 2}
+                                                %
+                                            </div>
+                                        </div>
+                                    </div>
+                                )
+                            }
+                        }
                     }}
                 </ChartTooltip>
                 <Interval
@@ -374,7 +465,7 @@ class List extends TabList {
                             marginRatio: 0,
                         },
                     ]}
-                    color={["name", colors]}
+                    color={["name", ["#73d13d", "#ff4d4f", "#36cfc9"]]}
                     position="month*monthAverageRain"
                 />
                 <Axis name="monthAverageRain" position="left" />
@@ -386,19 +477,19 @@ class List extends TabList {
                     custom={true}
                     items={[
                         {
-                            name: "接通",
-                            value: "接通",
+                            name: "正常",
+                            value: "正常",
                             marker: {
                                 symbol: "square",
-                                style: { fill: colors[0] },
+                                style: { fill: "#73d13d" },
                             },
                         },
                         {
-                            name: "未接通",
-                            value: "未接通",
+                            name: "异常",
+                            value: "异常",
                             marker: {
                                 symbol: "square",
-                                style: { fill: colors[1] },
+                                style: { fill: "#ff4d4f" },
                             },
                         },
                         {

@@ -126,7 +126,10 @@ service.getActionType = async (args) => {
     return { ...data, list }
 }
 service.getActionParam = async (args) => {
-    let data = await createApi("action_param", schema, null, "eq.").get(args)
+    let data = await createApi("action_param", schema, null, "eq.").get({
+        ...args,
+        order: "require.desc",
+    })
     let list = data.list.map((item) => {
         return { ...item, remarks: item.remark }
     })
