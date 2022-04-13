@@ -63,6 +63,7 @@ let config = defineConfig({
         "primary-color": setting.primaryColor,
     },
     define: {
+        IS_PROD: IS_PROD,
         CONFIG: setting,
         SETTING: setting,
         BASE_PATH: BASE_PATH,

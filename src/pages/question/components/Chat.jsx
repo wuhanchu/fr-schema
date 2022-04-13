@@ -355,31 +355,6 @@ class Chat extends React.PureComponent {
         return (
             <div style={styles.leaveMsgView}>
                 <div dangerouslySetInnerHTML={{ __html: item.content }} />
-                {item.recommend_text && item.recommend_text.length ? (
-                    <div style={{ marginBottom: "10px" }}>
-                        您是否关心以下问题：
-                        <br />
-                        {item.recommend_text.map((item, index) => {
-                            return (
-                                <div>
-                                    <a
-                                        onClick={() => {
-                                            this.onSendMsg(item)
-                                        }}
-                                    >
-                                        <span style={{ marginRight: "5px" }}>
-                                            {"[" + (index + 1) + "]"}
-                                        </span>
-                                        <span>{item}</span>
-                                    </a>
-                                    <br />
-                                </div>
-                            )
-                        })}
-                    </div>
-                ) : (
-                    ""
-                )}
             </div>
         )
     }

@@ -352,6 +352,7 @@ class List extends TabList {
         return (
             <Chart
                 height={400}
+                style={{ minWidth: "400px" }}
                 padding={[50, 60]}
                 scale={scale}
                 data={data}
@@ -629,6 +630,7 @@ class List extends TabList {
                                     <Spin spinning={this.state.listLoading}>
                                         <Card bordered={false}>
                                             <Tabs
+                                                destroyInactiveTabPane={true}
                                                 tabBarExtraContent={operations}
                                                 defaultActiveKey="1"
                                             >

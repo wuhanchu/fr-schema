@@ -110,14 +110,18 @@ class List extends TabList {
     renderOperateColumnExtend(record) {
         return (
             <>
-                {/* <a
-                    onClick={() => {
-                        this.handleVisibleModal(true, record, "add")
-                    }}
-                >
-                    拨打测试
-                </a>
-                <Divider type="vertical" /> */}
+                {!IS_PROD && (
+                    <>
+                        <a
+                            onClick={() => {
+                                this.handleVisibleModal(true, record, "add")
+                            }}
+                        >
+                            拨号测试
+                        </a>
+                        <Divider type="vertical" />
+                    </>
+                )}
                 {record.block ? (
                     <Popconfirm
                         title="是否要取消屏蔽客户？"
