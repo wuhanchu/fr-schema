@@ -36,6 +36,13 @@ const schema = {
             // showTime: true,
             // valueType: "dateTime",
         },
+        render: (item, data) => {
+            if (data.create_time)
+                return moment(data.create_time).format("YYYY-MM-DD HH:mm:ss")
+            else {
+                return "-"
+            }
+        },
         type: schemaFieldType.DatePicker,
         sorter: true,
         search: false,

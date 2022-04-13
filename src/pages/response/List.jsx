@@ -24,10 +24,14 @@ const { actions, getPrimaryKey, decorateList } = frSchema
 import "ace-builds/src-noconflict/mode-json"
 import "ace-builds/src-noconflict/theme-github"
 import "ace-builds/src-noconflict/ext-language_tools"
-import { PlusOutlined, MinusCircleOutlined } from "@ant-design/icons"
+import {
+    PlusOutlined,
+    MinusCircleOutlined,
+    QuestionCircleOutlined,
+} from "@ant-design/icons"
 import { getTree } from "@/pages/Flow/methods"
 import ReactMarkdown from "react-markdown"
-import TabList from "@/pages/tabList/TabList";
+import TabList from "@/pages/tabList/TabList"
 @connect(({ global }) => ({
     dict: global.dict,
 }))
@@ -304,7 +308,6 @@ class List extends TabList {
     }]
          `
 
-
         return (
             <Modal
                 width={700}
@@ -470,7 +473,7 @@ class List extends TabList {
                                 }
                             >
                                 {/* <a> */}
-                                <InfoCircleOutlined
+                                <QuestionCircleOutlined
                                     style={{
                                         position: "absolute",
                                         right: "-20px",
@@ -524,6 +527,35 @@ class List extends TabList {
                             console.info("error", error)
                         }
                     }}
+                    onLoad={(editor) => {
+                        editor.completers = [
+                            {
+                                getCompletions: function (
+                                    editors,
+                                    session,
+                                    pos,
+                                    prefix,
+                                    callback
+                                ) {
+                                    let completer = [
+                                        {
+                                            name: "title",
+                                            value: "title",
+                                            score: 100,
+                                            meta: "展示文本",
+                                        },
+                                        {
+                                            name: "payload",
+                                            value: "payload",
+                                            score: 100,
+                                            meta: "回复选项值",
+                                        },
+                                    ]
+                                    callback(null, completer)
+                                },
+                            },
+                        ]
+                    }}
                     fontSize={14}
                     showPrintMargin
                     showGutter
@@ -542,7 +574,7 @@ class List extends TabList {
                         },
                     ]}
                     setOptions={{
-                        enableBasicAutocompletion: true,
+                        enableBasicAutocompletion: false,
                         enableLiveAutocompletion: true,
                         enableSnippets: true,
                         showLineNumbers: true,
@@ -588,14 +620,13 @@ class List extends TabList {
         })
     }
 
-    handleDomainChange = (item) => {
+    domainKeyChange = (item) => {
         if (this.meta.initLocalStorageDomainKey) {
             this.meta.queryArgs = {
                 ...this.meta.queryArgs,
-                domain_key: item.key,
+                domain_key: item,
             }
-            this.findIntentByDomainKey(item.key)
-            this.refreshList()
+            this.findIntentByDomainKey(item)
         }
     }
     /**

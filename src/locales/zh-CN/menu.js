@@ -12,6 +12,8 @@ export default {
     "menu.project.projectList": "问题库信息",
     "menu.project.mark": "问题库运维",
     "menu.statistics": "统计",
+    "menu.statistics.statisticsProject": "问题库统计",
+    "menu.statistics.taskStatistics": "外呼统计",
     "menu.domain": "域",
     "menu.outboundTask": "外呼",
     "menu.outboundTask.taskList": "任务管理",

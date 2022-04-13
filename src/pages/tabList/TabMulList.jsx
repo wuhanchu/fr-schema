@@ -1,15 +1,17 @@
 import React from "react"
 import {default as tempDataList} from "@/outter/fr-schema-antd-utils/src/components/Page/DataList"
-export const DataList = tempDataList
-import events from "events";
-import {Tabs} from "antd";
 
-window.events = new events.EventEmitter();
+export const DataList = tempDataList
+import {Tabs} from "antd";
+import {DomainKeyContext} from "@/layouts/TabLayout";
+
 
 /**
  * tab标签页下又存在tab时使用
  */
 class TabMulList extends React.PureComponent {
+    static contextType = DomainKeyContext;
+
     constructor(props) {
         let domain_key = localStorage.getItem("domain_key")
         super(props);
@@ -20,23 +22,22 @@ class TabMulList extends React.PureComponent {
         }
     }
 
-    async componentDidMount() {
-        if (this.state.needListener) {
-            // 注册事件监听, 当域选择更改时重新获取当前域数据
-            window.events.on('domainKeyChange', (domainKey) => {
-                this.setState({localStorageDomainKey: domainKey})
-                this.domainKeyChange(domainKey)
-                // 执行监听事件,通知父级,界面已重新渲染 (现目的: 禁止域未变更的情况下,切换tab重新渲染)
-                window.events.emit('domainKeyChangeDone');
-            });
+    componentWillReceiveProps(nextProps, nextContents) {
+        /**
+         * 使用16.8特性 Context方式从TabLayout传递数据到各个页面
+         * nextContents为 static 定义的contextType所对应的 Context传递的数据
+         * 判断是否变更 变更则重新请求数据渲染页面
+         */
+        if (nextContents !== this.state.localStorageDomainKey) {
+            this.setState({localStorageDomainKey: nextContents})
+            this.domainKeyChange(nextContents)
         }
-
     }
 
     // 统一间距样式
     render() {
         return (
-            <div style={{marginLeft: '30px', marginRight: '15px'}}>
+            <div style={{paddingLeft: '30px', paddingRight: '15px', backgroundColor: '#fff'}}>
                 {this.renderTab()}
             </div>
         )
@@ -64,7 +65,8 @@ class TabMulList extends React.PureComponent {
     }
 
     // 用于各页面针对 域更改时 自定义操作
-    domainKeyChange(domainKey) {}
+    domainKeyChange(domainKey) {
+    }
 }
 
 export default TabMulList

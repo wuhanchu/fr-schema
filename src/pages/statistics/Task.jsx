@@ -9,6 +9,7 @@ import { Form } from "@ant-design/compatible"
 import "@ant-design/compatible/assets/index.css"
 import frSchema from "@/outter/fr-schema/src"
 import { listToDict } from "@/outter/fr-schema/src/dict"
+import userService from "@/pages/authority/user/service"
 import Modal from "antd/lib/modal/Modal"
 import {
     Card,
@@ -20,7 +21,13 @@ import {
     AutoComplete,
     Input,
     Dropdown,
+    Divider,
     Menu,
+    Tree,
+    Tabs,
+    Table,
+    Spin,
+    Empty,
 } from "antd"
 import {
     LikeTwoTone,
@@ -44,20 +51,21 @@ import {
     getTheme,
 } from "bizcharts"
 import schema from "@/schemas/statistics/task"
-
+import TabList from "@/pages/tabList/TabList"
 import { exportData } from "@/outter/fr-schema-antd-utils/src/utils/xlsx"
 import { formatData } from "@/utils/utils"
 import clientService from "@/pages/authority/clientList/service"
 import moment from "moment"
 import SearchHistory from "@/pages/domain/component/SearchHistory"
+import { flow } from "lodash"
 
 const { utils, decorateList } = frSchema
-
+const { TabPane } = Tabs
 @connect(({ global }) => ({
     dict: global.dict,
 }))
 @Form.create()
-class List extends ListPage {
+class List extends TabList {
     constructor(props) {
         const localStorageDomainKey = localStorage.getItem("domain_key")
 
@@ -73,6 +81,9 @@ class List extends ListPage {
                     right: 14,
                 },
             },
+            search: {
+                span: 6,
+            },
             showEdit: false,
             showDelete: false,
             readOnly: true,
@@ -80,7 +91,9 @@ class List extends ListPage {
             // cardProps: { title: "匹配问题详情", bordered: true },
             queryArgs: {
                 ...props.queryArgs,
-                inside: true,
+                // inside: true,
+                limit: 1000,
+                order: "create_date.desc",
                 domain_key: localStorageDomainKey,
             },
         })
@@ -112,7 +125,7 @@ class List extends ListPage {
 
         this.formRef.current.resetFields()
         this.formRef.current.setFieldsValue({
-            begin_time: moment().subtract("days", 6),
+            begin_time: moment().subtract("days", 14),
         })
 
         this.setState(
@@ -122,7 +135,7 @@ class List extends ListPage {
             },
             () => {
                 this.refreshList({
-                    domain_key: "default",
+                    // domain_key: "default",
                     begin_time: moment().subtract("days", 6),
                 })
             }
@@ -157,27 +170,37 @@ class List extends ListPage {
         })
         // this.handleVisibleExportModal()
     }
-    async componentDidMount() {
-        // let res = await clientService.get({ limit: 1000 })
-        // let client_dict = listToDict(res.list, null, "client_id", "client_name")
 
-        // client_dict["null"] = {
-        //     value: "null",
-        //     client_id: "null",
-        //     remark: "未知",
-        // }
-        // this.schema.client_id.dict = client_dict
-        this.meta.queryArgs = {
-            ...this.meta.queryArgs,
-            sort: "desc",
+    init = async () => {
+        let res = await clientService.get({ limit: 1000 })
+        let client_dict = listToDict(res.list, null, "client_id", "client_name")
+
+        client_dict["null"] = {
+            value: "null",
+            client_id: "null",
+            remark: "未知",
         }
+        this.schema.client_id.dict = client_dict
+        await this.initFlowDict(this.meta.queryArgs.domain_key)
+        await this.initTaskDict(this.meta.queryArgs.domain_key)
+
+        await this.findUserList()
+    }
+
+    async componentDidMount() {
+        try {
+            this.formRef.current.setFieldsValue({
+                begin_time: moment().subtract("days", 14),
+            })
+        } catch (error) {}
+        await this.init()
+
         super.componentDidMount()
-        // this.setState({
-        //     searchValues: {
-        //         // domain_key: "default",
-        //         begin_time: moment().subtract("days", 6),
-        //     },
-        // })
+        this.setState({
+            searchValues: {
+                begin_time: moment().subtract("days", 14),
+            },
+        })
     }
 
     renderOperateColumnExtend(record) {
@@ -196,44 +219,49 @@ class List extends ListPage {
             </>
         )
     }
+    async findUserList() {
+        let res = await userService.get({ pageSize: 10000, select: "id, name" })
+        this.schema.user_id.dict = listToDict(res.list, null, "id", "name")
+    }
 
     renderSummary() {
         const theme = getTheme()
-
-        const data = [
-            { name: "London", month: "Jan.", monthAverageRain: 18.9 },
-            { name: "London", month: "Feb.", monthAverageRain: 28.8 },
-            { name: "London", month: "Mar.", monthAverageRain: 39.3 },
-            { name: "London", month: "Apr.", monthAverageRain: 81.4 },
-            { name: "London", month: "May", monthAverageRain: 47 },
-            { name: "London", month: "Jun.", monthAverageRain: 20.3 },
-            { name: "London", month: "Jul.", monthAverageRain: 24 },
-            { name: "London", month: "Aug.", monthAverageRain: 35.6 },
-            { name: "Berlin", month: "Jan.", monthAverageRain: 12.4 },
-            { name: "Berlin", month: "Feb.", monthAverageRain: 23.2 },
-            { name: "Berlin", month: "Mar.", monthAverageRain: 34.5 },
-            { name: "Berlin", month: "Apr.", monthAverageRain: 99.7 },
-            { name: "Berlin", month: "May", monthAverageRain: 52.6 },
-            { name: "Berlin", month: "Jun.", monthAverageRain: 35.5 },
-            { name: "Berlin", month: "Jul.", monthAverageRain: 37.4 },
-            { name: "Berlin", month: "Aug.", monthAverageRain: 42.4 },
-        ]
-        const average = data.reduce((pre, item) => {
-            const { month, monthAverageRain } = item
-            if (!pre[month]) {
-                pre[month] = 0
+        let data = []
+        let averageData = []
+        let max = 0
+        this.state.data.list.map((item, index) => {
+            data.push({
+                name: "接通",
+                month: item.create_date,
+                monthAverageRain: item.normal,
+                ...item,
+            })
+            data.push({
+                name: "未接通",
+                month: item.create_date,
+                monthAverageRain: item.abnormal,
+                ...item,
+            })
+            if (item.normal > item.abnormal) {
+                if (item.normal > max) {
+                    max = item.normal
+                }
+            } else {
+                if (item.abnormal > max) {
+                    max = item.abnormal
+                }
             }
-            pre[month] += monthAverageRain
-            return pre
-        }, {})
 
-        const averageData = Object.keys(average).map((key) => {
-            return {
-                month: key,
-                averageRain: Number((average[key] / 2).toFixed(2)),
+            averageData.push({
+                month: item.create_date,
+                averageRain: item.connected_rate * 100,
+                data: "ces",
                 name: "avg",
-            }
+            })
+            return
         })
+
+        console.log(max % 4)
 
         const scale = {
             month: {
@@ -260,6 +288,7 @@ class List extends ListPage {
          */
         let chartIns
         const { summary } = this.state.data
+
         return (
             <Chart
                 height={400}
@@ -269,7 +298,75 @@ class List extends ListPage {
                 autoFit
                 onGetG2Instance={(c) => (chartIns = c)}
             >
-                <ChartTooltip shared />
+                <ChartTooltip shared>
+                    {(title, items) => {
+                        console.log(items)
+                        let one = this.state.data.list.filter((item) => {
+                            return item.create_date == items[0].title
+                        })[0]
+                        return (
+                            <div>
+                                <div style={{ margin: "12px" }}>
+                                    <div style={{ marginBottom: "8px" }}>
+                                        接通率：
+                                        {Math.round(
+                                            one.connected_rate * 100 * 10 ** 2
+                                        ) /
+                                            10 ** 2}
+                                        %
+                                    </div>
+                                    <div style={{ marginBottom: "8px" }}>
+                                        接通：
+                                        {one.normal}
+                                    </div>
+                                    <div style={{ marginBottom: "8px" }}>
+                                        未接通：
+                                        {one.abnormal}
+                                    </div>
+                                    <Divider
+                                        style={{ margin: "8px 0px 8px 0px " }}
+                                    />
+                                    <div style={{ marginBottom: "8px" }}>
+                                        未接通：
+                                        {one.no_connect}
+                                    </div>
+                                    <div style={{ marginBottom: "8px" }}>
+                                        拒接：
+                                        {one.refuse}
+                                    </div>
+                                    <div style={{ marginBottom: "8px" }}>
+                                        无应答：
+                                        {one.no_answer}
+                                    </div>
+                                    <div style={{ marginBottom: "8px" }}>
+                                        拨打失败：
+                                        {one.failed}
+                                    </div>
+                                    <div style={{ marginBottom: "8px" }}>
+                                        忙线：
+                                        {one.busy}
+                                    </div>
+                                    <div style={{ marginBottom: "8px" }}>
+                                        空号：
+                                        {one.empty}
+                                    </div>
+                                    <div style={{ marginBottom: "8px" }}>
+                                        关机：
+                                        {one.shutdown}
+                                    </div>
+                                    <div style={{ marginBottom: "8px" }}>
+                                        停机：
+                                        {one.halt}
+                                    </div>
+                                    <div style={{ marginBottom: "8px" }}>
+                                        其他：
+                                        {one.other}
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                    }}
+                </ChartTooltip>
                 <Interval
                     adjust={[
                         {
@@ -289,23 +386,23 @@ class List extends ListPage {
                     custom={true}
                     items={[
                         {
-                            name: "London",
-                            value: "London",
+                            name: "接通",
+                            value: "接通",
                             marker: {
                                 symbol: "square",
                                 style: { fill: colors[0] },
                             },
                         },
                         {
-                            name: "Berlin",
-                            value: "Berlin",
+                            name: "未接通",
+                            value: "未接通",
                             marker: {
                                 symbol: "square",
                                 style: { fill: colors[1] },
                             },
                         },
                         {
-                            name: "平均",
+                            name: "接通率",
                             value: "avg",
                             marker: {
                                 symbol: "hyphen",
@@ -341,6 +438,55 @@ class List extends ListPage {
         )
     }
 
+    handleRenderTable = () => {
+        let columns = []
+        Object.keys(this.schema).forEach((key) => {
+            if (!this.schema[key].hideInTable)
+                columns.push({
+                    ...this.schema[key],
+                    dataIndex: key,
+                    key,
+                })
+        })
+        return (
+            <Table
+                columns={columns}
+                size="small"
+                pagination={false}
+                dataSource={this.state.data.list}
+            />
+        )
+    }
+
+    async handleExport(args, schema) {
+        this.setState({ exportLoading: true }, async () => {
+            let column = this.getColumns(false).filter((item) => {
+                return !item.hideInTable
+            })
+            let columns = column
+            let data = await this.requestList({
+                pageSize: 1000000,
+                offset: 0,
+                ...args,
+            })
+            const list =
+                data &&
+                data.list.map((item, index) => {
+                    return {
+                        ...item,
+                        connected_rate:
+                            Math.round(item.connected_rate * 100 * 10 ** 2) /
+                                10 ** 2 +
+                            "%",
+                    }
+                })
+            data = decorateList(list, this.schema)
+            await exportData("详情", data, columns)
+            this.setState({ exportLoading: false })
+        })
+        // this.handleVisibleExportModal()
+    }
+
     renderDataList() {
         const { visibleModal, visibleImport } = this.state
         let {
@@ -363,7 +509,15 @@ class List extends ListPage {
         } else if (renderSearchBar !== null) {
             searchBar = this.renderSearchBar && this.renderSearchBar()
         }
-
+        const operations = (
+            <Button
+                onClick={() => {
+                    this.handleExport({}, this.schema)
+                }}
+            >
+                导出
+            </Button>
+        )
         return (
             <>
                 <Card
@@ -380,7 +534,29 @@ class List extends ListPage {
                         {this.renderList(
                             { tableRender: () => <></> },
                             {
-                                renderOpeation: this.renderSummary(),
+                                renderOpeation: this.state.data.list.length ? (
+                                    <Spin spinning={this.state.listLoading}>
+                                        <Card bordered={false}>
+                                            <Tabs
+                                                tabBarExtraContent={operations}
+                                                defaultActiveKey="1"
+                                            >
+                                                <TabPane tab="图表" key="1">
+                                                    {this.renderSummary()}
+                                                </TabPane>
+                                                <TabPane tab="数据" key="2">
+                                                    {this.handleRenderTable()}
+                                                </TabPane>
+                                            </Tabs>
+                                        </Card>
+                                    </Spin>
+                                ) : (
+                                    <Spin spinning={this.state.listLoading}>
+                                        <Card bordered={false}>
+                                            <Empty></Empty>
+                                        </Card>
+                                    </Spin>
+                                ),
                             }
                         )}
                     </div>
@@ -476,75 +652,37 @@ class List extends ListPage {
             )
         )
     }
-
-    handleDomainChange = (item) => {
+    initTaskDict = async (domain_key) => {
+        let task = await schemas.outboundTask.service.get({
+            limit: 1000,
+            domain_key: domain_key,
+        })
+        this.schema.task_id.dict = listToDict(task.list, "", "id", "name")
+    }
+    initFlowDict = async (domain_key) => {
+        let flow = await schemas.flow.service.get({
+            limit: 1000,
+            select: "id, key, domain_key, name",
+            domain_key: domain_key,
+        })
+        this.schema.flow_key.dict = listToDict(flow.list, "", "key", "name")
+    }
+    domainKeyChange = async (item) => {
         if (this.meta.initLocalStorageDomainKey) {
             this.meta.queryArgs = {
                 ...this.meta.queryArgs,
-                domain_key: item.key,
+                domain_key: item,
             }
-            console.log(this.props, this.meta)
-            this.refreshList()
+
+            this.initFlowDict(item)
+            this.initTaskDict(item)
+
+            console.log(this.schema.task_id)
         }
     }
 
     render() {
-        const { title, content, tabList, onTabChange } = this.meta
-        const { tabActiveKey } = this.state
-        const { dict, data } = this.props
-        let domain = []
-        if (dict) {
-            Object.keys(dict.domain).forEach((key) => {
-                domain.push(dict.domain[key])
-            })
-        }
-        const menu = (
-            <Menu
-                onClick={async (item) => {
-                    console.log(item)
-                    localStorage.setItem("domain_key", item.key)
-                    this.setState({
-                        localStorageDomainKey: item.key,
-                    })
-                    this.handleDomainChange(item)
-                }}
-            >
-                {domain &&
-                    domain.map((item) => {
-                        return (
-                            <Menu.Item key={item.key}>
-                                <a>{item.name}</a>
-                            </Menu.Item>
-                        )
-                    })}
-            </Menu>
-        )
-        const operations = (
-            <Dropdown overlay={menu} placement="bottomLeft">
-                <Button style={{ top: "-35px", float: "right" }}>
-                    {(this.state.localStorageDomainKey &&
-                        dict &&
-                        dict.domain[this.state.localStorageDomainKey].name) ||
-                        "选择数据域"}
-                    <DownOutlined />
-                </Button>
-            </Dropdown>
-        )
-        return (
-            <PageHeaderWrapper
-                title={false}
-                content={
-                    content ||
-                    (this.renderHeaderContent && this.renderHeaderContent())
-                }
-                tabList={tabList}
-                onTabChange={onTabChange}
-                tabActiveKey={tabActiveKey}
-                extra={operations}
-            >
-                {this.renderDataList()}
-            </PageHeaderWrapper>
-        )
+        return this.renderDataList()
     }
     renderExtend() {
         const {

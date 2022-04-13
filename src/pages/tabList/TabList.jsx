@@ -1,8 +1,7 @@
 import React from "react"
 import {default as tempDataList} from "@/outter/fr-schema-antd-utils/src/components/Page/DataList"
 export const DataList = tempDataList
-import events from "events";
-window.events = new events.EventEmitter();
+import {DomainKeyContext} from "@/layouts/TabLayout";
 /**
  * meta 包含
  * resource
@@ -15,6 +14,8 @@ window.events = new events.EventEmitter();
  * tab列表页
  */
 class TabList extends DataList {
+    static contextType = DomainKeyContext;
+
     constructor(props, meta) {
         const localStorageDomainKey = localStorage.getItem("domain_key")
         super(props, {
@@ -29,19 +30,22 @@ class TabList extends DataList {
         this.meta = { ...(this.meta || {}), ...this.props.meta }
     }
 
-    async componentDidMount() {
-        // 注册事件监听, 当域选择更改时重新获取当前域数据
-        window.events.on('domainKeyChange', (domainKey) => {
+    componentWillReceiveProps(nextProps, nextContents) {
+        /**
+         * 使用16.8特性 Context方式从TabLayout传递数据到各个页面
+         * nextContents为 static 定义的contextType所对应的 Context传递的数据
+         * 判断是否变更 变更则重新请求数据渲染页面
+         */
+        if (nextContents !== this.state.localStorageDomainKey) {
             this.meta.queryArgs = {
                 ...this.meta.queryArgs,
-                domain_key: domainKey,
+                domain_key: nextContents,
             }
-            this.domainKeyChange(domainKey)
+            this.domainKeyChange(nextContents)
             this.refreshList();
-            // 执行监听事件,通知父级,界面已重新渲染 (现目的: 禁止域未变更的情况下,切换tab重新渲染)
-            window.events.emit('domainKeyChangeDone');
-        });
-        super.componentDidMount();
+            this.setState({localStorageDomainKey: nextContents});
+        }
+        super.componentWillReceiveProps(nextProps, nextContents)
     }
 
     // 用于各页面针对 域更改时 自定义操作

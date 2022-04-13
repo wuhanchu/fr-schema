@@ -278,7 +278,7 @@ const schema = {
                 ></RangePicker>
             )
         },
-        // width: "135px",
+        width: "135px",
     },
     update_time: {
         title: "更新时间",
@@ -294,7 +294,7 @@ const schema = {
             allowEmpty: [true, true],
             format: "YYYY-MM-DD",
         },
-        // width: "135px",
+        width: "135px",
     },
 }
 

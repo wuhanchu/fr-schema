@@ -273,6 +273,19 @@ class Dialogue extends Chat {
                                     this.setState({
                                         checkboxValue: data,
                                     })
+                                    let localValue =
+                                        localStorage.getItem("checkboxValue") ||
+                                        ""
+                                    localValue = [
+                                        ...localValue.split(","),
+                                        ...data,
+                                    ].filter((item) => {
+                                        return item !== ""
+                                    })
+                                    localStorage.setItem(
+                                        "checkboxValue",
+                                        localValue.join(",")
+                                    )
                                     this.handleGetHotWord(
                                         this.state.domainArray,
                                         data.join(",")
@@ -792,10 +805,30 @@ class Dialogue extends Chat {
         })
         let defaultProject = []
         project.list.map((item) => {
-            defaultProject.push(item.id)
+            let localValue = localStorage.getItem("checkboxValue") || ""
+            localValue = localValue.split(",")
+            localValue = localValue.map((item) => {
+                if (item) {
+                    return parseInt(item)
+                }
+            })
+            if (localValue.indexOf(item.id) > -1) {
+                defaultProject.push(item.id)
+            }
         })
         let options = []
         let flowOption = []
+        if (this.state.type === "chat" && defaultProject.length) {
+            schemas.domain.service.message({
+                domain_key,
+                conversation_id: this.state.conversationId,
+                text: `/slot{"project\_id":"` + defaultProject.join(",") + `"}`,
+            })
+            this.handleGetHotWord(
+                this.state.domainArray,
+                defaultProject.join(",")
+            )
+        }
         project.list &&
             project.list.map((item) => {
                 options.push({
