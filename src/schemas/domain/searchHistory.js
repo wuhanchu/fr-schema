@@ -96,7 +96,7 @@ const schema = {
     project_id: {
         title: "搜索库",
         required: true,
-        search: false,
+        // search: false,
         render: (text) => {
             return (
                 <Tooltip title={text}>
@@ -115,6 +115,7 @@ const schema = {
         },
         type: schemaFieldType.Select,
         props: {
+            mode: "tags",
             allowClear: true,
             showSearch: true,
         },
@@ -296,6 +297,9 @@ service.get = async (args) => {
         args.client_id = undefined
     } else {
         args.client_id = undefined
+    }
+    if (args.project_id) {
+        args.project_id = "ov.{" + args.project_id + "}"
     }
     let data = await createApi("search_history", schema, null, "eq.").get(args)
     return data

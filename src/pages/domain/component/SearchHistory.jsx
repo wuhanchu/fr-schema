@@ -41,7 +41,9 @@ class MyList extends DataList {
                 width: "900px",
             },
             operateWidth: "100px",
-
+            search: {
+                span: 6,
+            },
             showEdit: false,
             showDelete: false,
             addHide: true,
@@ -55,6 +57,7 @@ class MyList extends DataList {
 
     async componentDidMount() {
         let res = await projectService.service.get({ limit: 1000 })
+        this.initProject(this.props.record.key)
         let resClient = await clientService.get({ limit: 1000 })
         let client_dict = listToDict(
             resClient.list,
@@ -78,6 +81,7 @@ class MyList extends DataList {
                 client_id:
                     this.props.searchArgs && this.props.searchArgs.client_id,
                 have_match_project_id: this.props.searchArgs.match_project_id,
+                project_id: this.props.searchArgs.project_id,
             })
         } catch (error) {}
         super.componentDidMount()
@@ -91,8 +95,7 @@ class MyList extends DataList {
         }
         console.log(this.props)
         this.setState({ projectDict: listToDict(res.list), searchSpan: 6 })
-        this.schema.match_project_id.dict = listToDict(res.list)
-        this.schema.project_id.dict = listToDict(res.list)
+        // this.schema.project_id.dict = listToDict(res.list)
     }
 
     async requestList(tempArgs = {}) {
@@ -129,6 +132,7 @@ class MyList extends DataList {
             end_time: this.props.searchArgs && this.props.searchArgs.end_time,
             client_id: this.props.searchArgs && this.props.searchArgs.client_id,
             have_match_project_id: this.props.searchArgs.match_project_id,
+            project_id: this.props.searchArgs.project_id,
         })
         this.setState(
             {
@@ -161,6 +165,23 @@ class MyList extends DataList {
                 </a>
             </>
         )
+    }
+
+    initProject = async (domain_key) => {
+        let domainArray = []
+        domainArray.push(domain_key)
+        if (this.props.dict.domain[domain_key].base_domain_key) {
+            domainArray = [
+                ...domainArray,
+                ...this.props.dict.domain[domain_key].base_domain_key,
+            ]
+        }
+        let project = await schemas.project.service.get({
+            limit: 10000,
+            domain_key: "in.(" + domainArray.join(",") + ")",
+        })
+        this.schema.project_id.dict = listToDict(project.list)
+        this.schema.match_project_id.dict = listToDict(project.list)
     }
 
     renderExtend() {

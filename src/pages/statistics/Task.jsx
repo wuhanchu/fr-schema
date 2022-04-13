@@ -261,61 +261,6 @@ class List extends TabList {
             return
         })
 
-        console.log(max % 4)
-
-        switch (max) {
-            case 10 >= max > 0:
-                max = 10
-                break
-            case 20 >= max > 10:
-                max = 20
-                break
-            case 40 >= max > 20:
-                max = 40
-                break
-            case 100 >= max > 40:
-                max = 100
-                break
-            case 200 >= max > 100:
-                max = 200
-                break
-            case 400 >= max > 200:
-                max = 400
-                break
-            case 1000 >= max > 400:
-                max = 1000
-                break
-            case 2000 >= max > 1000:
-                max = 2000
-                break
-            case 4000 >= max > 2000:
-                max = 4000
-                break
-            case 10000 >= max > 4000:
-                max = 1000
-                break
-            case 20000 >= max > 10000:
-                max = 20000
-                break
-            case 40000 >= max > 20000:
-                max = 40000
-                break
-            case 100000 >= max > 40000:
-                max = 100000
-                break
-            case 200000 >= max > 100000:
-                max = 200000
-                break
-            case 400000 >= max > 200000:
-                max = 400000
-                break
-            case 1000000 >= max > 400000:
-                max = 1000000
-                break
-            default:
-                max = 10
-        }
-
         const scale = {
             month: {
                 sync: true,
