@@ -527,6 +527,35 @@ class List extends TabList {
                             console.info("error", error)
                         }
                     }}
+                    onLoad={(editor) => {
+                        editor.completers = [
+                            {
+                                getCompletions: function (
+                                    editors,
+                                    session,
+                                    pos,
+                                    prefix,
+                                    callback
+                                ) {
+                                    let completer = [
+                                        {
+                                            name: "title",
+                                            value: "title",
+                                            score: 100,
+                                            meta: "展示文本",
+                                        },
+                                        {
+                                            name: "payload",
+                                            value: "payload",
+                                            score: 100,
+                                            meta: "回复选项值",
+                                        },
+                                    ]
+                                    callback(null, completer)
+                                },
+                            },
+                        ]
+                    }}
                     fontSize={14}
                     showPrintMargin
                     showGutter
@@ -545,7 +574,7 @@ class List extends TabList {
                         },
                     ]}
                     setOptions={{
-                        enableBasicAutocompletion: true,
+                        enableBasicAutocompletion: false,
                         enableLiveAutocompletion: true,
                         enableSnippets: true,
                         showLineNumbers: true,
