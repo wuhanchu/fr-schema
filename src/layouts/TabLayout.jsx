@@ -9,11 +9,12 @@ import {connect, Link, useIntl, Route} from "umi"
 import {Button, Dropdown} from "antd"
 import RightContent from "@/outter/fr-schema-antd-utils/src/components/GlobalHeader/RightContent"
 import {Tabs, Menu, message} from 'antd';
+
 const {TabPane} = Tabs;
-import DomainList from '@/pages/domain/List';
-import logo from "@/assets/logo.svg"
 import Authorized from "@/outter/fr-schema-antd-utils/src/components/Authorized/Authorized"
 import {DownOutlined} from "@ant-design/icons";
+import {tabConfig}  from './tabLayoutConfig/TabLayoutConfig';
+
 const config = SETTING
 
 /**
@@ -43,30 +44,16 @@ const defaultFooterDom = (
 
 const BasicLayout = (props) => {
     let localStorageDomainKey = localStorage.getItem("domain_key");
-    const [tabList, setTabList] = useState([{
-        name: '域信息',
-        content: <Route component={DomainList}/>,
-        key: '/domain/list'
-    }]); // tab列表, 初始化首页
-    const [tabActiveKey, setTabActiveKey] = useState('/domain/list'); // 当前tab选中的key
+    const [tabList, setTabList] = useState(tabConfig.tabs.initPage); // tab列表, 初始化首页
+    const [tabActiveKey, setTabActiveKey] = useState(tabConfig.tabs.initActiveKey); // 当前tab选中的key
     const [domainList, setDomainList] = useState([]);  // 域列表
     const [showRightMenu, setShowRightMenu] = useState(false); // 是否显示tab菜单
     const [rightClickTab, setRightClickTab] = useState({}); // 当前点击的tab项
     const [currentDomainKey, setCurrentDomainKey] = useState(localStorageDomainKey);  // 当前所选域key
-    const [layoutProps, setLayoutProps] = useState({logo: logo,}); // layout样式,默认菜单栏在上面
+    const [layoutProps, setLayoutProps] = useState(tabConfig.tabs.layoutProps); // layout样式,默认菜单栏在上面
+    const [layoutMode, setLayoutMode] = useState('tabs') // 使用哪种layout方式来处理
     let tabDivObj = document.getElementById('tabDiv') // tab元素
     let tabDivWidth = tabDivObj && tabDivObj.clientWidth || 900; // 获取tab整体框宽度,以便计算最多能打开多少标签页
-
-    // 左侧菜单栏配置
-    const frameLayoutProps = {
-        layout: 'leftmenu',
-        style: { height: "calc(100% - 48px)" },
-        menuHeaderRender: false,
-        headerRender: false,
-        footerRender: _ => false,
-        rightContentRender: () => <></>,
-    }
-
 
     const {
         dispatch,
@@ -119,7 +106,10 @@ const BasicLayout = (props) => {
         }
         // 判断当前使用哪种 layout方式 根据路由配置 '/frame'开头为左侧菜单栏
         if (props.location.pathname.startsWith("/frame")) {
-            setLayoutProps(frameLayoutProps)
+            setLayoutMode('frame')
+            setLayoutProps(tabConfig.frame.layoutProps);
+            setTabList(tabConfig.frame.initPage);
+            setTabActiveKey(tabConfig.frame.initActiveKey);
         }
     }, [init])
 
@@ -135,6 +125,15 @@ const BasicLayout = (props) => {
             })
         }
     } // get children authority
+
+    const tabMenuPosition = (event) => {
+        if (props.collapsed) {
+            event.clientX = event.clientX - 48
+        } else {
+            event.clientX = event.clientX - 208
+        }
+        return event;
+    }
 
     const {formatMessage} = useIntl()
 
@@ -201,7 +200,8 @@ const BasicLayout = (props) => {
     // 左键点击tab
     const onTabMouseDown = (activeKey, event) => {
         if (event.button === 0 && activeKey === tabActiveKey) {
-            setRightClickTab(event)
+            let res = layoutMode === 'frame' ? tabMenuPosition(event) : event;
+            setRightClickTab({...res})
             setShowRightMenu(true)
         }
     }
@@ -240,7 +240,7 @@ const BasicLayout = (props) => {
         </div>
     )
 
-    // tab右键菜单
+    // tab左键菜单
     const rightClickMenu = (
         showRightMenu &&
         <div style={{position: 'absolute', left: rightClickTab.clientX, top: 40, zIndex: 9999,}}>
@@ -258,7 +258,6 @@ const BasicLayout = (props) => {
 
     return (
         <ProLayout
-            // logo={logo}
             formatMessage={formatMessage}
             menuHeaderRender={(logoDom, titleDom) => (
                 <Link to={"/"}>
