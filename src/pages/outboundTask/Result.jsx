@@ -119,6 +119,28 @@ class List extends DataList {
         )
     }
 
+    async requestList(tempArgs = {}) {
+        if (this.props.record.status === "running") {
+            await schemas.outboundTask.service.syncTaskResult({
+                task_id: this.props.record.external_id,
+            })
+        }
+
+        const { queryArgs } = this.meta
+        let searchParams = this.getSearchParam()
+
+        const params = {
+            ...(queryArgs || {}),
+            ...searchParams,
+            ...(this.state.pagination || {}),
+            ...tempArgs,
+        }
+
+        let data = await this.service.get(params)
+        data = this.dataConvert(data)
+        return data
+    }
+
     renderOperateColumnExtend(record) {
         return (
             <>
