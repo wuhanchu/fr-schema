@@ -24,7 +24,11 @@ const { actions, getPrimaryKey, decorateList } = frSchema
 import "ace-builds/src-noconflict/mode-json"
 import "ace-builds/src-noconflict/theme-github"
 import "ace-builds/src-noconflict/ext-language_tools"
-import { PlusOutlined, MinusCircleOutlined } from "@ant-design/icons"
+import {
+    PlusOutlined,
+    MinusCircleOutlined,
+    QuestionCircleOutlined,
+} from "@ant-design/icons"
 import { getTree } from "@/pages/Flow/methods"
 import ReactMarkdown from "react-markdown"
 import TabList from "@/pages/tabList/TabList"
@@ -469,7 +473,7 @@ class List extends TabList {
                                 }
                             >
                                 {/* <a> */}
-                                <InfoCircleOutlined
+                                <QuestionCircleOutlined
                                     style={{
                                         position: "absolute",
                                         right: "-20px",

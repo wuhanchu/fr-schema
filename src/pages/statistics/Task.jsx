@@ -181,18 +181,8 @@ class List extends TabList {
             remark: "未知",
         }
         this.schema.client_id.dict = client_dict
-
-        let flow = await schemas.flow.service.get({
-            limit: 1000,
-            select: "id, key, domain_key, name",
-            domain_key: this.meta.queryArgs.domain_key,
-        })
-        this.schema.flow_key.dict = listToDict(flow.list, "", "key", "name")
-        let task = await schemas.outboundTask.service.get({
-            limit: 1000,
-            domain_key: this.meta.queryArgs.domain_key,
-        })
-        this.schema.task_id.dict = listToDict(task.list, "", "id", "name")
+        await this.initFlowDict(this.meta.queryArgs.domain_key)
+        await this.initTaskDict(this.meta.queryArgs.domain_key)
 
         await this.findUserList()
     }
@@ -203,13 +193,14 @@ class List extends TabList {
                 begin_time: moment().subtract("days", 14),
             })
         } catch (error) {}
+        await this.init()
+
         super.componentDidMount()
         this.setState({
             searchValues: {
                 begin_time: moment().subtract("days", 14),
             },
         })
-        this.init()
     }
 
     renderOperateColumnExtend(record) {
@@ -661,24 +652,31 @@ class List extends TabList {
             )
         )
     }
-
+    initTaskDict = async (domain_key) => {
+        let task = await schemas.outboundTask.service.get({
+            limit: 1000,
+            domain_key: domain_key,
+        })
+        this.schema.task_id.dict = listToDict(task.list, "", "id", "name")
+    }
+    initFlowDict = async (domain_key) => {
+        let flow = await schemas.flow.service.get({
+            limit: 1000,
+            select: "id, key, domain_key, name",
+            domain_key: domain_key,
+        })
+        this.schema.flow_key.dict = listToDict(flow.list, "", "key", "name")
+    }
     domainKeyChange = async (item) => {
         if (this.meta.initLocalStorageDomainKey) {
             this.meta.queryArgs = {
                 ...this.meta.queryArgs,
                 domain_key: item,
             }
-            let flow = await schemas.flow.service.get({
-                limit: 1000,
-                select: "id, key, domain_key, name",
-                domain_key: item,
-            })
-            this.schema.flow_key.dict = listToDict(flow.list, "", "key", "name")
-            let task = await schemas.outboundTask.service.get({
-                limit: 1000,
-                domain_key: item,
-            })
-            this.schema.task_id.dict = listToDict(task.list, "", "id", "name")
+
+            this.initFlowDict(item)
+            this.initTaskDict(item)
+
             console.log(this.schema.task_id)
         }
     }
