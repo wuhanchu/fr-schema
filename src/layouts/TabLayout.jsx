@@ -4,7 +4,7 @@
  * https://github.com/ant-design/ant-design-pro-layout
  */
 import ProLayout, {DefaultFooter} from "@ant-design/pro-layout"
-import React, {useEffect, useState, createContext} from "react"
+import React, {useEffect, useState} from "react"
 import {connect, Link, useIntl, Route} from "umi"
 import {Button, Dropdown} from "antd"
 import RightContent from "@/outter/fr-schema-antd-utils/src/components/GlobalHeader/RightContent"
@@ -13,7 +13,7 @@ import {Tabs, Menu, message} from 'antd';
 const {TabPane} = Tabs;
 import Authorized from "@/outter/fr-schema-antd-utils/src/components/Authorized/Authorized"
 import {DownOutlined} from "@ant-design/icons";
-import {tabConfig}  from './tabLayoutConfig/TabLayoutConfig';
+import {tabConfig} from './tabLayoutConfig/TabLayoutConfig';
 
 const config = SETTING
 
@@ -43,15 +43,17 @@ const defaultFooterDom = (
 
 
 const BasicLayout = (props) => {
-    let localStorageDomainKey = localStorage.getItem("domain_key");
-    const [tabList, setTabList] = useState(tabConfig.tabs.initPage); // tab列表, 初始化首页
-    const [tabActiveKey, setTabActiveKey] = useState(tabConfig.tabs.initActiveKey); // 当前tab选中的key
+    let localStorageDomainKey = localStorage.getItem("domain_key");  // 本地缓存-域key
+    let localStorageLayoutMode = localStorage.getItem("layoutMode") || 'tabs';  // 本地缓存-layout模式
+    let localStorageTabList = JSON.parse(localStorage.getItem("tabList"));   // 本地缓存 - 多标签页
+    let layoutMode = props.location.pathname.startsWith("/frame") ? 'frame' : 'tabs';  // 获取当前layout模式
+    const [tabList, setTabList] = useState(); // tab列表, 初始化首页
+    const [tabActiveKey, setTabActiveKey] = useState(); // 当前tab选中的key
     const [domainList, setDomainList] = useState([]);  // 域列表
     const [showRightMenu, setShowRightMenu] = useState(false); // 是否显示tab菜单
     const [rightClickTab, setRightClickTab] = useState({}); // 当前点击的tab项
     const [currentDomainKey, setCurrentDomainKey] = useState(localStorageDomainKey);  // 当前所选域key
-    const [layoutProps, setLayoutProps] = useState(tabConfig.tabs.layoutProps); // layout样式,默认菜单栏在上面
-    const [layoutMode, setLayoutMode] = useState('tabs') // 使用哪种layout方式来处理
+    const [layoutProps, setLayoutProps] = useState(); // layout样式,默认菜单栏在上面
     let tabDivObj = document.getElementById('tabDiv') // tab元素
     let tabDivWidth = tabDivObj && tabDivObj.clientWidth || 900; // 获取tab整体框宽度,以便计算最多能打开多少标签页
 
@@ -60,10 +62,6 @@ const BasicLayout = (props) => {
         settings,
         init,
         initCallback,
-
-        location = {
-            pathname: "/",
-        },
     } = props
     /**
      * constructor
@@ -80,16 +78,7 @@ const BasicLayout = (props) => {
             setShowRightMenu(false)
         }
 
-        // 域初始化
-        let domain_key = localStorage.getItem("domain_key")
-
-        if (!domain_key) {
-            localStorage.setItem("domain_key", "default")
-        }
-
-        if (domain_key && !!props.dict.domain[domain_key]) {
-            localStorage.setItem("domain_key", "default")
-        }
+        initData()
     }, [])
 
     useEffect(() => {
@@ -104,14 +93,74 @@ const BasicLayout = (props) => {
             setDomainList([...domain])
             props.dict.domain[localStorageDomainKey] && setCurrentDomainKey(props.dict.domain[localStorageDomainKey].key)
         }
-        // 判断当前使用哪种 layout方式 根据路由配置 '/frame'开头为左侧菜单栏
-        if (props.location.pathname.startsWith("/frame")) {
-            setLayoutMode('frame')
-            setLayoutProps(tabConfig.frame.layoutProps);
-            setTabList(tabConfig.frame.initPage);
-            setTabActiveKey(tabConfig.frame.initActiveKey);
-        }
     }, [init])
+
+
+    // 初始化数据
+    const initData = () => {
+        initDomain()
+        initConfig();
+        // 根据当前页面路径判断是否需要清除原缓存 若需要则移除 缓存的tab
+        if (localStorageLayoutMode !== layoutMode) {
+            localStorage.removeItem('tabList');
+            localStorage.setItem('layoutMode', layoutMode)
+            return;
+        }
+        getStorageData()
+    }
+
+    // 初始化layout数据和样式
+    const initConfig = () => {
+        setLayoutProps(tabConfig[layoutMode].layoutProps);
+        setTabList(tabConfig[layoutMode].initPage);
+        setTabActiveKey(tabConfig[layoutMode].initActiveKey);
+    }
+
+    // 域初始化
+    const initDomain = () => {
+        let domain_key = localStorage.getItem("domain_key")
+        if (!domain_key) {
+            localStorage.setItem("domain_key", "default")
+        }
+        if (domain_key && !!props.dict.domain[domain_key]) {
+            localStorage.setItem("domain_key", "default")
+        }
+    }
+
+    /**
+     * 获取标签页本地缓存数据
+     * 由于tab中content的数据是组件,但用localStorage存储时会丢失数据,顾无法直接获取使用
+     * 所以需要重新对tab中组件数据进行重新赋值
+     */
+    const getStorageData = () => {
+        let menuData = props.route.children; // 拿到当前菜单数据
+        let allMenu = getAllMenu(menuData, []); // 获取需遍历的菜单列表
+        let item = {};
+
+        // 重赋值
+        if (localStorageTabList && localStorageTabList.length > 0) {
+            for (let i = 0; i < localStorageTabList.length; i++) {
+                item = allMenu.find(value => {
+                    return value.path === localStorageTabList[i].key
+                })
+                item && (localStorageTabList[i].content = <Route component={item.component}/>);
+            }
+            setTabList([...localStorageTabList]);
+            setTabActiveKey(localStorageTabList[0].key);
+        }
+    }
+
+    // 获取所有菜单
+    const getAllMenu = (menuData, list) => {
+        list.push(...menuData)
+        menuData.map((item) => {
+            const localItem = {
+                ...item,
+                children: item.children ? getAllMenu(item.children, list) : [],
+            }
+        })
+        return list;
+    }
 
     /**
      * init variables
@@ -175,6 +224,8 @@ const BasicLayout = (props) => {
                 key: menuItem.key
             })
             setTabList([...tabList])
+            // 缓存标签页,以此使得刷新后,标签页仍然存在
+            localStorage.setItem('tabList', JSON.stringify([...tabList]))
         }
         setTabActiveKey(`${menuItem.key}`)
     };
@@ -189,12 +240,14 @@ const BasicLayout = (props) => {
         let activeKey = panes[panes.length - 1].key
         setTabList([...panes])
         setTabActiveKey(activeKey)
+        localStorage.setItem('tabList', JSON.stringify([...panes]))
     };
 
     // 关闭其他便签页
     const tabRemoveOther = targetKey => {
         const panes = tabList.filter(pane => pane.key === targetKey);
         setTabList([...panes]);
+        localStorage.setItem('tabList', JSON.stringify([...panes]))
     }
 
     // 左键点击tab
