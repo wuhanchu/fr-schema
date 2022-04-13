@@ -1,4 +1,4 @@
-let { REACT_APP_ENV, BASE_PATH } = process.env
+let { REACT_APP_ENV, BASE_PATH, IS_PROD } = process.env
 
 if (!BASE_PATH) {
     BASE_PATH = ""
@@ -19,7 +19,7 @@ export default {
         locale: true,
     },
     pwa: false,
-
+    IS_PROD: !!IS_PROD, // 是否正式
     // basic info
     title: "知料", // 基础信息
     product_key: "z_know_info",

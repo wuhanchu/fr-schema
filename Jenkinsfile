@@ -27,6 +27,10 @@ pipeline {
         stage('Build') {
             parallel {
                 stage('Build Dataknown') {
+                   when {
+                        anyOf { tag '*dataknown*'}
+                     }
+
                     agent {
                         docker {
                             reuseNode true
@@ -37,10 +41,7 @@ pipeline {
                         }
                     }
 
-                    when {
-                        anyOf {branch 'master'; tag '*dataknown*'}
-                     }
-
+                 
                     steps{
                         sh 'pwd'
                         sh 'yarn config set registry https://registry.npm.taobao.org && yarn install --prefer-offline --ignore-optional'
@@ -48,11 +49,32 @@ pipeline {
                     }
                 }
 
-                stage('Build Standard') {
+                stage('Build Test') {
                     when {
                        anyOf {
-                           allOf{ buildingTag();
-                           not { tag '*dataknown*'}}}
+                           allOf{ branch 'master';}}
+                     }
+
+                     agent {
+                        docker {
+                            reuseNode true
+                            alwaysPull true
+                            image 'node:lts-alpine'
+                            args '-v jenkins:/var/jenkins_home -v jenkins_yarn_cache:/usr/local/share/.cache/yarn'
+                        }
+                    }
+
+                    steps {
+                        sh 'pwd'
+                        sh 'yarn config set registry https://registry.npm.taobao.org && yarn install --prefer-offline --ignore-optional'
+                        sh 'npm run build:test'
+                    }
+                }
+
+                stage('Build Prod') {
+                    when {
+                       anyOf {
+                           allOf{ buildingTag(); not { tag '*dataknown*'}}}
                      }
 
                      agent {
