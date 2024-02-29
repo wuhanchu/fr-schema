@@ -16,23 +16,6 @@ export default {
 };
 ```
 
-## DataList 的使用
-
-- meta
-  - scroll: table whether can scroll
-  - showSelect: whether show multi select
-  - selectedRows
-  - resource: schema resource name，
-  - service: 配置在 modules 中的 service
-  - title: page title,
-  - handleChangeCallback: data change call back
-  - queryArgs: fixed query args
-  - infoProps 会传给 InfoModal 的属性
-
-### 列表操作
-
-- handleVisibleModal: 信息框显示
-
 ## schema 的属性
 
 schema 代表是一个数据对象的定义，一般来说会和数据库的设计有 8 成相似。

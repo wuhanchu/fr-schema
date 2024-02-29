@@ -1,6 +1,6 @@
 {
     "name": "fr-schema",
-    "version": "0.0.8",
+    "version": "1.8.0",
     "description": "前端的一个统一schema工具，设计schema来生成不同客户端以及不同框架的界面。",
     "main": "lib/index.js",
     "scripts": {
